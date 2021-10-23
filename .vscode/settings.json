@@ -1,0 +1,7 @@
+{
+    "python.defaultInterpreterPath": "C:/Users/CJR/Budget-Buddy/backend/venv/Scripts/python.exe",
+    "python.pythonPath": "C:/Users/CJR/Budget-Buddy/backend/venv/Scripts/python.exe",
+    "python.analysis.extraPaths": [
+        "./backend/app"
+    ]
+}
