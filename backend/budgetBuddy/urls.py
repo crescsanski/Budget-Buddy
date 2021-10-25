@@ -15,11 +15,15 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.conf.urls import include, url
+from django.urls import path
 from rest_framework import routers
 from app import views
 from django.views.generic import RedirectView
 from django.conf import settings
 from django.conf.urls.static import static
+from budgetBuddy.views import CustomAuthToken
+from rest_framework.authtoken import views as authViews
+
 
 router = routers.DefaultRouter()
 router.register(r'players', views.UsersViewSet)
@@ -29,5 +33,6 @@ urlpatterns = [
     # Additionally, we include login URLs for the browsable API.   
     url(r'^', include('app.urls')),
     # Wire up our API using automatic URL routing.
-    url(r'^api-auth/', include('rest_framework.urls', namespace='rest_framework')) 
+    path(r'api-token-auth/', CustomAuthToken.as_view())
 ]
+
