@@ -33,6 +33,6 @@ urlpatterns = [
     # Additionally, we include login URLs for the browsable API.   
     url(r'^', include('app.urls')),
     # Wire up our API using automatic URL routing.
-    path(r'api-token-auth/', CustomAuthToken.as_view())
+    path(r'api-token-auth', CustomAuthToken.as_view())
 ]
 

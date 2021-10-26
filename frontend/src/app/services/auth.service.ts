@@ -14,8 +14,8 @@ export class AuthService {
 
   private authUrl = 'api-token-auth';  // URL to web api
   private userUrl = 'user';
-  private currentUserSubject: BehaviorSubject<User | null>;
-  public currentUser: Observable<User | null>;
+  private currentUserSubject: BehaviorSubject<User>;
+  public currentUser: Observable<User>;
 
   httpOptions = {
     headers: new HttpHeaders({ 'Content-Type': 'application/json' })
@@ -26,12 +26,12 @@ export class AuthService {
     private router: Router,
     private messageService: MessageService) { 
       //allows other components to easily get the current value of the logged in user without have to subscribe to the currentUser observable
-      this.currentUserSubject = new BehaviorSubject<User | null>(JSON.parse(localStorage.getItem('currentUser') as string));
+      this.currentUserSubject = new BehaviorSubject<User>(JSON.parse(localStorage.getItem('currentUser') as string));
       //exposes user as an observable, so any component can be notified when a user logs in, logs out, or updates their profile
       this.currentUser = this.currentUserSubject.asObservable();
     }
   
-  public get currentUserValue(): User | null {
+  public get currentUserValue(): User {
     return this.currentUserSubject.value;
   }
 
@@ -55,7 +55,7 @@ export class AuthService {
   {
     // remove user from local storage and set current user to null
     localStorage.removeItem('currentUser');
-    this.currentUserSubject.next(null);
+    this.currentUserSubject.next(<User>{});
     //return to login page
     this.router.navigate(['login']);
   }
