@@ -5,14 +5,19 @@ import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { ServiceWorkerModule } from '@angular/service-worker';
 import { environment } from '../environments/environment';
-import { LoginComponent } from './login/login.component';
-import { LoginPageComponent } from './login-page/login-page.component';
+import { LoginPageComponent } from './login/login-page/login-page.component';
+import { LoginNavComponent } from './login/login-nav/login-nav.component';
+import { LoginPanelComponent } from './login/login-panel/login-panel.component';
+
+import { PasswordModule } from 'primeng/password';
+import {ButtonModule} from 'primeng/button';
 
 @NgModule({
   declarations: [
     AppComponent,
-    LoginComponent,
-    LoginPageComponent
+    LoginPageComponent,
+    LoginNavComponent,
+    LoginPanelComponent
   ],
   imports: [
     BrowserModule,
@@ -22,7 +27,9 @@ import { LoginPageComponent } from './login-page/login-page.component';
       // Register the ServiceWorker as soon as the app is stable
       // or after 30 seconds (whichever comes first).
       registrationStrategy: 'registerWhenStable:30000'
-    })
+    }),
+    PasswordModule,
+    ButtonModule
   ],
   providers: [],
   bootstrap: [AppComponent]
