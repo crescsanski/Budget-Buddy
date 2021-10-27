@@ -1,5 +1,14 @@
+import { LoginPageComponent } from './login/login-page/login-page.component';
+import { MainPageComponent } from './home/main-page/main-page.component';
 import { NgModule } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
+
+/*
+const routes: Routes = [
+  { path: '', redirectTo: '/login-page', pathMatch: 'full' },
+  {path: 'main-page', component: MainPageComponent},
+  {path: 'login-page', component: LoginPageComponent}
+  */
 
 import { HomeComponent } from './home/home.component';
 import { AuthGuard } from './helpers/auth.guard';

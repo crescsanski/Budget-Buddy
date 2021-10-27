@@ -1,0 +1,50 @@
+$blue: #003486 !default;
+$teal: #4ec5ca !default;
+$green: #4eca9f !default;
+$dark-blue: #090526 !default;
+$light-gray: #707070 !default;
+
+body {
+  background-image: linear-gradient(125deg, $blue, $teal);
+  height: 100vh;
+  background-repeat: no-repeat;
+  font-family: "Century Gothic Pro" !important;
+}
+
+button {
+  background-color: $teal;
+  border-radius: 15px;
+  border: 2px solid $teal;
+  width: 6em;
+  padding-top: 0.5em;
+  padding-bottom: 0.35em;
+  font-family: "Century Gothic Pro" !important;
+  color: white;
+  cursor: pointer;
+
+  &:hover {
+    opacity: 50%;
+  }
+}
+
+.button-secondary {
+  color: $teal;
+  background-color: #ffffff;
+}
+
+.link {
+  &:hover {
+    opacity: 50%;
+    cursor: pointer;
+  }
+}
+
+::ng-deep {
+  input {
+    border-radius: 10px;
+    border-color: $light-gray;
+    border-width: 1px;
+    width: 98%;
+    padding: 0.2em;
+  }
+}
