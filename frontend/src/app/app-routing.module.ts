@@ -12,6 +12,7 @@ const routes: Routes = [
   { path: '', redirectTo: '/login-page', pathMatch: 'full' },
   {path: 'main-page', component: MainPageComponent},
   {path: 'login-page', component: LoginPageComponent}
+];
 
 /*
 const routes: Routes = [
