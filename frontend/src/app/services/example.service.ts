@@ -9,7 +9,7 @@ import { MessageService } from './message.service';
 
 
 @Injectable({ providedIn: 'root' })
-export class UserService {
+export class ExampleService {
 
   private usersUrl = 'api/users';  // URL to web api
 

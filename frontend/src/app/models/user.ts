@@ -6,6 +6,7 @@ export interface User {
     phone_number: string;
     registered: Date;
     birth_date: Date;
+    token: string;
   }
   
   
