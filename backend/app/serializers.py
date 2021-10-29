@@ -8,7 +8,9 @@ class UsersSerializer(serializers.HyperlinkedModelSerializer):
        fields = ('user_id',
                 'first_name',
                 'last_name',
-                'user_name',
+                'email',
+                'username',
                 'phone_number',
                 'registered',
-                'birth_date')
+                'birth_date',
+                'password')

@@ -1,14 +1,14 @@
 <div class="panel">
-    <div class="content">
+    <div class="content" [formGroup]="form">
         <h1>Login</h1>
         <p>Username</p>
-        <input type="text" class="field" pInputText />
+        <input type="text" formControlName="username" class="field" pInputText />
         <p>Password</p>
-        <p-password></p-password>
+        <p-password formControlName="password"></p-password>
         <br>
         <div class="button-container">
-            <button class="button" pButton type="button" label="Login" (click)="buttonClick()"></button>
-            <button class="button button-secondary" pButton type="button" label="Sign Up" ></button>
+            <button class="button" pButton type="button" label="Login" (click)="login()"></button>
+            <button class="button button-secondary" pButton type="button" (click)="register()" label="Sign Up" ></button>
         </div>
             
        

@@ -12,8 +12,9 @@ import { Router } from '@angular/router';
 @Injectable({ providedIn: 'root' })
 export class AuthService {
 
-  private authUrl = 'api-token-auth';  // URL to web api
-  private userUrl = 'user';
+  private authUrl = 'api/auth/';  // URL to web api
+  private registerUrl = 'api/auth/register/';
+  private userUrl = 'api/users/';
   private currentUserSubject: BehaviorSubject<User>;
   public currentUser: Observable<User>;
 
@@ -63,7 +64,7 @@ export class AuthService {
   /** REGISTER new user */
   register(user: User)
   {
-    return this.http.post(this.userUrl, user);
+    return this.http.post(this.registerUrl, user);
   }
 
   /** UPDATE user information */
