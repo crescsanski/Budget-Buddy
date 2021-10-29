@@ -1,0 +1,25 @@
+@import "../../../styles.scss";
+
+.app-content {
+  display: flex;
+}
+
+h1 {
+  color: $blue;
+  font-size: 6vh;
+
+  img {
+    position: absolute;
+    right: 7vw;
+    height: 5vh;
+
+    &:hover {
+      opacity: 50%;
+      cursor: pointer;
+    }
+  }
+}
+
+.widget-area {
+  margin-left: 3em;
+}

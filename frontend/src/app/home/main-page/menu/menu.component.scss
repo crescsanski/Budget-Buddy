@@ -1,0 +1,70 @@
+@import "../../../../styles.scss";
+
+.panel {
+  background-image: linear-gradient(0deg, $blue, $teal);
+  height: 105vh;
+  width: 20vw;
+  min-width: 300px;
+  max-width: 320px;
+  padding-right: 2vw;
+  padding-left: 1vw;
+  padding-top: 10px;
+  background-repeat: no-repeat;
+  font-family: "Century Gothic Pro" !important;
+}
+
+h1 {
+  color: white;
+  text-align: center;
+  margin-bottom: 0.5em;
+}
+
+.user-info {
+  margin: 2em;
+  text-align: center;
+}
+
+img {
+  height: 12em;
+  text-align: center;
+}
+
+p {
+  font-size: 1.5em;
+  margin-top: 0.5em;
+  text-align: center;
+  color: white;
+}
+
+ul {
+  list-style-type: none;
+  color: white;
+  margin-top: 3em;
+  margin-left: -0.75em;
+  text-align: center;
+
+  li {
+    margin: 0.75em;
+    font-size: 2em;
+    text-align: left;
+    border-width: 3px;
+    padding-left: 0.4em;
+    padding-top: 0.3em;
+
+    &:hover {
+      opacity: 50%;
+      cursor: pointer;
+      text-align: left;
+    }
+  }
+}
+
+.selected {
+  font-weight: bold;
+  text-align: left;
+  border-style: solid;
+  border-color: white;
+  border-right: transparent;
+  border-top: transparent;
+  border-bottom: transparent;
+}
