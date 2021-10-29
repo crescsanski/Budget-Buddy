@@ -2,11 +2,12 @@ import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 
 import { BehaviorSubject, Observable, of } from 'rxjs';
-import { catchError, map, tap } from 'rxjs/operators';
+import { catchError, first, map, tap } from 'rxjs/operators';
 
 import { User } from '../models/user';
 import { MessageService } from './message.service';
 import { Router } from '@angular/router';
+import { AlertService } from './alert.service';
 
 
 @Injectable({ providedIn: 'root' })
@@ -25,6 +26,7 @@ export class AuthService {
   constructor(
     private http: HttpClient,
     private router: Router,
+    private alertService: AlertService,
     private messageService: MessageService) { 
       //allows other components to easily get the current value of the logged in user without have to subscribe to the currentUser observable
       this.currentUserSubject = new BehaviorSubject<User>(JSON.parse(localStorage.getItem('currentUser') as string));
@@ -41,13 +43,13 @@ export class AuthService {
     return this.http.post<User>(this.authUrl, {username, password}, this.httpOptions).pipe(
      map((user) => {
           // store user details and login token in local storage to keep user logged in
+          console.log("Login was successful???")
           localStorage.setItem('currentUser', JSON.stringify(user))
-          this.log(`logged in successfully w/ token=${user}`);
+          this.log(`logged in successfully w/ token=${user.token}`);
           this.currentUserSubject.next(user);
           return user;
           }
-        ),
-      catchError(this.handleError<User>('loginUser'))
+        )
     );
   }
 
@@ -58,13 +60,13 @@ export class AuthService {
     localStorage.removeItem('currentUser');
     this.currentUserSubject.next(<User>{});
     //return to login page
-    this.router.navigate(['login']);
+    this.router.navigate(['login-page']);
   }
 
   /** REGISTER new user */
   register(user: User)
   {
-    return this.http.post(this.registerUrl, user);
+    return this.http.post(this.registerUrl, user, this.httpOptions);
   }
 
   /** UPDATE user information */
@@ -109,7 +111,7 @@ export class AuthService {
 
   /** Log a UserService message with the MessageService */
   private log(message: string) {
-    this.messageService.add(`UserService: ${message}`);
+    this.messageService.addInfo(`AuthService: ${message}`, "");
   }
 }
 

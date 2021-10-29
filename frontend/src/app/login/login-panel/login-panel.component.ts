@@ -4,6 +4,7 @@ import { AlertService } from 'src/app/services/alert.service';
 import { AuthService } from 'src/app/services/auth.service';
 import { first } from 'rxjs/operators';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { MessageService } from 'src/app/services/message.service';
 
 
 @Component({
@@ -19,7 +20,7 @@ export class LoginPanelComponent implements OnInit {
   form: FormGroup = <FormGroup>{};
 
   constructor(private router: Router, 
-    private alertService: AlertService,
+    private messageService: MessageService,
     private formBuilder: FormBuilder,
     private route: ActivatedRoute,
     private authService: AuthService) { }
@@ -38,9 +39,6 @@ export class LoginPanelComponent implements OnInit {
   
     this.loginAttempt = true;
 
-    // reset alerts on submit
-    this.alertService.clear();
-
     // stop here if form is invalid
     if (this.form.invalid) {
         return;
@@ -50,13 +48,17 @@ export class LoginPanelComponent implements OnInit {
     this.authService.login(this.f.username.value, this.f.password.value)
         .pipe(first())
         .subscribe({
-            next: () => {
+            next: (user) => {
                 // redirect to main page of app if login was successful
-                console.log('to main page');
-                this.router.navigateByUrl('/main-page');
+                if (user)
+                {
+                    console.log('to main page');
+                    this.router.navigateByUrl('/main-page');
+                }
             },
             error: error => {
-                this.alertService.error(error);
+                console.log("There was an error.")
+                this.messageService.addError("Login Error", error)
                 this.loading = false;
             }
         });
@@ -65,8 +67,6 @@ export class LoginPanelComponent implements OnInit {
   register() {
     this.registerAttempt = true;
 
-    // reset alerts on submit
-    this.alertService.clear();
 
     // stop here if form is invalid
     if (this.form.invalid) {
@@ -78,10 +78,10 @@ export class LoginPanelComponent implements OnInit {
         .pipe(first())
         .subscribe({
             next: () => {
-                this.alertService.success('Registration successful', { keepAfterRouteChange: true });
+                this.messageService.addSuccess('Registration successful', "");
             },
             error: error => {
-                this.alertService.error(error);
+                this.messageService.addError('Registration Error', error);
                 this.loading = false;
             }
         });

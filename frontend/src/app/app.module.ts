@@ -16,6 +16,8 @@ import { ErrorInterceptor } from './helpers/error.interceptor';
 import { HomeComponent } from './home/home.component';
 import { ReactiveFormsModule } from '@angular/forms';
 import { AlertComponent } from './alert/alert.component';
+import {MessagesModule} from 'primeng/messages';
+import { MessageService } from 'primeng/api';
 
 @NgModule({
   declarations: [
@@ -29,6 +31,7 @@ import { AlertComponent } from './alert/alert.component';
   imports: [
     BrowserModule,
     AppRoutingModule,
+    MessagesModule,
     BrowserAnimationsModule,
     ServiceWorkerModule.register('ngsw-worker.js', {
       enabled: environment.production,
@@ -44,6 +47,7 @@ import { AlertComponent } from './alert/alert.component';
   providers: [
     { provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true },
     { provide: HTTP_INTERCEPTORS, useClass: ErrorInterceptor, multi: true },
+    MessageService
   ],
   bootstrap: [AppComponent]
 })
