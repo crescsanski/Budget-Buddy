@@ -1,0 +1,19 @@
+<div class="panel">
+    <div class="user-info">
+        <h1>{{name}}</h1>
+        <img src="../../assets/budget-buddy-avatar.png" alt="Budget Buddy Logo">
+        <p>{{ level }}</p>
+    </div>
+    <div class="menu-options">
+        <ul>
+            <li (click)="onClick('Dashboard')" [ngClass]="{'selected' : selected=='Dashboard'}">Dashboard</li>
+            <li (click)="onClick('Budget')" [ngClass]="{'selected' : selected=='Budget'}">Budget</li>
+            <li (click)="onClick('Tracking')" [ngClass]="{'selected' : selected=='Tracking'}">Tracking</li>
+            <li (click)="onClick('Analytics')" [ngClass]="{'selected' : selected=='Analytics'}">Analytics</li>
+            <li (click)="onClick('My Room')" [ngClass]="{'selected' : selected=='My Room'}">My Room</li>
+            <li (click)="onClick('Rewards')" [ngClass]="{'selected' : selected=='Rewards'}">Rewards</li>
+            <li (click)="onClick('Competitions')" [ngClass]="{'selected' : selected=='Competitions'}">Competitions</li>
+            <li (click)="onClick('Account')" [ngClass]="{'selected' : selected=='Account'}">Account</li>
+        </ul>
+    </div>
+</div>

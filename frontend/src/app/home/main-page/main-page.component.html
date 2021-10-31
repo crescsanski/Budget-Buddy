@@ -1,3 +1,12 @@
-<div style="background-color: white; border-color:white; margin: 0; position: absolute; top: 0px; left: 0px; height: 105vh; width: 105vw">
-  <h1>This will be the container for the page elements</h1>
+<div class="app-content" style="background-color: white; border-color:white; margin: 0; position: absolute; top: 0px; left: 0px; height: 105vh; width: 105vw">
+  <div><app-menu (notify)='onNotify($event)'></app-menu></div>
+  <p-menu #menu [popup]="true" [model]="settings"></p-menu>
+  <div class="widget-area">
+    <div class="title-bar">
+      <h1 style="text-align: left; ">{{ currentPage }} 
+        <img src="../../assets/settings-icon.png" alt="settings">
+    </h1>
+    <p-menu #menu [popup]="true" [model]="settings"></p-menu>
+    </div>
+  </div>
 </div>

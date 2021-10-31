@@ -1,3 +1,4 @@
+import { MenuComponent } from './main-page/menu/menu.component';
 import { Component } from '@angular/core';
 
 import { User } from '../models/user';
