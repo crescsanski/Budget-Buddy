@@ -1,16 +1,18 @@
 CREATE SCHEMA IF NOT EXISTS budgetBuddy;
 
-CREATE TABLE IF NOT EXISTS budgetBuddy.account(
-	account_id SERIAL,
-	email VARCHAR(255) UNIQUE NOT NULL,
-	pass VARCHAR(255) NOT NULL,
-	hint VARCHAR(14) NOT NULL,
-	PRIMARY KEY (account_id)
+CREATE TABLE IF NOT EXISTS budgetBuddy.security_question(
+	security_question_id SERIAL,
+    	security_question_name VARCHAR(255) NOT NULL,
+	security_question_question VARCHAR(255) NOT NULL,
+	PRIMARY KEY (security_question_id) 
 );
 
 CREATE TABLE IF NOT EXISTS budgetBuddy.users(
 	user_id SERIAL,
-	account_id INT,	
+	email VARCHAR(255) UNIQUE NOT NULL,
+	pass VARCHAR(255) NOT NULL,
+	security_question_id INT,
+	pass_hint VARCHAR(255),	
 	first_name VARCHAR(255),
 	last_name VARCHAR(255),
 	user_name VARCHAR(255) UNIQUE NOT NULL,
@@ -19,7 +21,7 @@ CREATE TABLE IF NOT EXISTS budgetBuddy.users(
 	birth_date DATE NOT NULL,
 	notifications BIT NOT NULL,
 	PRIMARY KEY (user_id),
-	CONSTRAINT fk_usersaccount FOREIGN KEY(account_id) REFERENCES budgetBuddy.account(account_id)
+	CONSTRAINT fk_userssecurityquestion FOREIGN KEY(security_question_id) REFERENCES budgetBuddy.security_question(security_question_id)
 );
 
 CREATE TABLE IF NOT EXISTS budgetBuddy.avatar(
