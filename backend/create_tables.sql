@@ -12,7 +12,7 @@ CREATE TABLE IF NOT EXISTS budgetBuddy.users(
 	email VARCHAR(255) UNIQUE NOT NULL,
 	pass VARCHAR(255) NOT NULL,
 	security_question_id INT,
-	pass_hint VARCHAR(255),	
+	security_answer VARCHAR(255),	
 	first_name VARCHAR(255),
 	last_name VARCHAR(255),
 	user_name VARCHAR(255) UNIQUE NOT NULL,
