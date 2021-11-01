@@ -4,6 +4,15 @@ from django.contrib.auth.models import (
     BaseUserManager, AbstractBaseUser
 )
 
+class SecurityQuestion(models.Model):
+    security_question_id = models.AutoField(primary_key=True)
+    security_question_name = models.CharField(max_length=255)
+    security_question_question = models.CharField(max_length=255)
+
+    class Meta:
+        managed = True
+        db_table = 'security_question'
+
 class MyUserManager(BaseUserManager):
     def create_user(self, username, password=None, extra=None):
         """
@@ -60,6 +69,12 @@ class Users(AbstractBaseUser, models.Model):
     password = models.CharField(unique=True, max_length=255, blank=False, null=True)
     registered = models.DateField(null=True, blank=True)
     birth_date = models.DateField(null=True, blank=True)
+
+    security_question = models.ForeignKey(SecurityQuestion, models.DO_NOTHING, blank=True, null=True)
+    security_answer = models.CharField(max_length=255, blank=True, null=True)
+    notifications = models.TextField()  # This field type is a guess.
+
+
     is_active = models.BooleanField(default=True)
     is_admin = models.BooleanField(default=False)
     objects = MyUserManager()
@@ -88,3 +103,241 @@ class Users(AbstractBaseUser, models.Model):
 
     class Meta:
         db_table = 'users'
+
+class Avatar(models.Model):
+    avatar_id = models.AutoField(primary_key=True)
+    avatar_level = models.IntegerField(blank=True, null=True)
+    avatar_exp = models.IntegerField(blank=True, null=True)
+    user = models.ForeignKey('Users', models.DO_NOTHING, blank=True, null=True)
+
+    class Meta:
+        managed = True
+        db_table = 'avatar'
+
+
+class Budget(models.Model):
+    budget_id = models.AutoField(primary_key=True)
+    projected_income = models.DecimalField(max_digits=10, decimal_places=2, blank=True, null=True)
+    projected_expenses = models.DecimalField(max_digits=10, decimal_places=2, blank=True, null=True)
+    additional_expenses_goal = models.DecimalField(max_digits=10, decimal_places=2, blank=True, null=True)
+    savings_goal = models.DecimalField(max_digits=10, decimal_places=2, blank=True, null=True)
+    savings_actual = models.DecimalField(max_digits=10, decimal_places=2, blank=True, null=True)
+    expenses_actual = models.DecimalField(max_digits=10, decimal_places=2, blank=True, null=True)
+    budget_percent_goal = models.DecimalField(max_digits=10, decimal_places=2, blank=True, null=True)
+    start_date = models.DateField(blank=True, null=True)
+    user = models.ForeignKey('Users', models.DO_NOTHING, blank=True, null=True)
+
+    class Meta:
+        managed = True
+        db_table = 'budget'
+
+
+class Category(models.Model):
+    category_id = models.AutoField(primary_key=True)
+    category_name = models.CharField(max_length=255)
+    category_description = models.CharField(max_length=255)
+
+    class Meta:
+        managed = True
+        db_table = 'category'
+
+
+class Challenge(models.Model):
+    challenge_id = models.AutoField(primary_key=True)
+    challenge_name = models.CharField(max_length=255)
+    challenge_description = models.CharField(max_length=255)
+    challenge_type = models.CharField(max_length=255)
+    active = models.TextField()  # This field type is a guess.
+    challenge_time_given = models.IntegerField(blank=True, null=True)
+    challenge_repeatable = models.TextField(blank=True, null=True)  # This field type is a guess.
+    item = models.ForeignKey('Items', models.DO_NOTHING, blank=True, null=True)
+    difficulty = models.ForeignKey('Difficulty', models.DO_NOTHING, blank=True, null=True)
+
+    class Meta:
+        managed = True
+        db_table = 'challenge'
+
+
+class ChallengeInventory(models.Model):
+    challenge_inventory_id = models.AutoField(primary_key=True)
+    challenge_start_date = models.DateField()
+    challenge_completion = models.TextField()  # This field type is a guess.
+    challenge = models.ForeignKey(Challenge, models.DO_NOTHING, blank=True, null=True)
+    avatar = models.ForeignKey(Avatar, models.DO_NOTHING, blank=True, null=True)
+
+    class Meta:
+        managed = True
+        db_table = 'challenge_inventory'
+
+
+class CompetitionStatus(models.Model):
+    competition_status_id = models.AutoField(primary_key=True)
+    competition_status_type = models.CharField(max_length=20)
+
+    class Meta:
+        managed = True
+        db_table = 'competition_status'
+
+
+class Competitions(models.Model):
+    competition_id = models.AutoField(primary_key=True)
+    competition_type = models.CharField(max_length=255, blank=True, null=True)
+    user_2_id = models.IntegerField()
+    competition_start_date = models.DateField()
+    competition_winner = models.IntegerField(blank=True, null=True)
+    user = models.ForeignKey('Users', models.DO_NOTHING, blank=True, null=True)
+    competition_status = models.ForeignKey(CompetitionStatus, models.DO_NOTHING, blank=True, null=True)
+
+    class Meta:
+        managed = True
+        db_table = 'competitions'
+        unique_together = (('user', 'user_2_id'),)
+
+
+class Difficulty(models.Model):
+    difficulty_id = models.AutoField(primary_key=True)
+    difficulty_name = models.CharField(max_length=255)
+    difficulty_description = models.CharField(max_length=255)
+
+    class Meta:
+        managed = True
+        db_table = 'difficulty'
+
+
+class FriendStatus(models.Model):
+    friend_status_id = models.AutoField(primary_key=True)
+    friend_status_type = models.CharField(max_length=20)
+
+    class Meta:
+        managed = True
+        db_table = 'friend_status'
+
+
+class Friends(models.Model):
+    friend_id = models.AutoField()
+    user_2_id = models.IntegerField()
+    user = models.ForeignKey('Users', models.DO_NOTHING, blank=True, null=True)
+    friend_status = models.OneToOneField(FriendStatus, models.DO_NOTHING, primary_key=True)
+
+    class Meta:
+        managed = True
+        db_table = 'friends'
+        unique_together = (('user', 'user_2_id'),)
+
+
+class GlobalCompetitions(models.Model):
+    global_competition_id = models.AutoField(primary_key=True)
+    global_competition_type = models.CharField(max_length=255, blank=True, null=True)
+    budget_percent_goal = models.DecimalField(max_digits=10, decimal_places=2, blank=True, null=True)
+    ranking = models.IntegerField()
+    competition_start_date = models.DateField()
+    competition_winner = models.IntegerField(blank=True, null=True)
+    user = models.ForeignKey('Users', models.DO_NOTHING, blank=True, null=True)
+
+    class Meta:
+        managed = True
+        db_table = 'global_competitions'
+
+
+class Income(models.Model):
+    income_id = models.AutoField(primary_key=True)
+    income_name = models.CharField(max_length=255)
+    income_amount = models.DecimalField(max_digits=10, decimal_places=2)
+    receipt = models.ForeignKey('Receipt', models.DO_NOTHING, blank=True, null=True)
+    category = models.ForeignKey(Category, models.DO_NOTHING, blank=True, null=True)
+
+    class Meta:
+        managed = True
+        db_table = 'income'
+
+
+class Inventory(models.Model):
+    inventory_id = models.AutoField(primary_key=True)
+    equipped = models.TextField()  # This field type is a guess.
+    item = models.ForeignKey('Items', models.DO_NOTHING, blank=True, null=True)
+    avatar = models.ForeignKey(Avatar, models.DO_NOTHING, blank=True, null=True)
+
+    class Meta:
+        managed = True
+        db_table = 'inventory'
+
+
+class Items(models.Model):
+    item_id = models.AutoField(primary_key=True)
+    item_name = models.CharField(max_length=255)
+    item_description = models.CharField(max_length=255)
+    item_type = models.CharField(max_length=255)
+    item_link = models.CharField(max_length=255)
+    difficulty = models.ForeignKey(Difficulty, models.DO_NOTHING, blank=True, null=True)
+
+    class Meta:
+        managed = True
+        db_table = 'items'
+
+
+class Notifications(models.Model):
+    notification_id = models.AutoField(primary_key=True)
+    notification_name = models.CharField(max_length=255)
+    notification_message = models.CharField(max_length=255)
+
+    class Meta:
+        managed = True
+        db_table = 'notifications'
+
+
+class NotificationsList(models.Model):
+    notification_list_id = models.AutoField(primary_key=True)
+    notification_time = models.DateTimeField(blank=True, null=True)
+    user = models.ForeignKey('Users', models.DO_NOTHING, blank=True, null=True)
+    notification = models.ForeignKey(Notifications, models.DO_NOTHING, blank=True, null=True)
+
+    class Meta:
+        managed = True
+        db_table = 'notifications_list'
+
+
+class Product(models.Model):
+    product_id = models.AutoField(primary_key=True)
+    product_name = models.CharField(max_length=255)
+    product_price = models.DecimalField(max_digits=10, decimal_places=2)
+    receipt = models.ForeignKey('Receipt', models.DO_NOTHING, blank=True, null=True)
+    category = models.ForeignKey(Category, models.DO_NOTHING, blank=True, null=True)
+
+    class Meta:
+        managed = True
+        db_table = 'product'
+
+
+class Receipt(models.Model):
+    receipt_id = models.AutoField(primary_key=True)
+    receipt_amount = models.DecimalField(max_digits=10, decimal_places=2)
+    receipt_date = models.DateField()
+    reccuring = models.IntegerField()
+    #income = models.TextField()  # This field type is a guess.
+    user = models.ForeignKey('Users', models.DO_NOTHING, blank=True, null=True)
+
+    class Meta:
+        managed = True
+        db_table = 'receipt'
+
+
+class Widget(models.Model):
+    widget_id = models.AutoField(primary_key=True)
+    widget_name = models.CharField(max_length=255)
+    widget_description = models.CharField(max_length=255)
+    widget_link = models.CharField(max_length=255)
+
+    class Meta:
+        managed = True
+        db_table = 'widget'
+
+
+class WidgetInventory(models.Model):
+    widget_inventory_id = models.AutoField(primary_key=True)
+    widget_position = models.IntegerField(blank=True, null=True)
+    widget = models.ForeignKey(Widget, models.DO_NOTHING, blank=True, null=True)
+    user = models.ForeignKey(Users, models.DO_NOTHING, blank=True, null=True)
+
+    class Meta:
+        managed = True
+        db_table = 'widget_inventory'
