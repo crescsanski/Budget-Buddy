@@ -102,6 +102,7 @@ class Users(AbstractBaseUser, models.Model):
         return self.is_admin
 
     class Meta:
+        managed = True
         db_table = 'users'
 
 class Avatar(models.Model):
@@ -214,10 +215,10 @@ class FriendStatus(models.Model):
 
 
 class Friends(models.Model):
-    friend_id = models.AutoField()
+    friend_id = models.AutoField(primary_key=True)
     user_2_id = models.IntegerField()
     user = models.ForeignKey('Users', models.DO_NOTHING, blank=True, null=True)
-    friend_status = models.OneToOneField(FriendStatus, models.DO_NOTHING, primary_key=True)
+    friend_status = models.OneToOneField(FriendStatus, models.DO_NOTHING)
 
     class Meta:
         managed = True
@@ -312,8 +313,8 @@ class Receipt(models.Model):
     receipt_id = models.AutoField(primary_key=True)
     receipt_amount = models.DecimalField(max_digits=10, decimal_places=2)
     receipt_date = models.DateField()
-    reccuring = models.IntegerField()
-    #income = models.TextField()  # This field type is a guess.
+    reoccuring = models.IntegerField()
+    is_income = models.TextField()
     user = models.ForeignKey('Users', models.DO_NOTHING, blank=True, null=True)
 
     class Meta:

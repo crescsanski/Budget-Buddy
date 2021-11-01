@@ -33,8 +33,10 @@ router.register(r'widget_inventories', views.WidgetInventoryViewSet)
 
 # The API URLs are now determined automatically by the router.
 # Additionally, we include the login URLs for the browsable API.
+app_name = 'app'
 urlpatterns = [
-    path('api/auth/',views.CustomAuthToken.as_view()),
-    path('api/auth/register/', views.RegisterView.as_view()),
-    path('api/', include(router.urls)),
+    path('auth/',views.CustomAuthToken.as_view()),
+    path('auth/register/', views.RegisterView.as_view()),
+    path('', include(router.urls)),
 ]
+

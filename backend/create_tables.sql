@@ -22,6 +22,8 @@ CREATE TABLE IF NOT EXISTS budgetBuddy.users(
 	registered DATE NOT NULL,	
 	birth_date DATE NOT NULL,
 	notifications BIT NOT NULL,
+	is_admin BOOLEAN DEFAULT FALSE,
+	is_active BOOLEAN DEFAULT TRUE,
 	PRIMARY KEY (user_id),
 	CONSTRAINT fk_userssecurityquestion FOREIGN KEY(security_question_id) REFERENCES budgetBuddy.security_question(security_question_id)
 );
@@ -93,8 +95,8 @@ CREATE TABLE IF NOT EXISTS budgetBuddy.receipt(
 	receipt_id SERIAL,
     	receipt_amount DECIMAL(10,2) NOT NULL,
 	receipt_date DATE NOT NULL,		
-	reccuring INT NOT NULL,
-	income BIT NOT NULL,
+	reoccuring INT NOT NULL,
+	is_income BIT NOT NULL,
 	user_id INT,
 	PRIMARY KEY (receipt_id),
 	CONSTRAINT fk_receiptusers FOREIGN KEY(user_id) REFERENCES budgetBuddy.users(user_id)
@@ -190,7 +192,7 @@ CREATE TABLE IF NOT EXISTS budgetBuddy.friends(
 	user_2_id INT NOT NULL,
 	user_id INT,
 	friend_status_id INT,	
-	PRIMARY KEY (friend_status_id),
+	PRIMARY KEY (friend_id),
 	CONSTRAINT fk_friendsusers FOREIGN KEY(user_id) REFERENCES budgetBuddy.users(user_id),
 	CONSTRAINT fk_friendsfriendstatus FOREIGN KEY(friend_status_id) REFERENCES budgetBuddy.friend_status(friend_status_id),
 	CONSTRAINT uq_friendsonce UNIQUE(user_id, user_2_id)
