@@ -31,6 +31,7 @@ class MyUserManager(BaseUserManager):
                 first_name=extra['first_name'] if 'first_name' in extra.keys() else None,
                 last_name=extra['last_name'] if 'last_name' in extra.keys() else None,
                 birth_date=extra['birth_date'] if 'birth_date' in extra.keys() else None,
+                notifications=extra['notifications'] if 'notifications' in extra.keys() else None,
                 registered=date.today(),
                 phone_number=extra['phone_number'] if 'phone_number' in extra.keys() else None,
             )
