@@ -8,13 +8,13 @@ import { MessageService } from 'src/app/services/message.service';
 
 
 @Component({
-  selector: 'app-login-panel',
-  templateUrl: './login-panel.component.html',
-  styleUrls: ['./login-panel.component.scss']
+  selector: 'app-register-panel',
+  templateUrl: './register-panel.component.html',
+  styleUrls: ['./register-panel.component.scss']
 })
-export class LoginPanelComponent implements OnInit {
+export class RegisterPanelComponent implements OnInit {
 
-  loginAttempt: boolean = false;
+  registerAttempt: boolean = false;
   loading: boolean = false;
   form: FormGroup = <FormGroup>{};
 
@@ -27,16 +27,23 @@ export class LoginPanelComponent implements OnInit {
   ngOnInit(): void {
     this.form = this.formBuilder.group({
       username: ['', Validators.required],
-      password: ['', Validators.required]
+      password: ['', Validators.required],
+      email: ['', Validators.required],
+      first_name: ['', Validators.required],
+      last_name: ['', Validators.required],
+      phone_number: ['', Validators.required],
+      birth_date: ['', Validators.required],
+      notifications: ['', Validators.required],
   });
   }
 
   // convenience getter for easy access to form fields
   get f() { return this.form.controls; }
 
-  login(){
-  
-    this.loginAttempt = true;
+  register() {
+
+    this.registerAttempt = true;
+
 
     // stop here if form is invalid
     if (this.form.invalid) {
@@ -44,27 +51,18 @@ export class LoginPanelComponent implements OnInit {
     }
 
     this.loading = true;
-    this.authService.login(this.f.username.value, this.f.password.value)
+    this.authService.register(this.form.value)
         .pipe(first())
         .subscribe({
-            next: (user) => {
-                // redirect to main page of app if login was successful
-                if (user)
-                {
-                    console.log('to main page');
-                    this.router.navigateByUrl('/main-page');
-                }
+            next: () => {
+                this.messageService.addSuccess('Registration successful', "");
+                this.router.navigateByUrl('/login-page');
             },
             error: error => {
-                console.log("There was an error.")
-                this.messageService.addError("Login Error", error)
+                this.messageService.addError('Registration Error', error);
                 this.loading = false;
             }
         });
-  }
-
-  register() {
-    this.router.navigateByUrl('/register-page');
     }
 
 

@@ -19,6 +19,9 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { AlertComponent } from './alert/alert.component';
 import {MessagesModule} from 'primeng/messages';
 import { MessageService } from 'primeng/api';
+import { RegisterPanelComponent } from './register/register-panel/register-panel.component';
+import { RegisterNavComponent } from './register/register-nav/register-nav.component';
+import { RegisterPageComponent } from './register/register-page/register-page.component';
 
 @NgModule({
   declarations: [
@@ -27,7 +30,10 @@ import { MessageService } from 'primeng/api';
     LoginNavComponent,
     LoginPanelComponent,
     HomeComponent,
-    AlertComponent
+    AlertComponent,
+    RegisterPanelComponent,
+    RegisterNavComponent,
+    RegisterPageComponent
   ],
   imports: [
     BrowserModule,

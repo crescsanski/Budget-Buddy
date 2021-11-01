@@ -1,0 +1,27 @@
+<div class="panel">
+    <div class="content" [formGroup]="form">
+        <h1>Register</h1>
+        <p>Username</p>
+        <input type="text" formControlName="username" class="field" pInputText />
+        <p>Password</p>
+        <p-password formControlName="password"></p-password>
+        <p>Email</p>
+        <input type="text" formControlName="email" class="field" pInputText />
+        <p>First Name</p>
+        <input type="text" formControlName="first_name" class="field" pInputText />
+        <p>Last Name</p>
+        <input type="text" formControlName="last_name" class="field" pInputText />
+        <p>Phone Number</p>
+        <input type="text" formControlName="phone_number" class="field" pInputText />
+        <p>Date of Birth</p>
+        <input type="text" formControlName="birth_date" class="field" pInputText />
+        <p>Notifications</p>
+        <input type="text" formControlName="notifications" class="field" pInputText />
+        <br>
+        <div class="button-container">
+            <button class="button" pButton type="button" label="Register" (click)="register()"></button>
+        </div>
+            
+       
+    </div>
+</div>

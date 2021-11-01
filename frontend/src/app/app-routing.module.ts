@@ -4,6 +4,7 @@ import { NgModule } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
 import { HomeComponent } from './home/home.component';
 import { AuthGuard } from './helpers/auth.guard';
+import { RegisterPageComponent } from './register/register-page/register-page.component';
 
 const accountModule = () => import('./account/account.module').then(x => x.AccountModule);
 
@@ -11,7 +12,8 @@ const accountModule = () => import('./account/account.module').then(x => x.Accou
 const routes: Routes = [
   { path: '', redirectTo: '/login-page', pathMatch: 'full' },
   {path: 'main-page', component: MainPageComponent},
-  {path: 'login-page', component: LoginPageComponent}
+  {path: 'login-page', component: LoginPageComponent},
+  {path: 'register-page', component: RegisterPageComponent}
 ];
 
 /*
