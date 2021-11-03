@@ -1,5 +1,6 @@
-<div class="app-content" style="background-color: white; border-color:white; margin: 0; position: absolute; top: 0px; left: 0px; height: 105vh; width: 105vw">
-  <div><app-menu (notify)='onNotify($event)'></app-menu></div>
+<div class="app-content" style="background-color: white; border-color:white; margin: 0; position: absolute; top: 0px; left: 0px; height: 105%; width: 100%">
+  <div><app-menu class="scroll-lock" (notify)='onNotify($event)'></app-menu></div>
+  <div class="placeholder"></div>
   <p-menu #menu [popup]="true" [model]="settings"></p-menu>
   <div class="widget-area">
     <div class="title-bar">
@@ -8,5 +9,75 @@
     </h1>
     <p-menu #menu [popup]="true" [model]="settings"></p-menu>
     </div>
+    <div *ngIf="currentPage === 'Dashboard'" class="widget-container" style="width: 73vw;"> 
+      <div class="large-widgets">
+        <div *ngFor="let widget of dashboardWidgets" class="large-widgets">
+          <app-basic-widget *ngIf="widget.size==='large'" [title]=widget.title [image]=widget.image></app-basic-widget>
+        </div>
+      </div>
+      <div class="small-widgets">
+        <div *ngFor="let widget of dashboardWidgets" class="small-widgets">
+          <app-small-widget *ngIf="widget.size==='small'" [title]=widget.title [image]=widget.image></app-small-widget>
+        </div>
+      </div>
+    </div>
+    <div *ngIf="currentPage === 'Budget'" class="widget-container" style="width: 73vw;"> 
+      <div class="large-widgets">
+        <div *ngFor="let widget of budgetWidgets" class="large-widgets">
+          <app-basic-widget *ngIf="widget.size==='large'" [title]=widget.title [image]=widget.image></app-basic-widget>
+        </div>
+      </div>
+      <div class="small-widgets">
+        <div *ngFor="let widget of budgetWidgets" class="small-widgets">
+          <app-small-widget *ngIf="widget.size==='small'" [title]=widget.title [image]=widget.image></app-small-widget>
+        </div>
+      </div>
+    </div>
+    <div *ngIf="currentPage === 'Tracking'" class="widget-container" style="width: 73vw;"> 
+      <div class="small-widgets">
+        <div *ngFor="let widget of trackingWidgets" class="small-widgets">
+          <app-small-widget *ngIf="widget.size==='small'" [title]=widget.title [image]=widget.image></app-small-widget>
+        </div>
+      </div>
+      <div class="large-widgets">
+        <div class="large-widgets">
+         <app-receipt-tracking></app-receipt-tracking>
+        </div>
+        <div *ngFor="let widget of trackingWidgets" class="large-widgets">
+          <app-basic-widget *ngIf="widget.size==='large'" [title]=widget.title [image]=widget.image></app-basic-widget>
+        </div>
+      </div>
+      <div class="small-widgets">
+        <div *ngFor="let widget of budgetWidgets" class="small-widgets">
+          <app-small-widget *ngIf="widget.size==='small'" [title]=widget.title [image]=widget.image></app-small-widget>
+        </div>
+      </div>
+    </div>
+    <div *ngIf="currentPage === 'Analytics'" class="widget-container" style="width: 73vw;"> 
+      <div class="large-widgets">
+        <div *ngFor="let widget of analyticsWidgets" class="large-widgets">
+          <app-basic-widget *ngIf="widget.size==='large'" [title]=widget.title [image]=widget.image></app-basic-widget>
+        </div>
+      </div>
+      <div class="small-widgets">
+        <div *ngFor="let widget of analyticsWidgets" class="small-widgets">
+          <app-small-widget *ngIf="widget.size==='small'" [title]=widget.title [image]=widget.image></app-small-widget>
+        </div>
+      </div>
+    </div>
+    <div *ngIf="currentPage === 'Rewards'" class="widget-container" style="width: 73vw;"> 
+      <div class="large-widgets">
+        <div *ngFor="let widget of rewardsWidgets" class="large-widgets">
+          <app-basic-widget *ngIf="widget.size==='large'" [title]=widget.title [image]=widget.image></app-basic-widget>
+        </div>
+      </div>
+      <div class="small-widgets">
+        <div *ngFor="let widget of analyticsWidgets" class="small-widgets">
+          <app-small-widget *ngIf="widget.size==='small'" [title]=widget.title [image]=widget.image></app-small-widget>
+        </div>
+      </div>
+    </div>
   </div>
+  <img class="back-to-top" src="../../assets/prototype-images/back-to-top.png">
+  
 </div>

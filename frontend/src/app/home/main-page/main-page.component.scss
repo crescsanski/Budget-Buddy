@@ -10,8 +10,9 @@ h1 {
 
   img {
     position: absolute;
-    right: 7vw;
-    height: 5vh;
+    right: 1vw;
+    top: 5vh;
+    height: 3vh;
 
     &:hover {
       opacity: 50%;
@@ -20,6 +21,59 @@ h1 {
   }
 }
 
+div {
+  display: flex;
+}
+
 .widget-area {
-  margin-left: 3em;
+  margin-left: 2em;
+  margin-right: 2em;
+  display: block;
+}
+
+.widget-container {
+  margin: 0.5em;
+  margin-top: 1vh;
+  text-align: left;
+  display: inline-flex;
+  flex-direction: row;
+  padding-right: 2em;
+}
+
+.large-widgets {
+  width: 54vw;
+  display: block;
+}
+
+.small-widgets {
+  display: block;
+  margin-left: 1vw;
+  margin-right: 0.5vw;
+}
+
+.scroll-lock {
+  position: fixed;
+}
+
+.placeholder {
+  height: 105vh;
+  width: 20vw;
+  min-width: 300px;
+  max-width: 320px;
+  padding-right: 2vw;
+  padding-left: 1vw;
+  padding-top: 10px;
+}
+
+.back-to-top {
+  width: 30px;
+  height: 30px;
+  position: absolute;
+  right: 1vw;
+  bottom: 10vh;
+
+  &:hover {
+    opacity: 50%;
+    cursor: pointer;
+  }
 }

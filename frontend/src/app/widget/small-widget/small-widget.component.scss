@@ -1,0 +1,43 @@
+@import "../../../styles.scss";
+
+.panel {
+  background-color: white;
+  color: $teal;
+  padding: 1em;
+  min-width: 20em;
+  border-radius: 25px;
+  text-align: center;
+  box-shadow: 2px 2px 5px $light-gray;
+  display: flex;
+  margin-bottom: 2em;
+  width: 15vw;
+  padding-bottom: 2em;
+}
+
+h2 {
+  color: $teal;
+  font-size: xx-large;
+  text-align: center;
+  width: 100%;
+}
+
+.header {
+  display: flex;
+}
+
+p {
+  color: $blue;
+  width: 100%;
+  text-align: right;
+}
+
+.content-area {
+  display: block;
+  margin: 1em;
+  margin-bottom: 2em;
+}
+
+img {
+  width: 100%;
+  text-align: center;
+}
