@@ -5,11 +5,23 @@
   color: $teal;
   padding: 1em;
   width: 20vw;
-  min-width: 20em;
-  max-width: 20em;
+  min-width: 50em;
+  max-width: 100em;
   border-radius: 62px;
   text-align: left;
   box-shadow: 3px 3px 10px $light-gray;
+}
+
+.grid
+{
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 10px;
+  grid-auto-rows: minmax(100px, auto);
+}
+
+.row {
+  grid-row: 1 / 3;
 }
 
 .content {

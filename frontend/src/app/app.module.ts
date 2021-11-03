@@ -37,8 +37,8 @@ import { RegisterPageComponent } from './register/register-page/register-page.co
   ],
   imports: [
     BrowserModule,
-    AppRoutingModule,
     MessagesModule,
+    AppRoutingModule,
     BrowserAnimationsModule,
     ServiceWorkerModule.register('ngsw-worker.js', {
       enabled: environment.production,

@@ -1,1 +1,7 @@
 @import "../styles.scss";
+
+:host ::ng-deep .p-message-custom {
+
+    z-index: 500 !important;
+}
+

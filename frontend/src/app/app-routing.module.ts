@@ -11,7 +11,7 @@ const accountModule = () => import('./account/account.module').then(x => x.Accou
 
 const routes: Routes = [
   { path: '', redirectTo: '/login-page', pathMatch: 'full' },
-  {path: 'main-page', component: MainPageComponent},
+  {path: 'main-page', component: MainPageComponent, canActivate: [AuthGuard]},
   {path: 'login-page', component: LoginPageComponent},
   {path: 'register-page', component: RegisterPageComponent}
 ];

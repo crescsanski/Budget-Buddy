@@ -28,9 +28,9 @@ export class RegisterPanelComponent implements OnInit {
     this.form = this.formBuilder.group({
       username: ['', Validators.required],
       password: ['', Validators.required],
-      email: ['', Validators.required],
-      first_name: ['', Validators.required],
-      last_name: ['', Validators.required],
+      email: ['', Validators.compose([Validators.required, Validators.email])],
+      first_name: ['', Validators.compose([Validators.pattern('[a-zA-Z ]*'), Validators.required])],
+      last_name: ['', Validators.compose([Validators.pattern('[a-zA-Z ]*'), Validators.required])],
       phone_number: ['', Validators.required],
       birth_date: ['', Validators.required],
       notifications: ['', Validators.required],
@@ -47,6 +47,7 @@ export class RegisterPanelComponent implements OnInit {
 
     // stop here if form is invalid
     if (this.form.invalid) {
+        this.messageService.addInfo("Invalid Entry", "Some fields are incomplete or invalid.")
         return;
     }
 
