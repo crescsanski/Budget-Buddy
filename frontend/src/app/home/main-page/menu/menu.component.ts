@@ -2,6 +2,7 @@
 import { MainPageComponent } from './../main-page.component';
 import { ThrowStmt } from '@angular/compiler';
 import { Component, EventEmitter, OnInit, Output } from '@angular/core';
+import { AuthService } from 'src/app/services/auth.service';
 
 @Component({
   selector: 'app-menu',
@@ -17,8 +18,10 @@ export class MenuComponent implements OnInit {
   @Output()
   notify: EventEmitter<string> = new EventEmitter<string>();
   
-  constructor() {
-   
+  constructor(authServ: AuthService) {
+
+    this.name = authServ.currentUserValue.first_name + " " + authServ.currentUserValue.last_name;
+       
    }
 
   ngOnInit(): void {

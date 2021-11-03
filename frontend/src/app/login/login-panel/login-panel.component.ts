@@ -40,6 +40,7 @@ export class LoginPanelComponent implements OnInit {
 
     // stop here if form is invalid
     if (this.form.invalid) {
+        this.messageService.addInfo(`Invalid Entry`, `Please fill out both the username and password fields.`);
         return;
     }
 
@@ -56,8 +57,10 @@ export class LoginPanelComponent implements OnInit {
                 }
             },
             error: error => {
-                console.log("There was an error.")
-                this.messageService.addError("Login Error", error)
+              for (const key in error)
+              {
+                this.messageService.addError(`Login Error: ${key}`, error[key]);
+              }
                 this.loading = false;
             }
         });

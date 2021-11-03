@@ -33,17 +33,16 @@ export class RegisterPanelComponent implements OnInit {
       last_name: ['', Validators.compose([Validators.pattern('[a-zA-Z ]*'), Validators.required])],
       phone_number: ['', Validators.required],
       birth_date: ['', Validators.required],
-      notifications: ['', Validators.required],
+      notifications: ['0', Validators.required],
   });
+
   }
 
   // convenience getter for easy access to form fields
   get f() { return this.form.controls; }
 
   register() {
-
     this.registerAttempt = true;
-
 
     // stop here if form is invalid
     if (this.form.invalid) {
@@ -60,7 +59,11 @@ export class RegisterPanelComponent implements OnInit {
                 this.router.navigateByUrl('/login-page');
             },
             error: error => {
-                this.messageService.addError('Registration Error', error);
+                for (const key in error)
+                {
+                  this.messageService.addError(`Registration Error: ${key}`, error[key]);
+                }
+   
                 this.loading = false;
             }
         });

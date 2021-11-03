@@ -1,6 +1,7 @@
 import { WidgetModule } from './widget/widget.module';
 import { HomeModule } from './home/home.module';
 import { NgModule } from '@angular/core';
+import {InputMaskModule} from 'primeng/inputmask';
 import { BrowserModule } from '@angular/platform-browser';
 import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
 import { AppRoutingModule } from './app-routing.module';
@@ -23,7 +24,8 @@ import { MessageService } from 'primeng/api';
 import { RegisterPanelComponent } from './register/register-panel/register-panel.component';
 import { RegisterNavComponent } from './register/register-nav/register-nav.component';
 import { RegisterPageComponent } from './register/register-page/register-page.component';
-
+import {CheckboxModule} from 'primeng/checkbox';
+import {ToastModule} from 'primeng/toast';
 
 @NgModule({
   declarations: [
@@ -50,8 +52,11 @@ import { RegisterPageComponent } from './register/register-page/register-page.co
     }),
     PasswordModule,
     ButtonModule,
+    InputMaskModule,
+    CheckboxModule,
     ReactiveFormsModule,
     HttpClientModule,
+    ToastModule,
     HomeModule,
     WidgetModule
   ],

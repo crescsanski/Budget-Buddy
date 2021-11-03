@@ -8,15 +8,15 @@ export class MessageService {
 
 
   addError(summary: string, detail: string) {
-    this.messageService.add({severity:'error', summary:summary, detail:detail});
+    this.messageService.add({severity:'error', life: 10000, summary:summary, detail:detail});
   }
 
   addSuccess(summary: string, detail: string) {
-    this.messageService.add({severity:'success', summary:summary, detail:detail});
+    this.messageService.add({severity:'success', life: 10000, summary:summary, detail:detail});
   }
 
   addInfo(summary: string, detail: string) {
-    this.messageService.add({severity:'info', summary:summary, detail:detail});
+    this.messageService.add({severity:'info', life: 10000, summary:summary, detail:detail});
   }
 
   clear() {

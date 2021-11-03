@@ -5,26 +5,47 @@
             <div class="row">
                 <p>Username</p>
                 <input type="text" formControlName="username" class="field" pInputText />
+                    <div class="validator" *ngIf="f.username.invalid && (f.username.dirty || f.username.touched)">
+                        Please enter a valid username.
+                    </div>
                 <p>Password</p>
                 <p-password formControlName="password"></p-password>
+                    <div class="validator" *ngIf="f.password.invalid && (f.password.dirty || f.password.touched)">
+                        Please enter a valid password.
+                    </div>
                 <p>Email</p>
                 <input type="text" formControlName="email" class="field" pInputText />
+                    <div class="validator" *ngIf="f.email.invalid && (f.email.dirty || f.email.touched)">
+                        Please enter a valid email.
+                    </div>
             </div>
             <div class="row">
                 <p>First Name</p>
                 <input type="text" formControlName="first_name" class="field" pInputText />
+                    <div class="validator" *ngIf="f.first_name.invalid && (f.first_name.dirty || f.first_name.touched)">
+                        Field is required
+                    </div>
                 <p>Last Name</p>
                 <input type="text" formControlName="last_name" class="field" pInputText />
+                    <div class="validator" *ngIf="f.last_name.invalid && (f.last_name.dirty || f.last_name.touched)">
+                        Field is required
+                    </div>
                 <p>Phone Number</p>
-                <input type="text" formControlName="phone_number" class="field" pInputText />
+                <p-inputMask mask="(999) 999-9999" formControlName="phone_number" placeholder="(999) 999-9999"></p-inputMask>
+                    <div class="validator" *ngIf="f.phone_number.invalid && (f.phone_number.dirty || f.phone_number.touched)">
+                        Field is required
+                    </div>
             </div>
         <div class="row">
                 <p>Date of Birth</p>
-                <input type="text" formControlName="birth_date" class="field" pInputText />
-                <p>Notifications</p>
-                <input type="text" formControlName="notifications" class="field" pInputText />
-        </div>
-    </div>
+                <p-inputMask mask="9999-99-99" formControlName="birth_date" placeholder="1987-03-12" slotChar="yyyy-mm-dd"></p-inputMask>
+                    <div class="validator" *ngIf="f.birth_date.invalid && (f.birth_date.dirty || f.birth_date.touched)">
+                        Please enter a valid date.
+                    </div>
+                <p>Check to Enroll in Notifications</p>
+                <input type="checkbox" formControlName="notifications" class="field" pInputText />
+            </div>
+         </div>
         <br>
         <div class="button-container">
             <button class="button" pButton type="button" label="Register" (click)="register()"></button>
