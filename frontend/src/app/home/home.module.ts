@@ -1,3 +1,4 @@
+import { WidgetModule } from '../widget/widget.module';
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MainPageComponent } from './main-page/main-page.component';
@@ -5,6 +6,7 @@ import { MenuComponent } from './main-page/menu/menu.component';
 import {MenuModule} from 'primeng/menu';
 import { ButtonModule } from 'primeng/button';
 import { RippleModule } from 'primeng/ripple';
+
 
 
 
@@ -19,8 +21,8 @@ import { RippleModule } from 'primeng/ripple';
     CommonModule,
     MenuModule,
     ButtonModule,
-    RippleModule
-  ],
+    RippleModule,
+    WidgetModule  ],
  
 })
 export class HomeModule { }

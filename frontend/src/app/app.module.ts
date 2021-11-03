@@ -1,3 +1,4 @@
+import { WidgetModule } from './widget/widget.module';
 import { HomeModule } from './home/home.module';
 import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
@@ -10,12 +11,13 @@ import { LoginPageComponent } from './login/login-page/login-page.component';
 import { LoginNavComponent } from './login/login-nav/login-nav.component';
 import { LoginPanelComponent } from './login/login-panel/login-panel.component';
 import { PasswordModule } from 'primeng/password';
-import {ButtonModule} from 'primeng/button';
+import { ButtonModule } from 'primeng/button';
 import { AuthInterceptor } from './helpers/authInterceptor.service';
 import { ErrorInterceptor } from './helpers/error.interceptor';
 import { HomeComponent } from './home/home.component';
 import { ReactiveFormsModule } from '@angular/forms';
 import { AlertComponent } from './alert/alert.component';
+
 
 @NgModule({
   declarations: [
@@ -39,7 +41,8 @@ import { AlertComponent } from './alert/alert.component';
     ButtonModule,
     ReactiveFormsModule,
     HttpClientModule,
-    HomeModule
+    HomeModule,
+    WidgetModule
   ],
   providers: [
     { provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true },
