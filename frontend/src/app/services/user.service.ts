@@ -9,7 +9,7 @@ import { MessageService } from './message.service';
 
 
 @Injectable({ providedIn: 'root' })
-export class ExampleService {
+export class UserService {
 
   private usersUrl = 'api/users';  // URL to web api
 
@@ -117,7 +117,7 @@ export class ExampleService {
 
   /** Log a UserService message with the MessageService */
   private log(message: string) {
-    this.messageService.add(`UserService: ${message}`);
+    this.messageService.addInfo(`UserService: ${message}`, "");
   }
 }
 
