@@ -147,7 +147,7 @@ class RegisterView(GenericAPIView):
     @action(detail=False, methods=['post'])
     def post(self, request, *args, **kwargs):
         
-        serializer = UsersSerializer(data=request.data,
+        serializer = UserRegistrationSerializer(data=request.data,
                                            context={'request': request})
         serializer.is_valid(raise_exception=True)
 
@@ -158,16 +158,10 @@ class RegisterView(GenericAPIView):
         common = Users.objects.filter(username = user['username'])
         if len(common) > 0:
             raise Exception("A user with the given username already exists.  Please enter a different username.")
-        # Next, let's validate the password:
-        try:
-            validate_password(user['password'], user = user.items(), password_validators=[MinimumLengthValidator(8), 
-            CommonPasswordValidator(),
-            NumericPasswordValidator(),
-            UserAttributeSimilarityValidator()])
-        except:
-            return Response(password_validation.password_validators_help_texts())
+                
         # Otherwise, if all correct, we create the user
         auth.get_user_model().objects.create_user(username = user['username'], password=user['password'], extra=user)
+        print("Username: ", )
         return Response("User has been registered successfully!")
 
 
@@ -182,7 +176,11 @@ class CustomAuthToken(ObtainAuthToken):
 
         user = serializer.validated_data['user']
 
-        token, created = Token.objects.get_or_create(user=user)
+        # Remove any old tokens for the user if they exist
+        Token.objects.filter(user=user).delete()
+
+        # Create a new token for the user
+        token = Token.objects.create(user=user)
 
         return Response({
             'token': token.key,
