@@ -17,7 +17,7 @@ export class MainPageComponent implements OnInit {
   analyticsWidgets: any[] | undefined;
   rewardsWidgets: any[] | undefined;
   roomWidgets: any[] | undefined;
-  hidden: boolean = false;
+  hidden: boolean = true;
 
 
 
