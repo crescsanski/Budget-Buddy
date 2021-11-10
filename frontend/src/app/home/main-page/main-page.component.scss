@@ -45,6 +45,17 @@ div {
   display: block;
 }
 
+.xlarge-widgets {
+  width: 75vw;
+  display: block;
+  padding: 0;
+
+  &img {
+    margin: 0;
+    padding: 0;
+  }
+}
+
 .small-widgets {
   display: block;
   margin-left: 1vw;

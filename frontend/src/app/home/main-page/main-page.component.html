@@ -9,8 +9,13 @@
     </h1>
     <p-menu #menu [popup]="true" [model]="settings"></p-menu>
     </div>
+    <div *ngIf='hidden === false'>
+      <app-small-widget style="position: absolute; backdrop-filter: blur; top: 30vh; left: 45vw;"[title]=" 'Track Spending' " [image]=" '../../assets/prototype-images/spending-log.png' " (click)="toggleHidden()"></app-small-widget>
+    </div>
+    
+
     <div *ngIf="currentPage === 'Dashboard'" class="widget-container" style="width: 73vw;"> 
-      <div class="large-widgets">
+        <div class="large-widgets">
         <div *ngFor="let widget of dashboardWidgets" class="large-widgets">
           <app-basic-widget *ngIf="widget.size==='large'" [title]=widget.title [image]=widget.image></app-basic-widget>
         </div>
@@ -29,7 +34,7 @@
       </div>
       <div class="small-widgets">
         <div *ngFor="let widget of budgetWidgets" class="small-widgets">
-          <app-small-widget *ngIf="widget.size==='small'" [title]=widget.title [image]=widget.image></app-small-widget>
+          <app-small-widget *ngIf="widget.size==='small'" (click)="toggleHidden()" [title]=widget.title [image]=widget.image></app-small-widget>
         </div>
       </div>
     </div>
@@ -47,11 +52,6 @@
           <app-basic-widget *ngIf="widget.size==='large'" [title]=widget.title [image]=widget.image></app-basic-widget>
         </div>
       </div>
-      <div class="small-widgets">
-        <div *ngFor="let widget of budgetWidgets" class="small-widgets">
-          <app-small-widget *ngIf="widget.size==='small'" [title]=widget.title [image]=widget.image></app-small-widget>
-        </div>
-      </div>
     </div>
     <div *ngIf="currentPage === 'Analytics'" class="widget-container" style="width: 73vw;"> 
       <div class="large-widgets">
@@ -65,7 +65,7 @@
         </div>
       </div>
     </div>
-    <div *ngIf="currentPage === 'Rewards'" class="widget-container" style="width: 73vw;"> 
+    <div *ngIf="currentPage === 'Rewards' || currentPage === 'Competitions'" class="widget-container" style="width: 73vw;"> 
       <div class="large-widgets">
         <div *ngFor="let widget of rewardsWidgets" class="large-widgets">
           <app-basic-widget *ngIf="widget.size==='large'" [title]=widget.title [image]=widget.image></app-basic-widget>
@@ -77,7 +77,19 @@
         </div>
       </div>
     </div>
+    <div *ngIf="currentPage === 'My Room'" class="widget-container" style="width: 73vw;"> 
+      <div class="large-widgets">
+        <div *ngFor="let widget of roomWidgets" class="xlarge-widgets">
+          <app-basic-widget *ngIf="widget.size==='large'" [title]=widget.title [image]=widget.image></app-basic-widget>
+        </div>
+      </div>
+      <div class="small-widgets">
+        <div *ngFor="let widget of roomWidgets" class="small-widgets">
+          <app-small-widget *ngIf="widget.size==='small'" [title]=widget.title [image]=widget.image></app-small-widget>
+        </div>
+      </div>
+    </div>
   </div>
-  <img class="back-to-top" src="../../assets/prototype-images/back-to-top.png">
+ <img class="back-to-top" src="../../assets/prototype-images/back-to-top.png">
   
 </div>

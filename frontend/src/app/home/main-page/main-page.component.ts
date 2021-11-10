@@ -16,6 +16,8 @@ export class MainPageComponent implements OnInit {
   trackingWidgets: any[] | undefined;
   analyticsWidgets: any[] | undefined;
   rewardsWidgets: any[] | undefined;
+  roomWidgets: any[] | undefined;
+  hidden: boolean = true;
 
 
 
@@ -40,7 +42,7 @@ export class MainPageComponent implements OnInit {
 
     this.budgetWidgets = [
       { size: 'large', title: 'Breakdown', image: '../../assets/prototype-images/bar-graph.png' },
-      { size: 'large', title: 'Net Income', image: '../../assets/prototype-images/pie-chart.png' },
+      { size: 'large', title: 'Net Income', image: '../../assets/prototype-images/pie-chart.png', button: 'Add Income' },
       { size: 'small', title: 'Weekly Budget Manager', image: '../../assets/prototype-images/budget-breakdown.png' },
       { size: 'small', title: 'Income', image: '../../assets/prototype-images/income-breakdown.png' }
     ]
@@ -65,6 +67,10 @@ export class MainPageComponent implements OnInit {
       { size: 'small', title: 'Badges', image: '../../assets/prototype-images/line-graph.png' },
     ]
 
+    this.roomWidgets = [
+      { size: 'large', title: '', image: '../../assets/prototype-images/room.png' },
+      
+    ]
     
   }
 
@@ -72,7 +78,9 @@ export class MainPageComponent implements OnInit {
     this.currentPage = page;
   }
 
-
+  toggleHidden() {
+    this.hidden = !this.hidden;
+  }
 
 
 
