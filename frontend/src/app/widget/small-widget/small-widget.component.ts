@@ -10,6 +10,8 @@ export class SmallWidgetComponent implements OnInit {
   @Input() title: string = '';
   @Input() subtitle: string | undefined;
   @Input() smallSize: boolean = false;
+  @Input() button: string | undefined;
+
 
   
   imageUrl: string ='';
@@ -17,6 +19,10 @@ export class SmallWidgetComponent implements OnInit {
   constructor() { }
 
   ngOnInit(): void {
+  }
+
+  overlay(){
+    console.log('overlay');
   }
 
 }

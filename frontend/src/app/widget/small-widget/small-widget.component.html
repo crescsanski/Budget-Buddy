@@ -7,5 +7,6 @@
         <br>
         <img *ngIf="image" src={{image}}>
         <br>
+        <button *ngIf="button" class="button" pButton type="button" label={{ button }} (click)="overlay()"></button>
     </div>
 </div>
