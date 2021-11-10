@@ -18,7 +18,6 @@ import { AuthInterceptor } from './helpers/authInterceptor.service';
 import { ErrorInterceptor } from './helpers/error.interceptor';
 import { HomeComponent } from './home/home.component';
 import { ReactiveFormsModule } from '@angular/forms';
-import { AlertComponent } from './alert/alert.component';
 import {MessagesModule} from 'primeng/messages';
 import { MessageService } from 'primeng/api';
 import { RegisterPanelComponent } from './register/register-panel/register-panel.component';
@@ -34,7 +33,6 @@ import {ToastModule} from 'primeng/toast';
     LoginNavComponent,
     LoginPanelComponent,
     HomeComponent,
-    AlertComponent,
     RegisterPanelComponent,
     RegisterNavComponent,
     RegisterPageComponent

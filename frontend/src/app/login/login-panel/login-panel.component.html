@@ -4,7 +4,7 @@
         <p>Username</p>
         <input type="text" formControlName="username" class="field" pInputText />
         <p>Password</p>
-        <p-password formControlName="password"></p-password>
+        <p-password [feedback]="false" formControlName="password"></p-password>
         <br>
         <div class="button-container">
             <button class="button" pButton type="button" label="Login" (click)="login()"></button>
