@@ -8,6 +8,7 @@ from rest_framework import status
 from django.shortcuts import render
 from rest_framework import permissions, renderers, viewsets
 from rest_framework.decorators import action, permission_classes
+from django.contrib.auth import get_user_model, logout
 from rest_framework.response import Response
 from app.models import *
 from django.contrib.auth.password_validation import CommonPasswordValidator, NumericPasswordValidator, UserAttributeSimilarityValidator, validate_password, MinimumLengthValidator
@@ -193,3 +194,14 @@ class CustomAuthToken(ObtainAuthToken):
             'last_name': user.last_name,
             'registered': user.registered
         })
+    
+class Logout(GenericAPIView):
+    permission_classes = [permissions.IsAuthenticated]
+    
+    @action(detail=False, methods=['post'])
+    def post(self, request, format=None):
+        # simply delete the token to force a login
+        request.user.auth_token.delete()
+        logout(request)
+        return Response(status=status.HTTP_200_OK)
+

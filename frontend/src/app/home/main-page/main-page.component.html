@@ -6,6 +6,7 @@
     <div class="title-bar">
       <h1 style="text-align: left; ">{{ currentPage }} 
         <img src="../../assets/settings-icon.png" alt="settings">
+        <p-button label="Logout" (onClick)="logout()"></p-button>
     </h1>
     <p-menu #menu [popup]="true" [model]="settings"></p-menu>
     </div>

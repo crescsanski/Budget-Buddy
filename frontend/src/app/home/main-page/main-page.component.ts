@@ -1,6 +1,9 @@
 
 import { Component, OnChanges, OnInit, SimpleChanges } from '@angular/core';
 import {MenuItem} from 'primeng/api';
+import { MessageService } from 'src/app/services/message.service';
+import { first } from 'rxjs/operators';
+import { AuthService } from 'src/app/services/auth.service';
 
 @Component({
   selector: 'app-main-page',
@@ -21,7 +24,7 @@ export class MainPageComponent implements OnInit {
 
 
 
-  constructor() { 
+  constructor(private authService: AuthService, private messageService: MessageService) { 
    this.currentPage = 'Dashboard';
   }
 
@@ -80,6 +83,21 @@ export class MainPageComponent implements OnInit {
 
   toggleHidden() {
     this.hidden = !this.hidden;
+  }
+
+  logout() {
+    this.authService.logout().pipe(first())
+    .subscribe({
+        next: () => {
+            this.messageService.addSuccess('Logout successful', "");
+        },
+        error: error => {
+            for (const key in error)
+            {
+              this.messageService.addError(`Logout error: ${key}`, error[key]);
+            }
+        }
+    });
   }
 
 

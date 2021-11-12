@@ -36,6 +36,7 @@ router.register(r'widget_inventories', views.WidgetInventoryViewSet)
 app_name = 'app'
 urlpatterns = [
     path('auth/',views.CustomAuthToken.as_view()),
+    path('auth/logout/',views.Logout.as_view()),
     path('auth/register/', views.RegisterView.as_view()),
     path('', include(router.urls)),
 ]

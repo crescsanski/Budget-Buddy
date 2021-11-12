@@ -10,7 +10,7 @@ export class AuthInterceptor implements HttpInterceptor {
   intercept(request: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
     const user = this.authService.currentUserValue;
     const isLoggedIn = user && user.token;
-        const isApiUrl = request.url.startsWith('api-token-auth');
+        const isApiUrl = request.url.startsWith('api');
         if (isLoggedIn && isApiUrl) {
             request = request.clone({
                 setHeaders: {

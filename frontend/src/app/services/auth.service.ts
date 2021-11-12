@@ -14,6 +14,7 @@ import { AlertService } from './alert.service';
 export class AuthService {
 
   private authUrl = 'api/auth/';  // URL to web api
+  private logoutUrl = 'api/auth/logout/'
   private registerUrl = 'api/auth/register/';
   private userUrl = 'api/users/';
   private currentUserSubject: BehaviorSubject<User>;
@@ -43,7 +44,6 @@ export class AuthService {
     return this.http.post<User>(this.authUrl, {username, password}, this.httpOptions).pipe(
      map((user) => {
           // store user details and login token in local storage to keep user logged in
-          console.log("Login was successful???")
           localStorage.setItem('currentUser', JSON.stringify(user))
           this.log(`logged in successfully w/ token=${user.token}`);
           this.currentUserSubject.next(user);
@@ -56,12 +56,22 @@ export class AuthService {
   /** LOGOUT user */
   logout()
   {
-    // remove user from local storage and set current user to null
-    localStorage.removeItem('currentUser');
-    this.currentUserSubject.next(<User>{});
-    //return to login page
-    this.router.navigate(['login-page']);
+    // request that the user's token be deleted from the database
+    return this.http.post<User>(this.logoutUrl, {}, this.httpOptions).pipe(
+      map((x) => {
+           // store user details and login token in local storage to keep user logged in
+          // remove user from local storage and set current user to null
+          localStorage.removeItem('currentUser');
+          this.currentUserSubject.next(<User>{});
+
+          //return to login page
+          this.router.navigate(['login-page']);
+          return x;
+          }
+         )
+     );
   }
+ 
 
   /** REGISTER new user */
   register(user: User)
