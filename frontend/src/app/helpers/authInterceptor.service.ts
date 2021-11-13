@@ -14,7 +14,7 @@ export class AuthInterceptor implements HttpInterceptor {
         if (isLoggedIn && isApiUrl) {
             request = request.clone({
                 setHeaders: {
-                    Authorization: `Token ${user.token}`
+                    Authorization: `Token ${user!.token}`
                 }
             });
         }

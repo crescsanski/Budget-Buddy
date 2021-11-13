@@ -20,8 +20,10 @@ export class MenuComponent implements OnInit {
   
   constructor(authServ: AuthService) {
 
-    this.name = authServ.currentUserValue.first_name + " " + authServ.currentUserValue.last_name;
-       
+    if (authServ.currentUserValue)
+    {
+      this.name = authServ.currentUserValue.first_name + " " + authServ.currentUserValue.last_name;
+    }      
    }
 
   ngOnInit(): void {

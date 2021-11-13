@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, HostListener, OnInit } from '@angular/core';
 
 import { AuthService } from './services/auth.service';
 import { User } from './models/user';
@@ -8,34 +8,27 @@ import { User } from './models/user';
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.scss']
 })
-/*
-export class AppComponent implements OnInit{
-  loginPage: boolean = true;
 
-  constructor() { 
-    this.loginPage = true;
-  }
-
-  toggleLogin(){
-    this.loginPage = !this.loginPage;
-  }
-
-
-  ngOnInit(): void {
-    throw new Error('Method not implemented.');
-  }
-  title = 'budgetBuddy';
-  */
 export class AppComponent {
-  user: User = <User>{};
+  user: User | null = null;
 
   constructor(private authServ: AuthService)
   {
     this.authServ.currentUser.subscribe(x => this.user = <User>x);
   }
 
+  //Force a logout on close for security
+  @HostListener('window:unload', [ '$event' ])
+  unloadHandler(event: any) {
+    let user = this.authServ.currentUserValue;
+    if (user && user.token)
+    {
+      this.logout();
+    }
+  }
+
   logout() {
-    this.authServ.logout();
+    this.authServ.logout().subscribe();
   }
 }
 

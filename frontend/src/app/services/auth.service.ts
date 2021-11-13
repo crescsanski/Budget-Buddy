@@ -17,8 +17,10 @@ export class AuthService {
   private logoutUrl = 'api/auth/logout/'
   private registerUrl = 'api/auth/register/';
   private userUrl = 'api/users/';
-  private currentUserSubject: BehaviorSubject<User>;
-  public currentUser: Observable<User>;
+  private user: User | null = null;
+  private currentUserSubject: BehaviorSubject<User | null>;
+  public currentUser: Observable<User | null>;
+
 
   httpOptions = {
     headers: new HttpHeaders({ 'Content-Type': 'application/json' })
@@ -30,12 +32,12 @@ export class AuthService {
     private alertService: AlertService,
     private messageService: MessageService) { 
       //allows other components to easily get the current value of the logged in user without have to subscribe to the currentUser observable
-      this.currentUserSubject = new BehaviorSubject<User>(JSON.parse(localStorage.getItem('currentUser') as string));
+      this.currentUserSubject = new BehaviorSubject<User | null>(this.user);
       //exposes user as an observable, so any component can be notified when a user logs in, logs out, or updates their profile
       this.currentUser = this.currentUserSubject.asObservable();
     }
   
-  public get currentUserValue(): User {
+  public get currentUserValue(): User | null {
     return this.currentUserSubject.value;
   }
 
@@ -44,7 +46,7 @@ export class AuthService {
     return this.http.post<User>(this.authUrl, {username, password}, this.httpOptions).pipe(
      map((user) => {
           // store user details and login token in local storage to keep user logged in
-          localStorage.setItem('currentUser', JSON.stringify(user))
+          this.user = user;
           this.log(`logged in successfully w/ token=${user.token}`);
           this.currentUserSubject.next(user);
           return user;
@@ -61,8 +63,8 @@ export class AuthService {
       map((x) => {
            // store user details and login token in local storage to keep user logged in
           // remove user from local storage and set current user to null
-          localStorage.removeItem('currentUser');
-          this.currentUserSubject.next(<User>{});
+          this.user = null
+          this.currentUserSubject.next(null);
 
           //return to login page
           this.router.navigate(['login-page']);
@@ -89,7 +91,7 @@ export class AuthService {
         {
           // update local storage
           const user = {...this.currentUserValue, ...params};
-          localStorage.setItem('currentUser', JSON.stringify(user));
+          this.user = user;
 
           //publish updated user to subscribers
           this.currentUserSubject.next(user);
