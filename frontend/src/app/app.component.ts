@@ -17,16 +17,6 @@ export class AppComponent {
     this.authServ.currentUser.subscribe(x => this.user = <User>x);
   }
 
-  //Force a logout on close for security
-  @HostListener('window:unload', [ '$event' ])
-  unloadHandler(event: any) {
-    let user = this.authServ.currentUserValue;
-    if (user && user.token)
-    {
-      this.logout();
-    }
-  }
-
   logout() {
     this.authServ.logout().subscribe();
   }

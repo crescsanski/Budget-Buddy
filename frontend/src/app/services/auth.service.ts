@@ -17,7 +17,6 @@ export class AuthService {
   private logoutUrl = 'api/auth/logout/'
   private registerUrl = 'api/auth/register/';
   private userUrl = 'api/users/';
-  private user: User | null = null;
   private currentUserSubject: BehaviorSubject<User | null>;
   public currentUser: Observable<User | null>;
 
@@ -32,7 +31,7 @@ export class AuthService {
     private alertService: AlertService,
     private messageService: MessageService) { 
       //allows other components to easily get the current value of the logged in user without have to subscribe to the currentUser observable
-      this.currentUserSubject = new BehaviorSubject<User | null>(this.user);
+      this.currentUserSubject = new BehaviorSubject<User | null>(JSON.parse(sessionStorage.getItem('currentUser') || '{}'));
       //exposes user as an observable, so any component can be notified when a user logs in, logs out, or updates their profile
       this.currentUser = this.currentUserSubject.asObservable();
     }
@@ -46,7 +45,7 @@ export class AuthService {
     return this.http.post<User>(this.authUrl, {username, password}, this.httpOptions).pipe(
      map((user) => {
           // store user details and login token in local storage to keep user logged in
-          this.user = user;
+          sessionStorage.setItem('currentUser', JSON.stringify(user))
           this.log(`logged in successfully w/ token=${user.token}`);
           this.currentUserSubject.next(user);
           return user;
@@ -63,7 +62,7 @@ export class AuthService {
       map((x) => {
            // store user details and login token in local storage to keep user logged in
           // remove user from local storage and set current user to null
-          this.user = null
+          sessionStorage.removeItem('currentUser');
           this.currentUserSubject.next(null);
 
           //return to login page
@@ -91,7 +90,7 @@ export class AuthService {
         {
           // update local storage
           const user = {...this.currentUserValue, ...params};
-          this.user = user;
+          sessionStorage.setItem('currentUser', JSON.stringify(user));
 
           //publish updated user to subscribers
           this.currentUserSubject.next(user);
