@@ -55,22 +55,28 @@ export class AuthService {
   }
 
   /** LOGOUT user */
-  logout()
+  cleanLogout()
   {
     // request that the user's token be deleted from the database
     return this.http.post<User>(this.logoutUrl, {}, this.httpOptions).pipe(
       map((x) => {
-           // store user details and login token in local storage to keep user logged in
-          // remove user from local storage and set current user to null
-          sessionStorage.removeItem('currentUser');
-          this.currentUserSubject.next(null);
-
-          //return to login page
-          this.router.navigate(['login-page']);
+          this.expireLogout();
           return x;
           }
          )
      );
+  }
+
+  //this is the logout procedure used when the token has expired
+  expireLogout()
+  {
+      // store user details and login token in local storage to keep user logged in
+      // remove user from local storage and set current user to null
+      sessionStorage.removeItem('currentUser');
+      this.currentUserSubject.next(null);
+
+      //return to login page
+      this.router.navigate(['login-page']);
   }
  
 

@@ -1,7 +1,6 @@
 import { WidgetModule } from './widget/widget.module';
 import { HomeModule } from './home/home.module';
 import { NgModule } from '@angular/core';
-import {InputMaskModule} from 'primeng/inputmask';
 import { BrowserModule } from '@angular/platform-browser';
 import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
 import { AppRoutingModule } from './app-routing.module';
@@ -12,19 +11,13 @@ import { environment } from '../environments/environment';
 import { LoginPageComponent } from './login/login-page/login-page.component';
 import { LoginNavComponent } from './login/login-nav/login-nav.component';
 import { LoginPanelComponent } from './login/login-panel/login-panel.component';
-import { PasswordModule } from 'primeng/password';
-import { ButtonModule } from 'primeng/button';
 import { AuthInterceptor } from './helpers/authInterceptor.service';
 import { ErrorInterceptor } from './helpers/error.interceptor';
-import { HomeComponent } from './home/home.component';
 import { ReactiveFormsModule } from '@angular/forms';
-import {MessagesModule} from 'primeng/messages';
-import { MessageService } from 'primeng/api';
 import { RegisterPanelComponent } from './register/register-panel/register-panel.component';
 import { RegisterNavComponent } from './register/register-nav/register-nav.component';
 import { RegisterPageComponent } from './register/register-page/register-page.component';
-import {CheckboxModule} from 'primeng/checkbox';
-import {ToastModule} from 'primeng/toast';
+import { PrimengModule } from './primeng/primeng.module';
 
 @NgModule({
   declarations: [
@@ -32,14 +25,13 @@ import {ToastModule} from 'primeng/toast';
     LoginPageComponent,
     LoginNavComponent,
     LoginPanelComponent,
-    HomeComponent,
     RegisterPanelComponent,
     RegisterNavComponent,
     RegisterPageComponent
   ],
   imports: [
     BrowserModule,
-    MessagesModule,
+    PrimengModule,
     AppRoutingModule,
     BrowserAnimationsModule,
     ServiceWorkerModule.register('ngsw-worker.js', {
@@ -48,20 +40,16 @@ import {ToastModule} from 'primeng/toast';
       // or after 30 seconds (whichever comes first).
       registrationStrategy: 'registerWhenStable:30000'
     }),
-    PasswordModule,
-    ButtonModule,
-    InputMaskModule,
-    CheckboxModule,
     ReactiveFormsModule,
     HttpClientModule,
-    ToastModule,
     HomeModule,
     WidgetModule
+  ],
+  exports: [
   ],
   providers: [
     { provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true },
     { provide: HTTP_INTERCEPTORS, useClass: ErrorInterceptor, multi: true },
-    MessageService
   ],
   bootstrap: [AppComponent]
 })

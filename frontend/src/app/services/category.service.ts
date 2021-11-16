@@ -11,7 +11,7 @@ import { MessageService } from './message.service';
 @Injectable({ providedIn: 'root' })
 export class CategoryService {
 
-  private categoriesUrl = 'api/categories';  // URL to web api
+  private categoriesUrl = 'api/categories/';  // URL to web api
 
   httpOptions = {
     headers: new HttpHeaders({ 'Content-Type': 'application/json' })
@@ -22,11 +22,11 @@ export class CategoryService {
     private messageService: MessageService) { }
 
   /** GET categories from the server */
-  getCategorys(): Observable<Category[]> {
+  getCategories(): Observable<Category[]> {
     return this.http.get<Category[]>(this.categoriesUrl)
       .pipe(
         tap(_ => this.log('fetched categories')),
-        catchError(this.handleError<Category[]>('getCategorys', []))
+        catchError(this.handleError<Category[]>('getCategories', []))
       );
   }
 
@@ -54,7 +54,7 @@ export class CategoryService {
   }
 
   /* GET categories whose name contains search term */
-  searchCategorys(term: string): Observable<Category[]> {
+  searchCategories(term: string): Observable<Category[]> {
     if (!term.trim()) {
       // if not search term, return empty category array.
       return of([]);
@@ -63,7 +63,7 @@ export class CategoryService {
       tap(x => x.length ?
          this.log(`found categories matching "${term}"`) :
          this.log(`no categories matching "${term}"`)),
-      catchError(this.handleError<Category[]>('searchCategorys', []))
+      catchError(this.handleError<Category[]>('searchCategories', []))
     );
   }
 

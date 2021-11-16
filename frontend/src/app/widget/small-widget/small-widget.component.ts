@@ -1,4 +1,5 @@
 import { Component, Input, OnInit } from '@angular/core';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 
 @Component({
   selector: 'app-small-widget',
@@ -12,13 +13,12 @@ export class SmallWidgetComponent implements OnInit {
   @Input() smallSize: boolean = false;
   @Input() button: string | undefined;
 
-
-  
   imageUrl: string ='';
   
   constructor() { }
 
   ngOnInit(): void {
+
   }
 
   overlay(){

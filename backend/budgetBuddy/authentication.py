@@ -2,6 +2,7 @@ from rest_framework.authentication import TokenAuthentication, get_authorization
 from rest_framework import exceptions
 from datetime import datetime, timedelta
 import pytz
+from rest_framework.authtoken.models import Token
 
 class TokenExpireAuthentication(TokenAuthentication):
     def authenticate_credentials(self, key):
@@ -20,6 +21,8 @@ class TokenExpireAuthentication(TokenAuthentication):
 
         #invalidate the token if its older than 30 minutes
         if token.created < utc_now - timedelta(minutes=30):
+            #delete the expired token from the database
+            Token.objects.filter(user=token.user).delete()
             raise exceptions.AuthenticationFailed('Token has expired')
 
 

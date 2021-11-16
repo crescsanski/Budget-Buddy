@@ -6,7 +6,7 @@
     <div class="title-bar">
       <h1 style="text-align: left; ">{{ currentPage }} 
         <img src="../../assets/settings-icon.png" alt="settings">
-        <p-button label="Logout" (onClick)="logout()"></p-button>
+        <p-button label="Logout" (onClick)="cleanLogout()"></p-button>
     </h1>
     <p-menu #menu [popup]="true" [model]="settings"></p-menu>
     </div>
@@ -41,6 +41,7 @@
     </div>
     <div *ngIf="currentPage === 'Tracking'" class="widget-container" style="width: 73vw;"> 
       <div class="small-widgets">
+        <app-spending-widget title="Spending"></app-spending-widget>
         <div *ngFor="let widget of trackingWidgets" class="small-widgets">
           <app-small-widget *ngIf="widget.size==='small'" [title]=widget.title [image]=widget.image></app-small-widget>
         </div>

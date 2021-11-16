@@ -17,8 +17,8 @@ export class AppComponent {
     this.authServ.currentUser.subscribe(x => this.user = <User>x);
   }
 
-  logout() {
-    this.authServ.logout().subscribe();
+  cleanLogout() {
+    this.authServ.cleanLogout().subscribe();
   }
 }
 
