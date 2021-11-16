@@ -44,9 +44,8 @@ export class RegisterPanelComponent implements OnInit {
   register() {
     this.registerAttempt = true;
 
-    console.log(this.form.value)
     this.f.notifications.value ? this.f.notifications.setValue("1") : this.f.notifications.setValue("0");
-    console.log(this.form.value)
+ 
     // stop here if form is invalid
     if (this.form.invalid) {
         this.messageService.addInfo("Invalid Entry", "Some fields are incomplete or invalid.")

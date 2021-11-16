@@ -131,6 +131,7 @@ class Budget(models.Model):
     start_date = models.DateField(blank=True, null=True)
     user = models.ForeignKey('Users', models.DO_NOTHING, blank=True, null=True)
 
+
     class Meta:
         managed = True
         db_table = 'budget'
@@ -157,6 +158,7 @@ class Challenge(models.Model):
     item = models.ForeignKey('Items', models.DO_NOTHING, blank=True, null=True)
     difficulty = models.ForeignKey('Difficulty', models.DO_NOTHING, blank=True, null=True)
 
+
     class Meta:
         managed = True
         db_table = 'challenge'
@@ -169,6 +171,7 @@ class ChallengeInventory(models.Model):
     challenge = models.ForeignKey(Challenge, models.DO_NOTHING, blank=True, null=True)
     avatar = models.ForeignKey(Avatar, models.DO_NOTHING, blank=True, null=True)
 
+
     class Meta:
         managed = True
         db_table = 'challenge_inventory'
@@ -177,6 +180,7 @@ class ChallengeInventory(models.Model):
 class CompetitionStatus(models.Model):
     competition_status_id = models.AutoField(primary_key=True)
     competition_status_type = models.CharField(max_length=20)
+
 
     class Meta:
         managed = True
@@ -192,6 +196,7 @@ class Competitions(models.Model):
     user = models.ForeignKey('Users', models.DO_NOTHING, blank=True, null=True)
     competition_status = models.ForeignKey(CompetitionStatus, models.DO_NOTHING, blank=True, null=True)
 
+
     class Meta:
         managed = True
         db_table = 'competitions'
@@ -203,6 +208,7 @@ class Difficulty(models.Model):
     difficulty_name = models.CharField(max_length=255)
     difficulty_description = models.CharField(max_length=255)
 
+
     class Meta:
         managed = True
         db_table = 'difficulty'
@@ -211,6 +217,7 @@ class Difficulty(models.Model):
 class FriendStatus(models.Model):
     friend_status_id = models.AutoField(primary_key=True)
     friend_status_type = models.CharField(max_length=20)
+
 
     class Meta:
         managed = True
@@ -222,6 +229,7 @@ class Friends(models.Model):
     user_2_id = models.IntegerField()
     user = models.ForeignKey('Users', models.DO_NOTHING, blank=True, null=True)
     friend_status = models.OneToOneField(FriendStatus, models.DO_NOTHING)
+
 
     class Meta:
         managed = True
@@ -238,6 +246,7 @@ class GlobalCompetitions(models.Model):
     competition_winner = models.IntegerField(blank=True, null=True)
     user = models.ForeignKey('Users', models.DO_NOTHING, blank=True, null=True)
 
+
     class Meta:
         managed = True
         db_table = 'global_competitions'
@@ -250,6 +259,7 @@ class Income(models.Model):
     receipt = models.ForeignKey('Receipt', models.DO_NOTHING, blank=True, null=True)
     category = models.ForeignKey(Category, models.DO_NOTHING, blank=True, null=True)
 
+
     class Meta:
         managed = True
         db_table = 'income'
@@ -260,6 +270,7 @@ class Inventory(models.Model):
     equipped = models.CharField(max_length = 1, validators = [RegexValidator('^[01]+$', message="The string can only include 0s or 1s.")], blank=True, null=True)
     item = models.ForeignKey('Items', models.DO_NOTHING, blank=True, null=True)
     avatar = models.ForeignKey(Avatar, models.DO_NOTHING, blank=True, null=True)
+
 
     class Meta:
         managed = True
@@ -274,6 +285,7 @@ class Items(models.Model):
     item_link = models.CharField(max_length=255)
     difficulty = models.ForeignKey(Difficulty, models.DO_NOTHING, blank=True, null=True)
 
+
     class Meta:
         managed = True
         db_table = 'items'
@@ -283,6 +295,7 @@ class Notifications(models.Model):
     notification_id = models.AutoField(primary_key=True)
     notification_name = models.CharField(max_length=255)
     notification_message = models.CharField(max_length=255)
+
 
     class Meta:
         managed = True
@@ -295,6 +308,7 @@ class NotificationsList(models.Model):
     user = models.ForeignKey('Users', models.DO_NOTHING, blank=True, null=True)
     notification = models.ForeignKey(Notifications, models.DO_NOTHING, blank=True, null=True)
 
+
     class Meta:
         managed = True
         db_table = 'notifications_list'
@@ -306,6 +320,7 @@ class Product(models.Model):
     product_price = models.DecimalField(max_digits=10, decimal_places=2)
     receipt = models.ForeignKey('Receipt', models.DO_NOTHING, blank=True, null=True)
     category = models.ForeignKey(Category, models.DO_NOTHING, blank=True, null=True)
+
 
     class Meta:
         managed = True
@@ -320,6 +335,8 @@ class Receipt(models.Model):
     is_income = models.TextField()
     user = models.ForeignKey('Users', models.DO_NOTHING, blank=True, null=True)
 
+
+
     class Meta:
         managed = True
         db_table = 'receipt'
@@ -331,6 +348,7 @@ class Widget(models.Model):
     widget_description = models.CharField(max_length=255)
     widget_link = models.CharField(max_length=255)
 
+
     class Meta:
         managed = True
         db_table = 'widget'
@@ -341,6 +359,7 @@ class WidgetInventory(models.Model):
     widget_position = models.IntegerField(blank=True, null=True)
     widget = models.ForeignKey(Widget, models.DO_NOTHING, blank=True, null=True)
     user = models.ForeignKey(Users, models.DO_NOTHING, blank=True, null=True)
+
 
     class Meta:
         managed = True

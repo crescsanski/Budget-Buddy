@@ -50,7 +50,7 @@ class BudgetSerializer(serializers.ModelSerializer):
 
 class CategorySerializer(serializers.ModelSerializer):
     class Meta:
-        model = Budget
+        model = Category
         fields = '__all__'
     
 class ChallengeSerializer(serializers.ModelSerializer):

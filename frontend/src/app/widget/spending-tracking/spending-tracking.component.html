@@ -7,14 +7,19 @@
         <!--<img *ngIf="image" src={{image}}">-->
         <form [formGroup]="form" (ngSubmit)="onSubmit()">
             <p>Date of Purchase</p>
-            <p-calendar formControlName="date"></p-calendar>
+            <p-calendar formControlName="receipt_date"></p-calendar>
             <p>Purchase Type</p>
             <p-dropdown [options]="catOptions" optionLabel="category_name" optionValue="category_id" 
             formControlName="category"></p-dropdown>
             <p>Cost</p>
-            <p-inputNumber formControlName="cost" mode="currency" currency="USD" locale="en-US">
+            <p-inputNumber formControlName="receipt_amount" mode="currency" currency="USD" locale="en-US">
             </p-inputNumber>
             <br>
+
+            <div class="button-container">
+                <button class="button" pButton type="submit" label="Track"></button>
+            </div>
+
         </form>
     </div>
 </div>

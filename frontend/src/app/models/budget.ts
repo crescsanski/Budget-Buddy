@@ -1,5 +1,5 @@
 export interface Budget {
-    budget_id: number;
+    budget_id?: number;
     projected_income: number;
     projected_expenses: number;
     additional_expenses_goal: number;
