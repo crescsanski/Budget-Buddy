@@ -18,6 +18,7 @@ import { RegisterPanelComponent } from './register/register-panel/register-panel
 import { RegisterNavComponent } from './register/register-nav/register-nav.component';
 import { RegisterPageComponent } from './register/register-page/register-page.component';
 import { PrimengModule } from './primeng/primeng.module';
+import { DatePipe } from '@angular/common';
 
 @NgModule({
   declarations: [
@@ -50,6 +51,7 @@ import { PrimengModule } from './primeng/primeng.module';
   providers: [
     { provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true },
     { provide: HTTP_INTERCEPTORS, useClass: ErrorInterceptor, multi: true },
+    DatePipe
   ],
   bootstrap: [AppComponent]
 })
