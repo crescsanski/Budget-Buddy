@@ -19,6 +19,7 @@ import { RegisterNavComponent } from './register/register-nav/register-nav.compo
 import { RegisterPageComponent } from './register/register-page/register-page.component';
 import { PrimengModule } from './primeng/primeng.module';
 import { DatePipe } from '@angular/common';
+import {TooltipModule} from 'primeng/tooltip';
 
 @NgModule({
   declarations: [
@@ -44,7 +45,8 @@ import { DatePipe } from '@angular/common';
     ReactiveFormsModule,
     HttpClientModule,
     HomeModule,
-    WidgetModule
+    WidgetModule,
+    TooltipModule
   ],
   exports: [
   ],
