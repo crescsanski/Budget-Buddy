@@ -1,0 +1,28 @@
+@import "../../../styles.scss";
+
+button {
+  background-color: $blue !important;
+  border: none !important;
+  font-size: large;
+}
+
+.header {
+  text-align: center !important;
+  width: 100%;
+}
+
+.panel {
+  display: flex;
+  flex-direction: column;
+  text-align: center;
+}
+
+p {
+  text-align: left !important;
+  margin-left: 3px;
+}
+
+.content-area {
+  margin-bottom: 0.5em !important;
+  margin-top: 0 !important;
+}
