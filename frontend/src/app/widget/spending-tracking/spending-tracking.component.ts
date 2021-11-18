@@ -42,6 +42,8 @@ export class SpendingTrackingComponent implements OnInit {
         this.catOptions = cats;
       }
     )
+
+    this.ws.testFunction();
   }
 
   ngOnInit(): void {
