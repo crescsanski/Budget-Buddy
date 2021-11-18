@@ -42,7 +42,6 @@
     </div>
     <div *ngIf="currentPage === 'Tracking'" class="widget-container" style="width: 73vw;"> 
       <div class="small-widgets">
-        <app-spending-widget title="Spending"></app-spending-widget>
         <div *ngFor="let widget of trackingWidgets" class="small-widgets">
           <app-small-widget *ngIf="widget.size==='small'" [title]=widget.title [image]=widget.image></app-small-widget>
         </div>

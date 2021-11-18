@@ -10,6 +10,8 @@ import {ToastModule} from 'primeng/toast';
 import {CalendarModule} from 'primeng/calendar';
 import {InputNumberModule} from 'primeng/inputnumber';
 import {DropdownModule} from 'primeng/dropdown';
+import {SliderModule} from 'primeng/slider';
+import { InputTextModule } from 'primeng/inputtext';
 
 @NgModule({
   declarations: [  ],
@@ -23,6 +25,8 @@ import {DropdownModule} from 'primeng/dropdown';
     InputMaskModule,
     CheckboxModule,
     ToastModule,
+    SliderModule,
+    InputTextModule,
   ],
   exports: [
     InputNumberModule,
@@ -34,6 +38,8 @@ import {DropdownModule} from 'primeng/dropdown';
     CheckboxModule,
     ToastModule,
     DropdownModule,
+    SliderModule,
+    InputTextModule,
   ],
   providers: [
     MessageService

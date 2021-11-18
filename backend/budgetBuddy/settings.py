@@ -59,6 +59,7 @@ INSTALLED_APPS = [
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': [
         'budgetBuddy.authentication.TokenExpireAuthentication',
+        'rest_framework.authentication.SessionAuthentication',
     ]
 }
 

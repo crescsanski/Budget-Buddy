@@ -69,7 +69,11 @@ export class WidgetService {
             map((res: Product) => {
                 this.messageService.addSuccess('Spending Recorded Successfully', "");
             }),
-            catchError(err => of('error', err)));
+            catchError(err => 
+              {
+                this.messageService.addError('Spending Failed to Be Recorded!', "");
+                return of('error', err);
+              }));
         
     }
 

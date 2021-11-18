@@ -2,20 +2,26 @@
         <div class="header">
             <h2>Tracking</h2> 
         </div>
-        
-        <div class="content-area">
-            <p>Name</p>
-            <input type="text" pInputText>
-            <br>
-            <p>Date</p>
-            <input type="date" pInputText>
-            <br>
-            <p>Cost</p>
-            <input type="number" step="any" />
-            <br>
-            <button style="margin-top: 2em" class="track" pButton type="button" label='Track'></button>
-        </div>
-        
+        <form [formGroup]="form" (ngSubmit)="track()">
+            <div class="content-area">
+                <p>Name</p>
+                <input formControlName="product_name" type="text" pInputText/>
+                <br>
+                <p>Date</p>
+                <p-calendar formControlName="receipt_date"></p-calendar>
+                <br>
+                <p>Category</p>
+                <p-dropdown [options]="catOptions" optionLabel="category_name" optionValue="category_id" 
+                [autoDisplayFirst]=false
+                formControlName="category"></p-dropdown>
+                <br>
+                <p>Cost</p>
+                <p-inputNumber formControlName="product_price" 
+                mode="currency" currency="USD" locale="en-US"></p-inputNumber>
+                <br>
+                <button style="margin-top: 2em" class="track" pButton type="submit" label='Track'></button>
+            </div>
+        </form>
        
 
 </div>
