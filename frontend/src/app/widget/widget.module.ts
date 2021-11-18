@@ -1,13 +1,13 @@
+import { ButtonModule } from 'primeng/button';
 import { SmallWidgetComponent } from './small-widget/small-widget.component';
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { BasicWidgetComponent } from './basic-widget/basic-widget.component';
 import {SliderModule} from 'primeng/slider';
 import { ReceiptTrackingComponent } from './receipt-tracking/receipt-tracking.component';
-import { SpendingTrackingComponent } from './spending-tracking/spending-tracking.component';
-import { PrimengModule } from '../primeng/primeng.module';
-import { ReactiveFormsModule } from '@angular/forms';
-
+import { TrackingComponent } from './tracking/tracking.component';
+import { InputTextModule } from 'primeng/inputtext';
+import {CalendarModule} from 'primeng/calendar'
 
 
 
@@ -16,15 +16,15 @@ import { ReactiveFormsModule } from '@angular/forms';
     BasicWidgetComponent,
     SmallWidgetComponent,
     ReceiptTrackingComponent,
-    SpendingTrackingComponent
-
+    TrackingComponent
   ],
   imports: [
-    CommonModule, 
+    CommonModule,
     SliderModule,
-    PrimengModule,
-    ReactiveFormsModule
+    ButtonModule,
+    InputTextModule,
+    CalendarModule
   ],
-  exports: [BasicWidgetComponent, SmallWidgetComponent, ReceiptTrackingComponent, SpendingTrackingComponent]
+  exports: [BasicWidgetComponent, SmallWidgetComponent, ReceiptTrackingComponent, TrackingComponent]
 })
 export class WidgetModule { }

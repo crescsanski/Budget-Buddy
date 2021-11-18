@@ -3,6 +3,7 @@ $teal: #4ec5ca !default;
 $green: #4eca9f !default;
 $dark-blue: #090526 !default;
 $light-gray: #707070 !default;
+$borders: #ebebeb !default;
 
 body {
   background-image: linear-gradient(125deg, $blue, $teal);
@@ -41,12 +42,11 @@ button {
 
 ::ng-deep {
   input {
-    border-radius: 10px !important;
-    border-color: $light-gray !important;
-    border-width: 1px !important;
-    width: 98% !important;
-    height: 22px !important;
-    padding: 0.2em !important;
+    border-radius: 10px;
+    border-color: $borders;
+    border-width: 1px;
+    width: 98%;
+    padding: 0.2em;
   }
 
   .p-inputwrapper {
@@ -54,4 +54,13 @@ button {
   }
 
 
+}
+
+.ui-datepicker {
+  overflow: visible;
+  z-index: 999;
+}
+
+input {
+  font-family: "Century Gothic", sans-serif;
 }
