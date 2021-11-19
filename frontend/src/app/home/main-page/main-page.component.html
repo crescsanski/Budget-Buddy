@@ -25,6 +25,7 @@
       </div>
       <div class="small-widgets">
         <app-weekly-spending-small></app-weekly-spending-small>
+        <app-badges-widget></app-badges-widget>
         <div *ngFor="let widget of dashboardWidgets" class="small-widgets">
           <app-small-widget *ngIf="widget.size==='small'" [title]=widget.title [image]=widget.image></app-small-widget>
         </div>

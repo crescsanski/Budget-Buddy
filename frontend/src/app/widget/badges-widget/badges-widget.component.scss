@@ -1,0 +1,34 @@
+@import "../../../styles.scss";
+
+.content-area {
+  width: 100%;
+  margin-bottom: -10px !important;
+}
+
+.descriptions {
+  p {
+    text-align: left;
+    max-width: 10vw;
+  }
+}
+.title {
+  font-weight: bolder;
+}
+
+.badges {
+  text-align: left;
+  img {
+    width: 3em;
+    max-height: 4em;
+    margin: 1em;
+  }
+}
+
+.name {
+  font-weight: bolder;
+  font-size: large;
+}
+
+.description {
+  margin-top: -10px;
+}
