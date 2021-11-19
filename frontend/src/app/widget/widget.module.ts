@@ -12,6 +12,7 @@ import {ProgressBarModule} from 'primeng/progressbar';
 import { IncomeTrackingComponent } from './income-tracking/income-tracking.component';
 import {ChartModule} from 'primeng/chart';
 import { SavingsOverTimeComponent } from './savings-over-time/savings-over-time.component';
+import { BadgesWidgetComponent } from './badges-widget/badges-widget.component';
 
 
 @NgModule({
@@ -23,7 +24,8 @@ import { SavingsOverTimeComponent } from './savings-over-time/savings-over-time.
     WeeklySpendingComponent,
     WeeklySpendingSmallComponent,
     IncomeTrackingComponent,
-    SavingsOverTimeComponent
+    SavingsOverTimeComponent,
+    BadgesWidgetComponent
   ],
   imports: [
     CommonModule,
@@ -32,6 +34,7 @@ import { SavingsOverTimeComponent } from './savings-over-time/savings-over-time.
     ProgressBarModule,
     ChartModule
   ],
-  exports: [BasicWidgetComponent, SmallWidgetComponent, ReceiptTrackingComponent, TrackingComponent, WeeklySpendingComponent, WeeklySpendingSmallComponent, IncomeTrackingComponent, SavingsOverTimeComponent]
+  exports: [BasicWidgetComponent, SmallWidgetComponent, ReceiptTrackingComponent, TrackingComponent, WeeklySpendingComponent, 
+    WeeklySpendingSmallComponent, IncomeTrackingComponent, SavingsOverTimeComponent, BadgesWidgetComponent]
 })
 export class WidgetModule { }
