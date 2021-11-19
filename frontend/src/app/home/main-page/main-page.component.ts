@@ -49,9 +49,7 @@ export class MainPageComponent implements OnInit {
     ]
 
     this.trackingWidgets = [
-      { size: 'small', title: 'Spending', image: '../../assets/prototype-images/spending-log.png' },
-      { size: 'small', title: 'Income', image: '../../assets/prototype-images/income-log.png' },
-      { size: 'large', title: 'Total Spending', image: '../../assets/prototype-images/spending-progress-bar.png' },
+     //retrieve list of tracking widgets
     ]
 
     this.analyticsWidgets = [

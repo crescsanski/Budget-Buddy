@@ -9,6 +9,7 @@ import { PrimengModule } from '../primeng/primeng.module';
 import { ReactiveFormsModule } from '@angular/forms';
 import { WeeklySpendingComponent } from './weekly-spending/weekly-spending.component';
 import {ProgressBarModule} from 'primeng/progressbar';
+import { IncomeTrackingComponent } from './income-tracking/income-tracking.component';
 
 
 
@@ -19,7 +20,8 @@ import {ProgressBarModule} from 'primeng/progressbar';
     ReceiptTrackingComponent,
     TrackingComponent,
     WeeklySpendingComponent,
-    WeeklySpendingSmallComponent
+    WeeklySpendingSmallComponent,
+    IncomeTrackingComponent
   ],
   imports: [
     CommonModule,
@@ -27,6 +29,6 @@ import {ProgressBarModule} from 'primeng/progressbar';
     ReactiveFormsModule,
     ProgressBarModule
   ],
-  exports: [BasicWidgetComponent, SmallWidgetComponent, ReceiptTrackingComponent, TrackingComponent, WeeklySpendingComponent, WeeklySpendingSmallComponent]
+  exports: [BasicWidgetComponent, SmallWidgetComponent, ReceiptTrackingComponent, TrackingComponent, WeeklySpendingComponent, WeeklySpendingSmallComponent, IncomeTrackingComponent]
 })
 export class WidgetModule { }

@@ -44,6 +44,7 @@
     <div *ngIf="currentPage === 'Tracking'" class="widget-container" style="width: 73vw;"> 
       <div class="small-widgets">
         <app-tracking></app-tracking>
+        <app-income-tracking></app-income-tracking>
         <div *ngFor="let widget of trackingWidgets" class="small-widgets">
           <app-small-widget *ngIf="widget.size==='small'" [title]=widget.title [image]=widget.image></app-small-widget>
         </div>
@@ -51,6 +52,7 @@
       <div class="large-widgets">
         <div class="large-widgets">
          <app-receipt-tracking></app-receipt-tracking>
+         <app-weekly-spending></app-weekly-spending>
         </div>
         <div *ngFor="let widget of trackingWidgets" class="large-widgets">
           <app-basic-widget *ngIf="widget.size==='large'" [title]=widget.title [image]=widget.image></app-basic-widget>
