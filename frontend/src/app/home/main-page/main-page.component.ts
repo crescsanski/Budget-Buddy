@@ -37,9 +37,7 @@ export class MainPageComponent implements OnInit {
 
   //obtain list of widgets via http request
     this.dashboardWidgets = [
-      { size: 'large', title: 'Weekly Spending', image: '../../assets/prototype-images/spending-progress-bar.png' },
       { size: 'large', title: 'Savings', image: '../../assets/prototype-images/line-graph.png' },
-      { size: 'small', title: 'Weekly Spending', image: '../../assets/prototype-images/price-large.png' },
       { size: 'small', title: 'Badges', image: '../../assets/prototype-images/badges.png' }
     ]
 
