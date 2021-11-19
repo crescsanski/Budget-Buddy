@@ -1,3 +1,4 @@
+import { WeeklySpendingSmallComponent } from './weekly-spending-small/weekly-spending-small.component';
 import { SmallWidgetComponent } from './small-widget/small-widget.component';
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
@@ -6,6 +7,8 @@ import { ReceiptTrackingComponent } from './receipt-tracking/receipt-tracking.co
 import { TrackingComponent } from './tracking/tracking.component';
 import { PrimengModule } from '../primeng/primeng.module';
 import { ReactiveFormsModule } from '@angular/forms';
+import { WeeklySpendingComponent } from './weekly-spending/weekly-spending.component';
+import {ProgressBarModule} from 'primeng/progressbar';
 
 
 
@@ -14,13 +17,16 @@ import { ReactiveFormsModule } from '@angular/forms';
     BasicWidgetComponent,
     SmallWidgetComponent,
     ReceiptTrackingComponent,
-    TrackingComponent
+    TrackingComponent,
+    WeeklySpendingComponent,
+    WeeklySpendingSmallComponent
   ],
   imports: [
     CommonModule,
     PrimengModule,
-    ReactiveFormsModule
+    ReactiveFormsModule,
+    ProgressBarModule
   ],
-  exports: [BasicWidgetComponent, SmallWidgetComponent, ReceiptTrackingComponent, TrackingComponent]
+  exports: [BasicWidgetComponent, SmallWidgetComponent, ReceiptTrackingComponent, TrackingComponent, WeeklySpendingComponent, WeeklySpendingSmallComponent]
 })
 export class WidgetModule { }

@@ -4,6 +4,7 @@ $green: #4eca9f !default;
 $dark-blue: #090526 !default;
 $light-gray: #707070 !default;
 $borders: #ebebeb !default;
+$shadow: #d3e2eb !default;
 
 body {
   background-image: linear-gradient(125deg, $blue, $teal);
@@ -65,6 +66,27 @@ button {
   .p-inputnumber {
     width: 100% !important;
   }
+
+  .p-progressbar .p-progressbar-value {
+    background: $green;
+    border-radius: 18px;
+  }
+
+  .p-progressbar .p-progressbar-label {
+    color: $light-gray;
+    font-family: "Century Gothic Pro", sans-serif !important;
+    font-size: larger;
+    text-align: right;
+    margin-top: 0.7em;
+    padding-right: 1vw;
+  }
+
+  .p-progressbar {
+    background: white;
+    box-shadow: inset 0px 0px 10px $shadow;
+    border-radius: 21px;
+    height: 3em;
+  }
 }
 
 .ui-datepicker {
@@ -74,4 +96,8 @@ button {
 
 input {
   font-family: "Century Gothic", sans-serif;
+}
+
+p {
+  font-size: larger;
 }
