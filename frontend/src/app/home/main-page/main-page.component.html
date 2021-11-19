@@ -18,6 +18,7 @@
     <div *ngIf="currentPage === 'Dashboard'" class="widget-container" style="width: 73vw;"> 
         <div class="large-widgets">
           <app-weekly-spending></app-weekly-spending>
+          <app-savings-over-time></app-savings-over-time>
         <div *ngFor="let widget of dashboardWidgets" class="large-widgets">
           <app-basic-widget *ngIf="widget.size==='large'" [title]=widget.title [image]=widget.image></app-basic-widget>
         </div>
