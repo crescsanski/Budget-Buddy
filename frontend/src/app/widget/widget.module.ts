@@ -9,7 +9,9 @@ import { PrimengModule } from '../primeng/primeng.module';
 import { ReactiveFormsModule } from '@angular/forms';
 import { WeeklySpendingComponent } from './weekly-spending/weekly-spending.component';
 import {ProgressBarModule} from 'primeng/progressbar';
-
+import { IncomeTrackingComponent } from './income-tracking/income-tracking.component';
+import {ChartModule} from 'primeng/chart';
+import { SavingsOverTimeComponent } from './savings-over-time/savings-over-time.component';
 
 
 @NgModule({
@@ -19,14 +21,17 @@ import {ProgressBarModule} from 'primeng/progressbar';
     ReceiptTrackingComponent,
     TrackingComponent,
     WeeklySpendingComponent,
-    WeeklySpendingSmallComponent
+    WeeklySpendingSmallComponent,
+    IncomeTrackingComponent,
+    SavingsOverTimeComponent
   ],
   imports: [
     CommonModule,
     PrimengModule,
     ReactiveFormsModule,
-    ProgressBarModule
+    ProgressBarModule,
+    ChartModule
   ],
-  exports: [BasicWidgetComponent, SmallWidgetComponent, ReceiptTrackingComponent, TrackingComponent, WeeklySpendingComponent, WeeklySpendingSmallComponent]
+  exports: [BasicWidgetComponent, SmallWidgetComponent, ReceiptTrackingComponent, TrackingComponent, WeeklySpendingComponent, WeeklySpendingSmallComponent, IncomeTrackingComponent, SavingsOverTimeComponent]
 })
 export class WidgetModule { }

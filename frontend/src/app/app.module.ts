@@ -20,7 +20,6 @@ import { RegisterPageComponent } from './register/register-page/register-page.co
 import { PrimengModule } from './primeng/primeng.module';
 import { DatePipe } from '@angular/common';
 import {TooltipModule} from 'primeng/tooltip';
-
 @NgModule({
   declarations: [
     AppComponent,
