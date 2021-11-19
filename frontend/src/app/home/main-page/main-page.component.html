@@ -5,8 +5,8 @@
   <div class="widget-area">
     <div class="title-bar">
       <h1 style="text-align: left; ">{{ currentPage }} 
-        <button  style="position: absolute; right: 2vw; top: 2.7em;"pButton pRipple pTooltip="Settings" tooltipPosition="bottom" type="button" icon="pi pi-power-off" class="p-button-rounded p-button-outlined"></button>
-        <button  style="position: absolute; right: 5.5vw; top: 2.7em;"pButton pRipple pTooltip="Logout" tooltipPosition="bottom" type="button" icon="pi pi-cog" class="p-button-rounded p-button-outlined"(click)="cleanLogout()" ></button>
+        <button  style="position: absolute; right: 2vw; top: 2.7em;"pButton pRipple pTooltip="Logout" tooltipPosition="bottom" type="button" icon="pi pi-power-off" class="p-button-rounded p-button-outlined" (click)="cleanLogout()" ></button>
+        <button  style="position: absolute; right: 5.5vw; top: 2.7em;"pButton pRipple pTooltip="Settings" tooltipPosition="bottom" type="button" icon="pi pi-cog" class="p-button-rounded p-button-outlined"></button>
     </h1>
     <p-menu #menu [popup]="true" [model]="settings"></p-menu>
     </div>
