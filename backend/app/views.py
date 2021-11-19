@@ -162,7 +162,6 @@ class RegisterView(GenericAPIView):
                 
         # Otherwise, if all correct, we create the user
         auth.get_user_model().objects.create_user(username = user['username'], password=user['password'], extra=user)
-        print("Username: ", )
         return Response("User has been registered successfully!")
 
 

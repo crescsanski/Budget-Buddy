@@ -58,7 +58,6 @@ export class WidgetService {
             .pipe(
               concatMap((rec: Receipt) =>
               {
-                console.log("Receipt: ", rec)
                 return this.ps.addProduct({
                   product_name: inp.product_name,
                   product_price: inp.product_price,

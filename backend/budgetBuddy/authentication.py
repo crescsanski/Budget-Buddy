@@ -25,5 +25,4 @@ class TokenExpireAuthentication(TokenAuthentication):
             Token.objects.filter(user=token.user).delete()
             raise exceptions.AuthenticationFailed('Token has expired')
 
-
         return (token.user, token)
