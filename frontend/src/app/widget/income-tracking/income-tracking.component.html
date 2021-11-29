@@ -8,10 +8,10 @@
             <input formControlName="income_name" type="text" pInputText/>
             <br>
             <p>Date</p>
-            <p-calendar formControlName="income_date"></p-calendar>
+            <p-calendar formControlName="receipt_date"></p-calendar>
             <br>
             <p>Type of Income</p>
-            <p-dropdown [options]="catOptions" optionLabel="category" optionValue="category_id" 
+            <p-dropdown [options]="catOptions" optionLabel="category_name" optionValue="category_id" 
             [autoDisplayFirst]=false
             formControlName="category"></p-dropdown>
             <br>

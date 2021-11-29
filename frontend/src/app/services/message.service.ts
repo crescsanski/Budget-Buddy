@@ -7,8 +7,8 @@ export class MessageService {
   constructor(private messageService: MS) {}
 
 
-  addError(summary: string, detail: string) {
-    this.messageService.add({severity:'error', life: 10000, summary:summary, detail:detail});
+  addError(summary: string, details: any) {
+    this.messageService.add({severity:'error', life: 10000, summary:summary, detail:details});
   }
 
   addSuccess(summary: string, detail: string) {

@@ -14,6 +14,9 @@ import { DatePipe } from '@angular/common';
 import { AuthService } from '../services/auth.service';
 import { Receipt } from '../models/receipt';
 import { BasicManualSpend } from '../models/formModels/basicManualSpend';
+import { Income } from '../models/income';
+import { BasicManualIncome } from '../models/formModels/basicManualIncome';
+import { IncomeService } from '../services/income.service';
 
 
 @Injectable({ providedIn: 'root'
@@ -26,6 +29,7 @@ export class WidgetService {
     private as: AuthService,
     private ps: ProductService,
     private rs: ReceiptService,
+    private is: IncomeService,
     private cs: CategoryService,
     private dp: DatePipe) { 
 
@@ -75,6 +79,38 @@ export class WidgetService {
               }));
         
     }
+
+     /**
+   * This is designed to input an income transaction for an individual income source on its own receipt.  It will be used
+   * by the income-tracking widget. 
+   */
+      basicIncomeTransaction(inp: BasicManualIncome): Observable<Income>
+      {
+          return this.rs.addReceipt({
+              receipt_date: this.dp.transform(inp.receipt_date, 'yyyy-MM-dd'),
+              is_income: '1', reoccuring: '0',
+              receipt_amount: inp.income_amount,
+              user: this.as.currentUserValue.user_id})
+              .pipe(
+                concatMap((rec: Receipt) =>
+                {
+                  return this.is.addIncome({
+                    income_name: inp.income_name,
+                    income_amount: inp.income_amount,
+                    category: inp.category as number,
+                    receipt: rec.receipt_id
+                  })
+                }),
+              map((res: Income) => {
+                  this.messageService.addSuccess('Income Recorded Successfully', "");
+              }),
+              catchError(err => 
+                {
+                  this.messageService.addError('Income Failed to Be Recorded!', "");
+                  return of('error', err);
+                }));
+          
+      }
 
   
 

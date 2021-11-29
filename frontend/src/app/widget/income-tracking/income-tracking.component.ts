@@ -37,7 +37,7 @@ form: FormGroup = <FormGroup>{};
   ngOnInit(): void {
     this.form = this.fb.group({
       income_name: ['', Validators.required],
-      income_date: ['', Validators.required],
+      receipt_date: ['', Validators.required],
       income_amount: ['', Validators.required],
       category: ['', Validators.required]
 });
@@ -51,9 +51,9 @@ form: FormGroup = <FormGroup>{};
       return;
     }
 
-    /* this.ws.basicSpendingTransaction(this.form.value)
+    this.ws.basicIncomeTransaction(this.form.value)
       .subscribe(()=> {this.form.reset()}
-      ) */
+      ) 
   }
 
 }

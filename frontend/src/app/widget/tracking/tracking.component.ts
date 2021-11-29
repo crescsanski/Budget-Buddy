@@ -41,7 +41,6 @@ export class TrackingComponent implements OnInit {
   track() {
     if (this.form.invalid) {
       this.ms.addInfo("Invalid Entry", "Some fields are incomplete or invalid.")
-      console.log(this.form.controls)
       return;
     }
 
