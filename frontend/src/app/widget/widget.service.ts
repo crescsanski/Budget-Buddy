@@ -97,7 +97,7 @@ export class WidgetService {
                   return this.is.addIncome({
                     income_name: inp.income_name,
                     income_amount: inp.income_amount,
-                    category: inp.category as number,
+                    category: inp.category,
                     receipt: rec.receipt_id
                   })
                 }),

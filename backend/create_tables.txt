@@ -21,7 +21,7 @@ CREATE TABLE IF NOT EXISTS budgetBuddy.users(
 	phone_number VARCHAR(14) UNIQUE,
 	registered DATE NOT NULL,	
 	birth_date DATE NOT NULL,
-	notifications BIT NOT NULL,
+	notifications BOOLEAN NOT NULL,
 	user_exp INT,
 	PRIMARY KEY (user_id),
 	CONSTRAINT fk_userssecurityquestion FOREIGN KEY(security_question_id) REFERENCES budgetBuddy.security_question(security_question_id)
@@ -51,7 +51,7 @@ CREATE TABLE IF NOT EXISTS budgetBuddy.items(
 );
 CREATE TABLE IF NOT EXISTS budgetBuddy.inventory(
 	inventory_id SERIAL,
-	equipped BIT NOT NULL,
+	equipped BOOLEAN NOT NULL,
 	item_id INT,
 	user_id INT,
 	PRIMARY KEY (inventory_id),
@@ -69,8 +69,8 @@ CREATE TABLE IF NOT EXISTS budgetBuddy.challenge(
 	challenge_description VARCHAR(255) NOT NULL,
 	challenge_type VARCHAR(255) NOT NULL,		
 	challenge_time_given INT NOT NULL,
-	challenge_repeatable BIT NOT NULL,
-	active BIT NOT NULL,
+	challenge_repeatable BOOLEAN NOT NULL,
+	active BOOLEAN NOT NULL,
 	experience INT,
 	item_id INT,	
 	difficulty_id INT,
@@ -84,7 +84,7 @@ CREATE TABLE IF NOT EXISTS budgetBuddy.challenge(
 CREATE TABLE IF NOT EXISTS budgetBuddy.challenge_inventory(
 	challenge_inventory_id SERIAL,	
 	challenge_start_date DATE NOT NULL,
-	challenge_completion BIT NOT NULL,
+	challenge_completion BOOLEAN NOT NULL,
 	challenge_id INT,
 	user_id INT,
 	PRIMARY KEY (challenge_inventory_id),
@@ -96,16 +96,16 @@ CREATE TABLE IF NOT EXISTS budgetBuddy.receipt(
     	receipt_amount DECIMAL(10,2),
 	receipt_date TIMESTAMP NOT NULL,		
 	reccuring INT NOT NULL,
-	income BIT NOT NULL,
+	income BOOLEAN NOT NULL,
 	user_id INT,
 	PRIMARY KEY (receipt_id),
 	CONSTRAINT fk_receiptusers FOREIGN KEY(user_id) REFERENCES budgetBuddy.users(user_id)
 );
 CREATE TABLE IF NOT EXISTS budgetBuddy.category(
 	category_id SERIAL,
-    	category_name VARCHAR(255) NOT NULL,	
+    category_name VARCHAR(255) NOT NULL,	
 	category_description VARCHAR(255) NOT NULL,
-	category_income BIT NOT NULL,
+	category_income BOOLEAN NOT NULL,
 	PRIMARY KEY (category_id)
 );
 CREATE TABLE IF NOT EXISTS budgetBuddy.product(

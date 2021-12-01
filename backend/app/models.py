@@ -75,7 +75,7 @@ class Users(AbstractBaseUser, models.Model):
 
     security_question = models.ForeignKey(SecurityQuestion, models.DO_NOTHING, blank=True, null=True)
     security_answer = models.CharField(max_length=255, blank=True, null=True)
-    notifications = models.CharField(max_length = 1, validators = [RegexValidator('^[01]+$', message="The string can only include 0s or 1s.")], blank=True, null=True)
+    notifications = models.BooleanField(blank=True, null=True)
 
 
     is_active = models.BooleanField(default=True)
@@ -140,7 +140,8 @@ class Budget(models.Model):
 class Category(models.Model):
     category_id = models.AutoField(primary_key=True)
     category_name = models.CharField(max_length=255)
-    category_description = models.CharField(max_length=255)
+    category_description = models.CharField(max_length=255),
+    category_income = models.BooleanField(blank=True, null=True)
 
     class Meta:
         managed = True
@@ -152,9 +153,9 @@ class Challenge(models.Model):
     challenge_name = models.CharField(max_length=255)
     challenge_description = models.CharField(max_length=255)
     challenge_type = models.CharField(max_length=255)
-    active = models.CharField(max_length = 1, validators = [RegexValidator('^[01]+$', message="The string can only include 0s or 1s.")], blank=True, null=True)
+    active = models.BooleanField(blank=True, null=True)
     challenge_time_given = models.IntegerField(blank=True, null=True)
-    challenge_repeatable = models.CharField(max_length = 1, validators = [RegexValidator('^[01]+$', message="The string can only include 0s or 1s.")], blank=True, null=True)
+    challenge_repeatable = models.BooleanField(blank=True, null=True)
     item = models.ForeignKey('Items', models.DO_NOTHING, blank=True, null=True)
     difficulty = models.ForeignKey('Difficulty', models.DO_NOTHING, blank=True, null=True)
 
@@ -167,7 +168,7 @@ class Challenge(models.Model):
 class ChallengeInventory(models.Model):
     challenge_inventory_id = models.AutoField(primary_key=True)
     challenge_start_date = models.DateField()
-    challenge_completion = models.CharField(max_length = 1, validators = [RegexValidator('^[01]+$', message="The string can only include 0s or 1s.")], blank=True, null=True)
+    challenge_completion = models.BooleanField(blank=True, null=True)
     challenge = models.ForeignKey(Challenge, models.DO_NOTHING, blank=True, null=True)
     avatar = models.ForeignKey(Avatar, models.DO_NOTHING, blank=True, null=True)
 
@@ -267,7 +268,7 @@ class Income(models.Model):
 
 class Inventory(models.Model):
     inventory_id = models.AutoField(primary_key=True)
-    equipped = models.CharField(max_length = 1, validators = [RegexValidator('^[01]+$', message="The string can only include 0s or 1s.")], blank=True, null=True)
+    equipped = models.BooleanField(blank=True, null=True)
     item = models.ForeignKey('Items', models.DO_NOTHING, blank=True, null=True)
     avatar = models.ForeignKey(Avatar, models.DO_NOTHING, blank=True, null=True)
 
