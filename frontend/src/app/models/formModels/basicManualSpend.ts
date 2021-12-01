@@ -4,4 +4,5 @@ export interface BasicManualSpend
     product_price: number;
     product_name: string;
     category: number;
+    reocurring?: number;
 }

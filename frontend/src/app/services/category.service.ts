@@ -30,6 +30,24 @@ export class CategoryService {
       );
   }
 
+   /** GET income categories from the server */
+   getIncomeCategories(): Observable<Category[]> {
+    return this.http.get<Category[]>(`${this.categoriesUrl}income/`)
+      .pipe(
+        tap(_ => this.log('fetched income categories')),
+        catchError(this.handleError<Category[]>('getCategories', []))
+      );
+  }
+
+     /** GET spending categories from the server */
+     getSpendingCategories(): Observable<Category[]> {
+      return this.http.get<Category[]>(`${this.categoriesUrl}spending/`)
+        .pipe(
+          tap(_ => this.log('fetched spending categories')),
+          catchError(this.handleError<Category[]>('getCategories', []))
+        );
+    }
+
   /** GET category by id. Return `undefined` when id not found */
   getCategoryNo404<Data>(id: number): Observable<Category> {
     const url = `${this.categoriesUrl}/?id=${id}`;

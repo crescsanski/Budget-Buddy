@@ -6,6 +6,7 @@ import { Category } from 'src/app/models/category';
 import { MessageService } from 'src/app/services/message.service';
 import { WidgetService } from '../widget.service';
 import { CategoryService } from '../../services/category.service';
+import { SelectItem } from 'primeng/api';
 
 @Component({
   selector: 'app-tracking',
@@ -15,17 +16,20 @@ import { CategoryService } from '../../services/category.service';
 export class TrackingComponent implements OnInit {
   form: FormGroup = <FormGroup>{};
   catOptions!: Category[];
+  frequencyOptions!: SelectItem[];
 
   constructor(private ms: MessageService,
     private ws: WidgetService,
     private fb: FormBuilder,
     private cs: CategoryService) { 
-      this.cs.getCategories().subscribe(
+      this.cs.getSpendingCategories().subscribe(
         (cats: Category[]) => 
         {
           this.catOptions = cats;
         }
       )
+
+      this.frequencyOptions = this.ws.frequencyOptions;
   }
 
   ngOnInit(): void {
@@ -33,7 +37,8 @@ export class TrackingComponent implements OnInit {
       receipt_date: ['', Validators.required],
       product_price: ['', Validators.required],
       product_name: ['', Validators.required],
-      category: ['', Validators.required]
+      category: ['', Validators.required],
+      reocurring: ['']
 });
 
   }

@@ -6,6 +6,7 @@ import { Category } from 'src/app/models/category';
 import { MessageService } from 'src/app/services/message.service';
 import { WidgetService } from '../widget.service';
 import { CategoryService } from '../../services/category.service';
+import {SelectItem} from 'primeng/api';
 
 @Component({
   selector: 'app-income-tracking',
@@ -15,13 +16,13 @@ import { CategoryService } from '../../services/category.service';
 export class IncomeTrackingComponent implements OnInit {
 form: FormGroup = <FormGroup>{};
   catOptions!: Category[];
-  frequencyOptions!: String[];
+  frequencyOptions!: SelectItem[];
 
   constructor(private ms: MessageService,
     private ws: WidgetService,
     private fb: FormBuilder,
     private cs: CategoryService) { 
-      this.cs.getCategories().subscribe(
+      this.cs.getIncomeCategories().subscribe(
         (cats: Category[]) => 
         {
           this.catOptions = cats;
@@ -29,9 +30,7 @@ form: FormGroup = <FormGroup>{};
       )
       
       //TODO: Implement w/ API
-      this.frequencyOptions = [
-        'Daily', 'Weekly', 'Bi-Weekly', 'Monthly', 'Annually'
-      ]
+      this.frequencyOptions = this.ws.frequencyOptions;
   }
 
   ngOnInit(): void {
@@ -39,7 +38,8 @@ form: FormGroup = <FormGroup>{};
       income_name: ['', Validators.required],
       receipt_date: ['', Validators.required],
       income_amount: ['', Validators.required],
-      category: ['', Validators.required]
+      category: ['', Validators.required],
+      reocurring: ['']
 });
 
   }
@@ -47,7 +47,6 @@ form: FormGroup = <FormGroup>{};
   track() {
     if (this.form.invalid) {
       this.ms.addInfo("Invalid Entry", "Some fields are incomplete or invalid.")
-      console.log(this.form.controls)
       return;
     }
 

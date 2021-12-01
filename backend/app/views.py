@@ -53,6 +53,18 @@ class CategoryViewSet(viewsets.ModelViewSet):
     serializer_class = CategorySerializer
     permission_classes = [permissions.IsAuthenticatedOrReadOnly]
 
+    @action(detail=False, methods=['GET'], name='Get Income')
+    def income(self, request, format=None):
+        queryset = Category.objects.filter(category_income = True)
+        serializer = CategorySerializer(queryset, many=True)
+        return Response(serializer.data)
+
+    @action(detail=False, methods=['GET'], name='Get Spending')
+    def spending(self, request, format=None):
+         queryset = Category.objects.filter(category_income = False)
+         serializer = CategorySerializer(queryset, many=True)
+         return Response(serializer.data)
+
 class ChallengeViewSet(viewsets.ModelViewSet):
     queryset = Challenge.objects.all()
     serializer_class = ChallengeSerializer

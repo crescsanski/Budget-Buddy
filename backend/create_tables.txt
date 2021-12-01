@@ -93,7 +93,7 @@ CREATE TABLE IF NOT EXISTS budgetBuddy.challenge_inventory(
 );
 CREATE TABLE IF NOT EXISTS budgetBuddy.receipt(
 	receipt_id SERIAL,
-    	receipt_amount DECIMAL(10,2),
+    receipt_amount DECIMAL(10,2),
 	receipt_date TIMESTAMP NOT NULL,		
 	reccuring INT NOT NULL,
 	income BOOLEAN NOT NULL,

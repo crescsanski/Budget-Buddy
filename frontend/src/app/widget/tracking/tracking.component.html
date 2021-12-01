@@ -19,6 +19,11 @@
                 <p-inputNumber formControlName="product_price" 
                 mode="currency" currency="USD" locale="en-US"></p-inputNumber>
                 <br>
+                <p>Frequency</p>
+                <p-dropdown [options]="frequencyOptions"
+                [autoDisplayFirst]=false
+                formControlName="reocurring"></p-dropdown>
+                <br>
                 <button style="margin-top: 2em" class="track" pButton type="submit" label='Track'></button>
             </div>
         </form>

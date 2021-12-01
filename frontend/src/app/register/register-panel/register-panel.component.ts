@@ -43,8 +43,6 @@ export class RegisterPanelComponent implements OnInit {
 
   register() {
     this.registerAttempt = true;
-
-    this.f.notifications.value ? this.f.notifications.setValue("1") : this.f.notifications.setValue("0");
  
     // stop here if form is invalid
     if (this.form.invalid) {

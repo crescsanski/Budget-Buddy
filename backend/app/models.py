@@ -332,8 +332,8 @@ class Receipt(models.Model):
     receipt_id = models.AutoField(primary_key=True)
     receipt_amount = models.DecimalField(max_digits=10, decimal_places=2)
     receipt_date = models.DateField()
-    reoccuring = models.IntegerField()
-    is_income = models.TextField()
+    reoccuring = models.IntegerField(null=True, blank=True)
+    is_income = models.BooleanField(null=True, blank=False)
     user = models.ForeignKey('Users', models.DO_NOTHING, blank=True, null=True)
 
 

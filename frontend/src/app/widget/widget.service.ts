@@ -17,11 +17,20 @@ import { BasicManualSpend } from '../models/formModels/basicManualSpend';
 import { Income } from '../models/income';
 import { BasicManualIncome } from '../models/formModels/basicManualIncome';
 import { IncomeService } from '../services/income.service';
+import { SelectItem } from 'primeng/api';
 
 
 @Injectable({ providedIn: 'root'
 })
 export class WidgetService {
+
+   frequencyOptions: SelectItem[] = [
+    {label: 'Daily', value: 1},
+    {label: 'Weekly', value: 7,},
+    {label: 'Bi-Weekly', value: 14},
+    {label: 'Monthly', value: 30},
+    {label: 'Annually', value: 365}
+  ]
 
   constructor(
     private http: HttpClient,
@@ -56,7 +65,7 @@ export class WidgetService {
     {
         return this.rs.addReceipt({
             receipt_date: this.dp.transform(inp.receipt_date, 'yyyy-MM-dd'),
-            is_income: '0', reoccuring: '0',
+            is_income: false, reoccuring: inp.reocurring,
             receipt_amount: inp.product_price,
             user: this.as.currentUserValue.user_id})
             .pipe(
@@ -88,7 +97,7 @@ export class WidgetService {
       {
           return this.rs.addReceipt({
               receipt_date: this.dp.transform(inp.receipt_date, 'yyyy-MM-dd'),
-              is_income: '1', reoccuring: '0',
+              is_income: true, reoccuring: inp.reocurring,
               receipt_amount: inp.income_amount,
               user: this.as.currentUserValue.user_id})
               .pipe(
