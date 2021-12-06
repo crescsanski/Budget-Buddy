@@ -72,7 +72,8 @@ class Users(AbstractBaseUser, models.Model):
     password = models.CharField(unique=True, max_length=255, blank=False, null=True)
     registered = models.DateField(null=True, blank=True)
     birth_date = models.DateField(null=True, blank=True)
-
+    user_level = models.IntegerField(blank=True, null=True)
+    user_exp = models.IntegerField(blank=True, null=True)
     security_question = models.ForeignKey(SecurityQuestion, models.DO_NOTHING, blank=True, null=True)
     security_answer = models.CharField(max_length=255, blank=True, null=True)
     notifications = models.BooleanField(blank=True, null=True)
@@ -108,17 +109,6 @@ class Users(AbstractBaseUser, models.Model):
         managed = True
         db_table = 'users'
 
-class Avatar(models.Model):
-    avatar_id = models.AutoField(primary_key=True)
-    avatar_level = models.IntegerField(blank=True, null=True)
-    avatar_exp = models.IntegerField(blank=True, null=True)
-    user = models.ForeignKey('Users', models.DO_NOTHING, blank=True, null=True)
-
-    class Meta:
-        managed = True
-        db_table = 'avatar'
-
-
 class Budget(models.Model):
     budget_id = models.AutoField(primary_key=True)
     projected_income = models.DecimalField(max_digits=10, decimal_places=2, blank=True, null=True)
@@ -129,6 +119,7 @@ class Budget(models.Model):
     expenses_actual = models.DecimalField(max_digits=10, decimal_places=2, blank=True, null=True)
     budget_percent_goal = models.DecimalField(max_digits=10, decimal_places=2, blank=True, null=True)
     start_date = models.DateField(blank=True, null=True)
+    end_date = models.DateField(blank=True, null=True)
     user = models.ForeignKey('Users', models.DO_NOTHING, blank=True, null=True)
 
 
@@ -168,9 +159,9 @@ class Challenge(models.Model):
 class ChallengeInventory(models.Model):
     challenge_inventory_id = models.AutoField(primary_key=True)
     challenge_start_date = models.DateField()
-    challenge_completion = models.BooleanField(blank=True, null=True)
+    challenge_completion = models.DateField()
     challenge = models.ForeignKey(Challenge, models.DO_NOTHING, blank=True, null=True)
-    avatar = models.ForeignKey(Avatar, models.DO_NOTHING, blank=True, null=True)
+    user = models.ForeignKey(Users, models.DO_NOTHING, blank=True, null=True)
 
 
     class Meta:
@@ -270,7 +261,7 @@ class Inventory(models.Model):
     inventory_id = models.AutoField(primary_key=True)
     equipped = models.BooleanField(blank=True, null=True)
     item = models.ForeignKey('Items', models.DO_NOTHING, blank=True, null=True)
-    avatar = models.ForeignKey(Avatar, models.DO_NOTHING, blank=True, null=True)
+    user = models.ForeignKey(Users, models.DO_NOTHING, blank=True, null=True)
 
 
     class Meta:
@@ -365,3 +356,20 @@ class WidgetInventory(models.Model):
     class Meta:
         managed = True
         db_table = 'widget_inventory'
+
+
+# Database Views
+
+class BadgesEarned(models.Model):
+    badge_id = models.BigIntegerField(primary_key=True)
+    user_id = models.BigIntegerField()
+    badge_name = models.CharField(max_length=255)
+    badge_description = models.CharField(max_length=255)
+    badge_completion = models.DateField()
+
+    class Meta:
+        managed = False
+        db_table = 'badges_earned'
+
+
+    

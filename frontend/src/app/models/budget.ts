@@ -8,5 +8,6 @@ export interface Budget {
     expenses_actual: number;
     budget_percent_goal: number;
     start_date: Date;
+    end_date: Date;
     user_id: number;
 }

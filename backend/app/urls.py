@@ -8,7 +8,6 @@ from app import views
 router = DefaultRouter()
 router.register(r'security_questions', views.SecurityQuestionViewSet)
 router.register(r'users', views.UsersViewSet)
-router.register(r'avatars', views.AvatarViewSet)
 router.register(r'budgets', views.BudgetViewSet)
 router.register(r'categories', views.CategoryViewSet)
 router.register(r'challenges', views.ChallengeViewSet)
@@ -28,6 +27,9 @@ router.register(r'products', views.ProductViewSet)
 router.register(r'receipts', views.ReceiptViewSet)
 router.register(r'widgets', views.WidgetViewSet)
 router.register(r'widget_inventories', views.WidgetInventoryViewSet)
+
+#Register our database views
+router.register(r'badges_earned', views.BadgesEarnedViewSet)
 
 
 
