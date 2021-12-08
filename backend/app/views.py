@@ -38,10 +38,6 @@ class UsersViewSet(viewsets.ModelViewSet):
     def perform_create(self, serializer):
         serializer.save(owner=self.request.user)
 
-class AvatarViewSet(viewsets.ModelViewSet):
-    queryset = Avatar.objects.all()
-    serializer_class = AvatarSerializer
-    permission_classes = [permissions.IsAuthenticatedOrReadOnly]
 
 class BudgetViewSet(viewsets.ModelViewSet):
     queryset = Budget.objects.all()
@@ -74,6 +70,14 @@ class ChallengeInventoryViewSet(viewsets.ModelViewSet):
     queryset = ChallengeInventory.objects.all()
     serializer_class = ChallengeInventorySerializer
     permission_classes = [permissions.IsAuthenticatedOrReadOnly]
+
+    # @action(detail=False, methods=['GET'], name='Get Completed Badges')
+    # def earnedBadges(self, request, format=None):
+    #      userId = self.kwargs.get(self.lookup_url_kwarg)
+    #      print("UserID: ", userId)
+    #      queryset = ChallengeInventory.objects.filter(challenge_completion = True, user = userId).prefetch_related('challenge')
+    #      serializer = ChallengeInventorySerializer(queryset, many=True)
+    #      return Response(serializer.data)
 
 class CompetitionStatusViewSet(viewsets.ModelViewSet):
     queryset = CompetitionStatus.objects.all()
@@ -215,4 +219,17 @@ class Logout(GenericAPIView):
         request.user.auth_token.delete()
         logout(request)
         return Response(status=status.HTTP_200_OK)
+
+
+# Views for Database Views
+
+class BadgesEarnedViewSet(viewsets.ReadOnlyModelViewSet):
+    queryset = BadgesEarned.objects.all()
+    serializer_class = BadgesEarnedSerializer
+    permission_classes = [permissions.IsAuthenticatedOrReadOnly]
+
+    def retrieve(self, request, pk=None):
+        queryset = BadgesEarned.objects.filter(user_id = pk)
+        serializer = BadgesEarnedSerializer(queryset, many=True)
+        return Response(serializer.data)
 

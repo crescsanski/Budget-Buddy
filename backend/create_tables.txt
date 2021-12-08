@@ -65,7 +65,7 @@ CREATE TABLE IF NOT EXISTS budgetBuddy.trigger(
 );
 CREATE TABLE IF NOT EXISTS budgetBuddy.challenge(
 	challenge_id SERIAL,
-    	challenge_name VARCHAR(255) NOT NULL,
+    challenge_name VARCHAR(255) NOT NULL,
 	challenge_description VARCHAR(255) NOT NULL,
 	challenge_type VARCHAR(255) NOT NULL,		
 	challenge_time_given INT NOT NULL,
@@ -211,7 +211,7 @@ CREATE TABLE IF NOT EXISTS budgetBuddy.competition_status(
 );
 CREATE TABLE IF NOT EXISTS budgetBuddy.competitions(
 	competition_id SERIAL,
-	competition_type VARCHAR (255),	
+	competition_type VARCHAR (255),
 	user_2_id INT NOT NULL,
 	competition_start_date DATE NOT NULL,	
 	competition_winner INT,	
@@ -233,3 +233,20 @@ CREATE TABLE IF NOT EXISTS budgetBuddy.global_competitions(
 	PRIMARY KEY (global_competition_id),
 	CONSTRAINT fk_globalcompetitionsusers FOREIGN KEY(user_id) REFERENCES budgetBuddy.users(user_id)
 );
+
+/*Database Views*/
+CREATE OR REPLACE VIEW budgetBuddy.badges_earned AS
+  SELECT
+  row_number() OVER () as badge_id,
+  u.user_id,
+  ch.challenge_name as badge_name,
+  ch.challenge_description as badge_description,
+  ci.challenge_completion as badge_completion
+  FROM
+  budgetBuddy.challenge_inventory ci
+  INNER JOIN budgetBuddy.users u
+  ON ci.user_id = u.user_id
+  INNER JOIN budgetBuddy.challenge ch
+  ON ci.challenge_id = ch.challenge_id
+ WHERE ci.challenge_completion IS NOT NULL;
+

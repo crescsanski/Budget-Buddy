@@ -38,11 +38,6 @@ class UserRegistrationSerializer(serializers.ModelSerializer):
 
         return super(UserRegistrationSerializer, self).validate(data)
 
-class AvatarSerializer(serializers.ModelSerializer):
-    class Meta: 
-        model = Avatar
-        fields = '__all__'
-
 class BudgetSerializer(serializers.ModelSerializer):
     class Meta:
         model = Budget
@@ -136,6 +131,13 @@ class WidgetSerializer(serializers.ModelSerializer):
 class WidgetInventorySerializer(serializers.ModelSerializer):
     class Meta:
         model = WidgetInventory
+        fields = '__all__'
+
+# Serializers for Database Views
+
+class BadgesEarnedSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = BadgesEarned
         fields = '__all__'
 
 
