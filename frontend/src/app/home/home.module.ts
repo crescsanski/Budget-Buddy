@@ -6,6 +6,9 @@ import { MenuComponent } from './main-page/menu/menu.component';
 import {MenuModule} from 'primeng/menu';
 import { ButtonModule } from 'primeng/button';
 import { RippleModule } from 'primeng/ripple';
+import { NewBudgetComponent } from './budget-creator/new-budget/new-budget.component';
+import { BudgetPanelComponent } from './budget-creator/budget-panel/budget-panel.component';
+import { PrimengModule } from '../primeng/primeng.module';
 
 
 
@@ -15,14 +18,17 @@ import { RippleModule } from 'primeng/ripple';
 @NgModule({
   declarations: [
     MainPageComponent,
-    MenuComponent
+    MenuComponent,
+    NewBudgetComponent,
+    BudgetPanelComponent,
   ],
   imports: [
     CommonModule,
     MenuModule,
     ButtonModule,
     RippleModule,
-    WidgetModule  ],
+    WidgetModule,
+    PrimengModule  ],
  
 })
 export class HomeModule { }

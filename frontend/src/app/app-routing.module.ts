@@ -1,3 +1,4 @@
+import { NewBudgetComponent } from './home/budget-creator/new-budget/new-budget.component';
 import { LoginPageComponent } from './login/login-page/login-page.component';
 import { MainPageComponent } from './home/main-page/main-page.component';
 import { NgModule } from '@angular/core';
@@ -9,8 +10,9 @@ import { RegisterPageComponent } from './register/register-page/register-page.co
 
 const routes: Routes = [
   { path: '', redirectTo: '/main-page', pathMatch: 'full' },
-  {path: 'main-page', component: MainPageComponent, canActivate: [AuthGuard]},
+  {path: 'main-page', component: MainPageComponent, /*canActivate: [AuthGuard]*/},
   {path: 'login-page', component: LoginPageComponent},
+  {path: 'new-budget', component: NewBudgetComponent},
   {path: 'register-page', component: RegisterPageComponent}
 ];
 

@@ -34,9 +34,22 @@ button {
   background-color: #ffffff;
 }
 
+.button-emphasis {
+  color: white;
+  background-color: $blue;
+  border-color: $blue;
+}
+
 .link {
   &:hover {
     opacity: 50%;
+    cursor: pointer;
+  }
+}
+
+.clickable {
+  &:hover {
+    transform: scale(1.1);
     cursor: pointer;
   }
 }
