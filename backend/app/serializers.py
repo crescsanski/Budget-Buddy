@@ -38,6 +38,11 @@ class UserRegistrationSerializer(serializers.ModelSerializer):
 
         return super(UserRegistrationSerializer, self).validate(data)
 
+class ValidateChallengeSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = ChallengeInventory
+        fields = ['user', 'challenge']
+
 class BudgetSerializer(serializers.ModelSerializer):
     class Meta:
         model = Budget

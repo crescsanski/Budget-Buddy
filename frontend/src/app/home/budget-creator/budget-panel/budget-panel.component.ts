@@ -6,7 +6,11 @@ import { MessageService } from 'src/app/services/message.service';
 import {SelectItem} from 'primeng/api';
 import { WidgetService } from 'src/app/widget/widget.service';
 import { trigger, transition, animate, style } from '@angular/animations'
-import { delay } from 'rxjs/operators';
+import { delay, first } from 'rxjs/operators';
+import { BudgetService } from 'src/app/services/budget.service';
+import { Budget } from 'src/app/models/budget';
+import { AuthService } from 'src/app/services/auth.service';
+import { CategoryService } from 'src/app/services/category.service';
 
 @Component({
   selector: 'app-budget-panel',
@@ -28,6 +32,7 @@ import { delay } from 'rxjs/operators';
 export class BudgetPanelComponent implements OnInit {
   
   prompts: newBudgetPrompt[];
+  catOptions: Category[];
   form: FormArray
   currentPanel: any;
   panelNumber: number = 0;
@@ -37,7 +42,17 @@ export class BudgetPanelComponent implements OnInit {
   
 
   constructor(private ws: WidgetService, private fb: FormBuilder,
+    private bs: BudgetService,
+    private as: AuthService,
+    private cs: CategoryService,
     private ms: MessageService) {
+
+      this.cs.getCategories().subscribe(
+        (cats: Category[]) => 
+        {
+          this.catOptions = cats;
+        }
+      )
     
     this.prompts = [
       {icon: '../../../../assets/icons/budget-icons/help.png', categoryTitle: 'What\'s Your Budget?'},
@@ -56,7 +71,7 @@ export class BudgetPanelComponent implements OnInit {
       {icon: '../../../../assets/icons/budget-icons/insurance.png', categoryTitle: 'Insurance'},
       {icon: '../../../../assets/icons/budget-icons/medical.png', categoryTitle: 'Medical'},
       {icon: '../../../../assets/icons/budget-icons/investment.png', categoryTitle: 'Investment'},
-      {icon: '../../../../assets/icons/budget-icons/restaraunts.png', categoryTitle: 'Restaraunts'},
+      {icon: '../../../../assets/icons/budget-icons/restaraunts.png', categoryTitle: 'Restaurants'},
       {icon: '../../../../assets/icons/budget-icons/entertainment.png', categoryTitle: 'Entertainment'},
       {icon: '../../../../assets/icons/budget-icons/clothing.png', categoryTitle: 'Clothing'},
       {icon: '../../../../assets/icons/budget-icons/gift.png', categoryTitle: 'Gifts'},
@@ -146,7 +161,32 @@ export class BudgetPanelComponent implements OnInit {
       this.ms.addInfo("Invalid Entry", "Some fields are incomplete or invalid.")
         return;
     }
-  }
+
+    let catID = this.catOptions.find(val => 
+      this.currentPanel.categoryTitle.includes(val.category_name)).category_id
+
+    let budget: Budget = {
+      user: this.as.currentUserValue.user_id,
+      category: catID,
+      estimated_amount: x.get('amount').value,
+      last_modified_date: new Date().toISOString()
+    }
+
+    this.bs.addBudget(budget)
+    .pipe(first())
+    .subscribe({
+        next: () => {
+            this.ms.addSuccess('Budget Successfully Record', "");
+            this.pageForward();
+        },
+        error: error => {
+            for (const key in error)
+            {
+              this.ms.addError(`Error in Recording Budget: ${key}`, error[key]);
+            }
+        }
+    });
+}
  
 
 }

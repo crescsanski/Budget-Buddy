@@ -77,7 +77,7 @@ export class CategoryService {
       // if not search term, return empty category array.
       return of([]);
     }
-    return this.http.get<Category[]>(`${this.categoriesUrl}/?name=${term}`).pipe(
+    return this.http.get<Category[]>(`${this.categoriesUrl}/?category_name=${term}`).pipe(
       tap(x => x.length ?
          this.log(`found categories matching "${term}"`) :
          this.log(`no categories matching "${term}"`)),

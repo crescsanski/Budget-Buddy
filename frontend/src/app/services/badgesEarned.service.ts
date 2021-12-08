@@ -11,7 +11,7 @@ import { MessageService } from './message.service';
 @Injectable({ providedIn: 'root' })
 export class BadgesEarnedService {
 
-  private badgesEarnedUrl = 'api/badges_earned/';  // URL to web api
+  private badgesEarnedUrl = 'api/badges_earned';  // URL to web api
 
   httpOptions = {
     headers: new HttpHeaders({ 'Content-Type': 'application/json' })

@@ -14,6 +14,7 @@ from app.models import *
 from django.contrib.auth.password_validation import CommonPasswordValidator, NumericPasswordValidator, UserAttributeSimilarityValidator, validate_password, MinimumLengthValidator
 from app.serializers import *
 from django.contrib import auth
+from django.db import connection
 
 class SecurityQuestionViewSet(viewsets.ModelViewSet):
     queryset = SecurityQuestion.objects.all()
@@ -48,6 +49,7 @@ class CategoryViewSet(viewsets.ModelViewSet):
     queryset = Category.objects.all()
     serializer_class = CategorySerializer
     permission_classes = [permissions.IsAuthenticated]
+    filterset_fields = '__all__'
 
     @action(detail=False, methods=['GET'], name='Get Income')
     def income(self, request, format=None):
@@ -234,6 +236,26 @@ class Logout(GenericAPIView):
         request.user.auth_token.delete()
         logout(request)
         return Response(status=status.HTTP_200_OK)
+
+class ValidateChallenge(GenericAPIView):
+    permission_classes = [permissions.IsAuthenticated]
+    serializer_class = ValidateChallengeSerializer
+    
+    @action(detail=False, methods=['post'])
+    def post(self, request, format=None):
+
+        serializer = self.serializer_class(data=request.data)
+  
+        serializer.is_valid(raise_exception=True)
+
+        type = serializer.validated_data
+
+        with connection.cursor() as cursor:
+            cursor.callproc('validate_challenge', [type.user, type.challenge])
+            result = cursor.fetchall()
+        
+
+        return Response(result)
 
 
 # Views for Database Views

@@ -42,6 +42,7 @@ urlpatterns = [
     path('auth/',views.CustomAuthToken.as_view()),
     path('auth/logout/',views.Logout.as_view()),
     path('auth/register/', views.RegisterView.as_view()),
+    path('validate_challenge/', views.ValidateChallenge.as_view()),
     path('', include(router.urls)),
 ]
 

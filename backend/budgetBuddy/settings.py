@@ -53,13 +53,15 @@ INSTALLED_APPS = [
     # Add the REST Framework
     'rest_framework',
     # Add CORS
-    'corsheaders'
+    'corsheaders',
+    'django_filters'
 ]
 
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': [
         'budgetBuddy.authentication.TokenExpireAuthentication',
-    ]
+    ],
+    'DEFAULT_FILTER_BACKENDS': ['django_filters.rest_framework.DjangoFilterBackend']
 }
 
 MIDDLEWARE = [

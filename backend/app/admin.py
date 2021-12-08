@@ -5,7 +5,7 @@ from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
 from django.contrib.auth.forms import ReadOnlyPasswordHashField
 from django.core.exceptions import ValidationError
 
-from app.models import Users, Category, Product, Receipt, Challenge, ChallengeInventory
+from app.models import *
 
 
 class UserCreationForm(forms.ModelForm):
@@ -86,3 +86,22 @@ admin.site.register(Product)
 admin.site.register(Receipt)
 admin.site.register(Challenge)
 admin.site.register(ChallengeInventory)
+admin.site.register(SecurityQuestion)
+admin.site.register(Budget)
+admin.site.register(Notifications)
+admin.site.register(NotificationsList)
+admin.site.register(Trigger)
+admin.site.register(Competitions)
+admin.site.register(CompetitionStatus)
+admin.site.register(Difficulty)
+admin.site.register(Inventory)
+admin.site.register(Levels)
+admin.site.register(FriendStatus)
+admin.site.register(Friends)
+admin.site.register(GlobalCompetitions)
+admin.site.register(Income)
+admin.site.register(Items)
+admin.site.register(Widget)
+admin.site.register(WidgetInventory)
+admin.site.register(UserBudgetGoal)
+admin.site.register(BadgesEarned)
