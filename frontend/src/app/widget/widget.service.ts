@@ -25,11 +25,10 @@ import { SelectItem } from 'primeng/api';
 export class WidgetService {
 
    frequencyOptions: SelectItem[] = [
-    {label: 'Daily', value: 1},
-    {label: 'Weekly', value: 7,},
-    {label: 'Bi-Weekly', value: 14},
-    {label: 'Monthly', value: 30},
-    {label: 'Annually', value: 365}
+    {label: 'Every 1st Day of 1st Week', value: 1},
+    {label: 'Every 1st Day of 2nd Week', value: 2,},
+    {label: 'Every 1st Day of 3rd Week', value: 3},
+    {label: 'Every 1st Day of 4th Week', value: 4}
   ]
 
   constructor(

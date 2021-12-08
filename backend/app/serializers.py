@@ -47,6 +47,21 @@ class CategorySerializer(serializers.ModelSerializer):
     class Meta:
         model = Category
         fields = '__all__'
+
+class LevelsSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Levels
+        fields = '__all__'
+
+class BudgetGoalSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = UserBudgetGoal
+        fields = '__all__'
+
+class TriggerSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Trigger
+        fields = '__all__'
     
 class ChallengeSerializer(serializers.ModelSerializer):
     class Meta:

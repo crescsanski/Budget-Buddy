@@ -56,7 +56,25 @@ export class RegisterPanelComponent implements OnInit {
         .subscribe({
             next: () => {
                 this.messageService.addSuccess('Registration successful', "");
-                this.router.navigateByUrl('/login-page');
+                //let's auto-log in the user with the inputted data
+                this.authService.login(this.form.get('username').value, this.form.get('password').value)
+                .pipe(first())
+                .subscribe({
+                    next: (user) => {
+                        // redirect to budget creation page if login was successful
+                        if (user)
+                        {
+                          this.router.navigateByUrl('/new-budget');
+                        }
+                    },
+                    error: error => {
+                      for (const key in error)
+                      {
+                        this.messageService.addError(`Login Error: ${key}`, error[key]);
+                      }
+                        this.loading = false;
+                    }
+                });
             },
             error: error => {
                 for (const key in error)
@@ -68,6 +86,4 @@ export class RegisterPanelComponent implements OnInit {
             }
         });
     }
-
-
 }

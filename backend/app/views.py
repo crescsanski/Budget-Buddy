@@ -18,7 +18,7 @@ from django.contrib import auth
 class SecurityQuestionViewSet(viewsets.ModelViewSet):
     queryset = SecurityQuestion.objects.all()
     serializer_class = SecurityQuestionSerializer
-    permission_classes = [permissions.IsAuthenticatedOrReadOnly]
+    permission_classes = [permissions.IsAuthenticated]
 
 class UsersViewSet(viewsets.ModelViewSet):
     """
@@ -28,7 +28,7 @@ class UsersViewSet(viewsets.ModelViewSet):
     """
     queryset = Users.objects.all()
     serializer_class = UsersSerializer
-    permission_classes = [permissions.IsAuthenticatedOrReadOnly]
+    permission_classes = [permissions.IsAuthenticated]
 
     @action(detail=True, renderer_classes=[renderers.StaticHTMLRenderer])
     def highlight(self, request, *args, **kwargs):
@@ -42,12 +42,12 @@ class UsersViewSet(viewsets.ModelViewSet):
 class BudgetViewSet(viewsets.ModelViewSet):
     queryset = Budget.objects.all()
     serializer_class = BudgetSerializer
-    permission_classes = [permissions.IsAuthenticatedOrReadOnly]
+    permission_classes = [permissions.IsAuthenticated]
 
 class CategoryViewSet(viewsets.ModelViewSet):
     queryset = Category.objects.all()
     serializer_class = CategorySerializer
-    permission_classes = [permissions.IsAuthenticatedOrReadOnly]
+    permission_classes = [permissions.IsAuthenticated]
 
     @action(detail=False, methods=['GET'], name='Get Income')
     def income(self, request, format=None):
@@ -64,12 +64,12 @@ class CategoryViewSet(viewsets.ModelViewSet):
 class ChallengeViewSet(viewsets.ModelViewSet):
     queryset = Challenge.objects.all()
     serializer_class = ChallengeSerializer
-    permission_classes = [permissions.IsAuthenticatedOrReadOnly]
+    permission_classes = [permissions.IsAuthenticated]
 
 class ChallengeInventoryViewSet(viewsets.ModelViewSet):
     queryset = ChallengeInventory.objects.all()
     serializer_class = ChallengeInventorySerializer
-    permission_classes = [permissions.IsAuthenticatedOrReadOnly]
+    permission_classes = [permissions.IsAuthenticated]
 
     # @action(detail=False, methods=['GET'], name='Get Completed Badges')
     # def earnedBadges(self, request, format=None):
@@ -82,77 +82,92 @@ class ChallengeInventoryViewSet(viewsets.ModelViewSet):
 class CompetitionStatusViewSet(viewsets.ModelViewSet):
     queryset = CompetitionStatus.objects.all()
     serializer_class = CompetitionStatusSerializer
-    permission_classes = [permissions.IsAuthenticatedOrReadOnly]
+    permission_classes = [permissions.IsAuthenticated]
 
 class CompetitionsViewSet(viewsets.ModelViewSet):
     queryset = Competitions.objects.all()
     serializer_class = CompetitionsSerializer
-    permission_classes = [permissions.IsAuthenticatedOrReadOnly]
+    permission_classes = [permissions.IsAuthenticated]
 
 class DifficultyViewSet(viewsets.ModelViewSet):
     queryset = Difficulty.objects.all()
     serializer_class = DifficultySerializer
-    permission_classes = [permissions.IsAuthenticatedOrReadOnly]
+    permission_classes = [permissions.IsAuthenticated]
 
 class FriendStatusViewSet(viewsets.ModelViewSet):
     queryset = FriendStatus.objects.all()
     serializer_class = FriendStatusSerializer
-    permission_classes = [permissions.IsAuthenticatedOrReadOnly]
+    permission_classes = [permissions.IsAuthenticated]
 
 class FriendsViewSet(viewsets.ModelViewSet):
     queryset = Friends.objects.all()
     serializer_class = FriendsSerializer
-    permission_classes = [permissions.IsAuthenticatedOrReadOnly]
+    permission_classes = [permissions.IsAuthenticated]
 
 class GlobalCompetitionsViewSet(viewsets.ModelViewSet):
     queryset = GlobalCompetitions.objects.all()
     serializer_class = GlobalCompetitionsSerializer
-    permission_classes = [permissions.IsAuthenticatedOrReadOnly]
+    permission_classes = [permissions.IsAuthenticated]
 
 class IncomeViewSet(viewsets.ModelViewSet):
     queryset = Income.objects.all()
     serializer_class = IncomeSerializer
-    permission_classes = [permissions.IsAuthenticatedOrReadOnly]
+    permission_classes = [permissions.IsAuthenticated]
 
 class InventoryViewSet(viewsets.ModelViewSet):
     queryset = Inventory.objects.all()
     serializer_class = InventorySerializer
-    permission_classes = [permissions.IsAuthenticatedOrReadOnly]
+    permission_classes = [permissions.IsAuthenticated]
 
 class ItemsViewSet(viewsets.ModelViewSet):
     queryset = Items.objects.all()
     serializer_class = ItemsSerializer
-    permission_classes = [permissions.IsAuthenticatedOrReadOnly]
+    permission_classes = [permissions.IsAuthenticated]
 
 class NotificationsViewSet(viewsets.ModelViewSet):
     queryset = Notifications.objects.all()
     serializer_class = NotificationsSerializer
-    permission_classes = [permissions.IsAuthenticatedOrReadOnly]
+    permission_classes = [permissions.IsAuthenticated]
+
+class LevelsViewSet(viewsets.ModelViewSet):
+    queryset = Levels.objects.all()
+    serializer_class = LevelsSerializer
+    permission_classes = [permissions.IsAuthenticated]
+
+class BudgetGoalsViewSet(viewsets.ModelViewSet):
+    queryset = UserBudgetGoal.objects.all()
+    serializer_class = BudgetGoalSerializer
+    permission_classes = [permissions.IsAuthenticated]
+
+class TriggerViewSet(viewsets.ModelViewSet):
+    queryset = Trigger.objects.all()
+    serializer_class = TriggerSerializer
+    permission_classes = [permissions.IsAuthenticated]
 
 class NotificationsListViewSet(viewsets.ModelViewSet):
     queryset = NotificationsList.objects.all()
     serializer_class = NotificationsListSerializer
-    permission_classes = [permissions.IsAuthenticatedOrReadOnly]
+    permission_classes = [permissions.IsAuthenticated]
 
 class ProductViewSet(viewsets.ModelViewSet):
     queryset = Product.objects.all()
     serializer_class = ProductSerializer
-    permission_classes = [permissions.IsAuthenticatedOrReadOnly]
+    permission_classes = [permissions.IsAuthenticated]
 
 class ReceiptViewSet(viewsets.ModelViewSet):
     queryset = Receipt.objects.all()
     serializer_class = ReceiptSerializer
-    permission_classes = [permissions.IsAuthenticatedOrReadOnly]
+    permission_classes = [permissions.IsAuthenticated]
 
 class WidgetViewSet(viewsets.ModelViewSet):
     queryset = Widget.objects.all()
     serializer_class = WidgetSerializer
-    permission_classes = [permissions.IsAuthenticatedOrReadOnly]
+    permission_classes = [permissions.IsAuthenticated]
 
 class WidgetInventoryViewSet(viewsets.ModelViewSet):
     queryset = WidgetInventory.objects.all()
     serializer_class = WidgetInventorySerializer
-    permission_classes = [permissions.IsAuthenticatedOrReadOnly]
+    permission_classes = [permissions.IsAuthenticated]
 
 
 class RegisterView(GenericAPIView):
@@ -211,7 +226,7 @@ class CustomAuthToken(ObtainAuthToken):
         })
     
 class Logout(GenericAPIView):
-    permission_classes = [permissions.IsAuthenticatedOrReadOnly]
+    permission_classes = [permissions.IsAuthenticated]
     
     @action(detail=False, methods=['post'])
     def post(self, request, format=None):
@@ -226,7 +241,7 @@ class Logout(GenericAPIView):
 class BadgesEarnedViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = BadgesEarned.objects.all()
     serializer_class = BadgesEarnedSerializer
-    permission_classes = [permissions.IsAuthenticatedOrReadOnly]
+    permission_classes = [permissions.IsAuthenticated]
 
     def retrieve(self, request, pk=None):
         queryset = BadgesEarned.objects.filter(user_id = pk)

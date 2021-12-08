@@ -1,6 +1,6 @@
 import { newBudgetPrompt } from './../../../models/newBudgetPrompt';
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { Form, FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Category } from 'src/app/models/category';
 import { MessageService } from 'src/app/services/message.service';
 import {SelectItem} from 'primeng/api';
@@ -28,14 +28,16 @@ import { delay } from 'rxjs/operators';
 export class BudgetPanelComponent implements OnInit {
   
   prompts: newBudgetPrompt[];
+  form: FormArray
   currentPanel: any;
   panelNumber: number = 0;
-  frequencyOptions!: SelectItem[];
+  //frequencyOptions!: SelectItem[];
   visible=true;
   animationDirection: string = "forward";
   
 
-  constructor(private ws: WidgetService) {
+  constructor(private ws: WidgetService, private fb: FormBuilder,
+    private ms: MessageService) {
     
     this.prompts = [
       {icon: '../../../../assets/icons/budget-icons/help.png', categoryTitle: 'What\'s Your Budget?'},
@@ -65,13 +67,36 @@ export class BudgetPanelComponent implements OnInit {
       {icon: '../../../../assets/icons/budget-icons/thumbs-up.png', categoryTitle: 'All Done!'},
     ]
 
-    this.frequencyOptions = this.ws.frequencyOptions;
+    //this.frequencyOptions = this.ws.frequencyOptions;
    }
 
   ngOnInit(): void {
 
     this.currentPanel = this.prompts[this.panelNumber];
 
+    this.form = this.fb.array([])
+    for (let i of this.prompts)
+    {
+      let foCom = this.fb.group({
+        amount: ['0', Validators.required],
+        //reocurring: ['', Validators.required]
+      })
+  
+      this.form.push(foCom)
+    }
+
+  }
+
+  //shortcut to access all form components
+  get f()
+  {
+    return this.form.controls;
+  }
+
+  //shortcut to access one form component
+  c(index: number): FormGroup
+  {
+    return this.f[index] as FormGroup
   }
 
   pageForward(){
@@ -102,7 +127,7 @@ export class BudgetPanelComponent implements OnInit {
   }
 
   slideInOutStart(event) {
- 
+
   }
   
   slideInOutEnd(event) {
@@ -113,6 +138,15 @@ export class BudgetPanelComponent implements OnInit {
     }
   }
 
+  track(x: FormGroup)
+  {
+    //stop here if the form is invalid
+    if (x.invalid)
+    {
+      this.ms.addInfo("Invalid Entry", "Some fields are incomplete or invalid.")
+        return;
+    }
+  }
  
 
 }

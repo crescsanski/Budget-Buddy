@@ -9,6 +9,7 @@ import { RippleModule } from 'primeng/ripple';
 import { NewBudgetComponent } from './budget-creator/new-budget/new-budget.component';
 import { BudgetPanelComponent } from './budget-creator/budget-panel/budget-panel.component';
 import { PrimengModule } from '../primeng/primeng.module';
+import { ReactiveFormsModule } from '@angular/forms';
 
 
 
@@ -28,7 +29,8 @@ import { PrimengModule } from '../primeng/primeng.module';
     ButtonModule,
     RippleModule,
     WidgetModule,
-    PrimengModule  ],
+    PrimengModule,
+    ReactiveFormsModule  ],
  
 })
 export class HomeModule { }

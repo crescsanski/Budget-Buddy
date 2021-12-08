@@ -1,112 +1,12 @@
+# This is an auto-generated Django model module.
+# You'll have to do the following manually to clean this up:
+#   * Rearrange models' order
+#   * Make sure each model has one field with primary_key=True
+#   * Make sure each ForeignKey and OneToOneField has `on_delete` set to the desired behavior
+#   * Remove `managed = False` lines if you wish to allow Django to create, modify, and delete the table
+# Feel free to rename the models, but don't rename db_table values or field names.
 from django.db import models
-from django.core.validators import EmailValidator, RegexValidator
-from datetime import date
-from django.contrib.auth.models import (
-    BaseUserManager, AbstractBaseUser
-)
 
-class SecurityQuestion(models.Model):
-    security_question_id = models.AutoField(primary_key=True)
-    security_question_name = models.CharField(max_length=255)
-    security_question_question = models.CharField(max_length=255)
-
-    class Meta:
-        managed =  True
-        db_table = 'security_question'
-
-class MyUserManager(BaseUserManager):
-    def create_user(self, username, password=None, extra=None):
-        """
-        Creates and saves a User with the given email, date of
-        birth and password.
-        """
-    
-        if extra == None:
-            user = self.model(
-                username=username
-            )
-        else:
-            user = self.model(
-                username=username,
-                email=extra['email'] if 'email' in extra.keys() else None,
-                first_name=extra['first_name'] if 'first_name' in extra.keys() else None,
-                last_name=extra['last_name'] if 'last_name' in extra.keys() else None,
-                birth_date=extra['birth_date'] if 'birth_date' in extra.keys() else None,
-                notifications=extra['notifications'] if 'notifications' in extra.keys() else None,
-                registered=date.today(),
-                phone_number=extra['phone_number'] if 'phone_number' in extra.keys() else None,
-            )
-
-        user.set_password(password)
-        user.save(using=self._db)
-        return user
-
-    def create_superuser(self, username, password):
-        """
-        Creates and saves a superuser with the given email, date of
-        birth and password.
-        """
-        user = self.create_user(
-            username=username,
-            password=password,
-        )
-        user.is_admin = True
-        user.save(using=self._db)
-        return user
-
-
-class Users(AbstractBaseUser, models.Model):
-    email = models.EmailField(
-        verbose_name='email address',
-        validators=[EmailValidator()],
-        max_length=255,
-        unique=True,
-        blank=True,
-        null=True
-    )
-    user_id = models.AutoField(primary_key=True)
-    first_name = models.CharField(max_length=255, blank=True, null=True)
-    last_name = models.CharField(max_length=255, blank=True, null=True)
-    username = models.CharField(unique=True, max_length=255)
-    phone_number = models.CharField(unique=True, max_length=14, blank=True, null=True)
-    password = models.CharField(unique=True, max_length=255, blank=False, null=True)
-    registered = models.DateField(null=True, blank=True)
-    birth_date = models.DateField(null=True, blank=True)
-    user_exp = models.IntegerField(blank=True, null=True)
-    security_question = models.ForeignKey(SecurityQuestion, models.DO_NOTHING, blank=True, null=True)
-    security_answer = models.CharField(max_length=255, blank=True, null=True)
-    notifications = models.BooleanField(blank=True, null=True)
-
-
-    is_active = models.BooleanField(default=True)
-    is_admin = models.BooleanField(default=False)
-    objects = MyUserManager()
-
-    USERNAME_FIELD = 'username'
-    REQUIRED_FIELDS = []
-
-    def __str__(self):
-        return self.email
-
-    def has_perm(self, perm, obj=None):
-        "Does the user have a specific permission?"
-        # Simplest possible answer: Yes, always
-        return True
-
-    def has_module_perms(self, app_label):
-        "Does the user have permissions to view the app `app_label`?"
-        # Simplest possible answer: Yes, always
-        return True
-
-    @property
-    def is_staff(self):
-        "Is the user a member of staff?"
-        # Simplest possible answer: All admins are staff
-        return self.is_admin
-
-    class Meta:
-        managed = True
-        db_table = 'users'
 
 class Budget(models.Model):
     budget_id = models.AutoField(primary_key=True)
@@ -116,7 +16,7 @@ class Budget(models.Model):
     last_modified_date = models.DateTimeField(blank=True, null=True)
 
     class Meta:
-        managed =  True
+        managed = False
         db_table = 'budget'
 
 
@@ -127,7 +27,7 @@ class Category(models.Model):
     category_income = models.BooleanField()
 
     class Meta:
-        managed =  True
+        managed = False
         db_table = 'category'
 
 
@@ -147,7 +47,7 @@ class Challenge(models.Model):
     maximum = models.IntegerField(blank=True, null=True)
 
     class Meta:
-        managed =  True
+        managed = False
         db_table = 'challenge'
 
 
@@ -160,7 +60,7 @@ class ChallengeInventory(models.Model):
     user = models.ForeignKey('Users', models.DO_NOTHING, blank=True, null=True)
 
     class Meta:
-        managed =  True
+        managed = False
         db_table = 'challenge_inventory'
 
 
@@ -169,7 +69,7 @@ class CompetitionStatus(models.Model):
     competition_status_type = models.CharField(max_length=20)
 
     class Meta:
-        managed =  True
+        managed = False
         db_table = 'competition_status'
 
 
@@ -183,7 +83,7 @@ class Competitions(models.Model):
     competition_status = models.ForeignKey(CompetitionStatus, models.DO_NOTHING, blank=True, null=True)
 
     class Meta:
-        managed =  True
+        managed = False
         db_table = 'competitions'
         unique_together = (('user', 'user_2_id'),)
 
@@ -194,7 +94,7 @@ class Difficulty(models.Model):
     difficulty_description = models.CharField(max_length=255)
 
     class Meta:
-        managed =  True
+        managed = False
         db_table = 'difficulty'
 
 
@@ -203,7 +103,7 @@ class FriendStatus(models.Model):
     friend_status_type = models.CharField(max_length=20)
 
     class Meta:
-        managed =  True
+        managed = False
         db_table = 'friend_status'
 
 
@@ -214,7 +114,7 @@ class Friends(models.Model):
     friend_status = models.ForeignKey(FriendStatus, models.DO_NOTHING, blank=True, null=True)
 
     class Meta:
-        managed =  True
+        managed = False
         db_table = 'friends'
         unique_together = (('user', 'user_2_id'),)
 
@@ -229,7 +129,7 @@ class GlobalCompetitions(models.Model):
     user = models.ForeignKey('Users', models.DO_NOTHING, blank=True, null=True)
 
     class Meta:
-        managed =  True
+        managed = False
         db_table = 'global_competitions'
 
 
@@ -241,7 +141,7 @@ class Income(models.Model):
     category = models.ForeignKey(Category, models.DO_NOTHING, blank=True, null=True)
 
     class Meta:
-        managed =  True
+        managed = False
         db_table = 'income'
 
 
@@ -252,7 +152,7 @@ class Inventory(models.Model):
     user = models.ForeignKey('Users', models.DO_NOTHING, blank=True, null=True)
 
     class Meta:
-        managed =  True
+        managed = False
         db_table = 'inventory'
 
 
@@ -266,7 +166,7 @@ class Items(models.Model):
     unlock_level = models.IntegerField(blank=True, null=True)
 
     class Meta:
-        managed =  True
+        managed = False
         db_table = 'items'
 
 
@@ -278,7 +178,7 @@ class Levels(models.Model):
     challenge = models.ForeignKey(Challenge, models.DO_NOTHING, blank=True, null=True)
 
     class Meta:
-        managed =  True
+        managed = False
         db_table = 'levels'
 
 
@@ -288,7 +188,7 @@ class Notifications(models.Model):
     notification_message = models.CharField(max_length=255)
 
     class Meta:
-        managed =  True
+        managed = False
         db_table = 'notifications'
 
 
@@ -299,7 +199,7 @@ class NotificationsList(models.Model):
     notification = models.ForeignKey(Notifications, models.DO_NOTHING, blank=True, null=True)
 
     class Meta:
-        managed =  True
+        managed = False
         db_table = 'notifications_list'
 
 
@@ -312,7 +212,7 @@ class Product(models.Model):
     essential = models.BooleanField(blank=True, null=True)
 
     class Meta:
-        managed =  True
+        managed = False
         db_table = 'product'
 
 
@@ -321,12 +221,22 @@ class Receipt(models.Model):
     receipt_amount = models.DecimalField(max_digits=10, decimal_places=2, blank=True, null=True)
     receipt_date = models.DateTimeField()
     reccuring = models.IntegerField()
-    is_income = models.BooleanField()
+    income = models.BooleanField()
     user = models.ForeignKey('Users', models.DO_NOTHING, blank=True, null=True)
 
     class Meta:
-        managed =  True
+        managed = False
         db_table = 'receipt'
+
+
+class SecurityQuestion(models.Model):
+    security_question_id = models.AutoField(primary_key=True)
+    security_question_name = models.CharField(max_length=255)
+    security_question_question = models.CharField(max_length=255)
+
+    class Meta:
+        managed = False
+        db_table = 'security_question'
 
 
 class Trigger(models.Model):
@@ -334,7 +244,7 @@ class Trigger(models.Model):
     trigger_names = models.CharField(max_length=255, blank=True, null=True)
 
     class Meta:
-        managed =  True
+        managed = False
         db_table = 'trigger'
 
 
@@ -344,8 +254,29 @@ class UserBudgetGoal(models.Model):
     goal_amount = models.IntegerField(blank=True, null=True)
 
     class Meta:
-        managed =  True
+        managed = False
         db_table = 'user_budget_goal'
+
+
+class Users(models.Model):
+    user_id = models.AutoField(primary_key=True)
+    email = models.CharField(unique=True, max_length=255)
+    pass_field = models.CharField(db_column='pass', max_length=255)  # Field renamed because it was a Python reserved word.
+    security_question = models.ForeignKey(SecurityQuestion, models.DO_NOTHING, blank=True, null=True)
+    security_answer = models.CharField(max_length=255)
+    first_name = models.CharField(max_length=255, blank=True, null=True)
+    last_name = models.CharField(max_length=255, blank=True, null=True)
+    user_name = models.CharField(unique=True, max_length=255)
+    phone_number = models.CharField(unique=True, max_length=14, blank=True, null=True)
+    registered = models.DateField()
+    birth_date = models.DateField()
+    notifications = models.BooleanField()
+    user_exp = models.IntegerField(blank=True, null=True)
+
+    class Meta:
+        managed = False
+        db_table = 'users'
+
 
 class Widget(models.Model):
     widget_id = models.AutoField(primary_key=True)
@@ -354,7 +285,7 @@ class Widget(models.Model):
     widget_link = models.CharField(max_length=255)
 
     class Meta:
-        managed =  True
+        managed = False
         db_table = 'widget'
 
 
@@ -365,22 +296,5 @@ class WidgetInventory(models.Model):
     user = models.ForeignKey(Users, models.DO_NOTHING, blank=True, null=True)
 
     class Meta:
-        managed =  True
+        managed = False
         db_table = 'widget_inventory'
-
-
-# Database Views
-
-class BadgesEarned(models.Model):
-    badge_id = models.BigIntegerField(primary_key=True)
-    user_id = models.BigIntegerField()
-    badge_name = models.CharField(max_length=255)
-    badge_description = models.CharField(max_length=255)
-    badge_completion = models.DateField()
-
-    class Meta:
-        managed =  False
-        db_table = 'badges_earned'
-
-
-    

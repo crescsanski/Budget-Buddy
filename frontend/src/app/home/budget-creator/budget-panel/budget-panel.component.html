@@ -10,18 +10,21 @@
             <h1>{{ currentPanel.categoryTitle }}</h1>
         </div>
         <div *ngIf="currentPanel.categoryTitle != 'What\'s Your Budget?' && currentPanel.categoryTitle != 'Halfway There!' && currentPanel.categoryTitle != 'All Done!' ">
-            <form>
+            <form [formGroup]="c(panelNumber)" (ngSubmit)="track(c(panelNumber))">
                 <div class="content-area">
                     <p>Amount</p>
-                    <p-inputNumber mode="currency" currency="USD" locale="en-US"></p-inputNumber>
+                    <p-inputNumber mode="currency" formControlName="amount" currency="USD" [maxFractionDigits]=0 locale="en-US"></p-inputNumber>
                     <br>
-    
+                    
+                    <!--
                     <p>Frequency</p>
                     <p-dropdown [options]="frequencyOptions"
                     [autoDisplayFirst]=false
                     formControlName="reocurring"></p-dropdown>
-    
+                    
                     <br>
+                    -->
+
                     <div style="text-align: center;">
                         <button style="margin-top: 2em; text-align: center;" class="track button-emphasis" pButton type="submit" label='Track'></button>
                     </div>
@@ -49,7 +52,7 @@
                 <br>
             </p>
             <div style="text-align: center;">
-                <a routerLink="/main-page"><button style="margin-top: 2em; text-align: center;" class="track button-emphasis" pButton type="submit" label='Get Started'></button></a>
+                <a [routerLink]="['/main-page']"><button style="margin-top: 2em; text-align: center;" class="track button-emphasis" pButton type="submit" label='Get Started'></button></a>
             </div>
         </div>
         <br>
