@@ -54,7 +54,7 @@ export class BudgetPanelComponent implements OnInit {
       {icon: '../../../../assets/icons/budget-icons/insurance.png', categoryTitle: 'Insurance'},
       {icon: '../../../../assets/icons/budget-icons/medical.png', categoryTitle: 'Medical'},
       {icon: '../../../../assets/icons/budget-icons/investment.png', categoryTitle: 'Investment'},
-      {icon: '../../../../assets/icons/budget-icons/restraunts.png', categoryTitle: 'Restaraunts'},
+      {icon: '../../../../assets/icons/budget-icons/restaraunts.png', categoryTitle: 'Restaraunts'},
       {icon: '../../../../assets/icons/budget-icons/entertainment.png', categoryTitle: 'Entertainment'},
       {icon: '../../../../assets/icons/budget-icons/clothing.png', categoryTitle: 'Clothing'},
       {icon: '../../../../assets/icons/budget-icons/gift.png', categoryTitle: 'Gifts'},
