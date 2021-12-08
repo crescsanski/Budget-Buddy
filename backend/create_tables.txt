@@ -1,8 +1,14 @@
-CREATE SCHEMA IF NOT EXISTS budgetBuddy;
+*************************DATABASE CHANGES**************************************
+Removed 	table: budgetBuddy.user_category_budgets
 
-CREATE OR REPLACE PROCEDURE create_all_tables()
-LANGUAGE SQL
-AS $$
+Altered 	table:budgetBuddy.budget
+		table:budgetBuddy.products
+
+Added 		table:budgetBuddy.user_budget_goal
+*******************************************************************************
+
+*******************************TABLES******************************************
+
 CREATE TABLE IF NOT EXISTS budgetBuddy.security_question(
 	security_question_id SERIAL,
     	security_question_name VARCHAR(255) NOT NULL,
@@ -25,12 +31,6 @@ CREATE TABLE IF NOT EXISTS budgetBuddy.users(
 	user_exp INT,
 	PRIMARY KEY (user_id),
 	CONSTRAINT fk_userssecurityquestion FOREIGN KEY(security_question_id) REFERENCES budgetBuddy.security_question(security_question_id)
-);
-CREATE TABLE IF NOT EXISTS budgetBuddy.levels(
-	level_id SERIAL,	
-	level_number INT NOT NULL,
-	level_exp INT NOT NULL,	
-	PRIMARY KEY (level_id)		
 );
 CREATE TABLE IF NOT EXISTS budgetBuddy.difficulty(
 	difficulty_id SERIAL,
@@ -60,7 +60,7 @@ CREATE TABLE IF NOT EXISTS budgetBuddy.inventory(
 );
 CREATE TABLE IF NOT EXISTS budgetBuddy.trigger(
 	trigger_id SERIAL,
-	trigger_name VARCHAR(255),    	
+	trigger_names VARCHAR(255),    	
 	PRIMARY KEY (trigger_id) 
 );
 CREATE TABLE IF NOT EXISTS budgetBuddy.challenge(
@@ -75,7 +75,8 @@ CREATE TABLE IF NOT EXISTS budgetBuddy.challenge(
 	item_id INT,	
 	difficulty_id INT,
 	trigger_id INT,
-	status INT,
+	minimum INT,
+	maximum INT,
 	PRIMARY KEY (challenge_id),
 	CONSTRAINT fk_challengeitems FOREIGN KEY(item_id) REFERENCES budgetBuddy.items(item_id),
 	CONSTRAINT fk_challengedifficulty FOREIGN KEY(difficulty_id) REFERENCES budgetBuddy.difficulty(difficulty_id),
@@ -84,16 +85,27 @@ CREATE TABLE IF NOT EXISTS budgetBuddy.challenge(
 CREATE TABLE IF NOT EXISTS budgetBuddy.challenge_inventory(
 	challenge_inventory_id SERIAL,	
 	challenge_start_date DATE NOT NULL,
-	challenge_completion BOOLEAN NOT NULL,
+	challenge_completion TIMESTAMP,
 	challenge_id INT,
+	status INT,
 	user_id INT,
 	PRIMARY KEY (challenge_inventory_id),
 	CONSTRAINT fk_challengeinventorychallenge FOREIGN KEY(challenge_id) REFERENCES budgetBuddy.challenge(challenge_id),
 	CONSTRAINT fk_challengeinventoryuser FOREIGN KEY(user_id) REFERENCES budgetBuddy.users(user_id)
 );
+CREATE TABLE IF NOT EXISTS budgetBuddy.levels(
+	level_id SERIAL,	
+	level_number INT NOT NULL,
+	level_exp INT NOT NULL,	
+	item_id INT,
+	challenge_id INT,
+	PRIMARY KEY (level_id),
+	CONSTRAINT fk_levelsitem FOREIGN KEY(item_id) REFERENCES budgetBuddy.items(item_id),
+	CONSTRAINT fk_levelschallenge FOREIGN KEY(challenge_id) REFERENCES budgetBuddy.challenge(challenge_id)	
+);
 CREATE TABLE IF NOT EXISTS budgetBuddy.receipt(
 	receipt_id SERIAL,
-    receipt_amount DECIMAL(10,2),
+    	receipt_amount DECIMAL(10,2),
 	receipt_date TIMESTAMP NOT NULL,		
 	reccuring INT NOT NULL,
 	income BOOLEAN NOT NULL,
@@ -103,7 +115,7 @@ CREATE TABLE IF NOT EXISTS budgetBuddy.receipt(
 );
 CREATE TABLE IF NOT EXISTS budgetBuddy.category(
 	category_id SERIAL,
-    category_name VARCHAR(255) NOT NULL,	
+    	category_name VARCHAR(255) NOT NULL,	
 	category_description VARCHAR(255) NOT NULL,
 	category_income BOOLEAN NOT NULL,
 	PRIMARY KEY (category_id)
@@ -114,6 +126,7 @@ CREATE TABLE IF NOT EXISTS budgetBuddy.product(
 	product_price DECIMAL(10,2) NOT NULL,
 	receipt_id INT,
 	category_id INT,
+	essential_BOOLEAN,
 	PRIMARY KEY (product_id),	
 	CONSTRAINT fk_productreceipt FOREIGN KEY(receipt_id) REFERENCES budgetBuddy.receipt(receipt_id),
 	CONSTRAINT fk_productcategory FOREIGN KEY(category_id) REFERENCES budgetBuddy.category(category_id)
@@ -125,45 +138,25 @@ CREATE TABLE IF NOT EXISTS budgetBuddy.income(
 	receipt_id INT,
 	category_id INT,
 	PRIMARY KEY (income_id),
-	CONSTRAINT fk_productreceipt FOREIGN KEY(receipt_id) REFERENCES budgetBuddy.receipt(receipt_id),
-	CONSTRAINT fk_productcategory FOREIGN KEY(category_id) REFERENCES budgetBuddy.category(category_id)		
+	CONSTRAINT fk_incomereceipt FOREIGN KEY(receipt_id) REFERENCES budgetBuddy.receipt(receipt_id),
+	CONSTRAINT fk_incomecategory FOREIGN KEY(category_id) REFERENCES budgetBuddy.category(category_id)		
 );
 CREATE TABLE IF NOT EXISTS budgetBuddy.budget(
-	budget_id SERIAL,	
-	projected_monthly_income DECIMAL(10,2),
-	actual_monthly_income DECIMAL(10,2),
-	projected_monthly_expenses DECIMAL(10,2),
-	actual_monthly_expenses DECIMAL(10,2),
-	additional_expenses_goal DECIMAL(10,2),
-	projected_savings DECIMAL(10,2),
-	actual_monthly_savings DECIMAL(10,2),
-	budget_percent_goal DECIMAL(10,2),
-	start_date DATE,
-	user_id INT,
-	PRIMARY KEY (budget_id),
-	CONSTRAINT fk_budgetusers FOREIGN KEY(user_id) REFERENCES budgetBuddy.users(user_id)	
+	budget_id SERIAL,
+	user_id INT,	
+	category_id INT,
+	estimated_amount INT,
+	last_modified_date TIMESTAMP,	
+	PRIMARY KEY (budget_id),		
+	CONSTRAINT fk_budgetusers FOREIGN KEY(user_id) REFERENCES budgetBuddy.users(user_id),
+	CONSTRAINT fk_budgetcategory FOREIGN KEY(category_id) REFERENCES budgetBuddy.category(category_id)		
 );
-CREATE TABLE IF NOT EXISTS budgetBuddy.user_category_budgets(
-	category_budget_id SERIAL,
-	user_id INT NOT NULL,
-	housing INT,
-	transportation INT,
-	essential_groceries INT,
-	non_essential_groceries INT,
-	utilities INT,
-	insurance INT,
-	medical INT,
-	investment INT,
-	restaurant INT,
-	entertainment INT,
-	clothing INT,
-	gift INT,
-	furnishings INT,
-	pet INT,
-	tax_payment INT,
-	miscellaneous_expense INT,
+CREATE TABLE IF NOT EXISTS budgetBuddy.user_budget_goal(
+	goal_id SERIAL,
+	user_id INT,
+	goal_amount INT,
 	CONSTRAINT fk_userbudgetcategory FOREIGN KEY(user_id) REFERENCES budgetBuddy.users(user_id),
-	PRIMARY KEY (category_budget_id) 
+	PRIMARY KEY (goal_id) 
 );
 CREATE TABLE IF NOT EXISTS budgetBuddy.notifications(
 	notification_id SERIAL,

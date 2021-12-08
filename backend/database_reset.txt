@@ -16,18 +16,19 @@ DROP TABLE IF EXISTS budgetBuddy.widget;
 DROP TABLE IF EXISTS budgetBuddy.notifications_list;
 DROP TABLE IF EXISTS budgetBuddy.notifications;
 DROP TABLE IF EXISTS budgetBuddy.user_category_budgets;
+DROP TABLE IF EXISTS budgetBuddy.user_budget_goal;
 DROP TABLE IF EXISTS budgetBuddy.budget;
 DROP TABLE IF EXISTS budgetBuddy.income;
 DROP TABLE IF EXISTS budgetBuddy.product;
 DROP TABLE IF EXISTS budgetBuddy.category;
 DROP TABLE IF EXISTS budgetBuddy.receipt;
+DROP TABLE IF EXISTS budgetBuddy.levels;
 DROP TABLE IF EXISTS budgetBuddy.challenge_inventory;
 DROP TABLE IF EXISTS budgetBuddy.challenge;
 DROP TABLE IF EXISTS budgetBuddy.trigger;
 DROP TABLE IF EXISTS budgetBuddy.inventory;
 DROP TABLE IF EXISTS budgetBuddy.items;
 DROP TABLE IF EXISTS budgetBuddy.difficulty;
-DROP TABLE IF EXISTS budgetBuddy.levels;
 DROP TABLE IF EXISTS budgetBuddy.users;
 DROP TABLE IF EXISTS budgetBuddy.security_question;
 $$;
@@ -59,16 +60,10 @@ CREATE TABLE IF NOT EXISTS budgetBuddy.users(
 	phone_number VARCHAR(14) UNIQUE,
 	registered DATE NOT NULL,	
 	birth_date DATE NOT NULL,
-	notifications BIT NOT NULL,
+	notifications BOOLEAN NOT NULL,
 	user_exp INT,
 	PRIMARY KEY (user_id),
 	CONSTRAINT fk_userssecurityquestion FOREIGN KEY(security_question_id) REFERENCES budgetBuddy.security_question(security_question_id)
-);
-CREATE TABLE IF NOT EXISTS budgetBuddy.levels(
-	level_id SERIAL,	
-	level_number INT NOT NULL,
-	level_exp INT NOT NULL,	
-	PRIMARY KEY (level_id)		
 );
 CREATE TABLE IF NOT EXISTS budgetBuddy.difficulty(
 	difficulty_id SERIAL,
@@ -89,7 +84,7 @@ CREATE TABLE IF NOT EXISTS budgetBuddy.items(
 );
 CREATE TABLE IF NOT EXISTS budgetBuddy.inventory(
 	inventory_id SERIAL,
-	equipped BIT NOT NULL,
+	equipped BOOLEAN NOT NULL,
 	item_id INT,
 	user_id INT,
 	PRIMARY KEY (inventory_id),
@@ -98,7 +93,7 @@ CREATE TABLE IF NOT EXISTS budgetBuddy.inventory(
 );
 CREATE TABLE IF NOT EXISTS budgetBuddy.trigger(
 	trigger_id SERIAL,
-	trigger_name VARCHAR(255),    	
+	trigger_names VARCHAR(255),    	
 	PRIMARY KEY (trigger_id) 
 );
 CREATE TABLE IF NOT EXISTS budgetBuddy.challenge(
@@ -107,13 +102,14 @@ CREATE TABLE IF NOT EXISTS budgetBuddy.challenge(
 	challenge_description VARCHAR(255) NOT NULL,
 	challenge_type VARCHAR(255) NOT NULL,		
 	challenge_time_given INT NOT NULL,
-	challenge_repeatable BIT NOT NULL,
-	active BIT NOT NULL,
+	challenge_repeatable BOOLEAN NOT NULL,
+	active BOOLEAN NOT NULL,
 	experience INT,
 	item_id INT,	
 	difficulty_id INT,
 	trigger_id INT,
-	status INT,
+	minimum INT,
+	maximum INT,
 	PRIMARY KEY (challenge_id),
 	CONSTRAINT fk_challengeitems FOREIGN KEY(item_id) REFERENCES budgetBuddy.items(item_id),
 	CONSTRAINT fk_challengedifficulty FOREIGN KEY(difficulty_id) REFERENCES budgetBuddy.difficulty(difficulty_id),
@@ -122,19 +118,30 @@ CREATE TABLE IF NOT EXISTS budgetBuddy.challenge(
 CREATE TABLE IF NOT EXISTS budgetBuddy.challenge_inventory(
 	challenge_inventory_id SERIAL,	
 	challenge_start_date DATE NOT NULL,
-	challenge_completion BIT NOT NULL,
+	challenge_completion TIMESTAMP,
 	challenge_id INT,
+	status INT,
 	user_id INT,
 	PRIMARY KEY (challenge_inventory_id),
 	CONSTRAINT fk_challengeinventorychallenge FOREIGN KEY(challenge_id) REFERENCES budgetBuddy.challenge(challenge_id),
 	CONSTRAINT fk_challengeinventoryuser FOREIGN KEY(user_id) REFERENCES budgetBuddy.users(user_id)
+);
+CREATE TABLE IF NOT EXISTS budgetBuddy.levels(
+	level_id SERIAL,	
+	level_number INT NOT NULL,
+	level_exp INT NOT NULL,	
+	item_id INT,
+	challenge_id INT,
+	PRIMARY KEY (level_id),
+	CONSTRAINT fk_levelsitem FOREIGN KEY(item_id) REFERENCES budgetBuddy.items(item_id),
+	CONSTRAINT fk_levelschallenge FOREIGN KEY(challenge_id) REFERENCES budgetBuddy.challenge(challenge_id)	
 );
 CREATE TABLE IF NOT EXISTS budgetBuddy.receipt(
 	receipt_id SERIAL,
     	receipt_amount DECIMAL(10,2),
 	receipt_date TIMESTAMP NOT NULL,		
 	reccuring INT NOT NULL,
-	income BIT NOT NULL,
+	income BOOLEAN NOT NULL,
 	user_id INT,
 	PRIMARY KEY (receipt_id),
 	CONSTRAINT fk_receiptusers FOREIGN KEY(user_id) REFERENCES budgetBuddy.users(user_id)
@@ -143,7 +150,7 @@ CREATE TABLE IF NOT EXISTS budgetBuddy.category(
 	category_id SERIAL,
     	category_name VARCHAR(255) NOT NULL,	
 	category_description VARCHAR(255) NOT NULL,
-	category_income BIT NOT NULL,
+	category_income BOOLEAN NOT NULL,
 	PRIMARY KEY (category_id)
 );
 CREATE TABLE IF NOT EXISTS budgetBuddy.product(
@@ -152,6 +159,7 @@ CREATE TABLE IF NOT EXISTS budgetBuddy.product(
 	product_price DECIMAL(10,2) NOT NULL,
 	receipt_id INT,
 	category_id INT,
+	essential_BOOLEAN,
 	PRIMARY KEY (product_id),	
 	CONSTRAINT fk_productreceipt FOREIGN KEY(receipt_id) REFERENCES budgetBuddy.receipt(receipt_id),
 	CONSTRAINT fk_productcategory FOREIGN KEY(category_id) REFERENCES budgetBuddy.category(category_id)
@@ -163,45 +171,25 @@ CREATE TABLE IF NOT EXISTS budgetBuddy.income(
 	receipt_id INT,
 	category_id INT,
 	PRIMARY KEY (income_id),
-	CONSTRAINT fk_productreceipt FOREIGN KEY(receipt_id) REFERENCES budgetBuddy.receipt(receipt_id),
-	CONSTRAINT fk_productcategory FOREIGN KEY(category_id) REFERENCES budgetBuddy.category(category_id)		
+	CONSTRAINT fk_incomereceipt FOREIGN KEY(receipt_id) REFERENCES budgetBuddy.receipt(receipt_id),
+	CONSTRAINT fk_incomecategory FOREIGN KEY(category_id) REFERENCES budgetBuddy.category(category_id)		
 );
 CREATE TABLE IF NOT EXISTS budgetBuddy.budget(
-	budget_id SERIAL,	
-	projected_monthly_income DECIMAL(10,2),
-	actual_monthly_income DECIMAL(10,2),
-	projected_monthly_expenses DECIMAL(10,2),
-	actual_monthly_expenses DECIMAL(10,2),
-	additional_expenses_goal DECIMAL(10,2),
-	projected_savings DECIMAL(10,2),
-	actual_monthly_savings DECIMAL(10,2),
-	budget_percent_goal DECIMAL(10,2),
-	start_date DATE,
-	user_id INT,
-	PRIMARY KEY (budget_id),
-	CONSTRAINT fk_budgetusers FOREIGN KEY(user_id) REFERENCES budgetBuddy.users(user_id)	
+	budget_id SERIAL,
+	user_id INT,	
+	category_id INT,
+	estimated_amount INT,
+	last_modified_date TIMESTAMP,	
+	PRIMARY KEY (budget_id),		
+	CONSTRAINT fk_budgetusers FOREIGN KEY(user_id) REFERENCES budgetBuddy.users(user_id),
+	CONSTRAINT fk_budgetcategory FOREIGN KEY(category_id) REFERENCES budgetBuddy.category(category_id)		
 );
-CREATE TABLE IF NOT EXISTS budgetBuddy.user_category_budgets(
-	category_budget_id SERIAL,
-	user_id INT NOT NULL,
-	housing INT,
-	transportation INT,
-	essential_groceries INT,
-	non_essential_groceries INT,
-	utilities INT,
-	insurance INT,
-	medical INT,
-	investment INT,
-	restaurant INT,
-	entertainment INT,
-	clothing INT,
-	gift INT,
-	furnishings INT,
-	pet INT,
-	tax_payment INT,
-	miscellaneous_expense INT,
+CREATE TABLE IF NOT EXISTS budgetBuddy.user_budget_goal(
+	goal_id SERIAL,
+	user_id INT,
+	goal_amount INT,
 	CONSTRAINT fk_userbudgetcategory FOREIGN KEY(user_id) REFERENCES budgetBuddy.users(user_id),
-	PRIMARY KEY (category_budget_id) 
+	PRIMARY KEY (goal_id) 
 );
 CREATE TABLE IF NOT EXISTS budgetBuddy.notifications(
 	notification_id SERIAL,
@@ -284,7 +272,6 @@ $$;
 /* Create All Tables in Database */
 CALL create_all_tables();
 
-
 /* Insert new security question */
 CREATE OR REPLACE PROCEDURE insert_new_security_question(security_question_name VARCHAR, security_question_question VARCHAR)
 LANGUAGE SQL
@@ -303,7 +290,7 @@ VALUES ('nickname', 'What was your childhood nickname?'),('friend','What is the 
 ('street','What street did you live on in third grade?'),('middle','What is your oldest sibling''s middle name?'),
 ('school','What school did you attend for sixth grade?'),('cousin','What is your oldest cousin''s first and last name?'),
 ('toy','What was the name of your favorite toy growing up?'),('city','In what city or town did your mother and father meet?'),
-('kiss','What is the fist name of your first kiss?'),('teacher','What was the last name of your third grade teacher?'),
+('kiss','What is the first name of your first kiss?'),('teacher','What was the last name of your third grade teacher?'),
 ('number','What is the number of your nearest sibling''s address?'),('grandmother','What is your maternal grandmother''s maiden name?'),
 ('job','In what city or town was your first job?'),('college','What was the name of your first choice college?');
 $$;
@@ -316,7 +303,7 @@ CALL insert_security_questions();
 /* Insert a new user */
 CREATE OR REPLACE PROCEDURE insert_new_user(email VARCHAR, pass VARCHAR, security_question_id INT, security_answer VARCHAR,
  first_name VARCHAR, last_name VARCHAR, user_name VARCHAR, phone_number VARCHAR, registered DATE, birth_date DATE,
-notifications BIT, user_exp INT)
+notifications BOOLEAN, user_exp INT)
 LANGUAGE SQL
 AS $$
 INSERT INTO budgetBuddy.users(email, pass, security_question_id, security_answer, 
@@ -340,7 +327,7 @@ first_name, last_name, user_name, phone_number, registered, birth_date, notifica
 floor(random() * (SELECT COUNT(*) FROM budgetBuddy.security_question) + 1)::int,CONCAT('answer',CAST(counter as VarChar)),
 CONCAT('fname',CAST(counter as VarChar)),CONCAT('lname',CAST(counter as VarChar)),CONCAT('username',CAST(counter as VarChar)),
 CAST(counter as VarChar),'2021-01-01', '2021-01-01',
-CAST(floor(random() * 1.99)::int as BIT),0);
+CAST(floor(random() * 1.99)::int as BOOLEAN),0);
 	counter := counter + 1;
    end loop;
 end$$;
@@ -350,8 +337,8 @@ end$$;
 CALL insert_users(50);
 
 
-/* Insert new category (BIT use: B'1' or B'0')*/
-CREATE OR REPLACE PROCEDURE insert_new_category(category_name VARCHAR, category_description VARCHAR, category_income BIT)
+/* Insert new category (BOOLEAN use 0,1 true,false)*/
+CREATE OR REPLACE PROCEDURE insert_new_category(category_name VARCHAR, category_description VARCHAR, category_income BOOLEAN)
 LANGUAGE SQL
 AS $$
 INSERT INTO budgetBuddy.category(category_name, category_description, category_income) 
@@ -364,33 +351,58 @@ CREATE OR REPLACE PROCEDURE insert_categories()
 LANGUAGE SQL
 AS $$
 INSERT INTO budgetBuddy.category(category_name, category_description,category_income) 
-VALUES ('Housing','Property insurance, rent, mortgage payments, property taxes, home maintenance costs, ect.',B'0'),
-('Transportation','Auto insurance, vehicle payments, DMV fees, gas, tolls, parking, public transit, vehicle maintenance, ect.',B'0'),
-('Essential Groceries','Grocery items considered essential',B'0'),
-('Non-Essential Groceries','Grocery items considered non-essential ex: alcohol',B'0'),
-('Utilities','Water, electricity, HVAC, gas, phone, cable/internet, ect.',B'0'),
-('Insurance','Life insurance, disability insurance, and other miscellaneous insurances.',B'0'),
-('Medical','Health insurance, out-of-pocket primary care costs, specialty care, dental care, urgent care, prescriptions, medical supplies/devices, ect.',B'0'),
-('Investment','401(k) retirement account, IRAs, ETFs, stocks, savings bonds, non-liquid assets, ect.',B'0'),
-('Restaurant','Diners, drive-ins, dives, fast food, restaurants, ect.',B'0'),
-('Entertainment','Sporting events, concert tickets, vacation expenses, video games, movies, hobbies, ect.',B'0'),
-('Clothing','Shirts, blouses, pants, skirts, hats, jewlery, accessories, ect.',B'0'),
-('Gift','Presents for others.',B'0'),
-('Furnishings','Home decor, furniture, fittings, decorative accessories, curtains, carpets, ect.',B'0'),
-('Pet','Ownership, food, treats, housing, medical expenses, and anything else pertaining to ones hairy, furry, scaly, or feathery friends.',B'0'),
-('Tax Payment','Government tax payment',B'0'),
-('Miscellaneous Expense','Expenses that do not fit in other categories.',B'0'),
-('Job Income','Wages or salary from ones job.',B'1'),
-('Received Gift','Cash gift from another person.',B'1'),
-('Interest','Non-liquid funds made liquid, dividends, savings account interest, ect.',B'1'),
-('Government Payment','Assistance payments from the government.',B'1'),
-('Tax Refund','Government refund from taxes.',B'1'),
-('Miscellaneous Income','Incomes that do not fit in other categories.',B'1');
+VALUES ('Housing','Property insurance, rent, mortgage payments, property taxes, home maintenance costs, ect.',false),
+('Transportation','Auto insurance, vehicle payments, DMV fees, gas, tolls, parking, public transit, vehicle maintenance, ect.',false),
+('Essential Groceries','Grocery items considered essential',false),
+('Non-Essential Groceries','Grocery items considered non-essential ex: alcohol',false),
+('Utilities','Water, electricity, HVAC, gas, phone, cable/internet, ect.',false),
+('Insurance','Life insurance, disability insurance, and other miscellaneous insurances.',false),
+('Medical','Health insurance, out-of-pocket primary care costs, specialty care, dental care, urgent care, prescriptions, medical supplies/devices, ect.',false),
+('Investment','401(k) retirement account, IRAs, ETFs, stocks, savings bonds, non-liquid assets, ect.',false),
+('Restaurant','Diners, drive-ins, dives, fast food, restaurants, ect.',false),
+('Entertainment','Sporting events, concert tickets, vacation expenses, video games, movies, hobbies, ect.',false),
+('Clothing','Shirts, blouses, pants, skirts, hats, jewlery, accessories, ect.',false),
+('Gift','Presents for others.',false),
+('Furnishings','Home decor, furniture, fittings, decorative accessories, curtains, carpets, ect.',false),
+('Pet','Ownership, food, treats, housing, medical expenses, and anything else pertaining to ones hairy, furry, scaly, or feathery friends.',false),
+('Tax Payment','Government tax payment',false),
+('Miscellaneous Expense','Expenses that do not fit in other categories.',false),
+('Job Income','Wages or salary from ones job.',true),
+('Received Gift','Cash gift from another person.',true),
+('Interest','Non-liquid funds made liquid, dividends, savings account interest, ect.',true),
+('Government Payment','Assistance payments from the government.',true),
+('Tax Refund','Government refund from taxes.',true),
+('Miscellaneous Income','Incomes that do not fit in other categories.',true);
 $$;
 
 
 /* Fill Category table */
 CALL insert_categories();
+
+
+
+/* Fill Levels */
+CREATE OR REPLACE PROCEDURE insert_levels()
+LANGUAGE plpgsql
+AS $$
+declare 
+   counter integer := 1;   
+begin
+   while counter <= 100 loop
+	IF counter = 1 THEN
+	INSERT INTO budgetBuddy.levels(level_number, level_exp) 
+VALUES (counter,0);
+	ELSE
+	INSERT INTO budgetBuddy.levels(level_number, level_exp) 
+VALUES (counter,((counter-1)*252));
+END IF;
+counter := counter + 1;
+   end loop;
+end$$;
+
+
+/* Fill Levels table */
+CALL insert_levels();
 
 
 
@@ -401,7 +413,7 @@ CREATE OR REPLACE PROCEDURE new_receipt(reccuring INT,toad VARCHAR)
 LANGUAGE SQL
 AS $$
 INSERT INTO budgetBuddy.receipt(receipt_date, reccuring, income, user_id) 
-VALUES (current_timestamp, reccuring, B'0', (SELECT user_id from
+VALUES (current_timestamp, reccuring, false, (SELECT user_id from
 budgetBuddy.users WHERE user_name = toad));
 $$;
 
@@ -451,7 +463,7 @@ declare
 begin
    while counter <= items loop
 	INSERT INTO budgetBuddy.product(product_name, product_price, receipt_id, category_id) 
-VALUES ('test', (SELECT round(CAST((random() * (highprice-lowprice + 1) + lowprice) AS decimal), 2)), 
+VALUES (CONCAT('tester',CAST(counter as VarChar)), (SELECT round(CAST((random() * (highprice-lowprice + 1) + lowprice) AS decimal), 2)), 
 (SELECT max(receipt_id) FROM budgetBuddy.receipt), 
 floor(random() * (SELECT COUNT(*) FROM budgetBuddy.category) + 1)::int);
 counter := counter + 1;
@@ -480,7 +492,7 @@ begin
    while counter <= numbers loop	
 	INSERT INTO budgetBuddy.receipt(receipt_date, reccuring, income,user_id) 
 VALUES ((select (timestamp '1999-01-01' + random() * (timestamp '2021-11-16' - timestamp '1999-01-01'))),
-0, B'0',(select floor(random() * (SELECT COUNT(*) FROM budgetBuddy.users) + 1)::int));
+0, false,(select floor(random() * (SELECT COUNT(*) FROM budgetBuddy.users) + 1)::int));
 	call fill_receipt_product_two();
 	call fill_receipt_product_three();
 	counter := counter + 1;
