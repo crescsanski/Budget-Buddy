@@ -1,6 +1,6 @@
 <div style="display: inline-flex;">
     <div>
-        <img class="clickable" src="../../../../assets/icons/left-arrow.png" style="height: 5em; margin-top: 22vh; margin-right: 3em; opacity: 95%" (click)="pageBackward()">
+        <img class="clickable" src="../../../../assets/icons/left-arrow.png" style="height: 5em; margin-top: 16vh; margin-right: 3em; opacity: 95%" (click)="pageBackward()">
     </div>
 <div *ngIf="visible" [@slideInOut] (@slideInOut.start)="slideInOutStart($event)" (@slideInOut.done)="slideInOutEnd($event)" class="panel">
     <div class="content">
@@ -16,15 +16,6 @@
                     <p-inputNumber mode="currency" formControlName="amount" currency="USD" [maxFractionDigits]=0 locale="en-US"></p-inputNumber>
                     <br>
                     
-                    <!--
-                    <p>Frequency</p>
-                    <p-dropdown [options]="frequencyOptions"
-                    [autoDisplayFirst]=false
-                    formControlName="reocurring"></p-dropdown>
-                    
-                    <br>
-                    -->
-
                     <div style="text-align: center;">
                         <button style="margin-top: 2em; text-align: center;" class="track button-emphasis" pButton type="submit" label='Track'></button>
                     </div>
@@ -58,5 +49,5 @@
         <br>
     </div>
 </div>
-<img class="clickable" src="../../../../assets/icons/right-arrow.png" style="height: 5em; margin-top: 22vh; margin-left: 3em; opacity: 95%" (click)="pageForward()">
+<img class="clickable" src="../../../../assets/icons/right-arrow.png" style="height: 5em; margin-top: 16vh; margin-left: 3em; opacity: 95%" (click)="pageForward()">
 </div>
