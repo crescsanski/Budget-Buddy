@@ -44,6 +44,7 @@ class BudgetViewSet(viewsets.ModelViewSet):
     queryset = Budget.objects.all()
     serializer_class = BudgetSerializer
     permission_classes = [permissions.IsAuthenticated]
+    filterset_fields = '__all__'
 
 class CategoryViewSet(viewsets.ModelViewSet):
     queryset = Category.objects.all()

@@ -54,12 +54,8 @@ export class BudgetService {
   }
 
   /* GET budgets whose name contains search term */
-  searchBudgets(term: string): Observable<Budget[]> {
-    if (!term.trim()) {
-      // if not search term, return empty budget array.
-      return of([]);
-    }
-    return this.http.get<Budget[]>(`${this.budgetsUrl}/?name=${term}`).pipe(
+  searchBudgets(term: number): Observable<Budget[]> {
+    return this.http.get<Budget[]>(`${this.budgetsUrl}?user=${term}`).pipe(
       tap(x => x.length ?
          this.log(`found budgets matching "${term}"`) :
          this.log(`no budgets matching "${term}"`)),
@@ -89,7 +85,7 @@ export class BudgetService {
 
   /** PUT: update the budget on the server */
   updateBudget(budget: Budget): Observable<any> {
-    return this.http.put(this.budgetsUrl, budget, this.httpOptions).pipe(
+    return this.http.put(`${this.budgetsUrl}${budget.budget_id}/`, budget, this.httpOptions).pipe(
       tap(_ => this.log(`updated budget id=${budget.budget_id}`)),
       catchError(this.handleError<any>('updateBudget'))
     );

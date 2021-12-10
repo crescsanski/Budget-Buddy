@@ -6,7 +6,7 @@ import { MessageService } from 'src/app/services/message.service';
 import {SelectItem} from 'primeng/api';
 import { WidgetService } from 'src/app/widget/widget.service';
 import { trigger, transition, animate, style } from '@angular/animations'
-import { delay, first } from 'rxjs/operators';
+import { delay, first, flatMap, map, mergeMap } from 'rxjs/operators';
 import { BudgetService } from 'src/app/services/budget.service';
 import { Budget } from 'src/app/models/budget';
 import { AuthService } from 'src/app/services/auth.service';
@@ -35,6 +35,7 @@ export class BudgetPanelComponent implements OnInit {
   catOptions: Category[];
   form: FormArray
   currentPanel: any;
+  exisBudgets: Budget[]
   panelNumber: number = 0;
   //frequencyOptions!: SelectItem[];
   visible=true;
@@ -47,12 +48,18 @@ export class BudgetPanelComponent implements OnInit {
     private cs: CategoryService,
     private ms: MessageService) {
 
-      this.cs.getCategories().subscribe(
-        (cats: Category[]) => 
+      this.cs.getCategories().pipe(
+        mergeMap((cats: Category[]) => 
         {
           this.catOptions = cats;
-        }
-      )
+          return this.bs.searchBudgets(this.as.currentUserValue.user_id);
+        }),
+        map((res: Budget[]) => 
+        {
+          this.exisBudgets = res;
+          this.initializeForm();
+        })
+      ).subscribe();
     
     this.prompts = [
       {icon: '../../../../assets/icons/budget-icons/help.png', categoryTitle: 'What\'s Your Budget?'},
@@ -81,25 +88,32 @@ export class BudgetPanelComponent implements OnInit {
       {icon: '../../../../assets/icons/budget-icons/misc-income.png', categoryTitle: 'Miscellaneous Expense'},
       {icon: '../../../../assets/icons/budget-icons/thumbs-up.png', categoryTitle: 'All Done!'},
     ]
+   }
 
-    //this.frequencyOptions = this.ws.frequencyOptions;
+   initializeForm()
+   {
+    this.form = this.fb.array([])
+    for (let i of this.prompts)
+    {
+      let cat = this.catOptions.find(val => 
+        i.categoryTitle.includes(val.category_name))      
+        
+        let oR = cat ? this.exisBudgets.find(val => val.category == cat.category_id) : undefined
+       
+        let foCom = this.fb.group({
+          budget_id: [oR ? oR.budget_id : undefined],
+          amount: [oR ? oR.estimated_amount : '0', Validators.required]
+        })
+    
+        this.form.push(foCom)
+    
+    }
+
    }
 
   ngOnInit(): void {
 
-    this.currentPanel = this.prompts[this.panelNumber];
-
-    this.form = this.fb.array([])
-    for (let i of this.prompts)
-    {
-      let foCom = this.fb.group({
-        amount: ['0', Validators.required],
-        //reocurring: ['', Validators.required]
-      })
-  
-      this.form.push(foCom)
-    }
-
+    this.currentPanel = this.prompts[this.panelNumber];    
   }
 
   //shortcut to access all form components
@@ -166,26 +180,55 @@ export class BudgetPanelComponent implements OnInit {
       this.currentPanel.categoryTitle.includes(val.category_name)).category_id
 
     let budget: Budget = {
+      budget_id: x.get('budget_id').value,
       user: this.as.currentUserValue.user_id,
       category: catID,
       estimated_amount: x.get('amount').value,
       last_modified_date: new Date().toISOString()
     }
-
-    this.bs.addBudget(budget)
-    .pipe(first())
-    .subscribe({
-        next: () => {
-            this.ms.addSuccess('Budget Successfully Record', "");
-            this.pageForward();
-        },
-        error: error => {
-            for (const key in error)
-            {
-              this.ms.addError(`Error in Recording Budget: ${key}`, error[key]);
-            }
-        }
-    });
+    if(x.get('budget_id').value == undefined)
+    {
+      this.bs.addBudget(budget)
+      .pipe(first())
+      .subscribe({
+          next: (res: Budget) => {
+              if (res && res.budget_id)
+              {
+                this.ms.addSuccess('Budget Successfully Record', "");
+                x.get('budget_id').setValue(res.budget_id)
+                this.pageForward();
+              }
+              else
+              {
+                this.ms.addError(`Error in Recording Budget`, "");
+              }
+          },
+          error: error => {
+              for (const key in error)
+              {
+                this.ms.addError(`Error in Recording Budget: ${key}`, error[key]);
+              }
+          }
+      });
+    }
+    else
+    {
+      this.bs.updateBudget(budget)
+      .pipe(first())
+      .subscribe({
+          next: () => {
+              this.ms.addSuccess('Budget Successfully Updated', "");
+              this.pageForward();
+          },
+          error: error => {
+              for (const key in error)
+              {
+                this.ms.addError(`Error in Updating Budget: ${key}`, error[key]);
+              }
+          }
+      });
+    }
+    
 }
  
 

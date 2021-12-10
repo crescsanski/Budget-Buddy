@@ -63,8 +63,8 @@ export class WidgetService {
     basicSpendingTransaction(inp: BasicManualSpend): Observable<Product>
     {
         return this.rs.addReceipt({
-            receipt_date: this.dp.transform(inp.receipt_date, 'yyyy-MM-dd'),
-            is_income: false, reoccuring: inp.reocurring,
+            receipt_date: this.dp.transform(inp.receipt_date, 'yyyy-MM-dd HH:mm:ss'),
+            is_income: false, reccuring: inp.reocurring,
             receipt_amount: inp.product_price,
             user: this.as.currentUserValue.user_id})
             .pipe(
@@ -95,8 +95,8 @@ export class WidgetService {
       basicIncomeTransaction(inp: BasicManualIncome): Observable<Income>
       {
           return this.rs.addReceipt({
-              receipt_date: this.dp.transform(inp.receipt_date, 'yyyy-MM-dd'),
-              is_income: true, reoccuring: inp.reocurring,
+              receipt_date: this.dp.transform(inp.receipt_date, 'yyyy-MM-dd HH:mm:ss'),
+              is_income: true, reccuring: inp.reocurring,
               receipt_amount: inp.income_amount,
               user: this.as.currentUserValue.user_id})
               .pipe(
