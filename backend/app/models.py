@@ -376,7 +376,7 @@ class BadgesEarned(models.Model):
     user_id = models.BigIntegerField()
     badge_name = models.CharField(max_length=255)
     badge_description = models.CharField(max_length=255)
-    badge_completion = models.DateField()
+    badge_completion = models.DateTimeField()
 
     class Meta:
         managed =  False
