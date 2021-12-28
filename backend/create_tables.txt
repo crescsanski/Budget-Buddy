@@ -1,44 +1,5 @@
-/* RUNNING THIS FILES DELETES ALL TABLES AND REINSTERTS THEM */
-/* THEN IT CREATES PROCEDURES AND CALLS THEM TO FILL TABLES */
+CREATE SCHEMA IF NOT EXISTS budgetBuddy;
 
-
-/* Drop All Tables in Database */
-CREATE OR REPLACE PROCEDURE drop_all_tables()
-LANGUAGE SQL
-AS $$
-DROP TABLE IF EXISTS budgetBuddy.global_competitions;
-DROP TABLE IF EXISTS budgetBuddy.competitions;
-DROP TABLE IF EXISTS budgetBuddy.competition_status;
-DROP TABLE IF EXISTS budgetBuddy.friends;
-DROP TABLE IF EXISTS budgetBuddy.friend_status;
-DROP TABLE IF EXISTS budgetBuddy.widget_inventory;
-DROP TABLE IF EXISTS budgetBuddy.widget;
-DROP TABLE IF EXISTS budgetBuddy.notifications_list;
-DROP TABLE IF EXISTS budgetBuddy.notifications;
-DROP TABLE IF EXISTS budgetBuddy.budget;
-DROP TABLE IF EXISTS budgetBuddy.income;
-DROP TABLE IF EXISTS budgetBuddy.product;
-DROP TABLE IF EXISTS budgetBuddy.category;
-DROP TABLE IF EXISTS budgetBuddy.receipt;
-DROP TABLE IF EXISTS budgetBuddy.challenge_inventory;
-DROP TABLE IF EXISTS budgetBuddy.challenge;
-DROP TABLE IF EXISTS budgetBuddy.inventory;
-DROP TABLE IF EXISTS budgetBuddy.items;
-DROP TABLE IF EXISTS budgetBuddy.difficulty;
-DROP TABLE IF EXISTS budgetBuddy.levels;
-DROP TABLE IF EXISTS budgetBuddy.users;
-DROP TABLE IF EXISTS budgetBuddy.security_question;
-$$;
-
-
-/* Drop All Tables in Database */
-CALL drop_all_tables();
-
-
-/* Create All Tables in Database */
-CREATE OR REPLACE PROCEDURE create_all_tables()
-LANGUAGE SQL
-AS $$
 CREATE TABLE IF NOT EXISTS budgetBuddy.security_question(
 	security_question_id SERIAL,
     	security_question_name VARCHAR(255) NOT NULL,
@@ -102,7 +63,7 @@ CREATE TABLE IF NOT EXISTS budgetBuddy.challenge(
 	challenge_time_given INT NOT NULL,
 	challenge_repeatable BIT NOT NULL,
 	active BIT NOT NULL,
-	experience INT,
+	experience INT,	
 	item_id INT,	
 	difficulty_id INT,
 	PRIMARY KEY (challenge_id),
@@ -246,116 +207,3 @@ CREATE TABLE IF NOT EXISTS budgetBuddy.global_competitions(
 	PRIMARY KEY (global_competition_id),
 	CONSTRAINT fk_globalcompetitionsusers FOREIGN KEY(user_id) REFERENCES budgetBuddy.users(user_id)
 );
-$$;
-
-
-/* Create All Tables in Database */
-CALL create_all_tables();
-
-/* Insert new security question */
-CREATE OR REPLACE PROCEDURE insert_new_security_question(security_question_name VARCHAR, security_question_question VARCHAR)
-LANGUAGE SQL
-AS $$
-INSERT INTO budgetBuddy.security_question(security_question_name, security_question_question) 
-VALUES (security_question_name, security_question_question);
-$$;
-
-
-/* Fill security questions */
-CREATE OR REPLACE PROCEDURE insert_security_questions()
-LANGUAGE SQL
-AS $$
-INSERT INTO budgetBuddy.security_question(security_question_name, security_question_question) 
-VALUES ('nickname', 'What was your childhood nickname?'),('friend','What is the name of your favorite childhood friend?'),
-('street','What street did you live on in third grade?'),('middle','What is your oldest sibling''s middle name?'),
-('school','What school did you attend for sixth grade?'),('cousin','What is your oldest cousin''s first and last name?'),
-('toy','What was the name of your favorite toy growing up?'),('city','In what city or town did your mother and father meet?'),
-('kiss','What is the fist name of your first kiss?'),('teacher','What was the last name of your third grade teacher?'),
-('number','What is the number of your nearest sibling''s address?'),('grandmother','What is your maternal grandmother''s maiden name?'),
-('job','In what city or town was your first job?'),('college','What was the name of your first choice college?');
-$$;
-
-
-/* Fill security question table */
-CALL insert_security_questions();
-
-
-/* Insert a new user */
-CREATE OR REPLACE PROCEDURE insert_new_user(email VARCHAR, pass VARCHAR, security_question_id INT, security_answer VARCHAR,
- first_name VARCHAR, last_name VARCHAR, user_name VARCHAR, phone_number VARCHAR, registered DATE, birth_date DATE,
-notifications BIT, user_exp INT)
-LANGUAGE SQL
-AS $$
-INSERT INTO budgetBuddy.users(email, pass, security_question_id, security_answer, 
-first_name, last_name, user_name, phone_number, registered, birth_date, notifications, user_exp) 
-VALUES (email, pass, security_question_id, security_answer, 
-first_name, last_name, user_name, phone_number, registered, birth_date, notifications, user_exp);
-$$;
-
-
-/* Fill Users table  */
-CREATE OR REPLACE PROCEDURE insert_users(numbers integer)
-LANGUAGE plpgsql
-AS $$
-declare 
-   counter integer := 0;
-begin
-   while counter <= numbers loop
-	INSERT INTO budgetBuddy.users(email, pass, security_question_id, security_answer, 
-first_name, last_name, user_name, phone_number, registered, birth_date, notifications,user_exp) 
-	VALUES (CONCAT('tester',CAST(counter as VarChar),'@testmail.com'), CONCAT('password',CAST(counter as VarChar)), 
-floor(random() * (SELECT COUNT(*) FROM budgetBuddy.security_question) + 1)::int,CONCAT('answer',CAST(counter as VarChar)),
-CONCAT('fname',CAST(counter as VarChar)),CONCAT('lname',CAST(counter as VarChar)), CAST(counter as VarChar), CAST(counter as VarChar),
-'2021-01-01', '2021-01-01',B'1',0);
-	counter := counter + 1;
-   end loop;
-end$$;
-
-
-/* Fill Users Table */
-CALL insert_users(50);
-
-
-/* Insert new category (BIT use: B'1' or B'0')*/
-CREATE OR REPLACE PROCEDURE insert_new_category(category_name VARCHAR, category_description VARCHAR, category_income BIT)
-LANGUAGE SQL
-AS $$
-INSERT INTO budgetBuddy.category(category_name, category_description, category_income) 
-VALUES (category_name, category_description,category_income);
-$$;
-
-
-/* Fill categories */
-CREATE OR REPLACE PROCEDURE insert_categories()
-LANGUAGE SQL
-AS $$
-INSERT INTO budgetBuddy.category(category_name, category_description,category_income) 
-VALUES ('Housing','Property insurance, rent, mortgage payments, property taxes, home maintenance costs, ect.',B'0'),
-('Transportation','Auto insurance, vehicle payments, DMV fees, gas, tolls, parking, public transit, vehicle maintenance, ect.',B'0'),
-('Essential Groceries','Grocery items considered essential',B'0'),
-('Non-Essential Groceries','Grocery items considered non-essential ex: alcohol',B'0'),
-('Utilities','Water, electricity, HVAC, gas, phone, cable/internet, ect.',B'0'),
-('Insurance','Life insurance, disability insurance, and other miscellaneous insurances.',B'0'),
-('Medical','Health insurance, out-of-pocket primary care costs, specialty care, dental care, urgent care, prescriptions, medical supplies/devices, ect.',B'0'),
-('Investment','401(k) retirement account, IRAs, ETFs, stocks, savings bonds, non-liquid assets, ect.',B'0'),
-('Restaurant','Diners, drive-ins, dives, fast food, restaurants, ect.',B'0'),
-('Entertainment','Sporting events, concert tickets, vacation expenses, video games, movies, hobbies, ect.',B'0'),
-('Clothing','Shirts, blouses, pants, skirts, hats, jewlery, accessories, ect.',B'0'),
-('Gift','Presents for others.',B'0'),
-('Furnishings','Home decor, furniture, fittings, decorative accessories, curtains, carpets, ect.',B'0'),
-('Pet','Ownership, food, treats, housing, medical expenses, and anything else pertaining to ones hairy, furry, scaly, or feathery friends.',B'0'),
-('Tax Payment','Government tax payment',B'0'),
-('Miscellaneous Expense','Expenses that do not fit in other categories.',B'0'),
-('Job Income','Wages or salary from ones job.',B'1'),
-('Received Gift','Cash gift from another person.',B'1'),
-('Interest','Non-liquid funds made liquid, dividends, savings account interest, ect.',B'1'),
-('Government Payment','Assistance payments from the government.',B'1'),
-('Tax Refund','Government refund from taxes.',B'1'),
-('Miscellaneous Income','Incomes that do not fit in other categories.',B'1');
-$$;
-
-
-/* Fill Category table */
-CALL insert_categories();
-
-
