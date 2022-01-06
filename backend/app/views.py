@@ -1,3 +1,4 @@
+from PIL.Image import Image
 from django.contrib.auth import password_validation
 from rest_framework.authtoken.views import ObtainAuthToken
 from rest_framework.authtoken.models import Token
@@ -14,7 +15,14 @@ from app.models import *
 from django.contrib.auth.password_validation import CommonPasswordValidator, NumericPasswordValidator, UserAttributeSimilarityValidator, validate_password, MinimumLengthValidator
 from app.serializers import *
 from django.contrib import auth
+from pdf2image import convert_from_path
 from django.db import connection
+from django.core.files.storage import FileSystemStorage
+import pytesseract
+import matplotlib.pyplot as plt
+import cv2
+from PIL import Image
+import numpy as np
 
 class SecurityQuestionViewSet(viewsets.ModelViewSet):
     queryset = SecurityQuestion.objects.all()
@@ -238,12 +246,11 @@ class Logout(GenericAPIView):
         logout(request)
         return Response(status=status.HTTP_200_OK)
 
-class ValidateChallenge(GenericAPIView):
+class ValidateChallengeViewSet(viewsets.ViewSet):
     permission_classes = [permissions.IsAuthenticated]
     serializer_class = ValidateChallengeSerializer
     
-    @action(detail=False, methods=['post'])
-    def post(self, request, format=None):
+    def create(self, request):
 
         serializer = self.serializer_class(data=request.data)
   
@@ -260,6 +267,99 @@ class ValidateChallenge(GenericAPIView):
             result = cursor.fetchone()
 
         return Response(result)
+
+class ReceiptUploadConvertViewSet(viewsets.ViewSet):
+    serializer_class = ReceiptUploadSerializer
+
+    def create(self, request):
+        file_uploaded = request.FILES.get('file_uploaded')
+        filename = file_uploaded.name
+        origPath = f"rawReceipts/{filename}"
+        finalPaths = []
+        fs = FileSystemStorage(location='rawReceipts')
+        fs.save(filename, file_uploaded)
+        content_type = file_uploaded.content_type
+        response = "POST API and you have uploaded a {} file".format(content_type)
+        if not(content_type.startswith('image') or content_type == 'application/pdf'):
+            return Response("Invalid File Type.  Only PDF and image files are accepted.")
+        elif content_type == 'application/pdf':
+            #Convert the PDF into an Image
+            pages = convert_from_path(pdf_path = origPath, dpi = 350)
+
+            i = 0
+            for page in pages:
+                image_name = filename[:-4] + "_" + str(i) + ".jpg"
+                path = f"rawReceipts/{image_name}"
+                page.save(path, "JPEG")
+                finalPaths.insert(i, path)
+                i += 1
+        else:
+            finalPaths.insert(0, origPath)
+
+        for path in finalPaths:
+
+                image = cv2.imread(path)
+                gray = self.get_grayscale(image)
+                thresh = self.thresholding(gray)
+                
+                opening = self.opening(gray)
+                canny = self.canny(gray)
+
+
+                custom_config = r'--oem 3 --psm 6'
+                content = pytesseract.image_to_string(thresh, config=custom_config)
+                print(content)
+
+        return Response(response)
+    
+    # get grayscale image
+    def get_grayscale(self, image):
+        return cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
+
+    # noise removal
+    def remove_noise(self, image):
+        return cv2.medianBlur(image,5)
+    
+    #thresholding
+    def thresholding(self, image):
+        return cv2.threshold(image, 0, 255, cv2.THRESH_BINARY + cv2.THRESH_OTSU)[1]
+
+    #dilation
+    def dilate(self, image):
+        kernel = np.ones((5,5),np.uint8)
+        return cv2.dilate(image, kernel, iterations = 1)
+        
+    #erosion
+    def erode(self, image):
+        kernel = np.ones((5,5),np.uint8)
+        return cv2.erode(image, kernel, iterations = 1)
+
+    #opening - erosion followed by dilation
+    def opening(self, image):
+        kernel = np.ones((5,5),np.uint8)
+        return cv2.morphologyEx(image, cv2.MORPH_OPEN, kernel)
+
+    #canny edge detection
+    def canny(self, image):
+        return cv2.Canny(image, 100, 200)
+
+    #skew correction
+    def deskew(self, image):
+        coords = np.column_stack(np.where(image > 0))
+        angle = cv2.minAreaRect(coords)[-1]
+        if angle < -45:
+            angle = -(90 + angle)
+        else:
+            angle = -angle
+        (h, w) = image.shape[:2]
+        center = (w // 2, h // 2)
+        M = cv2.getRotationMatrix2D(center, angle, 1.0)
+        rotated = cv2.warpAffine(image, M, (w, h), flags=cv2.INTER_CUBIC, borderMode=cv2.BORDER_REPLICATE)
+        return rotated
+
+    #template matching
+    def match_template(self, image, template):
+        return cv2.matchTemplate(image, template, cv2.TM_CCOEFF_NORMED)
 
 
 # Views for Database Views

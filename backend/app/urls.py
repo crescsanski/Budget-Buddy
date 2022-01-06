@@ -30,9 +30,14 @@ router.register(r'receipts', views.ReceiptViewSet)
 router.register(r'widgets', views.WidgetViewSet)
 router.register(r'widget_inventories', views.WidgetInventoryViewSet)
 
+#Register receipt processing apis
+router.register(r'receipt_upload', views.ReceiptUploadConvertViewSet, basename="upload")
+
+#Validate challenge
+router.register(r'validate_challenge', views.ValidateChallengeViewSet, basename="validate")
+
 #Register our database views
 router.register(r'badges_earned', views.BadgesEarnedViewSet)
-
 
 
 # The API URLs are now determined automatically by the router.
@@ -42,7 +47,6 @@ urlpatterns = [
     path('auth/',views.CustomAuthToken.as_view()),
     path('auth/logout/',views.Logout.as_view()),
     path('auth/register/', views.RegisterView.as_view()),
-    path('validate_challenge/', views.ValidateChallenge.as_view()),
     path('', include(router.urls)),
 ]
 

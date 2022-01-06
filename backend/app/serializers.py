@@ -1,7 +1,13 @@
 from django.contrib.auth.models import User
 from rest_framework import exceptions, serializers
 from django.contrib.auth.password_validation import CommonPasswordValidator, NumericPasswordValidator, UserAttributeSimilarityValidator, validate_password, MinimumLengthValidator
+from rest_framework.fields import FileField
 from .models import *
+
+class ReceiptUploadSerializer(serializers.Serializer):
+    file_uploaded = FileField()
+    class Meta:
+        fields = ['file_uploaded']
 
 class SecurityQuestionSerializer(serializers.ModelSerializer):
     class Meta:
