@@ -311,6 +311,7 @@ class ReceiptUploadConvertViewSet(viewsets.ViewSet):
                 #content = pytesseract.image_to_string(thresh, config=custom_config)
 
                 content = pytesseract.image_to_string(image)
+                print(content)
                 amounts = self.get_amounts(content)
                 grandTotal = max(amounts)
                 splits = content.splitlines()
@@ -328,22 +329,32 @@ class ReceiptUploadConvertViewSet(viewsets.ViewSet):
 
     # extract dates from receipt
     def get_dates(self, content):
-        dateNameRegex = r'((\b\d{1,2}\D{0,3})?\b(?:Jan(?:uary)?|Feb(?:ruary)?|Mar(?:ch)?|Apr(?:il)?|May|Jun(?:e)?|Jul(?:y)?|Aug(?:ust)?|Sep(?:tember)?|Oct(?:ober)?|(Nov|Dec)(?:ember)?)\D?)(\d{1,2}(st|nd|rd|th)?)?((\s*[,.\-\/]\s*)\D?)?\s*((19[0-9]\d|20\d{2})|\d{2})*'
-        tradDateRegex = r'^(?:(1[0-2]|0?[1-9])/(3[01]|[12][0-9]|0?[1-9])|(3[01]|[12][0-9]|0?[1-9])/(1[0-2]|0?[1-9]))/(?:[0-9]{2})?[0-9]{2}$'
-        dates = (re.findall(dateNameRegex, content)) + (re.findall(tradDateRegex, content))
-        unique = list(dict.fromkeys(dates))
+        monDDYYYY = r'((\b\d{1,2}\D{0,3})?\b(?:Jan(?:uary)?|Feb(?:ruary)?|Mar(?:ch)?|Apr(?:il)?|May|Jun(?:e)?|Jul(?:y)?|Aug(?:ust)?|Sep(?:tember)?|Oct(?:ober)?|(Nov|Dec)(?:ember)?)\D?)(\d{1,2}(st|nd|rd|th)?)?((\s*[,.\-\/]\s*)\D?)?\s*((19[0-9]\d|20\d{2})|\d{2})*'
+        YYYY = r'(19[0-9]\d|20\d{2})'
+        MM = r'(0[1-9]|1[0-2])'
+        DD = r'(0[1-9]|[12][0-9]|3[01])'
+        sep = r'[\-.\/:,]'
+        MMDDYYYY = MM + sep + DD + sep + YYYY
+        master = '|'.join([monDDYYYY, MMDDYYYY])
+        dates = self.findall_overlapping(master, content) 
+        #unique = list(dict.fromkeys(dates))
         # Remove duplicate items in tuples
-        
-        datPol = list()
-        for dit in unique:
-            dat = set()
-            datPol.append(dat)
-            for j in dit:
-                if re.search(r'^[\s,\-.:\\\/]*$', j) == None:
-                    dat.add(j.strip())
-                    
+        datPol = set()
+        for dit in dates:
+            datPol.add(dit.group())                    
     
         return datPol
+    
+    def findall_overlapping(self, pattern, string, flags=0):
+        """Find all matches, even ones that overlap."""
+        regex = re.compile(pattern, flags)
+        pos = 0
+        while True:
+            match = regex.search(string, pos)
+            if not match:
+                break
+            yield match
+            pos = match.start() + 1
 
     
     # extract itemized and grand total amounts from receipt text
