@@ -22,7 +22,9 @@ import pytesseract
 import matplotlib.pyplot as plt
 import cv2
 from PIL import Image
+import re
 import numpy as np
+import shutil
 
 class SecurityQuestionViewSet(viewsets.ModelViewSet):
     queryset = SecurityQuestion.objects.all()
@@ -284,7 +286,7 @@ class ReceiptUploadConvertViewSet(viewsets.ViewSet):
             return Response("Invalid File Type.  Only PDF and image files are accepted.")
         elif content_type == 'application/pdf':
             #Convert the PDF into an Image
-            pages = convert_from_path(pdf_path = origPath, dpi = 350)
+            pages = convert_from_path(pdf_path = origPath, dpi = 300)
 
             i = 0
             for page in pages:
@@ -299,18 +301,57 @@ class ReceiptUploadConvertViewSet(viewsets.ViewSet):
         for path in finalPaths:
 
                 image = cv2.imread(path)
-                gray = self.get_grayscale(image)
-                thresh = self.thresholding(gray)
+             #   gray = self.get_grayscale(image)
+             #   thresh = self.thresholding(gray)
                 
-                opening = self.opening(gray)
-                canny = self.canny(gray)
+              #  opening = self.opening(gray)
+               # canny = self.canny(gray)
 
+                #custom_config = r'--oem 3 --psm 6'
+                #content = pytesseract.image_to_string(thresh, config=custom_config)
 
-                custom_config = r'--oem 3 --psm 6'
-                content = pytesseract.image_to_string(thresh, config=custom_config)
-                print(content)
+                content = pytesseract.image_to_string(image)
+                amounts = self.get_amounts(content)
+                grandTotal = max(amounts)
+                splits = content.splitlines()
+                vendorName = splits[0]
+                dates = self.get_dates(content)
+                print("Dates: ", dates)
+                print("Vendor Name: ", vendorName)
+                print("Amounts: ", amounts)
+                print("Grand Total: ", grandTotal)
+        
+        #Delete the contents of the directory with the original image/PDF files
+        shutil.rmtree('rawReceipts', True)
 
         return Response(response)
+
+    # extract dates from receipt
+    def get_dates(self, content):
+        dateNameRegex = r'((\b\d{1,2}\D{0,3})?\b(?:Jan(?:uary)?|Feb(?:ruary)?|Mar(?:ch)?|Apr(?:il)?|May|Jun(?:e)?|Jul(?:y)?|Aug(?:ust)?|Sep(?:tember)?|Oct(?:ober)?|(Nov|Dec)(?:ember)?)\D?)(\d{1,2}(st|nd|rd|th)?)?((\s*[,.\-\/]\s*)\D?)?\s*((19[0-9]\d|20\d{2})|\d{2})*'
+        tradDateRegex = r'^(?:(1[0-2]|0?[1-9])/(3[01]|[12][0-9]|0?[1-9])|(3[01]|[12][0-9]|0?[1-9])/(1[0-2]|0?[1-9]))/(?:[0-9]{2})?[0-9]{2}$'
+        dates = (re.findall(dateNameRegex, content)) + (re.findall(tradDateRegex, content))
+        unique = list(dict.fromkeys(dates))
+        # Remove duplicate items in tuples
+        
+        datPol = list()
+        for dit in unique:
+            dat = set()
+            datPol.append(dat)
+            for j in dit:
+                if re.search(r'^[\s,\-.:\\\/]*$', j) == None:
+                    dat.add(j.strip())
+                    
+    
+        return datPol
+
+    
+    # extract itemized and grand total amounts from receipt text
+    def get_amounts(self, content):
+        amounts = re.findall(r'\d+\.\d{2}\b', content)
+        floats = [float(amount) for amount in amounts]
+        unique = list(dict.fromkeys(floats))
+        return unique
     
     # get grayscale image
     def get_grayscale(self, image):
