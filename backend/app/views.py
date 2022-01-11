@@ -20,6 +20,9 @@ from django.db import connection
 from django.core.files.storage import FileSystemStorage
 import pytesseract
 import matplotlib.pyplot as plt
+from imutils.perspective import four_point_transform
+import imutils
+import fitz
 import cv2
 from PIL import Image
 import re
@@ -276,6 +279,7 @@ class ReceiptUploadConvertViewSet(viewsets.ViewSet):
     def create(self, request):
         file_uploaded = request.FILES.get('file_uploaded')
         filename = file_uploaded.name
+        physical = True #used to indicate whether the uploaded file is of a physical printed receipt or digital version
         origPath = f"rawReceipts/{filename}"
         finalPaths = []
         fs = FileSystemStorage(location='rawReceipts')
@@ -285,6 +289,12 @@ class ReceiptUploadConvertViewSet(viewsets.ViewSet):
         if not(content_type.startswith('image') or content_type == 'application/pdf'):
             return Response("Invalid File Type.  Only PDF and image files are accepted.")
         elif content_type == 'application/pdf':
+            #Detect whether PDF is a scanned image or digitally rendered
+            text_perc = self.get_text_percentage(origPath)
+            if text_perc < 0.01:
+                physical = True
+            else:
+                physical = False
             #Convert the PDF into an Image
             pages = convert_from_path(pdf_path = origPath, dpi = 300)
 
@@ -300,19 +310,54 @@ class ReceiptUploadConvertViewSet(viewsets.ViewSet):
 
         for path in finalPaths:
 
-                image = cv2.imread(path)
-             #   gray = self.get_grayscale(image)
-             #   thresh = self.thresholding(gray)
-                
-              #  opening = self.opening(gray)
-               # canny = self.canny(gray)
+                orig = cv2.imread(path)
+                if physical == True:
+                    image = orig.copy()
+                    image = imutils.resize(image, width=500)
+                    ratio = orig.shape[1] / float(image.shape[1])
+                    gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
+                    blurred = cv2.GaussianBlur(gray, (5, 5,), 0)
+                    edged = cv2.Canny(blurred, 75, 200)
 
-                #custom_config = r'--oem 3 --psm 6'
-                #content = pytesseract.image_to_string(thresh, config=custom_config)
+                    #Detect contours in the edged image and process them
+                    cnts = cv2.findContours(edged.copy(), cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+                    cnts = imutils.grab_contours(cnts)
+                    cnts = sorted(cnts, key=cv2.contourArea, reverse=True)
 
-                content = pytesseract.image_to_string(image)
-                print(content)
+                    #Determine if the contour contains four vertices
+                    # initialize a contour that corresponds to the receipt outline
+                    receiptCnt = None
+                    # loop over the contours
+                    for c in cnts:
+                        # approximate the contour
+                        peri = cv2.arcLength(c, True)
+                        approx = cv2.approxPolyDP(c, 0.02 * peri, True)
+                        # if our approximated contour has four points, then we can
+                        # assume we have found the outline of the receipt
+                        if len(approx) == 4:
+                            receiptCnt = approx
+                            break
+                    # if the receipt contour is empty then our script could not find the
+                    # outline and we should be notified
+                    if receiptCnt is None:
+                        raise Exception(("Could not find receipt outline. "
+                            "Try debugging your edge detection and contour steps."))
+
+                    #With the receipt contour found, let's apply our perspective transform to the image
+                    # apply a four-point perspective transform to the *original* image to
+                    # obtain a top-down bird's-eye view of the receipt
+                    receipt = four_point_transform(orig, receiptCnt.reshape(4, 2) * ratio)
+                    cv2.imwrite('savedImage.jpg', receipt)
+                else:
+                    receipt = orig
+
+                content = pytesseract.image_to_string(receipt)
+                #print(content)
                 amounts = self.get_amounts(content)
+                itemizedLines = self.get_items(content)
+                print("[INFO] price line items:")
+                print("========================")
+                print(itemizedLines)
                 grandTotal = max(amounts)
                 splits = content.splitlines()
                 vendorName = splits[0]
@@ -327,15 +372,54 @@ class ReceiptUploadConvertViewSet(viewsets.ViewSet):
 
         return Response(response)
 
+        
+    def get_text_percentage(self, file_name: str) -> float:
+        """
+        Calculate the percentage of document that is covered by (searchable) text.
+
+        If the returned percentage of text is very low, the document is
+        most likely a scanned PDF
+        """
+        total_page_area = 0.0
+        total_text_area = 0.0
+
+        doc = fitz.open(file_name)
+
+        for page_num, page in enumerate(doc):
+            total_page_area = total_page_area + abs(page.rect)
+            text_area = 0.0
+            for b in page.getTextBlocks():
+                r = fitz.Rect(b[:4])  # rectangle where block text appears
+                text_area = text_area + abs(r)
+            total_text_area = total_text_area + text_area
+        doc.close()
+        return total_text_area / total_page_area
+
+
+    # extract lines with itemized details
+    def get_items(self, content):
+        pricePattern = r'([0-9]+\.[0-9]+)'
+        items = []
+        for row in content.splitlines():
+            if re.search(pricePattern, row) is not None:
+                items.append(row)
+        return items
+
     # extract dates from receipt
     def get_dates(self, content):
         monDDYYYY = r'((\b\d{1,2}\D{0,3})?\b(?:Jan(?:uary)?|Feb(?:ruary)?|Mar(?:ch)?|Apr(?:il)?|May|Jun(?:e)?|Jul(?:y)?|Aug(?:ust)?|Sep(?:tember)?|Oct(?:ober)?|(Nov|Dec)(?:ember)?)\D?)(\d{1,2}(st|nd|rd|th)?)?((\s*[,.\-\/]\s*)\D?)?\s*((19[0-9]\d|20\d{2})|\d{2})*'
+        monthName = r'^(?:Jan(?:uary)?|Feb(?:ruary)?|Mar(?:ch)?|Apr(?:il)?|May|Jun(?:e)?|Jul(?:y)?|Aug(?:ust)?|Sep(?:tember)?|Oct(?:ober)?|(Nov|Dec)(?:ember)?)$'
         YYYY = r'(19[0-9]\d|20\d{2})'
         MM = r'(0[1-9]|1[0-2])'
         DD = r'(0[1-9]|[12][0-9]|3[01])'
         sep = r'[\-.\/:,]'
+        DDMMYYYY = DD + sep + MM + sep + YYYY
+        YYYYMMDD = YYYY + sep + MM + DD
         MMDDYYYY = MM + sep + DD + sep + YYYY
-        master = '|'.join([monDDYYYY, MMDDYYYY])
+        monDDYYYY = monthName + sep + DD + r', ' + YYYY
+        DDMonYYYY = DD + sep + monthName + r', ' + YYYY
+        YYYYMonDD = YYYY + r', ' + monthName + sep + DD
+        master = '|'.join([monDDYYYY, MMDDYYYY, DDMMYYYY, YYYYMMDD, YYYYMonDD])
         dates = self.findall_overlapping(master, content) 
         #unique = list(dict.fromkeys(dates))
         # Remove duplicate items in tuples
@@ -367,6 +451,9 @@ class ReceiptUploadConvertViewSet(viewsets.ViewSet):
     # get grayscale image
     def get_grayscale(self, image):
         return cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
+
+    def get_gausblur(self, image):
+        return cv2.GaussianBlur(image, (5, 5,), 0)
 
     # noise removal
     def remove_noise(self, image):
