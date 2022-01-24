@@ -22,6 +22,7 @@ import pytesseract
 import matplotlib.pyplot as plt
 from imutils.perspective import four_point_transform
 import imutils
+from PIL.ExifTags import TAGS
 import fitz
 import cv2
 from PIL import Image
@@ -280,6 +281,7 @@ class ReceiptUploadConvertViewSet(viewsets.ViewSet):
         file_uploaded = request.FILES.get('file_uploaded')
         filename = file_uploaded.name
         physical = True #used to indicate whether the uploaded file is of a physical printed receipt or digital version
+        metaData = False #used to indicate whether uploaded file contains info about it's origin (ex: the device from which it was taken)
         origPath = f"rawReceipts/{filename}"
         finalPaths = []
         fs = FileSystemStorage(location='rawReceipts')
@@ -307,13 +309,18 @@ class ReceiptUploadConvertViewSet(viewsets.ViewSet):
                 i += 1
         else:
             finalPaths.insert(0, origPath)
+            img = Image.open(origPath)
+            exifdata = img.getexif()
+            if exifdata:
+                metaData = True
 
         for path in finalPaths:
 
                 orig = cv2.imread(path)
-                if physical == True:
+                if physical and False:
                     image = orig.copy()
                     image = imutils.resize(image, width=500)
+                    area = image.shape[0] * image.shape[1]
                     ratio = orig.shape[1] / float(image.shape[1])
                     gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
                     blurred = cv2.GaussianBlur(gray, (5, 5,), 0)
@@ -331,10 +338,15 @@ class ReceiptUploadConvertViewSet(viewsets.ViewSet):
                     for c in cnts:
                         # approximate the contour
                         peri = cv2.arcLength(c, True)
+                        
                         approx = cv2.approxPolyDP(c, 0.02 * peri, True)
+                                           
                         # if our approximated contour has four points, then we can
                         # assume we have found the outline of the receipt
-                        if len(approx) == 4:
+                        # if the size of our contours is too small, then we also exit the loop
+                        if cv2.contourArea(approx) / area < 0.4:
+                            break
+                        elif len(approx) == 4:
                             receiptCnt = approx
                             break
                     # if the receipt contour is empty then our script could not find the
@@ -352,20 +364,29 @@ class ReceiptUploadConvertViewSet(viewsets.ViewSet):
                     receipt = orig
 
                 content = pytesseract.image_to_string(receipt)
-                #print(content)
-                amounts = self.get_amounts(content)
-                itemizedLines = self.get_items(content)
-                print("[INFO] price line items:")
-                print("========================")
-                print(itemizedLines)
-                grandTotal = max(amounts)
-                splits = content.splitlines()
-                vendorName = splits[0]
-                dates = self.get_dates(content)
-                print("Dates: ", dates)
-                print("Vendor Name: ", vendorName)
-                print("Amounts: ", amounts)
-                print("Grand Total: ", grandTotal)
+                if len(content) > 2:
+                    amounts = self.get_amounts(content)
+                    itemizedLines = self.get_items(content)
+                    itemNames = self.get_itemName(itemizedLines)
+                    print("[INFO] price line items:")
+                    print("========================")
+                    print(itemizedLines)
+                    print("ITEM Names")
+                    print(itemNames)
+                    grandTotal = None
+                    if len(amounts) > 0:
+                        grandTotal = max(amounts)
+                    else:
+                        grandTotal = "Not Found"
+                    splits = content.splitlines()
+                    vendorName = splits[0]
+                    dates = self.get_dates(content)
+                    print("Dates: ", dates)
+                    print("Vendor Name: ", vendorName)
+                    print("Amounts: ", amounts)
+                    print("Grand Total: ", grandTotal)
+                else: 
+                    print("The uploaded file doesn't contain any text.")
         
         #Delete the contents of the directory with the original image/PDF files
         shutil.rmtree('rawReceipts', True)
@@ -399,11 +420,26 @@ class ReceiptUploadConvertViewSet(viewsets.ViewSet):
     # extract lines with itemized details
     def get_items(self, content):
         pricePattern = r'([0-9]+\.[0-9]+)'
+        doNotMatch = ['total', 'sub', 'tip', 'change']
         items = []
         for row in content.splitlines():
             if re.search(pricePattern, row) is not None:
-                items.append(row)
+                for index, item in enumerate(doNotMatch):
+                    if item in row.lower():
+                        break
+                    elif index == len(doNotMatch) - 1:
+                        items.append(row)
         return items
+
+    #Get names of items
+    def get_itemName(self, items):
+        namePattern = r'^[a-zA-Z\s-]$'
+        names = []
+        for item in items:
+            nameChoices = self.findall_overlapping(namePattern, item)
+            names.append(nameChoices)
+        return names
+
 
     # extract dates from receipt
     def get_dates(self, content):
