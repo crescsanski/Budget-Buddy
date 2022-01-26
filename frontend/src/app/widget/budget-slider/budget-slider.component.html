@@ -5,7 +5,7 @@
         </div>
         <div class="content-area scrollbox">
         <div *ngFor="let cat of budgetCategories">
-            <div *ngIf="cat.visible != false">
+            <div class="sliderArea" *ngIf="cat.visible != false">
                 <p style="color: #003486; text-align: left; font-weight: bold;">{{cat.categoryTitle}}: <span style="font-weight: lighter;">${{cat.amount}}</span></p>
                 <p-slider [(ngModel)]=cat.amount [min]="0" [max]=totalBudget [animate]="true" [step]="5"></p-slider>
             </div>
