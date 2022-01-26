@@ -1,0 +1,13 @@
+.scrollbox {
+  height: 50vh;
+  overflow-y: scroll;
+  width: 96%;
+  padding: 10px 0px;
+  margin-left: 5px;
+  margin-right: 5px;
+  margin-top: 0;
+
+  .p {
+    text-align: left !important;
+  }
+}

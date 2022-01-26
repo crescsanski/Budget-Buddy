@@ -13,13 +13,14 @@ import { LoginNavComponent } from './login/login-nav/login-nav.component';
 import { LoginPanelComponent } from './login/login-panel/login-panel.component';
 import { AuthInterceptor } from './helpers/authInterceptor.service';
 import { ErrorInterceptor } from './helpers/error.interceptor';
-import { ReactiveFormsModule } from '@angular/forms';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { RegisterPanelComponent } from './register/register-panel/register-panel.component';
 import { RegisterNavComponent } from './register/register-nav/register-nav.component';
 import { RegisterPageComponent } from './register/register-page/register-page.component';
 import { PrimengModule } from './primeng/primeng.module';
 import { DatePipe } from '@angular/common';
 import {TooltipModule} from 'primeng/tooltip';
+
 @NgModule({
   declarations: [
     AppComponent,
@@ -45,7 +46,8 @@ import {TooltipModule} from 'primeng/tooltip';
     HttpClientModule,
     HomeModule,
     WidgetModule,
-    TooltipModule
+    TooltipModule,
+    FormsModule
   ],
   exports: [
   ],
