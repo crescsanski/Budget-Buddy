@@ -16,7 +16,7 @@ class UserCreationForm(forms.ModelForm):
 
     class Meta:
         model = Users
-        fields = ('email', 'birth_date')
+        fields = ('user_email', 'user_birth_date')
 
     def clean_password2(self):
         # Check that the two password entries match
@@ -44,7 +44,7 @@ class UserChangeForm(forms.ModelForm):
 
     class Meta:
         model = Users
-        fields = ('email', 'password', 'birth_date', 'is_active', 'is_admin')
+        fields = ('user_email', 'password', 'user_birth_date', 'is_active', 'is_admin')
 
 
 class UserAdmin(BaseUserAdmin):
@@ -55,11 +55,11 @@ class UserAdmin(BaseUserAdmin):
     # The fields to be used in displaying the User model.
     # These override the definitions on the base UserAdmin
     # that reference specific fields on auth.User.
-    list_display = ('email', 'birth_date', 'is_admin')
+    list_display = ('user_email', 'user_birth_date', 'is_admin')
     list_filter = ('is_admin',)
     fieldsets = (
-        (None, {'fields': ('email', 'password')}),
-        ('Personal info', {'fields': ('birth_date',)}),
+        (None, {'fields': ('user_email', 'password')}),
+        ('Personal info', {'fields': ('user_birth_date',)}),
         ('Permissions', {'fields': ('is_admin',)}),
     )
     # add_fieldsets is not a standard ModelAdmin attribute. UserAdmin
@@ -67,11 +67,11 @@ class UserAdmin(BaseUserAdmin):
     add_fieldsets = (
         (None, {
             'classes': ('wide',),
-            'fields': ('email', 'birth_date', 'password1', 'password2'),
+            'fields': ('user_email', 'user_birth_date', 'password1', 'password2'),
         }),
     )
-    search_fields = ('email',)
-    ordering = ('email',)
+    search_fields = ('user_email',)
+    ordering = ('user_email',)
     filter_horizontal = ()
 
 
@@ -82,26 +82,9 @@ admin.site.register(Users, UserAdmin)
 admin.site.unregister(Group)
 
 admin.site.register(Category)
-admin.site.register(Product)
+admin.site.register(Expense)
 admin.site.register(Receipt)
-admin.site.register(Challenge)
-admin.site.register(ChallengeInventory)
-admin.site.register(SecurityQuestion)
-admin.site.register(Budget)
-admin.site.register(Notifications)
-admin.site.register(NotificationsList)
-admin.site.register(Trigger)
-admin.site.register(Competitions)
-admin.site.register(CompetitionStatus)
-admin.site.register(Difficulty)
-admin.site.register(Inventory)
-admin.site.register(Levels)
-admin.site.register(FriendStatus)
-admin.site.register(Friends)
-admin.site.register(GlobalCompetitions)
 admin.site.register(Income)
-admin.site.register(Items)
-admin.site.register(Widget)
-admin.site.register(WidgetInventory)
-admin.site.register(UserBudgetGoal)
-admin.site.register(BadgesEarned)
+admin.site.register(Challenge)
+admin.site.register(UserCategoryBudget)
+admin.site.register(UserChallengeInventory)

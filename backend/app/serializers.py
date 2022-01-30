@@ -3,21 +3,30 @@ from rest_framework import exceptions, serializers
 from django.contrib.auth.password_validation import CommonPasswordValidator, NumericPasswordValidator, UserAttributeSimilarityValidator, validate_password, MinimumLengthValidator
 from rest_framework.fields import FileField
 from .models import *
+from .baseSerializers import *
 
-class ReceiptUploadSerializer(serializers.Serializer):
-    file_uploaded = FileField()
+class IncomeReceiptSerializer(serializers.Serializer):
+
+    recQuer = Receipt.objects.all()
+    receipt = ReceiptSerializer(recQuer)
+
+    incomQuer = Income.objects.all()
+    incomes = IncomeSerializer(incomQuer, many=True)
+
+    
     class Meta:
-        fields = ['file_uploaded']
+        fields = ['incomes', 'receipt']
 
-class SecurityQuestionSerializer(serializers.ModelSerializer):
+class ExpenseReceiptSerializer(serializers.Serializer):
+    recQuer = Receipt.objects.all()
+    receipt = ReceiptSerializer(recQuer)
+
+    expenQuer = Expense.objects.all()
+    expenses = ExpenseSerializer(expenQuer, many=True)
+    
     class Meta:
-        model = SecurityQuestion
-        fields = '__all__'
+        fields = ['expenses', 'receipt']
 
-class UsersSerializer(serializers.ModelSerializer):
-   class Meta:
-       model = Users 
-       fields = '__all__'
 
 class UserRegistrationSerializer(serializers.ModelSerializer):
     class Meta:
@@ -43,128 +52,6 @@ class UserRegistrationSerializer(serializers.ModelSerializer):
             raise serializers.ValidationError(errors)
 
         return super(UserRegistrationSerializer, self).validate(data)
-
-class ValidateChallengeSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = ChallengeInventory
-        fields = ['user', 'challenge']
-
-class BudgetSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Budget
-        fields = '__all__'
-
-class CategorySerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Category
-        fields = '__all__'
-
-class LevelsSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Levels
-        fields = '__all__'
-
-class BudgetGoalSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = UserBudgetGoal
-        fields = '__all__'
-
-class TriggerSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Trigger
-        fields = '__all__'
-    
-class ChallengeSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Challenge
-        fields = '__all__'
-
-class ChallengeInventorySerializer(serializers.ModelSerializer):
-    class Meta:
-        model = ChallengeInventory
-        fields = '__all__'
-
-class CompetitionStatusSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = CompetitionStatus
-        fields = '__all__'
-
-class CompetitionsSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Competitions
-        fields = '__all__'
-
-class DifficultySerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Difficulty
-        fields = '__all__'
-
-class FriendStatusSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = FriendStatus
-        fields = '__all__'
-
-class FriendsSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Friends
-        fields = '__all__'
-
-class GlobalCompetitionsSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = GlobalCompetitions
-        fields = '__all__'
-
-class IncomeSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Income
-        fields = '__all__'
-
-class InventorySerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Inventory
-        fields = '__all__'
-
-class ItemsSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Items
-        fields = '__all__'
-
-class NotificationsSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Notifications
-        fields = '__all__'
-
-class NotificationsListSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = NotificationsList
-        fields = '__all__'
-
-class ProductSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Product
-        fields = '__all__'
-    
-class ReceiptSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Receipt
-        fields = '__all__'
-
-class WidgetSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Widget
-        fields = '__all__'
-
-class WidgetInventorySerializer(serializers.ModelSerializer):
-    class Meta:
-        model = WidgetInventory
-        fields = '__all__'
-
-# Serializers for Database Views
-
-class BadgesEarnedSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = BadgesEarned
-        fields = '__all__'
 
 
 

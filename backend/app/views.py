@@ -29,162 +29,125 @@ from PIL import Image
 import re
 import numpy as np
 import shutil
+from django.views.decorators.http import require_http_methods
+from rest_framework.decorators import api_view, throttle_classes
 
-class SecurityQuestionViewSet(viewsets.ModelViewSet):
-    queryset = SecurityQuestion.objects.all()
-    serializer_class = SecurityQuestionSerializer
-    permission_classes = [permissions.IsAuthenticated]
+#This API will be used primarily on the tracking page to generate new receipts for either incomes or expenses.  It will also be used
+#to retrieve, update, and delete receipts.  It combines the user, receipts, expenses, incomes, and category tables.
+#When a user retrieves a receipt, the underlying expenses and incomes associated should also be included.  
 
-class UsersViewSet(viewsets.ModelViewSet):
-    """
-    This viewset automatically provides `list`, `create`, `retrieve`,
-    `update` and `destroy` actions.
-    Additionally we also provide an extra `highlight` action.
-    """
-    queryset = Users.objects.all()
-    serializer_class = UsersSerializer
-    permission_classes = [permissions.IsAuthenticated]
+#Get, update, or delete a specific receipt and its content
+@api_view(['GET', 'PUT', 'DELETE'])
+def singleReceipt(request, receiptid):
+    receipt = Receipt.objects.filter(receipt_id = receiptid)
+    if receipt.count() == 0:
+        return Response("A receipt with the provided id does not exist.")
+    else:
+        incomes = Income.objects.filter(receipt = receipt.first())
+        expenses = Expense.objects.filter(receipt = receipt.first())
+        if request.method == 'GET':
+            out = {'incomes': incomes.values(),
+                    'expenses': expenses.values(),
+                    'receipt': receipt.values()[0]}
+            return Response(out)
+        elif request.method == 'DELETE':
+            incomes.delete()
+            expenses.delete()
+            receipt.delete()
+            return Response(f"Receipt with id {receiptid} and its content have been deleted.")
+        else:
+            recSerializer = ReceiptSerializer(data = request.data['receipt'])
+            recSerializer.is_valid(raise_exception=True)
+            recData = recSerializer.validated_data
+            receipt.update(**recData)
+            is_income = None
+            serializer = None
+            if request.data['incomes']:
+                for income in request.data['incomes']:
+                    Income.objects.filter(income_id=income['income_id']).update(
+                    income_name = income['income_name'],
+                    income_amount = income['income_amount'],
+                    receipt = receiptid,
+                    category = income['category'])
+            elif request.data['expenses']:
+                for expense in request.data['expenses']:
+                    Expense.objects.filter(product_id=expense['product_id']).update(
+                    product_name = expense['product_name'],
+                    product_price = expense['product_price'],
+                    receipt = receiptid,
+                    category = expense['category'],
+                    essential = expense['essential'])  
+            return Response(f"Receipt with id {receiptid} has been updated.")
+    
+    
 
-    @action(detail=True, renderer_classes=[renderers.StaticHTMLRenderer])
-    def highlight(self, request, *args, **kwargs):
-        snippet = self.get_object()
-        return Response(snippet.highlighted)
+#Get all receipts for a user and its content
+@api_view(["GET"])
+def getReceiptsByUser(request, userid):
 
-    def perform_create(self, serializer):
-        serializer.save(owner=self.request.user)
+    user = Users.objects.get(user_id = userid)
 
+    allReceipts = Receipt.objects.filter(user = user)
 
-class BudgetViewSet(viewsets.ModelViewSet):
-    queryset = Budget.objects.all()
-    serializer_class = BudgetSerializer
-    permission_classes = [permissions.IsAuthenticated]
-    filterset_fields = '__all__'
+    incomeReceipts = Income.objects.select_related('receipt').filter(receipt__user = user)
+    
+    expenseReceipts = Expense.objects.select_related('receipt').filter(receipt__user = user)        
+    out = []
+    for rec in allReceipts:
+        object = {'incomes': incomeReceipts.filter(receipt__receipt_id = rec.receipt_id).values(),
+                    'expenses': expenseReceipts.filter(receipt__receipt_id = rec.receipt_id).values()}
+        object['receipt'] = Receipt.objects.filter(receipt_id = rec.receipt_id).values()[0]
+        out.append(object)
 
-class CategoryViewSet(viewsets.ModelViewSet):
-    queryset = Category.objects.all()
-    serializer_class = CategorySerializer
-    permission_classes = [permissions.IsAuthenticated]
-    filterset_fields = '__all__'
+    return Response(out)
 
-    @action(detail=False, methods=['GET'], name='Get Income')
-    def income(self, request, format=None):
-        queryset = Category.objects.filter(category_income = True)
-        serializer = CategorySerializer(queryset, many=True)
-        return Response(serializer.data)
+#Create a new receipt:
+#Internally, this means that we are creating one entry in the Receipts table along with one or more records in the 
+#Incomes and/or Expenses table (depending on the type of receipt provided in the body.)
+@api_view(["POST"])
+def postReceipt(request):
+    is_income = None
+    serializer = None
+    if request.data['incomes']:
+        is_income = True
+        serializer = IncomeReceiptSerializer(data=request.data,
+                                        context={'request': request})
+    elif request.data['expenses']:
+        serializer = ExpenseReceiptSerializer(data=request.data,
+                                        context={'request': request})
 
-    @action(detail=False, methods=['GET'], name='Get Spending')
-    def spending(self, request, format=None):
-         queryset = Category.objects.filter(category_income = False)
-         serializer = CategorySerializer(queryset, many=True)
-         return Response(serializer.data)
+    serializer.is_valid(raise_exception=True)
+    receiptPackage = serializer.validated_data
+    userid = request.data['userid']
+    user = Users.objects.get(user_id = userid)
 
-class ChallengeViewSet(viewsets.ModelViewSet):
-    queryset = Challenge.objects.all()
-    serializer_class = ChallengeSerializer
-    permission_classes = [permissions.IsAuthenticated]
+    #1. Create the receipt object
+    recData = receiptPackage['receipt']
+    #1. Create the receipt object
+    receipt = Receipt.objects.create(receipt_amount = recData['receipt_amount'], 
+    receipt_date = recData['receipt_date'],
+    receipt_is_reccuring = recData['receipt_is_reccuring'],
+    receipt_is_income = recData['receipt_is_income'],
+    user = user)
 
-class ChallengeInventoryViewSet(viewsets.ModelViewSet):
-    queryset = ChallengeInventory.objects.all()
-    serializer_class = ChallengeInventorySerializer
-    permission_classes = [permissions.IsAuthenticated]
-
-    # @action(detail=False, methods=['GET'], name='Get Completed Badges')
-    # def earnedBadges(self, request, format=None):
-    #      userId = self.kwargs.get(self.lookup_url_kwarg)
-    #      print("UserID: ", userId)
-    #      queryset = ChallengeInventory.objects.filter(challenge_completion = True, user = userId).prefetch_related('challenge')
-    #      serializer = ChallengeInventorySerializer(queryset, many=True)
-    #      return Response(serializer.data)
-
-class CompetitionStatusViewSet(viewsets.ModelViewSet):
-    queryset = CompetitionStatus.objects.all()
-    serializer_class = CompetitionStatusSerializer
-    permission_classes = [permissions.IsAuthenticated]
-
-class CompetitionsViewSet(viewsets.ModelViewSet):
-    queryset = Competitions.objects.all()
-    serializer_class = CompetitionsSerializer
-    permission_classes = [permissions.IsAuthenticated]
-
-class DifficultyViewSet(viewsets.ModelViewSet):
-    queryset = Difficulty.objects.all()
-    serializer_class = DifficultySerializer
-    permission_classes = [permissions.IsAuthenticated]
-
-class FriendStatusViewSet(viewsets.ModelViewSet):
-    queryset = FriendStatus.objects.all()
-    serializer_class = FriendStatusSerializer
-    permission_classes = [permissions.IsAuthenticated]
-
-class FriendsViewSet(viewsets.ModelViewSet):
-    queryset = Friends.objects.all()
-    serializer_class = FriendsSerializer
-    permission_classes = [permissions.IsAuthenticated]
-
-class GlobalCompetitionsViewSet(viewsets.ModelViewSet):
-    queryset = GlobalCompetitions.objects.all()
-    serializer_class = GlobalCompetitionsSerializer
-    permission_classes = [permissions.IsAuthenticated]
-
-class IncomeViewSet(viewsets.ModelViewSet):
-    queryset = Income.objects.all()
-    serializer_class = IncomeSerializer
-    permission_classes = [permissions.IsAuthenticated]
-
-class InventoryViewSet(viewsets.ModelViewSet):
-    queryset = Inventory.objects.all()
-    serializer_class = InventorySerializer
-    permission_classes = [permissions.IsAuthenticated]
-
-class ItemsViewSet(viewsets.ModelViewSet):
-    queryset = Items.objects.all()
-    serializer_class = ItemsSerializer
-    permission_classes = [permissions.IsAuthenticated]
-
-class NotificationsViewSet(viewsets.ModelViewSet):
-    queryset = Notifications.objects.all()
-    serializer_class = NotificationsSerializer
-    permission_classes = [permissions.IsAuthenticated]
-
-class LevelsViewSet(viewsets.ModelViewSet):
-    queryset = Levels.objects.all()
-    serializer_class = LevelsSerializer
-    permission_classes = [permissions.IsAuthenticated]
-
-class BudgetGoalsViewSet(viewsets.ModelViewSet):
-    queryset = UserBudgetGoal.objects.all()
-    serializer_class = BudgetGoalSerializer
-    permission_classes = [permissions.IsAuthenticated]
-
-class TriggerViewSet(viewsets.ModelViewSet):
-    queryset = Trigger.objects.all()
-    serializer_class = TriggerSerializer
-    permission_classes = [permissions.IsAuthenticated]
-
-class NotificationsListViewSet(viewsets.ModelViewSet):
-    queryset = NotificationsList.objects.all()
-    serializer_class = NotificationsListSerializer
-    permission_classes = [permissions.IsAuthenticated]
-
-class ProductViewSet(viewsets.ModelViewSet):
-    queryset = Product.objects.all()
-    serializer_class = ProductSerializer
-    permission_classes = [permissions.IsAuthenticated]
-
-class ReceiptViewSet(viewsets.ModelViewSet):
-    queryset = Receipt.objects.all()
-    serializer_class = ReceiptSerializer
-    permission_classes = [permissions.IsAuthenticated]
-
-class WidgetViewSet(viewsets.ModelViewSet):
-    queryset = Widget.objects.all()
-    serializer_class = WidgetSerializer
-    permission_classes = [permissions.IsAuthenticated]
-
-class WidgetInventoryViewSet(viewsets.ModelViewSet):
-    queryset = WidgetInventory.objects.all()
-    serializer_class = WidgetInventorySerializer
-    permission_classes = [permissions.IsAuthenticated]
+    #2. Create the corresponding expense and/or income objects
+    if is_income:
+        for income in receiptPackage['incomes']:
+            Income.objects.create(income_name = income['income_name'],
+            income_amount = income['income_amount'],
+            receipt = receipt,
+            category = income['category'])
+    else:
+        for expense in receiptPackage['expenses']:
+            Expense.objects.create(product_name = expense['product_name'],
+            product_price = expense['product_price'],
+            receipt = receipt,
+            category = expense['category'],
+            essential = expense['essential'])   
+    
+    return Response({
+        'receipt_id': receipt.receipt_id
+    })
 
 
 class RegisterView(GenericAPIView):
@@ -204,12 +167,12 @@ class RegisterView(GenericAPIView):
         
         
         # First, let's check if the user name exists
-        common = Users.objects.filter(username = user['username'])
+        common = Users.objects.filter(user_user_name = user['user_user_name'])
         if len(common) > 0:
             raise Exception("A user with the given username already exists.  Please enter a different username.")
                 
         # Otherwise, if all correct, we create the user
-        auth.get_user_model().objects.create_user(username = user['username'], password=user['password'], extra=user)
+        auth.get_user_model().objects.create_user(username = user['user_user_name'], password=user['password'], extra=user)
         return Response("User has been registered successfully!")
 
 
@@ -252,11 +215,12 @@ class Logout(GenericAPIView):
         logout(request)
         return Response(status=status.HTTP_200_OK)
 
-class ValidateChallengeViewSet(viewsets.ViewSet):
+class ValidateChallengeViewSet(GenericAPIView):
     permission_classes = [permissions.IsAuthenticated]
     serializer_class = ValidateChallengeSerializer
     
-    def create(self, request):
+    @action(detail=False, methods=['post'])
+    def post(self, request, format=None):
 
         serializer = self.serializer_class(data=request.data)
   
@@ -274,10 +238,11 @@ class ValidateChallengeViewSet(viewsets.ViewSet):
 
         return Response(result)
 
-class ReceiptUploadConvertViewSet(viewsets.ViewSet):
+class ReceiptUploadConvertViewSet(GenericAPIView):
     serializer_class = ReceiptUploadSerializer
 
-    def create(self, request):
+    @action(detail=False, methods=['post'])
+    def post(self, request, format=None):
         file_uploaded = request.FILES.get('file_uploaded')
         filename = file_uploaded.name
         physical = True #used to indicate whether the uploaded file is of a physical printed receipt or digital version
@@ -317,7 +282,7 @@ class ReceiptUploadConvertViewSet(viewsets.ViewSet):
         for path in finalPaths:
 
                 orig = cv2.imread(path)
-                if physical and False:
+                if physical:
                     image = orig.copy()
                     image = imutils.resize(image, width=500)
                     area = image.shape[0] * image.shape[1]
@@ -537,15 +502,28 @@ class ReceiptUploadConvertViewSet(viewsets.ViewSet):
         return cv2.matchTemplate(image, template, cv2.TM_CCOEFF_NORMED)
 
 
-# Views for Database Views
+class BadgesEarnedViewSet(GenericAPIView):
+    #permission_classes = [permissions.IsAuthenticated]
 
-class BadgesEarnedViewSet(viewsets.ReadOnlyModelViewSet):
-    queryset = BadgesEarned.objects.all()
-    serializer_class = BadgesEarnedSerializer
-    permission_classes = [permissions.IsAuthenticated]
+    def get_serializer_class(self):
+        return None
 
-    def retrieve(self, request, pk=None):
-        queryset = BadgesEarned.objects.filter(user_id = pk)
-        serializer = BadgesEarnedSerializer(queryset, many=True)
-        return Response(serializer.data)
+    @action(detail=False, methods=['get'])
+    def get(self, request, *args, **kwargs):
+
+        userid = self.kwargs['userid']
+   
+        user = Users.objects.get(user_id = userid)
+
+        chFields = ['challenge__' + c.name for c in Challenge._meta.get_fields()]
+        ciFields = [ci.name for ci in UserChallengeInventory._meta.get_fields()]
+        desiredFields = chFields + ciFields
+
+        ex = UserChallengeInventory.objects.filter(user = user).select_related('challenge').values(
+            *desiredFields
+        )
+
+
+
+        return Response(ex)
 
