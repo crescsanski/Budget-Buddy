@@ -1,0 +1,67 @@
+/* CREATES VIEWS FOR WIDGETS*/
+
+CREATE OR REPLACE VIEW BadgesEarned AS
+  SELECT
+  budgetBuddy.users.user_id
+  ,budgetBuddy.challenge.challenge_name
+  ,budgetBuddy.challenge.challenge_description
+  ,budgetBuddy.user_challenge_inventory.challenge_completion
+  FROM
+  budgetBuddy.user_challenge_inventory
+  INNER JOIN budgetBuddy.users
+  ON budgetBuddy.user_challenge_inventory.user_id = budgetBuddy.users.user_id
+  INNER JOIN budgetBuddy.challenge
+  ON budgetBuddy.user_challenge_inventory.challenge_id = budgetBuddy.challenge.challenge_id;
+
+
+CREATE OR REPLACE VIEW CategorySpending AS
+SELECT
+budgetBuddy.users.user_id as UserID,
+date_part('year', budgetBuddy.receipt.receipt_date) as TheYear,
+date_part('week', budgetBuddy.receipt.receipt_date) as TheWeek,
+budgetBuddy.category.category_name as Category,
+sum(budgetBuddy.expense.expense_price) as TotalSpent,
+(budgetBuddy.user_category_budget.user_category_budget_estimated_amount/4) as WeeklyTarget,
+((budgetBuddy.user_category_budget.user_category_budget_estimated_amount/4) - sum(budgetBuddy.expense.expense_price)) as Difference
+FROM
+  budgetBuddy.expense
+  INNER JOIN budgetBuddy.category
+    ON budgetBuddy.expense.category_id = budgetBuddy.category.category_id
+  INNER JOIN budgetBuddy.receipt
+    ON budgetBuddy.expense.receipt_id = budgetBuddy.receipt.receipt_id
+  INNER JOIN budgetBuddy.users
+    ON budgetBuddy.receipt.user_id =budgetBuddy.users.user_id
+ INNER JOIN budgetBuddy.user_category_budget
+    ON budgetBuddy.receipt.user_id =budgetBuddy.user_category_budget.user_id	
+WHERE date_part('year', receipt_date) =  date_part('year', current_timestamp)
+and date_part('month', receipt_date) =  date_part('month', current_timestamp)
+and budgetBuddy.user_category_budget.category_id = budgetBuddy.expense.category_id
+group by budgetBuddy.users.user_id,budgetBuddy.category.category_name,
+date_part('year', budgetBuddy.receipt.receipt_date),date_part('week', budgetBuddy.receipt.receipt_date),
+budgetBuddy.user_category_budget.user_category_budget_estimated_amount;
+
+
+CREATE OR REPLACE VIEW WeeklyBudgetOne AS
+select
+budgetBuddy.receipt.user_id as UserID,
+date_part('year', budgetBuddy.receipt.receipt_date) as TheYear,
+date_part('week', budgetBuddy.receipt.receipt_date) as TheWeek,
+sum(budgetBuddy.expense.expense_price) as TotalExpenses
+from budgetBuddy.expense
+INNER JOIN budgetBuddy.receipt
+    ON budgetBuddy.expense.receipt_id = budgetBuddy.receipt.receipt_id
+where date_part('year', receipt_date) =  date_part('year', current_timestamp)
+and date_part('month', receipt_date) =  date_part('month', current_timestamp)
+group by 
+TheYear,TheWeek,UserID;
+
+
+CREATE OR REPLACE VIEW WeeklyBudgetTwo AS
+select 
+budgetBuddy.user_category_budget.user_id as UserID,
+sum((budgetBuddy.user_category_budget.user_category_budget_estimated_amount)/4) as WeeklyBudget
+from budgetBuddy.user_category_budget
+INNER JOIN budgetBuddy.category
+    ON budgetBuddy.user_category_budget.category_id = budgetBuddy.category.category_id
+where budgetBuddy.category.category_income = false
+group by UserID;

@@ -1,0 +1,127 @@
+/* PROCEDURES THAT ADD ONE ENTRY AT A TIME */
+
+
+
+
+/* Insert new security question */
+CREATE OR REPLACE PROCEDURE insert_new_security_question(security_question_name VARCHAR, security_question_question VARCHAR)
+LANGUAGE SQL
+AS $$
+INSERT INTO budgetBuddy.security_question(security_question_name, security_question_question) 
+VALUES (security_question_name, security_question_question);
+$$;
+
+
+
+
+/* Insert a new user */
+CREATE OR REPLACE PROCEDURE insert_new_user(user_first_name VARCHAR, user_last_name VARCHAR, user_user_name VARCHAR,
+user_email VARCHAR, user_password VARCHAR, user_phone_number VARCHAR, user_registration_date DATE, user_birth_date DATE,
+user_has_notifications BOOLEAN, user_budget_goal_amount INT, user_experience_points INT, security_question_id INT,
+user_security_question_answer VARCHAR)
+LANGUAGE SQL
+AS $$
+INSERT INTO budgetBuddy.users(user_first_name, user_last_name, user_user_name,
+user_email, user_password, user_phone_number, user_registration_date, user_birth_date,
+user_has_notifications, user_budget_goal_amount, user_experience_points, security_question_id,
+user_security_question_answer) 
+VALUES (user_first_name, user_last_name, user_user_name,
+user_email, user_password, user_phone_number, user_registration_date, user_birth_date,
+user_has_notifications, user_budget_goal_amount, user_experience_points, security_question_id,
+user_security_question_answer);
+$$;
+
+
+
+
+/* Insert new category (BOOLEAN use 0,1 true,false)*/
+CREATE OR REPLACE PROCEDURE insert_new_category(category_name VARCHAR, category_description VARCHAR, category_is_income BOOLEAN)
+LANGUAGE SQL
+AS $$
+INSERT INTO budgetBuddy.category(category_name, category_description, category_is_income) 
+VALUES (category_name, category_description,category_is_income);
+$$;
+
+
+
+
+/* RECEIPT CREATION */
+/* Create receipt first*/
+CREATE OR REPLACE PROCEDURE new_receipt_product(reccuring INT,toad VARCHAR)
+LANGUAGE SQL
+AS $$
+INSERT INTO budgetBuddy.receipt(receipt_date, receipt_is_reccuring, receipt_is_income, user_id) 
+VALUES (current_timestamp, reccuring, false, (SELECT user_id from
+budgetBuddy.users WHERE user_user_name = toad));
+$$;
+
+/* Create product second*/
+CREATE OR REPLACE PROCEDURE new_expense(expense_name VARCHAR, expense_price DECIMAL,
+toad VARCHAR, category_id INT)
+LANGUAGE SQL
+AS $$
+INSERT INTO budgetBuddy.expense(expense_name, expense_price, receipt_id, category_id) 
+VALUES (expense_name, expense_price, (SELECT receipt_id FROM budgetBuddy.receipt 
+WHERE user_id = (select user_id from
+budgetBuddy.users where user_user_name = toad) order by receipt_date desc limit 1), category_id);
+$$;
+
+/* Total Products and Complete Receipt*/
+CREATE OR REPLACE PROCEDURE complete_receipt_expense(toad VARCHAR)
+LANGUAGE SQL
+AS $$
+UPDATE budgetBuddy.receipt
+SET receipt_amount = (SELECT SUM(expense_price)
+FROM budgetBuddy.expense
+INNER JOIN budgetBuddy.receipt ON budgetBuddy.receipt.receipt_id=budgetBuddy.expense.receipt_id
+INNER JOIN budgetBuddy.users ON budgetBuddy.users.user_id=budgetBuddy.receipt.user_id
+WHERE budgetBuddy.expense.receipt_id = (SELECT receipt_id FROM budgetBuddy.receipt 
+WHERE user_id = (select user_id from budgetBuddy.users where user_user_name = toad) order by receipt_date desc limit 1))
+WHERE receipt_id = (SELECT receipt_id FROM budgetBuddy.receipt WHERE user_id = (select user_id from
+budgetBuddy.users where user_user_name = toad) order by receipt_date desc limit 1);
+$$;
+
+
+
+
+/* INCOME RECEIPT CREATION */
+/* Create receipt first*/
+CREATE OR REPLACE PROCEDURE new_receipt_income(reccuring INT,toad VARCHAR)
+LANGUAGE SQL
+AS $$
+INSERT INTO budgetBuddy.receipt(receipt_date, receipt_is_reccuring, receipt_is_income, user_id) 
+VALUES (current_timestamp, reccuring, true, (SELECT user_id from
+budgetBuddy.users WHERE user_user_name = toad));
+$$;
+
+/* Create income second*/
+CREATE OR REPLACE PROCEDURE new_income(income_name VARCHAR, income_amount DECIMAL,
+toad VARCHAR, category_id INT)
+LANGUAGE SQL
+AS $$
+INSERT INTO budgetBuddy.income(income_name, income_amount, receipt_id, category_id) 
+VALUES (income_name, income_amount, (SELECT receipt_id FROM budgetBuddy.receipt 
+WHERE user_id = (select user_id from budgetBuddy.users where user_user_name = toad) 
+order by receipt_date desc limit 1), category_id);
+$$;
+
+/* Total Incomes and Complete Receipt*/
+CREATE OR REPLACE PROCEDURE complete_receipt_income(toad VARCHAR)
+LANGUAGE SQL
+AS $$
+UPDATE budgetBuddy.receipt
+SET receipt_amount = (SELECT SUM(income_amount)
+FROM budgetBuddy.income
+INNER JOIN budgetBuddy.receipt ON budgetBuddy.receipt.receipt_id=budgetBuddy.income.receipt_id
+INNER JOIN budgetBuddy.users ON budgetBuddy.users.user_id=budgetBuddy.receipt.user_id
+WHERE budgetBuddy.income.receipt_id = (SELECT receipt_id FROM budgetBuddy.receipt 
+WHERE user_id = (select user_id from budgetBuddy.users where user_user_name = toad) order by receipt_date desc limit 1))
+WHERE receipt_id = (SELECT receipt_id FROM budgetBuddy.receipt WHERE user_id = (select user_id from
+budgetBuddy.users where user_user_name = toad) order by receipt_date desc limit 1);
+$$;
+
+
+
+
+
+

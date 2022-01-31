@@ -1,0 +1,62 @@
+LEVELING SYSTEM
+-----------------------------
+daily 50
+weekly 250 (70% of total dailys)
+monthly 750 (50% of toal dailys)
+
+=2100 month =25200 year =252 per level
+
+levels 1 - 100
+
+1 year if doing all challenges
+
+reason being we want this to be long term to help people budgetting
+and maintaining habits. If done in a month then they would stop.
+fixed rate because challenges always have same xp. No increase in
+xp like video game rpgs. More like free to play daily and weekly
+challenges.
+
+Procedure that would be necessary for leveling
+------------------------------------------------
+add user_current_level_experience_threshold INT attribute to user
+after challenge completion:
+			 	1-add experience to user_experience
+check if user_experience is greater than user_current_level_experience_threshold
+if true and not max level: 	
+				1-update user_current_level_experience_threshold.
+				2-check challenges and items and add to corresponding inventories
+				  where level_id equals new threshold.
+else:				1-do nothing
+
+
+
+CHALLENGES
+---------------------
+When a user updates any data for income, expense, sign-in....
+	each action has a trigger (ON UPDATE INSERT ATTRIBUTE HERE)
+Check challenge_inventory to see if user has any challenges with that trigger
+(makes challenge type (ie: grocery expense, job income...) redundant)
+
+
+
+SIGN-INS
+---------------------
+add last_signed_in TIMESTAMP to user table
+add sign_ins INT to user table
+if this week TIMESTAMP is greater than last_signed_in TIMESTAMP week
+	set sign_ins to 1
+else if today's TIMESTAMP day is greater than last_signed_in TIMESTAMP
+	add 1 to sign_ins
+check challenges_inventory for associated challenges 
+
+
+
+NOTIFICATIONS
+---------------------
+possible to change user_has_notifications to INT instead of BOOLEAN
+	then add notification_level to each notification
+	(0 = no notifications, 1 = challenges only, 2 inspiratitional, 
+	 3 = both,....ect)
+As of now, the complexity behind this may be out of reach. Random inspirational
+messages and persistent reminders may be a better fit for now.
+

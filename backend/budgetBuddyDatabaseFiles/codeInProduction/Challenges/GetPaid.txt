@@ -1,0 +1,133 @@
+INSERT INTO budgetBuddy.trigger(trigger_names)
+VALUES('paid');
+
+INSERT INTO budgetBuddy.challenge(
+    	challenge_name,
+	challenge_description,
+	challenge_type,		
+	challenge_time_given,
+	challenge_repeatable,
+	active,
+	experience,
+	trigger_id,
+	minimum,
+	maximum)
+VALUES('job_income','Get paid this month from your job','monthly',28,B'1',
+B'1', 10, 1, 0, 1);
+
+INSERT INTO budgetBuddy.challenge_inventory(
+	challenge_start_date,
+	challenge_completion,
+	challenge_id,
+	status,
+	user_id)
+VALUES(current_timestamp,B'0', 1, 0, 1);
+
+
+
+CREATE OR REPLACE FUNCTION paid()
+  RETURNS trigger AS
+$$
+BEGIN
+"CODE HERE: check if user has challenge
+in challenge_inventory with trigger name,
+then run calculation and update tables
+accordingly" 
+    RETURN NEW;
+END;
+$$
+LANGUAGE 'plpgsql';
+
+CREATE TRIGGER paid_trigger
+  AFTER INSERT
+  ON budgetBuddy.income
+  FOR EACH ROW
+  EXECUTE PROCEDURE paid();
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+-----------------------------------------------
+
+CREATE OR REPLACE FUNCTION get_paid()
+  RETURNS TRIGGER 
+  LANGUAGE PLPGSQL
+  AS $$
+  DECLARE 
+   productcat integer := NEW.user_id;
+   productuser := SELECT category_id FROM NEW.budgetBuddy.product;   
+   highprice integer :=100;
+   lowprice decimal :=.01;   
+BEGIN
+	IF NEW.budgetBuddy.income category_id = 1 
+	AND NEW.budgetBuddy.product 
+
+OLD.last_name THEN
+		 INSERT INTO employee_audits(employee_id,last_name,changed_on)
+		 VALUES(OLD.id,OLD.last_name,now());
+	END IF;
+
+	RETURN NEW;
+END;
+$$
+
+
+SELECT
+	user_id
+  income.receipt_id
+  ,receipt.users_id AS [receipt users_id]
+  ,users.users_id AS [users users_id]
+  ,challenge_inventory.challenge_id
+FROM
+  receipt
+  INNER JOIN income
+    ON receipt.receipt_id = income.receipt_id
+  INNER JOIN users
+    ON receipt.users_id = users.users_id
+  INNER JOIN challenge_inventory
+    ON users.users_id = challenge_inventory.users_id
+
+
+
+
+
+
+
+SELECT
+  budgetBuddy.product.receipt_id
+  ,budgetBuddy.receipt.user_id
+  ,budgetBuddy.users.user_id
+  ,budgetBuddy.challenge_inventory.challenge_id
+FROM
+  budgetBuddy.receipt
+  INNER JOIN budgetBuddy.product
+    ON budgetBuddy.receipt.receipt_id = budgetBuddy.product.receipt_id
+  INNER JOIN budgetBuddy.users
+    ON budgetBuddy.receipt.user_id = budgetBuddy.users.user_id
+  INNER JOIN budgetBuddy.challenge_inventory
+    ON budgetBuddy.users.user_id = budgetBuddy.challenge_inventory.user_id
+WHERE budgetBuddy.product.category_id = 5
+
+select * from budgetBuddy.product
+
+
+
+
+

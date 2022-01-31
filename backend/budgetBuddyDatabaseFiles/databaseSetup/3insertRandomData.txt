@@ -1,0 +1,258 @@
+/* PROCEDURES THAT ADD OPTIONAL RANDOM DATA */
+
+
+
+
+/* Fill Users table  */
+CREATE OR REPLACE PROCEDURE insert_users(numbers integer)
+LANGUAGE plpgsql
+AS $$
+declare 
+   counter integer := 1;
+begin
+   while counter <= numbers loop
+	INSERT INTO budgetBuddy.users(user_first_name, user_last_name, user_user_name,
+user_email, user_password, user_phone_number, user_registration_date, user_birth_date,
+user_has_notifications, user_budget_goal_amount, user_experience_points, security_question_id,
+user_security_question_answer) 
+	VALUES (CONCAT('fname',CAST(counter as VarChar)),CONCAT('lname',CAST(counter as VarChar)),CONCAT('username',CAST(counter as VarChar)),
+CONCAT('tester',CAST(counter as VarChar),'@testmail.com'), CONCAT('password',CAST(counter as VarChar)),
+CAST(counter as VarChar),'2021-01-01', '2021-01-01', CAST(floor(random() * 1.99)::int as BOOLEAN),floor(random() * (25 - 10 +1) + 10)::int,0,
+floor(random() * (SELECT COUNT(*) FROM budgetBuddy.security_question) + 1)::int,CONCAT('answer',CAST(counter as VarChar))
+);
+	counter := counter + 1;
+   end loop;
+end$$;
+
+/* Fill Users Table */
+CALL insert_users(50);
+
+
+
+
+/* RANDOM RECEIPT INSERTION */
+/* Creates Random Expenses */
+CREATE OR REPLACE PROCEDURE fill_receipt_expense_two()
+LANGUAGE plpgsql
+AS $$
+declare 
+   counter integer := 1;
+   items integer := (select floor(random() * (5- 1 +1) + 1)::int);   
+   highprice integer :=100;
+   lowprice decimal :=.01;   
+begin
+   while counter <= items loop
+	INSERT INTO budgetBuddy.expense(expense_name, expense_price, receipt_id, category_id) 
+VALUES (CONCAT('tester',CAST(counter as VarChar)), (SELECT round(CAST((random() * (highprice-lowprice + 1) + lowprice) AS decimal), 2)), 
+(SELECT max(receipt_id) FROM budgetBuddy.receipt), 
+floor(random() * (16) + 1)::int);
+counter := counter + 1;
+   end loop;
+end$$;
+
+/* Totals Random Expenses and Completes Random Receipt*/
+CREATE OR REPLACE PROCEDURE fill_receipt_expense_three()
+LANGUAGE SQL
+AS $$
+UPDATE budgetBuddy.receipt
+SET receipt_amount = (SELECT SUM(expense_price)
+FROM budgetBuddy.expense WHERE receipt_id = (SELECT max(receipt_id) FROM budgetBuddy.expense))
+WHERE receipt_id = (SELECT max(receipt_id) FROM budgetBuddy.receipt);
+$$;
+
+/* Creates Random Receipts and Ties To Expenses*/
+CREATE OR REPLACE PROCEDURE fill_receipt_expense_one(numbers integer)
+LANGUAGE plpgsql
+AS $$
+declare 
+   counter integer := 1;      
+begin
+   while counter <= numbers loop	
+	INSERT INTO budgetBuddy.receipt(receipt_date, receipt_is_reccuring, receipt_is_income,user_id) 
+VALUES ((select (timestamp '1999-01-01' + random() * (timestamp '2021-11-16' - timestamp '1999-01-01'))),
+0, false,(select floor(random() * (SELECT COUNT(*) FROM budgetBuddy.users) + 1)::int));
+	call fill_receipt_expense_two();
+	call fill_receipt_expense_three();
+	counter := counter + 1;
+   end loop;
+end$$;
+
+/* Creates Random Receipts and Expenses*/
+CALL fill_receipt_expense_one(100);
+
+
+
+
+/* GIVE USER 1 A BUNCH MORE RECEIPTS FOR TESTING BEGINNING THIS YEAR */
+/* Creates Random Expenses */
+CREATE OR REPLACE PROCEDURE fill_receipt_expense_two_extra()
+LANGUAGE plpgsql
+AS $$
+declare 
+   counter integer := 1;
+   items integer := (select floor(random() * (5- 1 +1) + 1)::int);   
+   highprice integer :=100;
+   lowprice decimal :=.01;   
+begin
+   while counter <= items loop
+	INSERT INTO budgetBuddy.expense(expense_name, expense_price, receipt_id, category_id) 
+VALUES (CONCAT('tester',CAST(counter as VarChar)), (SELECT round(CAST((random() * (highprice-lowprice + 1) + lowprice) AS decimal), 2)), 
+(SELECT max(receipt_id) FROM budgetBuddy.receipt), 
+floor(random() * (16) + 1)::int);
+counter := counter + 1;
+   end loop;
+end$$;
+
+/* Totals Random Expenses and Completes Random Receipt*/
+CREATE OR REPLACE PROCEDURE fill_receipt_expense_three_extra()
+LANGUAGE SQL
+AS $$
+UPDATE budgetBuddy.receipt
+SET receipt_amount = (SELECT SUM(expense_price)
+FROM budgetBuddy.expense WHERE receipt_id = (SELECT max(receipt_id) FROM budgetBuddy.expense))
+WHERE receipt_id = (SELECT max(receipt_id) FROM budgetBuddy.receipt);
+$$;
+
+/* Creates Random Receipts and Ties To Expenses*/
+CREATE OR REPLACE PROCEDURE fill_receipt_expense_one_extra(numbers integer)
+LANGUAGE plpgsql
+AS $$
+declare 
+   counter integer := 1; 
+   begin
+   while counter <= numbers loop		
+	INSERT INTO budgetBuddy.receipt(receipt_date, receipt_is_reccuring, receipt_is_income,user_id) 
+VALUES ((select (timestamp '2021-01-01' + random() * (current_timestamp - timestamp '2021-01-01'))), 0, false,1);
+	call fill_receipt_expense_two_extra();
+	call fill_receipt_expense_three_extra();
+	counter := counter + 1;	
+   end loop;
+end$$;
+
+/* Creates Random Receipts and Expenses*/
+CALL fill_receipt_expense_one_extra(1000);
+
+
+
+
+/* RANDOM INCOME RECEIPT INSERTION */
+/* Creates Random Incomes */
+CREATE OR REPLACE PROCEDURE fill_receipt_income_two()
+LANGUAGE plpgsql
+AS $$
+declare 
+   counter integer := 1;
+   items integer := (select floor(random() * (5- 1 +1) + 1)::int);   
+   highprice integer :=10000;
+   lowprice decimal :=.01;   
+begin
+   while counter <= items loop
+	INSERT INTO budgetBuddy.income(income_name, income_amount, receipt_id, category_id) 
+VALUES (CONCAT('tester',CAST(counter as VarChar)), (SELECT round(CAST((random() * (highprice-lowprice + 1) + lowprice) AS decimal), 2)), 
+(SELECT max(receipt_id) FROM budgetBuddy.receipt), 
+floor(random() * (23-17) + 17)::int);
+counter := counter + 1;
+   end loop;
+end$$;
+
+/* Totals Random Incomes and Completes Random Receipt*/
+CREATE OR REPLACE PROCEDURE fill_receipt_income_three()
+LANGUAGE SQL
+AS $$
+UPDATE budgetBuddy.receipt
+SET receipt_amount = (SELECT SUM(income_amount)
+FROM budgetBuddy.income WHERE receipt_id = (SELECT max(receipt_id) FROM budgetBuddy.income))
+WHERE receipt_id = (SELECT max(receipt_id) FROM budgetBuddy.receipt);
+$$;
+
+/* Creates Random Receipts and Ties To Income*/
+CREATE OR REPLACE PROCEDURE fill_receipt_income_one(numbers integer)
+LANGUAGE plpgsql
+AS $$
+declare 
+   counter integer := 1;      
+begin
+   while counter <= numbers loop	
+	INSERT INTO budgetBuddy.receipt(receipt_date, receipt_is_reccuring, receipt_is_income,user_id) 
+VALUES ((select (timestamp '1999-01-01' + random() * (timestamp '2021-11-16' - timestamp '1999-01-01'))),
+0, true,(select floor(random() * (SELECT COUNT(*) FROM budgetBuddy.users) + 1)::int));
+	call fill_receipt_income_two();
+	call fill_receipt_income_three();
+	counter := counter + 1;
+   end loop;
+end$$;
+
+/* Creates Random Receipts and Products*/
+CALL fill_receipt_income_one(100);
+
+
+
+
+/* GIVE USER 1 A BUNCH MORE INCOME RECEIPTS FOR TESTING BEGINNING THIS YEAR */
+/* Creates Random Incomes */
+CREATE OR REPLACE PROCEDURE fill_receipt_income_two_extra()
+LANGUAGE plpgsql
+AS $$
+declare 
+   counter integer := 1;
+   items integer := (select floor(random() * (5- 1 +1) + 1)::int);   
+   highprice integer :=10000;
+   lowprice decimal :=.01;   
+begin
+   while counter <= items loop
+	INSERT INTO budgetBuddy.income(income_name, income_amount, receipt_id, category_id) 
+VALUES (CONCAT('tester',CAST(counter as VarChar)), (SELECT round(CAST((random() * (highprice-lowprice + 1) + lowprice) AS decimal), 2)), 
+(SELECT max(receipt_id) FROM budgetBuddy.receipt), 
+floor(random() * (23-17) + 17)::int);
+counter := counter + 1;
+   end loop;
+end$$;
+
+/* Totals Random Incomes and Completes Random Receipt*/
+CREATE OR REPLACE PROCEDURE fill_receipt_income_three_extra()
+LANGUAGE SQL
+AS $$
+UPDATE budgetBuddy.receipt
+SET receipt_amount = (SELECT SUM(income_amount)
+FROM budgetBuddy.income WHERE receipt_id = (SELECT max(receipt_id) FROM budgetBuddy.income))
+WHERE receipt_id = (SELECT max(receipt_id) FROM budgetBuddy.receipt);
+$$;
+
+/* Creates Random Receipts and Ties To Incomes*/
+CREATE OR REPLACE PROCEDURE fill_receipt_income_one_extra(numbers integer)
+LANGUAGE plpgsql
+AS $$
+declare 
+   counter integer := 1; 
+   begin
+   while counter <= numbers loop		
+	INSERT INTO budgetBuddy.receipt(receipt_date, receipt_is_reccuring, receipt_is_income,user_id) 
+VALUES ((select (timestamp '2021-01-01' + random() * (current_timestamp - timestamp '2021-01-01'))), 0, true,1);
+	call fill_receipt_income_two_extra();
+	call fill_receipt_income_three_extra();
+	counter := counter + 1;	
+   end loop;
+end$$;
+
+/* Creates Random Receipts and Incomes*/
+CALL fill_receipt_income_one_extra(1000);
+
+
+
+
+/* GIVE USER 1 ESTIMATED EXPENSES AND INCOMES FOR EACH CATEGORY*/
+CREATE OR REPLACE PROCEDURE fill_user_category_budget_table()
+LANGUAGE plpgsql
+AS $$
+declare 
+   counter integer := 1;      
+begin
+   while counter <= (SELECT COUNT(*) FROM budgetBuddy.category)	loop
+   insert into budgetBuddy.user_category_budget(user_id, category_id, 
+				user_category_budget_estimated_amount,user_category_budget_last_modified_date)
+values(1,counter,(counter * 100),current_timestamp);
+	counter := counter + 1;
+   end loop;
+end$$;
+
+CALL fill_budget_table();

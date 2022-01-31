@@ -1,0 +1,142 @@
+CREATE TABLE IF NOT EXISTS budgetBuddy.challenge(
+	challenge_id SERIAL,
+    	challenge_name VARCHAR(255) NOT NULL,
+	challenge_description VARCHAR(255) NOT NULL,
+	challenge_type VARCHAR(255) NOT NULL,		
+	challenge_time_given INT NOT NULL,
+	challenge_repeatable BIT NOT NULL,
+	active BIT NOT NULL,
+	experience INT,
+	item_id INT,	
+	difficulty_id INT,
+	trigger_id INT,
+	minimum INT,
+	maximum INT,
+	PRIMARY KEY (challenge_id),
+	CONSTRAINT fk_challengeitems FOREIGN KEY(item_id) REFERENCES budgetBuddy.items(item_id),
+	CONSTRAINT fk_challengedifficulty FOREIGN KEY(difficulty_id) REFERENCES budgetBuddy.difficulty(difficulty_id),
+	CONSTRAINT fk_challengetrigger FOREIGN KEY(trigger_id) REFERENCES budgetBuddy.trigger(trigger_id)
+);
+CREATE TABLE IF NOT EXISTS budgetBuddy.challenge_inventory(
+	challenge_inventory_id SERIAL,	
+	challenge_start_date DATE NOT NULL,
+	challenge_completion BIT NOT NULL,
+	challenge_id INT,
+	status INT,
+	user_id INT,
+	PRIMARY KEY (challenge_inventory_id),
+	CONSTRAINT fk_challengeinventorychallenge FOREIGN KEY(challenge_id) REFERENCES budgetBuddy.challenge(challenge_id),
+	CONSTRAINT fk_challengeinventoryuser FOREIGN KEY(user_id) REFERENCES budgetBuddy.users(user_id)
+);
+
+
+
+
+/* Entertainment Weekly */
+CREATE OR REPLACE PROCEDURE entertainment_weekly()
+LANGUAGE plpgsql
+AS $$
+declare 
+   counter integer := 1;
+   items integer := (select floor(random() * (5- 1 +1) + 1)::int);   
+   highprice integer :=100;
+   lowprice decimal :=.01;   
+begin
+   while counter <= items loop
+	INSERT INTO budgetBuddy.product(product_name, product_price, receipt_id, category_id) 
+VALUES ('test', (SELECT round(CAST((random() * (highprice-lowprice + 1) + lowprice) AS decimal), 2)), 
+(SELECT max(receipt_id) FROM budgetBuddy.receipt), 
+floor(random() * (SELECT COUNT(*) FROM budgetBuddy.category) + 1)::int);
+counter := counter + 1;
+   end loop;
+end$$;
+-----------------------------------
+CREATE TRIGGER log_update
+    AFTER INSERT ON budgetBuddy.products
+    FOR EACH ROW
+    WHEN (OLD.* IS DISTINCT FROM NEW.*)
+    EXECUTE PROCEDURE log_account_update();
+--------------------------------------------------
+
+CREATE OR REPLACE FUNCTION entertainment_weekly()
+  RETURNS TRIGGER 
+  LANGUAGE PLPGSQL
+  AS $$
+  DECLARE 
+   productcat integer := SELECT category_id FROM NEW.budgetBuddy.product;
+   productuser := SELECT category_id FROM NEW.budgetBuddy.product;   
+   highprice integer :=100;
+   lowprice decimal :=.01;   
+BEGIN
+	IF NEW.budgetBuddy.product category_id = 1 
+	AND NEW.budgetBuddy.product 
+
+OLD.last_name THEN
+		 INSERT INTO employee_audits(employee_id,last_name,changed_on)
+		 VALUES(OLD.id,OLD.last_name,now());
+	END IF;
+
+	RETURN NEW;
+END;
+$$
+
+---------------------------------------------------------------------
+if user spends on entertainment and they have a challenge in their
+challenge inventory that has an entertainment trigger
+
+
+don't spend on entertainment today
+
+spend less than 200 on groceries this week
+
+get paid from work this month
+
+create a budget
+
+input an income
+
+input an expense
+
+spend less than your grocery budget this month
+
+insert into table acutal expenses{
+where user_id = this
+and category = this
+and date is between this and that
+}
+
+each week delete from challenge inventory where challenge_id challenge type = weekly
+
+-------------------------------------
+
+
+
+
+
+
+INSERT INTO budgetBuddy.trigger(trigger_names)
+VALUES('paid');
+
+INSERT INTO budgetBuddy.challenge(
+    	challenge_name,
+	challenge_description,
+	challenge_type,		
+	challenge_time_given,
+	challenge_repeatable,
+	active,
+	experience,
+	trigger_id,
+	minimum,
+	maximum)
+VALUES('job_income','Get paid this month from your job','monthly',28,B'1',
+B'1', 10, 1, 0, 1);
+
+INSERT INTO budgetBuddy.challenge_inventory(
+	challenge_start_date,
+	challenge_completion,
+	challenge_id,
+	status,
+	user_id)
+VALUES(current_timestamp,B'0', 1, 0, 1);
+
+select * from budgetBuddy.challenge_inventory

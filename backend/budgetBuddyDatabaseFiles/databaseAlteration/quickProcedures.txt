@@ -1,0 +1,34 @@
+DROP PROCEDURE procedure_name(element_name element_type, element_name element_type, ....);
+
+
+/* Drop All Tables in Database */
+CALL drop_all_tables();
+
+
+/* Create All Tables in Database */
+CALL create_all_tables();
+
+
+/* Insert a Security Question */
+CALL insert_security_question('short name','the question');
+
+
+/* Fill security question table */
+CALL insert_security_questions();
+
+
+/* Insert a new User, DATE ex: '2021-11-01', BIT ex: B'1', */
+CALL insert_new_user('email','password', security question id, 'security answer', 'first name',
+'last name','user name', 'phone number', 'register date', 'birthdate', B'notification or not');
+
+
+/* Fill Users Table */
+CALL insert_users(number of users);
+
+
+/* Insert a Category */
+CALL insert_new_category(category_name VARCHAR, category_description VARCHAR, category_income BIT);
+
+
+/* Fill Category table */
+CALL insert_categories();

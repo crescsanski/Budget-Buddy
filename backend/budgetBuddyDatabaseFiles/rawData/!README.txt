@@ -1,0 +1,1 @@
+These files include just the raw data for foundational tables in the database

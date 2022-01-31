@@ -1,0 +1,776 @@
+/* RUNNING THIS FILES DELETES ALL TABLES AND REINSTERTS THEM */
+/* THEN IT CREATES PROCEDURES AND CALLS THEM TO FILL TABLES */
+
+
+/* Drop All Tables and views in Database */
+CREATE OR REPLACE PROCEDURE drop_all_tables()
+LANGUAGE SQL
+AS $$
+DROP VIEW IF EXISTS BadgesEarned;
+DROP VIEW IF EXISTS CategorySpending;
+DROP VIEW IF EXISTS WeeklyBudgetOne;
+DROP VIEW IF EXISTS WeeklyBudgetTwo;
+DROP TABLE IF EXISTS budgetBuddy.global_competition;
+DROP TABLE IF EXISTS budgetBuddy.competition;
+DROP TABLE IF EXISTS budgetBuddy.friend;
+DROP TABLE IF EXISTS budgetBuddy.user_widget_inventory;
+DROP TABLE IF EXISTS budgetBuddy.widget;
+DROP TABLE IF EXISTS budgetBuddy.user_notification_list;
+DROP TABLE IF EXISTS budgetBuddy.notification;
+DROP TABLE IF EXISTS budgetBuddy.user_category_budget;
+DROP TABLE IF EXISTS budgetBuddy.income;
+DROP TABLE IF EXISTS budgetBuddy.expense;
+DROP TABLE IF EXISTS budgetBuddy.category;
+DROP TABLE IF EXISTS budgetBuddy.receipt;
+DROP TABLE IF EXISTS budgetBuddy.experience;
+DROP TABLE IF EXISTS budgetBuddy.user_challenge_inventory;
+DROP TABLE IF EXISTS budgetBuddy.challenge;
+DROP TABLE IF EXISTS budgetBuddy.challenge_trigger;
+DROP TABLE IF EXISTS budgetBuddy.user_item_inventory;
+DROP TABLE IF EXISTS budgetBuddy.item;
+DROP TABLE IF EXISTS budgetBuddy.users;
+DROP TABLE IF EXISTS budgetBuddy.security_question;
+$$;
+
+
+/* Drop All Tables in Database */
+CALL drop_all_tables();
+
+
+/* Create All Tables in Database */
+CREATE OR REPLACE PROCEDURE create_all_tables()
+LANGUAGE SQL
+AS $$
+CREATE TABLE IF NOT EXISTS budgetBuddy.security_question(
+	security_question_id SERIAL,
+    	security_question_name VARCHAR(255) NOT NULL,
+	security_question_question VARCHAR(255) NOT NULL,
+	PRIMARY KEY (security_question_id) 
+);
+CREATE TABLE IF NOT EXISTS budgetBuddy.users(
+	user_id SERIAL,
+	user_first_name VARCHAR(255),
+	user_last_name VARCHAR(255),
+	user_user_name VARCHAR(255) UNIQUE NOT NULL,
+	user_email VARCHAR(255) UNIQUE NOT NULL,
+	user_password VARCHAR(255) NOT NULL,	
+	user_phone_number VARCHAR(14) UNIQUE,
+	user_registration_date DATE NOT NULL,	
+	user_birth_date DATE NOT NULL,
+	user_has_notifications BOOLEAN NOT NULL,	
+	user_budget_goal_amount INT,
+	user_experience_points INT,
+	security_question_id INT,
+	user_security_question_answer VARCHAR(255) NOT NULL,	
+	PRIMARY KEY (user_id),
+	CONSTRAINT fk_userssecurityquestion FOREIGN KEY(security_question_id) REFERENCES budgetBuddy.security_question(security_question_id)
+);
+CREATE TABLE IF NOT EXISTS budgetBuddy.item(
+	item_id SERIAL,
+	item_name VARCHAR(255) NOT NULL,
+	item_description VARCHAR(255) NOT NULL,
+	item_type VARCHAR(255) NOT NULL,	
+	item_link VARCHAR(255) NOT NULL,
+	difficulty VARCHAR(255),
+	experience_level_unlock INT,		
+	PRIMARY KEY (item_id)
+);
+CREATE TABLE IF NOT EXISTS budgetBuddy.user_item_inventory(
+	user_item_inventory_id SERIAL,
+	user_item_is_equipped BOOLEAN NOT NULL,
+	item_id INT NOT NULL,
+	user_id INT NOT NULL,
+	PRIMARY KEY (user_item_inventory_id),
+	CONSTRAINT fk_useriteminventoryitem FOREIGN KEY(item_id) REFERENCES budgetBuddy.item(item_id),
+	CONSTRAINT fk_useriteminventoryuser FOREIGN KEY(user_id) REFERENCES budgetBuddy.users(user_id)	
+);
+CREATE TABLE IF NOT EXISTS budgetBuddy.challenge_trigger(
+	challenge_trigger_id SERIAL,
+	challenge_trigger_name VARCHAR(255) NOT NULL,    	
+	PRIMARY KEY (challenge_trigger_id) 
+);
+CREATE TABLE IF NOT EXISTS budgetBuddy.challenge(
+	challenge_id SERIAL,
+    challenge_name VARCHAR(255) NOT NULL,
+	challenge_description VARCHAR(255) NOT NULL,
+	challenge_type VARCHAR(255) NOT NULL,		
+	challenge_time_given INT NOT NULL,
+	challenge_is_repeatable BOOLEAN NOT NULL,
+	challenge_is_active BOOLEAN NOT NULL,
+	challenge_experience_points INT,
+	challenge_start_ammount INT,
+	challenge_completion_ammount INT,		
+	item_id INT,	
+	difficulty INT,
+	challenge_trigger_id INT,
+	experience_level_unlock INT,	
+	PRIMARY KEY (challenge_id),
+	CONSTRAINT fk_challengeitem FOREIGN KEY(item_id) REFERENCES budgetBuddy.item(item_id),
+	CONSTRAINT fk_challengechallengetrigger FOREIGN KEY(challenge_trigger_id) REFERENCES budgetBuddy.challenge_trigger(challenge_trigger_id)	
+);
+CREATE TABLE IF NOT EXISTS budgetBuddy.user_challenge_inventory(
+	user_challenge_inventory_id SERIAL,	
+	user_challenge_start_date DATE NOT NULL,
+	user_challenge_completion_date TIMESTAMP,
+	user_challenge_current_amount INT,
+	challenge_id INT,	
+	user_id INT,
+	PRIMARY KEY (user_challenge_inventory_id),
+	CONSTRAINT fk_userchallengeinventorychallenge FOREIGN KEY(challenge_id) REFERENCES budgetBuddy.challenge(challenge_id),
+	CONSTRAINT fk_userchallengeinventoryuser FOREIGN KEY(user_id) REFERENCES budgetBuddy.users(user_id)
+);
+CREATE TABLE IF NOT EXISTS budgetBuddy.experience(
+	experience_id SERIAL,	
+	experience_level INT NOT NULL,
+	experience_title VARCHAR(255) NOT NULL,
+	experience_point_threshold INT NOT NULL,	
+	PRIMARY KEY (experience_id)
+);
+CREATE TABLE IF NOT EXISTS budgetBuddy.receipt(
+	receipt_id SERIAL,
+    	receipt_amount DECIMAL(10,2),
+	receipt_date TIMESTAMP NOT NULL,		
+	receipt_is_reccuring INT NOT NULL,
+	receipt_is_income BOOLEAN NOT NULL,
+	user_id INT,
+	PRIMARY KEY (receipt_id),
+	CONSTRAINT fk_receiptusers FOREIGN KEY(user_id) REFERENCES budgetBuddy.users(user_id)
+);
+CREATE TABLE IF NOT EXISTS budgetBuddy.category(
+	category_id SERIAL,
+    	category_name VARCHAR(255) NOT NULL,	
+	category_description VARCHAR(255) NOT NULL,
+	category_is_income BOOLEAN NOT NULL,
+	PRIMARY KEY (category_id)
+);
+CREATE TABLE IF NOT EXISTS budgetBuddy.expense(
+	expense_id SERIAL,
+    	expense_name VARCHAR(255) NOT NULL,
+	expense_price DECIMAL(10,2) NOT NULL,
+	expense_is_essential BOOLEAN,
+	receipt_id INT,
+	category_id INT,	
+	PRIMARY KEY (expense_id),	
+	CONSTRAINT fk_expensereceipt FOREIGN KEY(receipt_id) REFERENCES budgetBuddy.receipt(receipt_id),
+	CONSTRAINT fk_expensecategory FOREIGN KEY(category_id) REFERENCES budgetBuddy.category(category_id)
+);
+CREATE TABLE IF NOT EXISTS budgetBuddy.income(
+	income_id SERIAL,
+	income_name VARCHAR(255) NOT NULL,
+    	income_amount DECIMAL(10,2) NOT NULL,
+	receipt_id INT,
+	category_id INT,
+	PRIMARY KEY (income_id),
+	CONSTRAINT fk_incomereceipt FOREIGN KEY(receipt_id) REFERENCES budgetBuddy.receipt(receipt_id),
+	CONSTRAINT fk_incomecategory FOREIGN KEY(category_id) REFERENCES budgetBuddy.category(category_id)		
+);
+CREATE TABLE IF NOT EXISTS budgetBuddy.user_category_budget(	
+	user_category_budget_id SERIAL,
+	user_id INT,	
+	category_id INT,
+	user_category_budget_estimated_amount INT,
+	user_category_budget_last_modified_date TIMESTAMP,			
+	PRIMARY KEY (user_category_budget_id),		
+	CONSTRAINT fk_usercategorybudgetuser FOREIGN KEY(user_id) REFERENCES budgetBuddy.users(user_id),
+	CONSTRAINT fk_usercategorybudgetcategory FOREIGN KEY(category_id) REFERENCES budgetBuddy.category(category_id)		
+);
+CREATE TABLE IF NOT EXISTS budgetBuddy.notification(
+	notification_id SERIAL,
+    notification_name VARCHAR(255) NOT NULL,
+	notification_message VARCHAR(255) NOT NULL,
+	PRIMARY KEY (notification_id)
+);
+CREATE TABLE IF NOT EXISTS budgetBuddy.user_notification_list(
+	user_notification_list_id SERIAL,    		
+	user_notification_list_time TIMESTAMP,
+	user_id INT,
+	notification_id INT,
+	PRIMARY KEY (user_notification_list_id),
+	CONSTRAINT fk_usernotificationlistuser FOREIGN KEY(user_id) REFERENCES budgetBuddy.users(user_id),
+	CONSTRAINT fk_usernotificationlistnotification FOREIGN KEY(notification_id) REFERENCES budgetBuddy.notification(notification_id)
+);
+CREATE TABLE IF NOT EXISTS budgetBuddy.widget(
+	widget_id SERIAL,
+   	widget_name VARCHAR(255) NOT NULL,
+	widget_description VARCHAR(255) NOT NULL, 
+	widget_link VARCHAR(255) NOT NULL,
+	PRIMARY KEY (widget_id)
+);
+CREATE TABLE IF NOT EXISTS budgetBuddy.user_widget_inventory(
+	user_widget_inventory_id SERIAL,
+	user_widget_position INT,
+	widget_id INT,
+	user_id INT,
+	PRIMARY KEY (user_widget_inventory_id),
+	CONSTRAINT fk_widgetinventorywidget FOREIGN KEY(widget_id) REFERENCES budgetBuddy.widget(widget_id),
+	CONSTRAINT fk_widgetinventoryusers FOREIGN KEY(user_id) REFERENCES budgetBuddy.users(user_id)
+);
+CREATE TABLE IF NOT EXISTS budgetBuddy.friend(
+	friend_id SERIAL,	
+	user_2_id INT NOT NULL,
+	user_id INT,
+	friend_status_type VARCHAR(20) NOT NULL,	
+	PRIMARY KEY (friend_id),
+	CONSTRAINT fk_frienduser FOREIGN KEY(user_id) REFERENCES budgetBuddy.users(user_id),
+	CONSTRAINT uq_friendsonce UNIQUE(user_id, user_2_id)
+);
+CREATE TABLE IF NOT EXISTS budgetBuddy.competition(
+	competition_id SERIAL,
+	competition_type VARCHAR (255),	
+	user_2_id INT NOT NULL,
+	competition_status_type VARCHAR(20) NOT NULL,
+	competition_start_date DATE NOT NULL,	
+	competition_winner INT,	
+	user_id INT,	
+	PRIMARY KEY (competition_id),
+	CONSTRAINT fk_competitionsusers FOREIGN KEY(user_id) REFERENCES budgetBuddy.users(user_id),
+	CONSTRAINT uq_competitionsonce UNIQUE(user_id, user_2_id)
+);
+CREATE TABLE IF NOT EXISTS budgetBuddy.global_competition(
+	global_competition_id SERIAL,
+	global_competition_type VARCHAR(255),	
+	budget_percent_goal DECIMAL(10,2),
+	ranking INT NOT NULL,
+	competition_start_date DATE NOT NULL,
+	competition_winner INT,
+	user_id INT,
+	PRIMARY KEY (global_competition_id),
+	CONSTRAINT fk_globalcompetitionsusers FOREIGN KEY(user_id) REFERENCES budgetBuddy.users(user_id)
+);
+$$;
+
+/* Create All Tables in Database */
+CALL create_all_tables();
+
+
+/* Insert new security question */
+CREATE OR REPLACE PROCEDURE insert_new_security_question(security_question_name VARCHAR, security_question_question VARCHAR)
+LANGUAGE SQL
+AS $$
+INSERT INTO budgetBuddy.security_question(security_question_name, security_question_question) 
+VALUES (security_question_name, security_question_question);
+$$;
+
+
+/* Fill security questions */
+CREATE OR REPLACE PROCEDURE insert_security_questions()
+LANGUAGE SQL
+AS $$
+INSERT INTO budgetBuddy.security_question(security_question_name, security_question_question) 
+VALUES ('nickname', 'What was your childhood nickname?'),('friend','What is the name of your favorite childhood friend?'),
+('street','What street did you live on in third grade?'),('middle','What is your oldest sibling''s middle name?'),
+('school','What school did you attend for sixth grade?'),('cousin','What is your oldest cousin''s first and last name?'),
+('toy','What was the name of your favorite toy growing up?'),('city','In what city or town did your mother and father meet?'),
+('kiss','What is the first name of your first kiss?'),('teacher','What was the last name of your third grade teacher?'),
+('number','What is the number of your nearest sibling''s address?'),('grandmother','What is your maternal grandmother''s maiden name?'),
+('job','In what city or town was your first job?'),('college','What was the name of your first choice college?');
+$$;
+
+
+/* Fill security question table */
+CALL insert_security_questions();
+
+
+/* Insert a new user */
+CREATE OR REPLACE PROCEDURE insert_new_user(user_first_name VARCHAR, user_last_name VARCHAR, user_user_name VARCHAR,
+user_email VARCHAR, user_password VARCHAR, user_phone_number VARCHAR, user_registration_date DATE, user_birth_date DATE,
+user_has_notifications BOOLEAN, user_budget_goal_amount INT, user_experience_points INT, security_question_id INT,
+user_security_question_answer VARCHAR)
+LANGUAGE SQL
+AS $$
+INSERT INTO budgetBuddy.users(user_first_name, user_last_name, user_user_name,
+user_email, user_password, user_phone_number, user_registration_date, user_birth_date,
+user_has_notifications, user_budget_goal_amount, user_experience_points, security_question_id,
+user_security_question_answer) 
+VALUES (user_first_name, user_last_name, user_user_name,
+user_email, user_password, user_phone_number, user_registration_date, user_birth_date,
+user_has_notifications, user_budget_goal_amount, user_experience_points, security_question_id,
+user_security_question_answer);
+$$;
+
+
+/* Fill Users table  */
+CREATE OR REPLACE PROCEDURE insert_users(numbers integer)
+LANGUAGE plpgsql
+AS $$
+declare 
+   counter integer := 1;
+begin
+   while counter <= numbers loop
+	INSERT INTO budgetBuddy.users(user_first_name, user_last_name, user_user_name,
+user_email, user_password, user_phone_number, user_registration_date, user_birth_date,
+user_has_notifications, user_budget_goal_amount, user_experience_points, security_question_id,
+user_security_question_answer) 
+	VALUES (CONCAT('fname',CAST(counter as VarChar)),CONCAT('lname',CAST(counter as VarChar)),CONCAT('username',CAST(counter as VarChar)),
+CONCAT('tester',CAST(counter as VarChar),'@testmail.com'), CONCAT('password',CAST(counter as VarChar)),
+CAST(counter as VarChar),'2021-01-01', '2021-01-01', CAST(floor(random() * 1.99)::int as BOOLEAN),floor(random() * (25 - 10 +1) + 10)::int,0,
+floor(random() * (SELECT COUNT(*) FROM budgetBuddy.security_question) + 1)::int,CONCAT('answer',CAST(counter as VarChar))
+);
+	counter := counter + 1;
+   end loop;
+end$$;
+
+
+/* Fill Users Table */
+CALL insert_users(50);
+
+
+/* Insert new category (BOOLEAN use 0,1 true,false)*/
+CREATE OR REPLACE PROCEDURE insert_new_category(category_name VARCHAR, category_description VARCHAR, category_is_income BOOLEAN)
+LANGUAGE SQL
+AS $$
+INSERT INTO budgetBuddy.category(category_name, category_description, category_is_income) 
+VALUES (category_name, category_description,category_is_income);
+$$;
+
+
+/* Fill categories */
+CREATE OR REPLACE PROCEDURE insert_categories()
+LANGUAGE SQL
+AS $$
+INSERT INTO budgetBuddy.category(category_name, category_description,category_is_income) 
+VALUES ('Housing','Property insurance, rent, mortgage payments, property taxes, home maintenance costs, ect.',false),
+('Transportation','Auto insurance, vehicle payments, DMV fees, gas, tolls, parking, public transit, vehicle maintenance, ect.',false),
+('Essential Groceries','Grocery items considered essential',false),
+('Non-Essential Groceries','Grocery items considered non-essential ex: alcohol',false),
+('Utilities','Water, electricity, HVAC, gas, phone, cable/internet, ect.',false),
+('Insurance','Life insurance, disability insurance, and other miscellaneous insurances.',false),
+('Medical','Health insurance, out-of-pocket primary care costs, specialty care, dental care, urgent care, prescriptions, medical supplies/devices, ect.',false),
+('Investment','401(k) retirement account, IRAs, ETFs, stocks, savings bonds, non-liquid assets, ect.',false),
+('Restaurant','Diners, drive-ins, dives, fast food, restaurants, ect.',false),
+('Entertainment','Sporting events, concert tickets, vacation expenses, video games, movies, hobbies, ect.',false),
+('Clothing','Shirts, blouses, pants, skirts, hats, jewlery, accessories, ect.',false),
+('Gift','Presents for others.',false),
+('Furnishings','Home decor, furniture, fittings, decorative accessories, curtains, carpets, ect.',false),
+('Pet','Ownership, food, treats, housing, medical expenses, and anything else pertaining to ones hairy, furry, scaly, or feathery friends.',false),
+('Tax Payment','Government tax payment',false),
+('Miscellaneous Expense','Expenses that do not fit in other categories.',false),
+('Job Income','Wages or salary from ones job.',true),
+('Received Gift','Cash gift from another person.',true),
+('Interest','Non-liquid funds made liquid, dividends, savings account interest, ect.',true),
+('Government Payment','Assistance payments from the government.',true),
+('Tax Refund','Government refund from taxes.',true),
+('Miscellaneous Income','Incomes that do not fit in other categories.',true);
+$$;
+
+
+/* Fill Category table */
+CALL insert_categories();
+
+
+
+/* Fill Experience Levels */
+CREATE OR REPLACE PROCEDURE insert_experience_levels()
+LANGUAGE plpgsql
+AS $$
+declare 
+   counter integer := 1;   
+begin
+   while counter <= 100 loop
+	IF counter = 1 THEN
+	INSERT INTO budgetBuddy.experience(experience_level, experience_title, experience_point_threshold) 
+VALUES (counter,'temp',0);
+	ELSE
+	INSERT INTO budgetBuddy.experience(experience_level, experience_title, experience_point_threshold) 
+VALUES (counter,'temp title',((counter-1)*252));
+END IF;
+counter := counter + 1;
+   end loop;
+end$$;
+
+
+/* Fill Experience Levels table */
+CALL insert_experience_levels();
+
+
+
+/* RECEIPT CREATION */
+
+/* Create receipt first*/
+CREATE OR REPLACE PROCEDURE new_receipt_product(reccuring INT,toad VARCHAR)
+LANGUAGE SQL
+AS $$
+INSERT INTO budgetBuddy.receipt(receipt_date, receipt_is_reccuring, receipt_is_income, user_id) 
+VALUES (current_timestamp, reccuring, false, (SELECT user_id from
+budgetBuddy.users WHERE user_user_name = toad));
+$$;
+
+
+
+/* Create product second*/
+CREATE OR REPLACE PROCEDURE new_expense(expense_name VARCHAR, expense_price DECIMAL,
+toad VARCHAR, category_id INT)
+LANGUAGE SQL
+AS $$
+INSERT INTO budgetBuddy.expense(expense_name, expense_price, receipt_id, category_id) 
+VALUES (expense_name, expense_price, (SELECT receipt_id FROM budgetBuddy.receipt 
+									  WHERE user_id = (select user_id from
+budgetBuddy.users where user_user_name = toad) order by receipt_date desc limit 1), category_id);
+$$;
+
+
+
+/* Total Products and Complete Receipt*/
+CREATE OR REPLACE PROCEDURE complete_receipt_expense(toad VARCHAR)
+LANGUAGE SQL
+AS $$
+UPDATE budgetBuddy.receipt
+SET receipt_amount = (SELECT SUM(expense_price)
+FROM budgetBuddy.expense
+INNER JOIN budgetBuddy.receipt ON budgetBuddy.receipt.receipt_id=budgetBuddy.expense.receipt_id
+INNER JOIN budgetBuddy.users ON budgetBuddy.users.user_id=budgetBuddy.receipt.user_id
+WHERE budgetBuddy.expense.receipt_id = (SELECT receipt_id FROM budgetBuddy.receipt 
+WHERE user_id = (select user_id from budgetBuddy.users where user_user_name = toad) order by receipt_date desc limit 1))
+WHERE receipt_id = (SELECT receipt_id FROM budgetBuddy.receipt WHERE user_id = (select user_id from
+budgetBuddy.users where user_user_name = toad) order by receipt_date desc limit 1);
+$$;
+
+
+
+/* RANDOM RECEIPT INSERTION */
+
+/* Creates Random Expenses */
+CREATE OR REPLACE PROCEDURE fill_receipt_expense_two()
+LANGUAGE plpgsql
+AS $$
+declare 
+   counter integer := 1;
+   items integer := (select floor(random() * (5- 1 +1) + 1)::int);   
+   highprice integer :=100;
+   lowprice decimal :=.01;   
+begin
+   while counter <= items loop
+	INSERT INTO budgetBuddy.expense(expense_name, expense_price, receipt_id, category_id) 
+VALUES (CONCAT('tester',CAST(counter as VarChar)), (SELECT round(CAST((random() * (highprice-lowprice + 1) + lowprice) AS decimal), 2)), 
+(SELECT max(receipt_id) FROM budgetBuddy.receipt), 
+floor(random() * (16) + 1)::int);
+counter := counter + 1;
+   end loop;
+end$$;
+
+
+/* Totals Random Expenses and Completes Random Receipt*/
+CREATE OR REPLACE PROCEDURE fill_receipt_expense_three()
+LANGUAGE SQL
+AS $$
+UPDATE budgetBuddy.receipt
+SET receipt_amount = (SELECT SUM(expense_price)
+FROM budgetBuddy.expense WHERE receipt_id = (SELECT max(receipt_id) FROM budgetBuddy.expense))
+WHERE receipt_id = (SELECT max(receipt_id) FROM budgetBuddy.receipt);
+$$;
+
+
+/* Creates Random Receipts and Ties To Expenses*/
+CREATE OR REPLACE PROCEDURE fill_receipt_expense_one(numbers integer)
+LANGUAGE plpgsql
+AS $$
+declare 
+   counter integer := 1;      
+begin
+   while counter <= numbers loop	
+	INSERT INTO budgetBuddy.receipt(receipt_date, receipt_is_reccuring, receipt_is_income,user_id) 
+VALUES ((select (timestamp '1999-01-01' + random() * (timestamp '2021-11-16' - timestamp '1999-01-01'))),
+0, false,(select floor(random() * (SELECT COUNT(*) FROM budgetBuddy.users) + 1)::int));
+	call fill_receipt_expense_two();
+	call fill_receipt_expense_three();
+	counter := counter + 1;
+   end loop;
+end$$;
+
+
+/* Creates Random Receipts and Expenses*/
+CALL fill_receipt_expense_one(100);
+
+
+/* GIVE USER 1 A BUNCH MORE RECEIPTS FOR TESTING BEGINNING THIS YEAR */
+
+/* Creates Random Expenses */
+CREATE OR REPLACE PROCEDURE fill_receipt_expense_two_extra()
+LANGUAGE plpgsql
+AS $$
+declare 
+   counter integer := 1;
+   items integer := (select floor(random() * (5- 1 +1) + 1)::int);   
+   highprice integer :=100;
+   lowprice decimal :=.01;   
+begin
+   while counter <= items loop
+	INSERT INTO budgetBuddy.expense(expense_name, expense_price, receipt_id, category_id) 
+VALUES (CONCAT('tester',CAST(counter as VarChar)), (SELECT round(CAST((random() * (highprice-lowprice + 1) + lowprice) AS decimal), 2)), 
+(SELECT max(receipt_id) FROM budgetBuddy.receipt), 
+floor(random() * (16) + 1)::int);
+counter := counter + 1;
+   end loop;
+end$$;
+
+
+/* Totals Random Expenses and Completes Random Receipt*/
+CREATE OR REPLACE PROCEDURE fill_receipt_expense_three_extra()
+LANGUAGE SQL
+AS $$
+UPDATE budgetBuddy.receipt
+SET receipt_amount = (SELECT SUM(expense_price)
+FROM budgetBuddy.expense WHERE receipt_id = (SELECT max(receipt_id) FROM budgetBuddy.expense))
+WHERE receipt_id = (SELECT max(receipt_id) FROM budgetBuddy.receipt);
+$$;
+
+
+/* Creates Random Receipts and Ties To Expenses*/
+CREATE OR REPLACE PROCEDURE fill_receipt_expense_one_extra(numbers integer)
+LANGUAGE plpgsql
+AS $$
+declare 
+   counter integer := 1; 
+   begin
+   while counter <= numbers loop		
+	INSERT INTO budgetBuddy.receipt(receipt_date, receipt_is_reccuring, receipt_is_income,user_id) 
+VALUES ((select (timestamp '2021-01-01' + random() * (current_timestamp - timestamp '2021-01-01'))), 0, false,1);
+	call fill_receipt_expense_two_extra();
+	call fill_receipt_expense_three_extra();
+	counter := counter + 1;	
+   end loop;
+end$$;
+
+
+/* Creates Random Receipts and Expenses*/
+CALL fill_receipt_expense_one_extra(1000);
+
+
+/* INCOME RECEIPT CREATION */
+
+/* Create receipt first*/
+CREATE OR REPLACE PROCEDURE new_receipt_income(reccuring INT,toad VARCHAR)
+LANGUAGE SQL
+AS $$
+INSERT INTO budgetBuddy.receipt(receipt_date, receipt_is_reccuring, receipt_is_income, user_id) 
+VALUES (current_timestamp, reccuring, true, (SELECT user_id from
+budgetBuddy.users WHERE user_user_name = toad));
+$$;
+
+
+
+/* Create income second*/
+CREATE OR REPLACE PROCEDURE new_income(income_name VARCHAR, income_amount DECIMAL,
+toad VARCHAR, category_id INT)
+LANGUAGE SQL
+AS $$
+INSERT INTO budgetBuddy.income(income_name, income_amount, receipt_id, category_id) 
+VALUES (income_name, income_amount, (SELECT receipt_id FROM budgetBuddy.receipt 
+WHERE user_id = (select user_id from budgetBuddy.users where user_user_name = toad) 
+order by receipt_date desc limit 1), category_id);
+$$;
+
+
+
+/* Total Incomes and Complete Receipt*/
+CREATE OR REPLACE PROCEDURE complete_receipt_income(toad VARCHAR)
+LANGUAGE SQL
+AS $$
+UPDATE budgetBuddy.receipt
+SET receipt_amount = (SELECT SUM(income_amount)
+FROM budgetBuddy.income
+INNER JOIN budgetBuddy.receipt ON budgetBuddy.receipt.receipt_id=budgetBuddy.income.receipt_id
+INNER JOIN budgetBuddy.users ON budgetBuddy.users.user_id=budgetBuddy.receipt.user_id
+WHERE budgetBuddy.income.receipt_id = (SELECT receipt_id FROM budgetBuddy.receipt 
+WHERE user_id = (select user_id from budgetBuddy.users where user_user_name = toad) order by receipt_date desc limit 1))
+WHERE receipt_id = (SELECT receipt_id FROM budgetBuddy.receipt WHERE user_id = (select user_id from
+budgetBuddy.users where user_user_name = toad) order by receipt_date desc limit 1);
+$$;
+
+
+
+/* RANDOM INCOME RECEIPT INSERTION */
+
+/* Creates Random Incomes */
+CREATE OR REPLACE PROCEDURE fill_receipt_income_two()
+LANGUAGE plpgsql
+AS $$
+declare 
+   counter integer := 1;
+   items integer := (select floor(random() * (5- 1 +1) + 1)::int);   
+   highprice integer :=10000;
+   lowprice decimal :=.01;   
+begin
+   while counter <= items loop
+	INSERT INTO budgetBuddy.income(income_name, income_amount, receipt_id, category_id) 
+VALUES (CONCAT('tester',CAST(counter as VarChar)), (SELECT round(CAST((random() * (highprice-lowprice + 1) + lowprice) AS decimal), 2)), 
+(SELECT max(receipt_id) FROM budgetBuddy.receipt), 
+floor(random() * (23-17) + 17)::int);
+counter := counter + 1;
+   end loop;
+end$$;
+
+
+/* Totals Random Incomes and Completes Random Receipt*/
+CREATE OR REPLACE PROCEDURE fill_receipt_income_three()
+LANGUAGE SQL
+AS $$
+UPDATE budgetBuddy.receipt
+SET receipt_amount = (SELECT SUM(income_amount)
+FROM budgetBuddy.income WHERE receipt_id = (SELECT max(receipt_id) FROM budgetBuddy.income))
+WHERE receipt_id = (SELECT max(receipt_id) FROM budgetBuddy.receipt);
+$$;
+
+
+/* Creates Random Receipts and Ties To Income*/
+CREATE OR REPLACE PROCEDURE fill_receipt_income_one(numbers integer)
+LANGUAGE plpgsql
+AS $$
+declare 
+   counter integer := 1;      
+begin
+   while counter <= numbers loop	
+	INSERT INTO budgetBuddy.receipt(receipt_date, receipt_is_reccuring, receipt_is_income,user_id) 
+VALUES ((select (timestamp '1999-01-01' + random() * (timestamp '2021-11-16' - timestamp '1999-01-01'))),
+0, true,(select floor(random() * (SELECT COUNT(*) FROM budgetBuddy.users) + 1)::int));
+	call fill_receipt_income_two();
+	call fill_receipt_income_three();
+	counter := counter + 1;
+   end loop;
+end$$;
+
+
+/* Creates Random Receipts and Products*/
+CALL fill_receipt_income_one(100);
+
+
+
+/* GIVE USER 1 A BUNCH MORE INCOME RECEIPTS FOR TESTING BEGINNING THIS YEAR */
+
+/* Creates Random Incomes */
+CREATE OR REPLACE PROCEDURE fill_receipt_income_two_extra()
+LANGUAGE plpgsql
+AS $$
+declare 
+   counter integer := 1;
+   items integer := (select floor(random() * (5- 1 +1) + 1)::int);   
+   highprice integer :=10000;
+   lowprice decimal :=.01;   
+begin
+   while counter <= items loop
+	INSERT INTO budgetBuddy.income(income_name, income_amount, receipt_id, category_id) 
+VALUES (CONCAT('tester',CAST(counter as VarChar)), (SELECT round(CAST((random() * (highprice-lowprice + 1) + lowprice) AS decimal), 2)), 
+(SELECT max(receipt_id) FROM budgetBuddy.receipt), 
+floor(random() * (23-17) + 17)::int);
+counter := counter + 1;
+   end loop;
+end$$;
+
+
+/* Totals Random Incomes and Completes Random Receipt*/
+CREATE OR REPLACE PROCEDURE fill_receipt_income_three_extra()
+LANGUAGE SQL
+AS $$
+UPDATE budgetBuddy.receipt
+SET receipt_amount = (SELECT SUM(income_amount)
+FROM budgetBuddy.income WHERE receipt_id = (SELECT max(receipt_id) FROM budgetBuddy.income))
+WHERE receipt_id = (SELECT max(receipt_id) FROM budgetBuddy.receipt);
+$$;
+
+
+/* Creates Random Receipts and Ties To Incomes*/
+CREATE OR REPLACE PROCEDURE fill_receipt_income_one_extra(numbers integer)
+LANGUAGE plpgsql
+AS $$
+declare 
+   counter integer := 1; 
+   begin
+   while counter <= numbers loop		
+	INSERT INTO budgetBuddy.receipt(receipt_date, receipt_is_reccuring, receipt_is_income,user_id) 
+VALUES ((select (timestamp '2021-01-01' + random() * (current_timestamp - timestamp '2021-01-01'))), 0, true,1);
+	call fill_receipt_income_two_extra();
+	call fill_receipt_income_three_extra();
+	counter := counter + 1;	
+   end loop;
+end$$;
+
+
+/* Creates Random Receipts and Incomes*/
+CALL fill_receipt_income_one_extra(1000);
+
+
+/* GIVE USER 1 ESTIMATED EXPENSES AND INCOMES FOR EACH CATEGORY*/
+CREATE OR REPLACE PROCEDURE fill_user_category_budget_table()
+LANGUAGE plpgsql
+AS $$
+declare 
+   counter integer := 1;      
+begin
+   while counter <= (SELECT COUNT(*) FROM budgetBuddy.category)	loop
+   insert into budgetBuddy.user_category_budget(user_id, category_id, 
+				user_category_budget_estimated_amount,user_category_budget_last_modified_date)
+values(1,counter,(counter * 100),current_timestamp);
+	counter := counter + 1;
+   end loop;
+end$$;
+
+CALL fill_budget_table();
+
+
+/* CREATES VIEWS FOR WIDGETS*/
+
+CREATE OR REPLACE VIEW BadgesEarned AS
+  SELECT
+  budgetBuddy.users.user_id
+  ,budgetBuddy.challenge.challenge_name
+  ,budgetBuddy.challenge.challenge_description
+  ,budgetBuddy.user_challenge_inventory.challenge_completion
+  FROM
+  budgetBuddy.user_challenge_inventory
+  INNER JOIN budgetBuddy.users
+  ON budgetBuddy.user_challenge_inventory.user_id = budgetBuddy.users.user_id
+  INNER JOIN budgetBuddy.challenge
+  ON budgetBuddy.user_challenge_inventory.challenge_id = budgetBuddy.challenge.challenge_id;
+
+
+CREATE OR REPLACE VIEW CategorySpending AS
+SELECT
+budgetBuddy.users.user_id as UserID,
+date_part('year', budgetBuddy.receipt.receipt_date) as TheYear,
+date_part('week', budgetBuddy.receipt.receipt_date) as TheWeek,
+budgetBuddy.category.category_name as Category,
+sum(budgetBuddy.expense.expense_price) as TotalSpent,
+(budgetBuddy.user_category_budget.user_category_budget_estimated_amount/4) as WeeklyTarget,
+((budgetBuddy.user_category_budget.user_category_budget_estimated_amount/4) - sum(budgetBuddy.expense.expense_price)) as Difference
+FROM
+  budgetBuddy.expense
+  INNER JOIN budgetBuddy.category
+    ON budgetBuddy.expense.category_id = budgetBuddy.category.category_id
+  INNER JOIN budgetBuddy.receipt
+    ON budgetBuddy.expense.receipt_id = budgetBuddy.receipt.receipt_id
+  INNER JOIN budgetBuddy.users
+    ON budgetBuddy.receipt.user_id =budgetBuddy.users.user_id
+ INNER JOIN budgetBuddy.user_category_budget
+    ON budgetBuddy.receipt.user_id =budgetBuddy.user_category_budget.user_id	
+WHERE date_part('year', receipt_date) =  date_part('year', current_timestamp)
+and date_part('month', receipt_date) =  date_part('month', current_timestamp)
+and budgetBuddy.user_category_budget.category_id = budgetBuddy.expense.category_id
+group by budgetBuddy.users.user_id,budgetBuddy.category.category_name,
+date_part('year', budgetBuddy.receipt.receipt_date),date_part('week', budgetBuddy.receipt.receipt_date),
+budgetBuddy.user_category_budget.user_category_budget_estimated_amount;
+
+
+CREATE OR REPLACE VIEW WeeklyBudgetOne AS
+select
+budgetBuddy.receipt.user_id as UserID,
+date_part('year', budgetBuddy.receipt.receipt_date) as TheYear,
+date_part('week', budgetBuddy.receipt.receipt_date) as TheWeek,
+sum(budgetBuddy.expense.expense_price) as TotalExpenses
+from budgetBuddy.expense
+INNER JOIN budgetBuddy.receipt
+    ON budgetBuddy.expense.receipt_id = budgetBuddy.receipt.receipt_id
+where date_part('year', receipt_date) =  date_part('year', current_timestamp)
+and date_part('month', receipt_date) =  date_part('month', current_timestamp)
+group by 
+TheYear,TheWeek,UserID;
+
+
+CREATE OR REPLACE VIEW WeeklyBudgetTwo AS
+select 
+budgetBuddy.user_category_budget.user_id as UserID,
+sum((budgetBuddy.user_category_budget.user_category_budget_estimated_amount)/4) as WeeklyBudget
+from budgetBuddy.user_category_budget
+INNER JOIN budgetBuddy.category
+    ON budgetBuddy.user_category_budget.category_id = budgetBuddy.category.category_id
+where budgetBuddy.category.category_income = false
+group by UserID;
