@@ -65,18 +65,14 @@ def singleReceipt(request, receiptid):
             if request.data['incomes']:
                 for income in request.data['incomes']:
                     Income.objects.filter(income_id=income['income_id']).update(
-                    income_name = income['income_name'],
-                    income_amount = income['income_amount'],
+                    **income,
                     receipt = receiptid,
-                    category = income['category'])
+                    )
             elif request.data['expenses']:
                 for expense in request.data['expenses']:
                     Expense.objects.filter(product_id=expense['product_id']).update(
-                    product_name = expense['product_name'],
-                    product_price = expense['product_price'],
-                    receipt = receiptid,
-                    category = expense['category'],
-                    essential = expense['essential'])  
+                    **expense,
+                    receipt = receiptid)  
             return Response(f"Receipt with id {receiptid} has been updated.")
     
     
@@ -124,26 +120,19 @@ def postReceipt(request):
     #1. Create the receipt object
     recData = receiptPackage['receipt']
     #1. Create the receipt object
-    receipt = Receipt.objects.create(receipt_amount = recData['receipt_amount'], 
-    receipt_date = recData['receipt_date'],
-    receipt_is_reccuring = recData['receipt_is_reccuring'],
-    receipt_is_income = recData['receipt_is_income'],
+    receipt = Receipt.objects.create(**recData,
     user = user)
 
     #2. Create the corresponding expense and/or income objects
     if is_income:
         for income in receiptPackage['incomes']:
-            Income.objects.create(income_name = income['income_name'],
-            income_amount = income['income_amount'],
-            receipt = receipt,
-            category = income['category'])
+            Income.objects.create(**income,
+            receipt = receipt
+         )
     else:
         for expense in receiptPackage['expenses']:
-            Expense.objects.create(product_name = expense['product_name'],
-            product_price = expense['product_price'],
-            receipt = receipt,
-            category = expense['category'],
-            essential = expense['essential'])   
+            Expense.objects.create(**expense,
+            receipt = receipt)   
     
     return Response({
         'receipt_id': receipt.receipt_id

@@ -159,7 +159,6 @@ class Notification(models.Model):
 
 class Receipt(models.Model):
     receipt_id = models.AutoField(primary_key=True)
-    receipt_amount = models.DecimalField(max_digits=10, decimal_places=2, blank=True, null=True)
     receipt_date = models.DateTimeField()
     receipt_is_reccuring = models.IntegerField()
     receipt_is_income = models.BooleanField()
@@ -185,11 +184,13 @@ class UserCategoryBudget(models.Model):
     user = models.ForeignKey('Users', models.DO_NOTHING, blank=True, null=True)
     category = models.ForeignKey(Category, models.DO_NOTHING, blank=True, null=True)
     user_category_budget_estimated_amount = models.IntegerField(blank=True, null=True)
+    user_category_budget_altered_amount = models.IntegerField(blank=True, null=True)
     user_category_budget_last_modified_date = models.DateTimeField(blank=True, null=True)
 
     class Meta:
         managed = False
         db_table = 'user_category_budget'
+        unique_together = (('user', 'category'),)
 
 
 class UserChallengeInventory(models.Model):
@@ -237,7 +238,6 @@ class UserWidgetInventory(models.Model):
         managed = False
         db_table = 'user_widget_inventory'
 
-
 class Widget(models.Model):
     widget_id = models.AutoField(primary_key=True)
     widget_name = models.CharField(max_length=255)
@@ -247,8 +247,6 @@ class Widget(models.Model):
     class Meta:
         managed = False
         db_table = 'widget'
-
-
 
 class MyUserManager(BaseUserManager):
     def create_user(self, username, password=None, extra=None):
@@ -301,14 +299,12 @@ class Users(AbstractBaseUser, models.Model):
     user_has_notifications = models.BooleanField()
     user_budget_goal_amount = models.IntegerField(blank=True, null=True)
     user_experience_points = models.IntegerField(blank=True, null=True)
-    experience = models.ForeignKey(Experience, models.DO_NOTHING, blank=True, null=True)
     security_question = models.ForeignKey(SecurityQuestion, models.DO_NOTHING, blank=True, null=True)
     user_security_question_answer = models.CharField(max_length=255)
 
-
-
     is_active = models.BooleanField(default=True)
     is_admin = models.BooleanField(default=False)
+    last_login = models.DateTimeField()
     objects = MyUserManager()
 
     USERNAME_FIELD = 'user_user_name'

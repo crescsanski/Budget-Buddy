@@ -8,6 +8,46 @@
 from django.db import models
 
 
+class AuthGroup(models.Model):
+    id = models.IntegerField(primary_key=True)
+    name = models.CharField(max_length=150)
+
+    class Meta:
+        managed = False
+        db_table = 'auth_group'
+
+
+class AuthGroupPermissions(models.Model):
+    id = models.BigIntegerField(primary_key=True)
+    group = models.ForeignKey(AuthGroup, models.DO_NOTHING)
+    permission_id = models.IntegerField()
+
+    class Meta:
+        managed = False
+        db_table = 'auth_group_permissions'
+
+
+class AuthPermission(models.Model):
+    id = models.IntegerField(primary_key=True)
+    name = models.CharField(max_length=255)
+    content_type_id = models.IntegerField()
+    codename = models.CharField(max_length=100)
+
+    class Meta:
+        managed = False
+        db_table = 'auth_permission'
+
+
+class AuthtokenToken(models.Model):
+    key = models.CharField(primary_key=True, max_length=40)
+    created = models.DateTimeField()
+    user = models.ForeignKey('Users', models.DO_NOTHING)
+
+    class Meta:
+        managed = False
+        db_table = 'authtoken_token'
+
+
 class Category(models.Model):
     category_id = models.AutoField(primary_key=True)
     category_name = models.CharField(max_length=255)
@@ -62,6 +102,52 @@ class Competition(models.Model):
         managed = False
         db_table = 'competition'
         unique_together = (('user', 'user_2_id'),)
+
+
+class DjangoAdminLog(models.Model):
+    id = models.IntegerField(primary_key=True)
+    action_time = models.DateTimeField()
+    object_id = models.TextField(blank=True, null=True)
+    object_repr = models.CharField(max_length=200)
+    action_flag = models.SmallIntegerField()
+    change_message = models.TextField()
+    content_type_id = models.IntegerField(blank=True, null=True)
+    user = models.ForeignKey('Users', models.DO_NOTHING)
+
+    class Meta:
+        managed = False
+        db_table = 'django_admin_log'
+
+
+class DjangoContentType(models.Model):
+    id = models.IntegerField(primary_key=True)
+    app_label = models.CharField(max_length=100)
+    model = models.CharField(max_length=100)
+
+    class Meta:
+        managed = False
+        db_table = 'django_content_type'
+
+
+class DjangoMigrations(models.Model):
+    id = models.BigIntegerField(primary_key=True)
+    app = models.CharField(max_length=255)
+    name = models.CharField(max_length=255)
+    applied = models.DateTimeField()
+
+    class Meta:
+        managed = False
+        db_table = 'django_migrations'
+
+
+class DjangoSession(models.Model):
+    session_key = models.CharField(primary_key=True, max_length=40)
+    session_data = models.TextField()
+    expire_date = models.DateTimeField()
+
+    class Meta:
+        managed = False
+        db_table = 'django_session'
 
 
 class Expense(models.Model):
@@ -152,7 +238,6 @@ class Notification(models.Model):
 
 class Receipt(models.Model):
     receipt_id = models.AutoField(primary_key=True)
-    receipt_amount = models.DecimalField(max_digits=10, decimal_places=2, blank=True, null=True)
     receipt_date = models.DateTimeField()
     receipt_is_reccuring = models.IntegerField()
     receipt_is_income = models.BooleanField()
@@ -178,11 +263,13 @@ class UserCategoryBudget(models.Model):
     user = models.ForeignKey('Users', models.DO_NOTHING, blank=True, null=True)
     category = models.ForeignKey(Category, models.DO_NOTHING, blank=True, null=True)
     user_category_budget_estimated_amount = models.IntegerField(blank=True, null=True)
+    user_category_budget_altered_amount = models.IntegerField(blank=True, null=True)
     user_category_budget_last_modified_date = models.DateTimeField(blank=True, null=True)
 
     class Meta:
         managed = False
         db_table = 'user_category_budget'
+        unique_together = (('user', 'category'),)
 
 
 class UserChallengeInventory(models.Model):
@@ -229,6 +316,30 @@ class UserWidgetInventory(models.Model):
     class Meta:
         managed = False
         db_table = 'user_widget_inventory'
+
+
+class Users(models.Model):
+    user_id = models.AutoField(primary_key=True)
+    user_first_name = models.CharField(max_length=255, blank=True, null=True)
+    user_last_name = models.CharField(max_length=255, blank=True, null=True)
+    user_user_name = models.CharField(unique=True, max_length=255)
+    user_email = models.CharField(unique=True, max_length=255)
+    password = models.CharField(max_length=255)
+    user_phone_number = models.CharField(unique=True, max_length=14, blank=True, null=True)
+    user_registration_date = models.DateField()
+    user_birth_date = models.DateField()
+    user_has_notifications = models.BooleanField()
+    user_budget_goal_amount = models.IntegerField(blank=True, null=True)
+    user_experience_points = models.IntegerField(blank=True, null=True)
+    security_question = models.ForeignKey(SecurityQuestion, models.DO_NOTHING, blank=True, null=True)
+    user_security_question_answer = models.CharField(max_length=255)
+    is_active = models.BooleanField(blank=True, null=True)
+    is_admin = models.BooleanField(blank=True, null=True)
+    last_login = models.DateTimeField(blank=True, null=True)
+
+    class Meta:
+        managed = False
+        db_table = 'users'
 
 
 class Widget(models.Model):

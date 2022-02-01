@@ -5,6 +5,24 @@ from rest_framework.fields import FileField
 from app.models import *
 from app.baseSerializers import *
 
+
+class InitialBudgetSerializer(serializers.Serializer):
+
+    class CustomUserSerializer(serializers.ModelSerializer):
+        class Meta:
+            model = Users 
+            fields = ['user_id']
+
+    class CustomCatUsBudgetSerializer(serializers.ModelSerializer):
+        class Meta:
+            model = UserCategoryBudget
+            fields = ['category', 'user_category_budget_estimated_amount', 'user_category_budget_altered_amount']
+    
+    budgets = CustomCatUsBudgetSerializer(UserCategoryBudget.objects.all(), many = True)
+
+    class Meta:
+        fields = ['budgets']
+
 class IncomeReceiptSerializer(serializers.Serializer):
 
     recQuer = Receipt.objects.all()

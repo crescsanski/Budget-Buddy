@@ -18,8 +18,8 @@ urlpatterns = [
     path('receipt_track/', views.postReceipt),
 
     #path('budget/<budgetid>/', views.manageBudget),
-    #path('budget/users/<userid>/', views.manageUserBudget),
-    #path('budget/', views.postInitialBudget),
+    path('budget/users/<userid>/', views.manageUserBudget),
+    path('budget/', views.setInitialBudget),
 
     path('receipt_upload/<userid>/', views.ReceiptUploadConvertViewSet.as_view()),
     
