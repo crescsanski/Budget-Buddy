@@ -107,16 +107,17 @@ WSGI_APPLICATION = 'budgetBuddy.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/3.2/ref/settings/#databases
 
-DATABASES = {
+DATABASES = { 
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'postgres',
-        'USER': 'postgres',
-        'PASSWORD': 'Asdf1234!$',
-        'HOST': '127.0.0.1',
+        'NAME': 'd2v4n3b4u498kt',
+        'USER': 'wwlqebrmaluase',
+        'PASSWORD': '216b7ea248c45cb3e7057c83fc18de8c017d120a74902f650c2882d26ffd5884',
+        'HOST': 'ec2-18-210-95-55.compute-1.amazonaws.com',
         'PORT': '5432',
         'OPTIONS': {
-            'options': '-c search_path=budgetBuddy'
+            'options': '-c search_path=budgetbuddy',
+            'sslmode': 'require'
         }
     }
 }

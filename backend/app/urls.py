@@ -17,6 +17,10 @@ urlpatterns = [
     path('receipt_track/<receiptid>/', views.singleReceipt),
     path('receipt_track/', views.postReceipt),
 
+    #path('budget/<budgetid>/', views.manageBudget),
+    #path('budget/users/<userid>/', views.manageUserBudget),
+    #path('budget/', views.postInitialBudget),
+
     path('receipt_upload/<userid>/', views.ReceiptUploadConvertViewSet.as_view()),
     
     path('validate_challenge/<userid>/<challengeid>', views.ValidateChallengeViewSet.as_view()),

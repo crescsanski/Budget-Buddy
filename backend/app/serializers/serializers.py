@@ -2,8 +2,8 @@ from django.contrib.auth.models import User
 from rest_framework import exceptions, serializers
 from django.contrib.auth.password_validation import CommonPasswordValidator, NumericPasswordValidator, UserAttributeSimilarityValidator, validate_password, MinimumLengthValidator
 from rest_framework.fields import FileField
-from .models import *
-from .baseSerializers import *
+from app.models import *
+from app.baseSerializers import *
 
 class IncomeReceiptSerializer(serializers.Serializer):
 

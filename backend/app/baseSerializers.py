@@ -66,11 +66,6 @@ class CompetitionsSerializer(serializers.ModelSerializer):
         model = Competition
         fields = '__all__'
 
-class DifficultySerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Difficulty
-        fields = '__all__'
-
 class FriendsSerializer(serializers.ModelSerializer):
     class Meta:
         model = Friend

@@ -8,16 +8,6 @@
 from django.db import models
 
 
-class AuthtokenToken(models.Model):
-    key = models.CharField(primary_key=True, max_length=40)
-    created = models.DateTimeField()
-    user = models.ForeignKey('Users', models.DO_NOTHING)
-
-    class Meta:
-        managed = False
-        db_table = 'authtoken_token'
-
-
 class Category(models.Model):
     category_id = models.AutoField(primary_key=True)
     category_name = models.CharField(max_length=255)
@@ -41,9 +31,9 @@ class Challenge(models.Model):
     challenge_start_ammount = models.IntegerField(blank=True, null=True)
     challenge_completion_ammount = models.IntegerField(blank=True, null=True)
     item = models.ForeignKey('Item', models.DO_NOTHING, blank=True, null=True)
-    difficulty = models.ForeignKey('Difficulty', models.DO_NOTHING, blank=True, null=True)
-    trigger = models.ForeignKey('ChallengeTrigger', models.DO_NOTHING, blank=True, null=True)
-    experience_id = models.IntegerField(blank=True, null=True)
+    difficulty = models.IntegerField(blank=True, null=True)
+    challenge_trigger = models.ForeignKey('ChallengeTrigger', models.DO_NOTHING, blank=True, null=True)
+    experience_level_unlock = models.IntegerField(blank=True, null=True)
 
     class Meta:
         managed = False
@@ -74,16 +64,6 @@ class Competition(models.Model):
         unique_together = (('user', 'user_2_id'),)
 
 
-class Difficulty(models.Model):
-    difficulty_id = models.AutoField(primary_key=True)
-    difficulty_name = models.CharField(max_length=255)
-    difficulty_description = models.CharField(max_length=255)
-
-    class Meta:
-        managed = False
-        db_table = 'difficulty'
-
-
 class Expense(models.Model):
     expense_id = models.AutoField(primary_key=True)
     expense_name = models.CharField(max_length=255)
@@ -100,7 +80,7 @@ class Expense(models.Model):
 class Experience(models.Model):
     experience_id = models.AutoField(primary_key=True)
     experience_level = models.IntegerField()
-    experience_title = models.CharField(db_column='experience__title', max_length=255)  # Field renamed because it contained more than one '_' in a row.
+    experience_title = models.CharField(max_length=255)
     experience_point_threshold = models.IntegerField()
 
     class Meta:
@@ -152,8 +132,8 @@ class Item(models.Model):
     item_description = models.CharField(max_length=255)
     item_type = models.CharField(max_length=255)
     item_link = models.CharField(max_length=255)
-    difficulty = models.ForeignKey(Difficulty, models.DO_NOTHING, blank=True, null=True)
-    experience = models.ForeignKey(Experience, models.DO_NOTHING, blank=True, null=True)
+    difficulty = models.CharField(max_length=255, blank=True, null=True)
+    experience_level_unlock = models.IntegerField(blank=True, null=True)
 
     class Meta:
         managed = False
@@ -195,10 +175,10 @@ class SecurityQuestion(models.Model):
 
 class UserCategoryBudget(models.Model):
     user_category_budget_id = models.AutoField(primary_key=True)
-    user_category_budget_estimated_amount = models.IntegerField(blank=True, null=True)
-    user_category_budget_last_modified_date = models.DateTimeField(blank=True, null=True)
     user = models.ForeignKey('Users', models.DO_NOTHING, blank=True, null=True)
     category = models.ForeignKey(Category, models.DO_NOTHING, blank=True, null=True)
+    user_category_budget_estimated_amount = models.IntegerField(blank=True, null=True)
+    user_category_budget_last_modified_date = models.DateTimeField(blank=True, null=True)
 
     class Meta:
         managed = False
@@ -249,28 +229,6 @@ class UserWidgetInventory(models.Model):
     class Meta:
         managed = False
         db_table = 'user_widget_inventory'
-
-
-class Users(models.Model):
-    user_id = models.AutoField(primary_key=True)
-    user_first_name = models.CharField(max_length=255, blank=True, null=True)
-    user_last_name = models.CharField(max_length=255, blank=True, null=True)
-    user_user_name = models.CharField(unique=True, max_length=255)
-    user_email = models.CharField(unique=True, max_length=255)
-    user_password = models.CharField(max_length=255)
-    user_phone_number = models.CharField(unique=True, max_length=14, blank=True, null=True)
-    user_registration_date = models.DateField()
-    user_birth_date = models.DateField()
-    user_has_notifications = models.BooleanField()
-    user_budget_goal_amount = models.IntegerField(blank=True, null=True)
-    user_experience_points = models.IntegerField(blank=True, null=True)
-    experience = models.ForeignKey(Experience, models.DO_NOTHING, blank=True, null=True)
-    security_question = models.ForeignKey(SecurityQuestion, models.DO_NOTHING, blank=True, null=True)
-    user_security_question_answer = models.CharField(max_length=255)
-
-    class Meta:
-        managed = False
-        db_table = 'users'
 
 
 class Widget(models.Model):
