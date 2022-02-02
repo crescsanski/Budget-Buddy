@@ -3,6 +3,9 @@ __pycache__/
 *.py[cod]
 *$py.class
 
+# Receipt Uploads
+rawReceipts/
+
 # C extensions
 *.so
 
