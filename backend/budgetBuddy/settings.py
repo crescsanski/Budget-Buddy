@@ -13,6 +13,16 @@ https://docs.djangoproject.com/en/3.2/ref/settings/
 import os
 import django_heroku
 from pathlib import Path
+from dotenv import load_dotenv
+
+load_dotenv()
+
+#Load DB Credentials
+DB_NAME=os.getenv('DB_NAME')
+DB_USER=os.getenv('DB_USER')
+DB_PASSWORD=os.getenv('DB_PASSWORD')
+DB_HOST=os.getenv('DB_HOST')
+DB_PORT=os.getenv('DB_PORT')
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -110,11 +120,11 @@ WSGI_APPLICATION = 'budgetBuddy.wsgi.application'
 DATABASES = { 
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'd2v4n3b4u498kt',
-        'USER': 'wwlqebrmaluase',
-        'PASSWORD': '216b7ea248c45cb3e7057c83fc18de8c017d120a74902f650c2882d26ffd5884',
-        'HOST': 'ec2-18-210-95-55.compute-1.amazonaws.com',
-        'PORT': '5432',
+        'NAME': DB_NAME,
+        'USER': DB_USER,
+        'PASSWORD': DB_PASSWORD,
+        'HOST': DB_HOST,
+        'PORT': DB_PORT,
         'OPTIONS': {
             'options': '-c search_path=budgetbuddy',
             'sslmode': 'require'
