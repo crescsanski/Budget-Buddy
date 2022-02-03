@@ -102,13 +102,14 @@ def getReceiptsByUser(request, userid):
 #Incomes and/or Expenses table (depending on the type of receipt provided in the body.)
 @api_view(["POST"])
 def postReceipt(request):
-    is_income = None
+    #print(request.data)
+    is_income = request.data['receipt']['receipt_is_income']
     serializer = None
-    if request.data['incomes']:
-        is_income = True
+    print(request.data['receipt']['receipt_is_income'])
+    if is_income:
         serializer = IncomeReceiptSerializer(data=request.data,
                                         context={'request': request})
-    elif request.data['expenses']:
+    else:
         serializer = ExpenseReceiptSerializer(data=request.data,
                                         context={'request': request})
 

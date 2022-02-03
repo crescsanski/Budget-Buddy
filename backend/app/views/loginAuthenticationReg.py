@@ -11,6 +11,7 @@ from rest_framework import permissions, renderers, viewsets
 from rest_framework.decorators import action, permission_classes
 from django.contrib.auth import get_user_model, logout
 from rest_framework.response import Response
+from django.forms.models import model_to_dict
 from app.models import *
 from django.contrib.auth.password_validation import CommonPasswordValidator, NumericPasswordValidator, UserAttributeSimilarityValidator, validate_password, MinimumLengthValidator
 from app.serializers import *
@@ -54,6 +55,7 @@ class RegisterView(GenericAPIView):
             raise Exception("A user with the given username already exists.  Please enter a different username.")
                 
         # Otherwise, if all correct, we create the user
+ 
         auth.get_user_model().objects.create_user(username = user['user_user_name'], password=user['password'], extra=user)
         return Response("User has been registered successfully!")
 
@@ -77,14 +79,7 @@ class CustomAuthToken(ObtainAuthToken):
 
         return Response({
             'token': token.key,
-            'user_id': user.pk,
-            'username': user.username,
-            'birth_date': user.birth_date,
-            'email': user.email,
-            'phone_number': user.phone_number,
-            'first_name': user.first_name,
-            'last_name': user.last_name,
-            'registered': user.registered
+            **model_to_dict(user)
         })
     
 class Logout(GenericAPIView):

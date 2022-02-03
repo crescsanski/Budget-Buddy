@@ -48,6 +48,7 @@ export class BudgetPanelComponent implements OnInit {
     private cs: CategoryService,
     private ms: MessageService) {
 
+      /*
       this.cs.getCategories().pipe(
         mergeMap((cats: Category[]) => 
         {
@@ -60,6 +61,9 @@ export class BudgetPanelComponent implements OnInit {
           this.initializeForm();
         })
       ).subscribe();
+      */
+
+      this.catOptions = this.cs.expenseCats.concat(this.cs.incomeCats);
     
     this.prompts = [
       {icon: '../../../../assets/icons/budget-icons/help.png', categoryTitle: 'What\'s Your Budget?'},

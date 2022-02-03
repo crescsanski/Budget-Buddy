@@ -47,9 +47,12 @@ class ExpenseReceiptSerializer(serializers.Serializer):
 
 
 class UserRegistrationSerializer(serializers.ModelSerializer):
+    
     class Meta:
-       model = Users 
-       fields = '__all__'
+        model = Users 
+        fields = ['user_first_name', 'user_last_name',
+        'user_user_name','user_birth_date', 'user_email', 'user_phone_number',
+        'password', 'user_has_notifications']
     
     #Validate password
     def validate(self, data):

@@ -22,7 +22,7 @@ export class MenuComponent implements OnInit {
 
     if (authServ.currentUserValue)
     {
-      this.name = authServ.currentUserValue.first_name + " " + authServ.currentUserValue.last_name;
+      this.name = authServ.currentUserValue.user_first_name + " " + authServ.currentUserValue.user_last_name;
     }      
    }
 

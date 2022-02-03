@@ -1,9 +1,11 @@
 from django.conf.urls import include, url
 from django.urls import path
+from app.views.baseViews import *
 from rest_framework.routers import DefaultRouter
 from app import views
 
-
+router= DefaultRouter()
+router.register(r'category', CategoryViewSet, basename='category')
 
 # The API URLs are now determined automatically by the router.
 # Additionally, we include the login URLs for the browsable API.
@@ -25,7 +27,9 @@ urlpatterns = [
     
     path('validate_challenge/<userid>/<challengeid>', views.ValidateChallengeViewSet.as_view()),
     
-    path('badges_earned/<userid>/', views.BadgesEarnedViewSet.as_view())
+    path('badges_earned/<userid>/', views.BadgesEarnedViewSet.as_view()),
+
+    path('', include(router.urls))
 ]
 
 

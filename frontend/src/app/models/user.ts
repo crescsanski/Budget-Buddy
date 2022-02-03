@@ -1,11 +1,13 @@
 export interface User {
     user_id: number;
-    first_name: string;
-    last_name: string;
-    username: string;
-    phone_number: string;
-    registered: Date;
-    birth_date: Date;
+    user_first_name: string;
+    user_last_name: string;
+    user_user_name: string;
+    user_email: string
+    user_phone_number: string;
+    user_has_notifications: boolean;
+    user_registration_date: string;
+    user_birth_date: Date;
     token: string;
   }
   

@@ -1,4 +1,5 @@
 from django.db import models
+from rest_framework.authtoken.models import Token
 from django.core.validators import EmailValidator, RegexValidator
 from datetime import date
 from django.contrib.auth.models import (
@@ -254,10 +255,13 @@ class MyUserManager(BaseUserManager):
         Creates and saves a User with the given email, date of
         birth and password.
         """
-    
+        userFields = [a.name for a in Users._meta.get_fields() if a.name != 'user_user_name']
+        default = dict.fromkeys(userFields, "")
+                     
         if extra == None:
             user = self.model(
-                user_user_name=username
+                user_user_name=username,
+                **default
             )
         else:
             user = self.model(
@@ -269,13 +273,13 @@ class MyUserManager(BaseUserManager):
         user.save(using=self._db)
         return user
 
-    def create_superuser(self, username, password):
+    def create_superuser(self, user_user_name, password):
         """
         Creates and saves a superuser with the given email, date of
         birth and password.
         """
         user = self.create_user(
-            username=username,
+            username=user_user_name,
             password=password,
         )
         user.is_admin = True

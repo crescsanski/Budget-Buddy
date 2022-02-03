@@ -26,14 +26,14 @@ export class RegisterPanelComponent implements OnInit {
 
   ngOnInit(): void {
     this.form = this.formBuilder.group({
-      username: ['', Validators.required],
+      user_user_name: ['', Validators.required],
       password: ['', Validators.required],
-      email: ['', Validators.compose([Validators.required, Validators.email])],
-      first_name: ['', Validators.compose([Validators.pattern('[a-zA-Z ]*'), Validators.required])],
-      last_name: ['', Validators.compose([Validators.pattern('[a-zA-Z ]*'), Validators.required])],
-      phone_number: ['', Validators.required],
-      birth_date: ['', Validators.required],
-      notifications: [false, Validators.required],
+      user_email: ['', Validators.compose([Validators.required, Validators.email])],
+      user_first_name: ['', Validators.compose([Validators.pattern('[a-zA-Z ]*'), Validators.required])],
+      user_last_name: ['', Validators.compose([Validators.pattern('[a-zA-Z ]*'), Validators.required])],
+      user_phone_number: ['', Validators.required],
+      user_birth_date: ['', Validators.required],
+      user_has_notifications: [false, Validators.required],
   });
 
   }
@@ -57,7 +57,7 @@ export class RegisterPanelComponent implements OnInit {
             next: () => {
                 this.messageService.addSuccess('Registration successful', "");
                 //let's auto-log in the user with the inputted data
-                this.authService.login(this.form.get('username').value, this.form.get('password').value)
+                this.authService.login(this.form.get('user_user_name').value, this.form.get('password').value)
                 .pipe(first())
                 .subscribe({
                     next: (user) => {

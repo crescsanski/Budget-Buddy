@@ -4,9 +4,12 @@ import { componentFactoryName } from '@angular/compiler';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Category } from 'src/app/models/category';
 import { MessageService } from 'src/app/services/message.service';
-import { WidgetService } from '../widget.service';
 import { CategoryService } from '../../services/category.service';
 import { SelectItem } from 'primeng/api';
+import { Receipt } from 'src/app/models/receipt';
+import { AuthService } from 'src/app/services/auth.service';
+import { ReceiptTrackService } from '../services/receipt-track.service';
+import { WidgetService } from '../widget.service';
 
 @Component({
   selector: 'app-tracking',
@@ -19,17 +22,15 @@ export class TrackingComponent implements OnInit {
   frequencyOptions!: SelectItem[];
 
   constructor(private ms: MessageService,
-    private ws: WidgetService,
     private fb: FormBuilder,
+    private rs: ReceiptTrackService,
+    private ws: WidgetService,
+    private auServ: AuthService,
     private cs: CategoryService) { 
-      this.cs.getSpendingCategories().subscribe(
-        (cats: Category[]) => 
-        {
-          this.catOptions = cats;
-        }
-      )
+      this.catOptions = this.cs.expenseCats;
 
       this.frequencyOptions = this.ws.frequencyOptions;
+
   }
 
   ngOnInit(): void {
@@ -44,12 +45,32 @@ export class TrackingComponent implements OnInit {
   }
 
   track() {
+
     if (this.form.invalid) {
       this.ms.addInfo("Invalid Entry", "Some fields are incomplete or invalid.")
       return;
     }
 
-    this.ws.basicSpendingTransaction(this.form.value)
+    let out: Receipt =
+    {
+      userid: this.auServ.currentUserValue.user_id,
+      expenses: [
+        {
+        expense_price: this.form.value['product_price'],
+        expense_name: this.form.value['product_name'],
+        category: this.form.value['category'],
+        expense_is_essential: true
+        }
+      ],
+      receipt:
+      {
+        receipt_date: this.form.value['receipt_date'],
+        receipt_is_reccuring: this.form.value['reocurring'],
+        receipt_is_income: false
+      }
+    }
+
+    this.rs.addReceipt(out)
       .subscribe(()=> {this.form.reset()}
       )
   }

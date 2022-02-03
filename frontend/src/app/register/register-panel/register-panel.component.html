@@ -4,8 +4,8 @@
         <div class="grid">
             <div class="row">
                 <p>Username</p>
-                <input type="text" formControlName="username" class="field" pInputText />
-                    <div class="validator" *ngIf="f.username.invalid && (f.username.dirty || f.username.touched)">
+                <input type="text" formControlName="user_user_name" class="field" pInputText />
+                    <div class="validator" *ngIf="f.user_user_name.invalid && (f.user_user_name.dirty || f.user_user_name.touched)">
                         Please enter a valid username.
                     </div>
                 <p>Password</p>
@@ -14,36 +14,36 @@
                         Please enter a valid password.
                     </div>
                 <p>Email</p>
-                <input type="text" formControlName="email" class="field" pInputText />
-                    <div class="validator" *ngIf="f.email.invalid && (f.email.dirty || f.email.touched)">
+                <input type="text" formControlName="user_email" class="field" pInputText />
+                    <div class="validator" *ngIf="f.user_email.invalid && (f.user_email.dirty || f.user_email.touched)">
                         Please enter a valid email.
                     </div>
             </div>
             <div class="row">
                 <p>First Name</p>
-                <input type="text" formControlName="first_name" class="field" pInputText />
-                    <div class="validator" *ngIf="f.first_name.invalid && (f.first_name.dirty || f.first_name.touched)">
+                <input type="text" formControlName="user_first_name" class="field" pInputText />
+                    <div class="validator" *ngIf="f.user_first_name.invalid && (f.user_first_name.dirty || f.user_first_name.touched)">
                         Field is required
                     </div>
                 <p>Last Name</p>
-                <input type="text" formControlName="last_name" class="field" pInputText />
-                    <div class="validator" *ngIf="f.last_name.invalid && (f.last_name.dirty || f.last_name.touched)">
+                <input type="text" formControlName="user_last_name" class="field" pInputText />
+                    <div class="validator" *ngIf="f.user_last_name.invalid && (f.user_last_name.dirty || f.user_last_name.touched)">
                         Field is required
                     </div>
                 <p>Phone Number</p>
-                <p-inputMask mask="(999) 999-9999" formControlName="phone_number" placeholder="(999) 999-9999"></p-inputMask>
-                    <div class="validator" *ngIf="f.phone_number.invalid && (f.phone_number.dirty || f.phone_number.touched)">
+                <p-inputMask mask="(999) 999-9999" formControlName="user_phone_number" placeholder="(999) 999-9999"></p-inputMask>
+                    <div class="validator" *ngIf="f.user_phone_number.invalid && (f.user_phone_number.dirty || f.user_phone_number.touched)">
                         Field is required
                     </div>
             </div>
         <div class="row">
                 <p>Date of Birth</p>
-                <p-inputMask mask="9999-99-99" formControlName="birth_date" placeholder="1987-03-12" slotChar="yyyy-mm-dd"></p-inputMask>
-                    <div class="validator" *ngIf="f.birth_date.invalid && (f.birth_date.dirty || f.birth_date.touched)">
+                <p-inputMask mask="9999-99-99" formControlName="user_birth_date" placeholder="1987-03-12" slotChar="yyyy-mm-dd"></p-inputMask>
+                    <div class="validator" *ngIf="f.user_birth_date.invalid && (f.user_birth_date.dirty || f.user_birth_date.touched)">
                         Please enter a valid date.
                     </div>
                 <p>Check to Enroll in Notifications</p>
-                <input type="checkbox" formControlName="notifications" class="field">
+                <input type="checkbox" formControlName="user_has_notifications" class="field">
             </div>
          </div>
         <br>

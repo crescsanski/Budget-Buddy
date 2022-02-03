@@ -4,9 +4,13 @@ import { componentFactoryName } from '@angular/compiler';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Category } from 'src/app/models/category';
 import { MessageService } from 'src/app/services/message.service';
-import { WidgetService } from '../widget.service';
 import { CategoryService } from '../../services/category.service';
 import {SelectItem} from 'primeng/api';
+import { ReceiptService } from 'src/app/services/receipt.service';
+import { AuthService } from 'src/app/services/auth.service';
+import { Receipt } from 'src/app/models/receipt';
+import { WidgetService } from '../widget.service';
+import { ReceiptTrackService } from '../services/receipt-track.service';
 
 @Component({
   selector: 'app-income-tracking',
@@ -19,16 +23,14 @@ form: FormGroup = <FormGroup>{};
   frequencyOptions!: SelectItem[];
 
   constructor(private ms: MessageService,
+    private rs: ReceiptTrackService,
+    private auServ: AuthService,
     private ws: WidgetService,
     private fb: FormBuilder,
     private cs: CategoryService) { 
-      this.cs.getIncomeCategories().subscribe(
-        (cats: Category[]) => 
-        {
-          this.catOptions = cats;
-        }
-      )
-      
+
+      this.catOptions = this.cs.incomeCats;
+    
       //TODO: Implement w/ API
       this.frequencyOptions = this.ws.frequencyOptions;
   }
@@ -50,9 +52,27 @@ form: FormGroup = <FormGroup>{};
       return;
     }
 
-    this.ws.basicIncomeTransaction(this.form.value)
+    let out: Receipt =
+    {
+      userid: this.auServ.currentUserValue.user_id,
+      incomes: [
+        {
+        income_amount: this.form.value['income_amount'],
+        income_name: this.form.value['income_name'],
+        category: this.form.value['category']
+        }
+      ],
+      receipt:
+      {
+        receipt_date: this.form.value['receipt_date'],
+        receipt_is_reccuring: this.form.value['reocurring'],
+        receipt_is_income: true
+      }
+    }
+
+    this.rs.addReceipt(out)
       .subscribe(()=> {this.form.reset()}
-      ) 
+      )
   }
 
 }

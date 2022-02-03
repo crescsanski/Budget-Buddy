@@ -6,17 +6,14 @@ import { catchError, concatMap, map, share, tap } from 'rxjs/operators';
 
 import { User } from '../models/user';
 import { MessageService } from '../services/message.service';
-import { ProductService } from '../services/product.service';
 import { ReceiptService } from '../services/receipt.service';
 import { CategoryService } from '../services/category.service';
-import { Product } from '../models/product';
 import { DatePipe } from '@angular/common';
 import { AuthService } from '../services/auth.service';
 import { Receipt } from '../models/receipt';
 import { BasicManualSpend } from '../models/formModels/basicManualSpend';
 import { Income } from '../models/income';
 import { BasicManualIncome } from '../models/formModels/basicManualIncome';
-import { IncomeService } from '../services/income.service';
 import { SelectItem } from 'primeng/api';
 
 
@@ -35,9 +32,7 @@ export class WidgetService {
     private http: HttpClient,
     private messageService: MessageService,
     private as: AuthService,
-    private ps: ProductService,
     private rs: ReceiptService,
-    private is: IncomeService,
     private cs: CategoryService,
     private dp: DatePipe) { 
 
@@ -45,7 +40,9 @@ export class WidgetService {
 
     }
 
-    //use for testing purposes of manual spending function
+    
+
+    /*use for testing purposes of manual spending function
     testFunction()
     {
         let inp: BasicManualSpend = {  receipt_date: new Date(),
@@ -60,6 +57,7 @@ export class WidgetService {
    * by the spending-tracking widget.  In the desktop interface, we may add a non-widget for spending that would allow the input of multiple 
    * products for a given receipt.
    */
+  /*
     basicSpendingTransaction(inp: BasicManualSpend): Observable<Product>
     {
         return this.rs.addReceipt({
@@ -92,6 +90,7 @@ export class WidgetService {
    * This is designed to input an income transaction for an individual income source on its own receipt.  It will be used
    * by the income-tracking widget. 
    */
+  /*
       basicIncomeTransaction(inp: BasicManualIncome): Observable<Income>
       {
           return this.rs.addReceipt({
