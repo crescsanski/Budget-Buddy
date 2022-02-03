@@ -1,7 +1,6 @@
 import { Budget } from 'src/app/models/budget';
 import { BudgetCategory } from '../../models/formModels/budgetCategory';
 import { Component, OnInit } from '@angular/core';
-import {SliderModule} from 'primeng/slider';
 
 @Component({
   selector: 'app-budget-slider',

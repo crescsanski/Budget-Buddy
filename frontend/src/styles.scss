@@ -100,6 +100,18 @@ button {
     border-radius: 21px;
     height: 3em;
   }
+
+  .p-button {
+    background-color: $blue;
+    border-radius: 15px;
+    border: 2px solid $blue;
+    padding-top: 0.5em;
+    padding-bottom: 0.35em;
+    font-family: "Century Gothic Pro", sans-serif !important;
+    color: white;
+    cursor: pointer;
+
+  }
 }
 
 .ui-datepicker {
