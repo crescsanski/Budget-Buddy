@@ -24,6 +24,11 @@ export class AppComponent {
 
   }
 
+  preFetchData(): Boolean
+  {
+    return (this.catService.expenseCats != null) && (this.catService.incomeCats != null);
+  }
+
   cleanLogout() {
     this.authServ.cleanLogout().subscribe();
   }

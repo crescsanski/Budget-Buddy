@@ -1,7 +1,6 @@
 export interface Budget {
     budget_id?: number;
-    user: number;
     category: number;
-    estimated_amount: number;
-    last_modified_date: string;
+    user_category_budget_estimated_amount: number;
+    user_category_budget_altered_amount: number;
 }

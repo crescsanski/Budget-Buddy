@@ -17,6 +17,7 @@ export class BadgesWidgetComponent implements OnInit {
     baEar.getBadgesEarned(userId).subscribe(
       (res) =>
       {
+        console.log(res)
         this.badges = res
       });
 

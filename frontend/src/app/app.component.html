@@ -1,6 +1,6 @@
 <p-toast position="top-center"></p-toast>
 <!-- main app container -->
-<div class="app-container">
+<div *ngIf="preFetchData()" class="app-container">
     <router-outlet></router-outlet>
 </div>
 

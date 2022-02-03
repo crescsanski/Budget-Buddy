@@ -7,10 +7,11 @@ import {SelectItem} from 'primeng/api';
 import { WidgetService } from 'src/app/widget/widget.service';
 import { trigger, transition, animate, style } from '@angular/animations'
 import { delay, first, flatMap, map, mergeMap } from 'rxjs/operators';
-import { BudgetService } from 'src/app/services/budget.service';
+import { BudgetService } from 'src/app/home/budget-creator/budget.service';
 import { Budget } from 'src/app/models/budget';
 import { AuthService } from 'src/app/services/auth.service';
 import { CategoryService } from 'src/app/services/category.service';
+import { BudgetPackage } from 'src/app/models/budgetPackage';
 
 @Component({
   selector: 'app-budget-panel',
@@ -35,6 +36,7 @@ export class BudgetPanelComponent implements OnInit {
   catOptions: Category[];
   form: FormArray
   currentPanel: any;
+  amount: number;
   exisBudgets: Budget[]
   panelNumber: number = 0;
   //frequencyOptions!: SelectItem[];
@@ -47,24 +49,10 @@ export class BudgetPanelComponent implements OnInit {
 
   constructor(private ws: WidgetService, private fb: FormBuilder,
     private bs: BudgetService,
+    private authServ: AuthService,
     private as: AuthService,
     private cs: CategoryService,
     private ms: MessageService) {
-
-      /*
-      this.cs.getCategories().pipe(
-        mergeMap((cats: Category[]) => 
-        {
-          this.catOptions = cats;
-          return this.bs.searchBudgets(this.as.currentUserValue.user_id);
-        }),
-        map((res: Budget[]) => 
-        {
-          this.exisBudgets = res;
-          this.initializeForm();
-        })
-      ).subscribe();
-      */
 
       this.catOptions = this.cs.expenseCats.concat(this.cs.incomeCats);
     
@@ -72,34 +60,35 @@ export class BudgetPanelComponent implements OnInit {
     //toggle comments to show finalization page first
       //{icon: '../../../../assets/icons/budget-icons/help.png', categoryTitle: 'Finalization', amount: null},
       {icon: '../../../../assets/icons/budget-icons/help.png', categoryTitle: 'What\'s Your Budget?', amount: null},
-      {icon: '../../../../assets/icons/budget-icons/job-income.png', categoryTitle: 'Job Income',  amount: 0, type: 'Income'},
-      {icon: '../../../../assets/icons/budget-icons/gift.png', categoryTitle: 'Received Gift',  amount: 0, type: 'Income'},
-      {icon: '../../../../assets/icons/budget-icons/interest.png', categoryTitle: 'Interest',  amount: 0, type: 'Income'},
-      {icon: '../../../../assets/icons/budget-icons/gov-payment.png', categoryTitle: 'Government Payment',  amount: 0, type: 'Income'},
-      {icon: '../../../../assets/icons/budget-icons/tax-refund.png', categoryTitle: 'Tax Refund',  amount: 0, type: 'Income'},
-      {icon: '../../../../assets/icons/budget-icons/misc-income.png', categoryTitle: 'Miscellaneous Income',  amount: 0, type: 'Income'},
+      {icon: '../../../../assets/icons/budget-icons/job-income.png', id: 17, categoryTitle: 'Job Income',  amount: 0, type: 'Income'},
+      {icon: '../../../../assets/icons/budget-icons/gift.png', id: 18, categoryTitle: 'Received Gift',  amount: 0, type: 'Income'},
+      {icon: '../../../../assets/icons/budget-icons/interest.png', id: 19, categoryTitle: 'Interest',  amount: 0, type: 'Income'},
+      {icon: '../../../../assets/icons/budget-icons/gov-payment.png', id: 20, categoryTitle: 'Government Payment',  amount: 0, type: 'Income'},
+      {icon: '../../../../assets/icons/budget-icons/tax-refund.png', id: 21, categoryTitle: 'Tax Refund',  amount: 0, type: 'Income'},
+      {icon: '../../../../assets/icons/budget-icons/misc-income.png', id: 22, categoryTitle: 'Miscellaneous Income',  amount: 0, type: 'Income'},
       {icon: '../../../../assets/icons/budget-icons/smile.png', categoryTitle: 'Halfway There!', amount: null},
-      {icon: '../../../../assets/icons/budget-icons/housing.png', categoryTitle: 'Housing',  amount: 0, type: 'Expense'},
-      {icon: '../../../../assets/icons/budget-icons/transportation.png', categoryTitle: 'Transportation',  amount: 0, type: 'Expense'},
-      {icon: '../../../../assets/icons/budget-icons/essential-groceries.png', categoryTitle: 'Essential Groceries',  amount: 0, type: 'Expense'},
-      {icon: '../../../../assets/icons/budget-icons/non-essential-groceries.png', categoryTitle: 'Non-Essential Groceries',  amount: 0, type: 'Expense'},
-      {icon: '../../../../assets/icons/budget-icons/utilities.png', categoryTitle: 'Utilities',  amount: 0, type: 'Expense'},
-      {icon: '../../../../assets/icons/budget-icons/insurance.png', categoryTitle: 'Insurance',  amount: 0, type: 'Expense'},
-      {icon: '../../../../assets/icons/budget-icons/medical.png', categoryTitle: 'Medical',  amount: 0, type: 'Expense'},
-      {icon: '../../../../assets/icons/budget-icons/investment.png', categoryTitle: 'Investment',  amount: 0, type: 'Expense'},
-      {icon: '../../../../assets/icons/budget-icons/restaraunts.png', categoryTitle: 'Restaurants',  amount: 0, type: 'Expense'},
-      {icon: '../../../../assets/icons/budget-icons/entertainment.png', categoryTitle: 'Entertainment',  amount: 0, type: 'Expense'},
-      {icon: '../../../../assets/icons/budget-icons/clothing.png', categoryTitle: 'Clothing',  amount: 0, type: 'Expense'},
-      {icon: '../../../../assets/icons/budget-icons/gift.png', categoryTitle: 'Gifts',  amount: 0, type: 'Expense'},
-      {icon: '../../../../assets/icons/budget-icons/furnishings.png', categoryTitle: 'Furnishings',  amount: 0, type: 'Expense'},
-      {icon: '../../../../assets/icons/budget-icons/pet.png', categoryTitle: 'Pets',  amount: 0, type: 'Expense'},
-      {icon: '../../../../assets/icons/budget-icons/tax-payment.png', categoryTitle: 'Tax Payment', amount: 0, type: 'Expense'},
-      {icon: '../../../../assets/icons/budget-icons/misc-income.png', categoryTitle: 'Miscellaneous Expense',  amount: 0, type: 'Expense'},
+      {icon: '../../../../assets/icons/budget-icons/housing.png', id: 1, categoryTitle: 'Housing',  amount: 0, type: 'Expense'},
+      {icon: '../../../../assets/icons/budget-icons/transportation.png', id: 2, categoryTitle: 'Transportation',  amount: 0, type: 'Expense'},
+      {icon: '../../../../assets/icons/budget-icons/essential-groceries.png', id: 3, categoryTitle: 'Essential Groceries',  amount: 0, type: 'Expense'},
+      {icon: '../../../../assets/icons/budget-icons/non-essential-groceries.png', id: 4, categoryTitle: 'Non-Essential Groceries',  amount: 0, type: 'Expense'},
+      {icon: '../../../../assets/icons/budget-icons/utilities.png', id: 5, categoryTitle: 'Utilities',  amount: 0, type: 'Expense'},
+      {icon: '../../../../assets/icons/budget-icons/insurance.png', id: 6, categoryTitle: 'Insurance',  amount: 0, type: 'Expense'},
+      {icon: '../../../../assets/icons/budget-icons/medical.png', id: 7, categoryTitle: 'Medical',  amount: 0, type: 'Expense'},
+      {icon: '../../../../assets/icons/budget-icons/investment.png', id: 8, categoryTitle: 'Investment',  amount: 0, type: 'Expense'},
+      {icon: '../../../../assets/icons/budget-icons/restaraunts.png', id: 9, categoryTitle: 'Restaurants',  amount: 0, type: 'Expense'},
+      {icon: '../../../../assets/icons/budget-icons/entertainment.png', id: 10, categoryTitle: 'Entertainment',  amount: 0, type: 'Expense'},
+      {icon: '../../../../assets/icons/budget-icons/clothing.png', id: 11, categoryTitle: 'Clothing',  amount: 0, type: 'Expense'},
+      {icon: '../../../../assets/icons/budget-icons/gift.png', id: 12, categoryTitle: 'Gifts',  amount: 0, type: 'Expense'},
+      {icon: '../../../../assets/icons/budget-icons/furnishings.png', id: 13, categoryTitle: 'Furnishings',  amount: 0, type: 'Expense'},
+      {icon: '../../../../assets/icons/budget-icons/pet.png', id: 14, categoryTitle: 'Pets',  amount: 0, type: 'Expense'},
+      {icon: '../../../../assets/icons/budget-icons/tax-payment.png', id: 15, categoryTitle: 'Tax Payment', amount: 0, type: 'Expense'},
+      {icon: '../../../../assets/icons/budget-icons/misc-income.png', id: 16, categoryTitle: 'Miscellaneous Expense',  amount: 0, type: 'Expense'},
       {icon: '../../../../assets/icons/budget-icons/help.png', categoryTitle: 'Finalization', amount: null},
       {icon: '../../../../assets/icons/budget-icons/thumbs-up.png', categoryTitle: 'All Done!', amount: null},
     ]
    }
 
+   /*
    initializeForm()
    {
     this.form = this.fb.array([])
@@ -118,8 +107,8 @@ export class BudgetPanelComponent implements OnInit {
         this.form.push(foCom)
     
     }
-
    }
+   */
 
   ngOnInit(): void {
 
@@ -163,6 +152,15 @@ export class BudgetPanelComponent implements OnInit {
   pageForwardStep2(){
     this.currentPanel = this.prompts[this.panelNumber];
     this.visible = true;
+    let amount = parseInt(localStorage.getItem(this.panelNumber.toString()))
+    if (!isNaN(amount))
+    {
+      this.amount = amount
+    }
+    else
+    {
+      this.amount = this.currentPanel.amount;
+    }
   }
 
   pageBackward(){
@@ -191,9 +189,38 @@ export class BudgetPanelComponent implements OnInit {
     }
   }
 
-  track(x: FormGroup)
+  submitBudget()
   {
-    //stop here if the form is invalid
+    let budgets:Budget[] = <Budget[]>[]
+    for (let pan of this.prompts)
+    {
+      if (pan.id != null)
+      {
+        let budget:Budget = {category: pan.id, user_category_budget_estimated_amount: pan.amount, user_category_budget_altered_amount: pan.amount}
+        budgets.push(budget);
+      }
+    }
+    let out: BudgetPackage = 
+    {
+      user_id: this.authServ.currentUserValue.user_id,
+      budgets: budgets
+    }
+    this.bs.addBudget(out).subscribe(
+      (res) =>
+      {
+        this.pageForward();
+        this.pageForwardStep2();
+      }
+    )
+  }
+
+  track(panelNumber: number, amount: number)
+  {
+    this.currentPanel.amount = amount;
+    localStorage.setItem(panelNumber.toString(), amount.toString())
+    this.pageForward()
+    this.pageForwardStep2();
+    /*stop here if the form is invalid
     if (x.invalid)
     {
       this.ms.addInfo("Invalid Entry", "Some fields are incomplete or invalid.")
@@ -252,8 +279,9 @@ export class BudgetPanelComponent implements OnInit {
           }
       });
     }
-    
+  */  
 }
+
  
 
 }

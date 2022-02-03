@@ -26,7 +26,7 @@ export class BadgesEarnedService {
   getBadgesEarned(user_id: number): Observable<BadgesEarned[]> {
     const url = `${this.badgesEarnedUrl}/${user_id}/`;
     return this.http.get<BadgesEarned[]>(url).pipe(
-      tap(_ => this.log(`fetched badges for user=${user_id}`)),
+      tap(_ => console.log(`fetched badges for user=${user_id}`)),
       catchError(this.handleError<BadgesEarned[]>(`getBadgesEarned id=${user_id}`))
     );
   }

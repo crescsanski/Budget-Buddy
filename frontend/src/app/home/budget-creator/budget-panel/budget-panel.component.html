@@ -10,17 +10,16 @@
             <h1>{{ currentPanel.categoryTitle }}</h1>
         </div>
         <div *ngIf="currentPanel.categoryTitle != 'What\'s Your Budget?' && currentPanel.categoryTitle != 'Halfway There!' && currentPanel.categoryTitle != 'All Done!' && currentPanel.categoryTitle != 'Finalization'">
-            <form [formGroup]="c(panelNumber)" (ngSubmit)="track(c(panelNumber))">
                 <div class="content-area">
                     <p>Amount</p>
-                    <p-inputNumber mode="currency" formControlName="amount" currency="USD" [maxFractionDigits]=0 locale="en-US"></p-inputNumber>
+                    <p-inputNumber mode="currency" currency="USD" [(ngModel)]="amount" [maxFractionDigits]=0 locale="en-US"></p-inputNumber>
                     <br>
         
                     <div style="text-align: center;">
-                        <button style="margin-top: 2em; text-align: center;" class="track button-emphasis" pButton type="submit" label='Track'></button>
+                        <button style="margin-top: 2em; text-align: center;" (click)='track(panelNumber, amount)' class="track button-emphasis" pButton type="submit" label='Track'></button>
                     </div>
                 </div>
-            </form>
+          
         </div>
         <div *ngIf="currentPanel.categoryTitle == 'What\'s Your Budget?' ">
             <p style="color: #003486; text-align: center;">
@@ -45,7 +44,7 @@
                 </div>
             </div>
             <div style="margin-top: 2em">
-                <p-button label="Submit"></p-button>
+                <p-button label="Submit" (click)="submitBudget()"></p-button>
             </div>
         </div>
 
