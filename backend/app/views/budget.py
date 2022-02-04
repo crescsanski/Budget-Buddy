@@ -59,7 +59,8 @@ def setInitialBudget(request):
     
     try:
         for budget in validData['budgets']:
-            UserCategoryBudget.objects.create(**budget, user_id=user, user_category_budget_last_modified_date = timezone.now())
+            UserCategoryBudget.objects.create(**budget, user_id=user, 
+            user_category_budget_last_modified_date = timezone.now())
     except:
         raise ValidationError("The user already has an existing budget.")
 

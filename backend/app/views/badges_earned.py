@@ -49,10 +49,9 @@ class BadgesEarnedViewSet(GenericAPIView):
         ciFields = [ci.name for ci in UserChallengeInventory._meta.get_fields()]
         desiredFields = chFields + ciFields
 
-        ex = UserChallengeInventory.objects.filter(user = user).select_related('challenge').values(
+        ex = UserChallengeInventory.objects.filter(user = user).select_related(
+            'challenge').values(
             *desiredFields
         )
-
-
 
         return Response(ex)

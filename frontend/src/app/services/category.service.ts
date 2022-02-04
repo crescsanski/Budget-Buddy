@@ -38,7 +38,7 @@ export class CategoryService {
 
    /** GET income categories from the server */
    getIncomeCategories(): Observable<Category[]> {
-    return this.http.get<Category[]>(`${this.categoriesUrl}?category_is_income=true/`)
+    return this.http.get<Category[]>(`${this.categoriesUrl}?category_is_income=true`)
       .pipe(
         tap((incCats: Category[]) => {
           console.log('fetched income categories');
@@ -50,7 +50,7 @@ export class CategoryService {
 
      /** GET spending categories from the server */
      getSpendingCategories(): Observable<Category[]> {
-      return this.http.get<Category[]>(`${this.categoriesUrl}?category_is_income=false/`)
+      return this.http.get<Category[]>(`${this.categoriesUrl}?category_is_income=false`)
         .pipe(
           tap((spenCats: Category[]) => {
             console.log('fetched spending categories');

@@ -191,7 +191,6 @@ class UserCategoryBudget(models.Model):
     class Meta:
         managed = False
         db_table = 'user_category_budget'
-        unique_together = (('user', 'category'),)
 
 
 class UserChallengeInventory(models.Model):
@@ -238,6 +237,7 @@ class UserWidgetInventory(models.Model):
     class Meta:
         managed = False
         db_table = 'user_widget_inventory'
+
 
 class Widget(models.Model):
     widget_id = models.AutoField(primary_key=True)
@@ -302,13 +302,14 @@ class Users(AbstractBaseUser, models.Model):
     user_birth_date = models.DateField()
     user_has_notifications = models.BooleanField()
     user_budget_goal_amount = models.IntegerField(blank=True, null=True)
-    user_experience_points = models.IntegerField(blank=True, null=True)
+    user_current_experience_points = models.IntegerField(blank=True, null=True)
+    user_required_experience_points = models.IntegerField(blank=True, null=True)
+    user_level = models.IntegerField(blank=True, null=True)
     security_question = models.ForeignKey(SecurityQuestion, models.DO_NOTHING, blank=True, null=True)
     user_security_question_answer = models.CharField(max_length=255)
-
-    is_active = models.BooleanField(default=True)
-    is_admin = models.BooleanField(default=False)
-    last_login = models.DateTimeField()
+    is_active = models.BooleanField(blank=True, null=True, default = True)
+    is_admin = models.BooleanField(blank=True, null=True, default = False)
+    last_login = models.DateTimeField(blank=True, null=True)
     objects = MyUserManager()
 
     USERNAME_FIELD = 'user_user_name'
