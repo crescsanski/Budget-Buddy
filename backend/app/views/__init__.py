@@ -5,3 +5,4 @@ from .badges_earned import *
 from .loginAuthenticationReg import *
 from .challenges import *
 from .baseViews import *
+from .spend_history import *

@@ -103,10 +103,10 @@ def getReceiptsByUser(request, userid):
 @api_view(["POST"])
 def postReceipt(request):
     #print(request.data)
-    is_income = request.data['receipt']['receipt_is_income']
+    is_income = bool(request.data['receipt']['receipt_is_income'])
     serializer = None
-    print(request.data['receipt']['receipt_is_income'])
     if is_income:
+        print("Hello world")
         serializer = IncomeReceiptSerializer(data=request.data,
                                         context={'request': request})
     else:

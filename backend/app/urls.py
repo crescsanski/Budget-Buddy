@@ -19,6 +19,9 @@ urlpatterns = [
     path('receipt_track/<receiptid>/', views.singleReceipt),
     path('receipt_track/', views.postReceipt),
 
+    path('spend_history/<user_id>/', views.getSpendHistory),
+    path('spend_history/<user_id>/<category_id>/', views.getSpendHistory),
+
     #path('budget/<budgetid>/', views.manageBudget),
     path('budget/users/<userid>/', views.manageUserBudget),
     path('budget/', views.setInitialBudget),
