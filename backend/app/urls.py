@@ -22,6 +22,11 @@ urlpatterns = [
     path('spend_history/<user_id>/', views.getSpendHistory),
     path('spend_history/<user_id>/<category_id>/', views.getSpendHistory),
 
+    path('income_history/<user_id>/', views.getIncomeHistory),
+    path('income_history/<user_id>/<category_id>/', views.getIncomeHistory),
+
+    path('savings_history/<user_id>/', views.getSavingsHistory),
+
     #path('budget/<budgetid>/', views.manageBudget),
     path('budget/users/<userid>/', views.manageUserBudget),
     path('budget/', views.setInitialBudget),
