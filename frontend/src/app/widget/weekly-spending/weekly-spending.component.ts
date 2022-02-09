@@ -1,4 +1,9 @@
+import { getSupportedInputTypes } from '@angular/cdk/platform';
 import { Component, OnInit } from '@angular/core';
+import { BudgetService } from 'src/app/services/budget.service';
+import { SpendHistory } from 'src/app/models/spendHistory';
+import { SpendingHistoryService } from 'src/app/services/spending-history.service';
+import { TriggerService } from 'src/app/services/trigger.service';
 
 @Component({
   selector: 'app-weekly-spending',
@@ -13,25 +18,30 @@ export class WeeklySpendingComponent implements OnInit {
   percentage: number = 0;
 
 
-  constructor() { }
+  constructor(private spenHis: SpendingHistoryService, private trigServ: TriggerService,
+    private budServ: BudgetService) { 
 
+    this.trigServ.receiptAnnounced$.subscribe(() =>
+    {
+      
+    })
+    
+  }
 
   ngOnInit(): void {
-    //fetch value from database (calculate percentage)
-   this.weeklyBudget = 300.00; //need to retreive via api
-   this.weeklySpent = 125.98; //api retrieval
-   this.percentage = Math.round(this.weeklySpent/this.weeklyBudget *100);
-
-   let interval = setInterval(() => {
-    this.value = this.value + 10;
-    if (this.value >= this.percentage) {
-        this.value = this.percentage;
-    }
-}, 70);
-
-
-
-
+        //fetch value from database (calculate percentage)
+  
+        this.weeklyBudget = this.budServ.spendBudCalcs.curWeekSpenBudget; //need to retreive via api
+     
+        this.weeklySpent = this.spenHis.weekSpend;
+        this.percentage = Math.round(this.weeklySpent/this.weeklyBudget *100);
+  
+     let interval = setInterval(() => {
+      this.value = this.value + 10;
+      if (this.value >= this.percentage) {
+          this.value = this.percentage;
+      }
+  }, 70);
   }
 
 }

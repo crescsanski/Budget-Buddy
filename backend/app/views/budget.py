@@ -1,4 +1,5 @@
 from datetime import datetime
+import json
 from PIL.Image import Image
 from django.contrib.auth import password_validation
 from rest_framework.authtoken.views import ObtainAuthToken
@@ -7,12 +8,16 @@ from rest_framework.exceptions import ValidationError
 from rest_framework.generics import GenericAPIView
 from rest_framework.response import Response
 from rest_framework import status
+import calendar
 from django.shortcuts import render
 from rest_framework import permissions, renderers, viewsets
 from rest_framework.decorators import action, permission_classes
 from django.contrib.auth import get_user_model, logout
 from rest_framework.response import Response
 from app.models import *
+from django.db.models import *
+import itertools
+from django.db.models.functions import *
 from django.contrib.auth.password_validation import CommonPasswordValidator, NumericPasswordValidator, UserAttributeSimilarityValidator, validate_password, MinimumLengthValidator
 from app.serializers import *
 from django.contrib import auth
@@ -68,8 +73,39 @@ def setInitialBudget(request):
 
 @api_view(["GET"])
 #Retrieve budgets for a specified user
+#Includes optional filter to retrieve only income
+#or only expense budgets
 def manageUserBudget(request, userid):
+    type = request.query_params.get('category_is_income')
+    filters = {'user_id': userid}
+    if type is not None:
+        if json.loads(type.lower()):
+            filters['category__category_is_income'] = True
+        else:
+            filters['category__category_is_income'] = False
+
     if Users.objects.filter(user_id = userid).count() == 0:
         raise ValidationError("A user with the given ID does not exist.")
-    budgets = UserCategoryBudget.objects.filter(user_id = userid).values()
+    budgets = UserCategoryBudget.objects.filter(**filters).annotate(
+        categoryTitle = F('category__category_name'),
+        amount = F('user_category_budget_altered_amount')
+    ).values('categoryTitle', 'amount')
     return Response(budgets)
+
+#Calculate and retrieve a user's monthly and weekly spending budget total (excludes income categories)
+@api_view(["GET"])
+def getSpendBudgetTotal(request, userid):
+
+    now = datetime.now()
+    daysInMonth = calendar.monthrange(now.year, now.month)[1]
+    spendBudget = UserCategoryBudget.objects.filter(
+            user_id = userid, 
+            category__category_is_income = False).values('user_id').annotate(
+                monthlyBudgetTotal = Sum('user_category_budget_altered_amount')).annotate(
+                curWeekSpenBudget = F('monthlyBudgetTotal') * (7 / daysInMonth)).values(
+                    'monthlyBudgetTotal', 'curWeekSpenBudget'
+                )
+    if len(spendBudget) > 0:
+        spendBudget = spendBudget[0]
+    
+    return Response(spendBudget)

@@ -1,4 +1,6 @@
 import { Component, OnInit } from '@angular/core';
+import { BudgetService } from 'src/app/services/budget.service';
+import { SpendingHistoryService } from 'src/app/services/spending-history.service';
 
 @Component({
   selector: 'app-weekly-spending-small',
@@ -13,12 +15,13 @@ export class WeeklySpendingSmallComponent implements OnInit {
   status: string = "error loading status";
 
 
-  constructor() { }
+  constructor(private budServ: BudgetService,
+    private spenHis: SpendingHistoryService) { }
 
   ngOnInit(): void {
     //fetch value from database (calculate percentage)
-   this.weeklyBudget = 300.00; //need to retreive via api
-   this.weeklySpent = 125.98; //api retrieval
+   this.weeklyBudget = this.budServ.spendBudCalcs.curWeekSpenBudget; //need to retreive via api
+   this.weeklySpent = this.spenHis.weekSpend; //api retrieval
 
    let interval = setInterval(() => {
     this.value = this.value + Math.floor(this.weeklySpent/10);

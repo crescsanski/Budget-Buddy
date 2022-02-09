@@ -4,6 +4,9 @@ import { AuthService } from './services/auth.service';
 import { User } from './models/user';
 import { WidgetService } from './widget/widget.service';
 import { CategoryService } from './services/category.service';
+import { BudgetService } from './services/budget.service';
+import { SpendingHistoryService } from './services/spending-history.service';
+import { BadgesEarnedService } from './services/badgesEarned.service';
 
 @Component({
   selector: 'app-root',
@@ -14,19 +17,14 @@ import { CategoryService } from './services/category.service';
 export class AppComponent {
   user: User | null = null;
 
-  constructor(private authServ: AuthService, private catService: CategoryService)
+  constructor(private authServ: AuthService, 
+    private budServ: BudgetService,
+    private spenTot: SpendingHistoryService,
+    private badServ: BadgesEarnedService,
+    private catService: CategoryService)
   {
     this.authServ.currentUser.subscribe(x => this.user = <User>x);
 
-    //Fetch categories for the app:
-    this.catService.getIncomeCategories().subscribe();
-    this.catService.getSpendingCategories().subscribe();
-
-  }
-
-  preFetchData(): Boolean
-  {
-    return (this.catService.expenseCats != null) && (this.catService.incomeCats != null);
   }
 
   cleanLogout() {

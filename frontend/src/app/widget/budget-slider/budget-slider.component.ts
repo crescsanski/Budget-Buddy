@@ -1,6 +1,7 @@
 import { Budget } from 'src/app/models/budget';
 import { BudgetCategory } from '../../models/formModels/budgetCategory';
 import { Component, OnInit } from '@angular/core';
+import { BudgetService } from 'src/app/services/budget.service';
 
 @Component({
   selector: 'app-budget-slider',
@@ -12,13 +13,15 @@ export class BudgetSliderComponent implements OnInit {
   totalBudget: number;
   tempValue = 0;
   
-  constructor() { }
+  constructor(private budServ: BudgetService) { }
 
   ngOnInit(): void {
     
-    this.totalBudget = 1000;
+    this.totalBudget = this.budServ.spendBudCalcs.monthlyBudgetTotal;
     this.tempValue = 0;
 
+    this.budgetCategories = this.budServ.exBudByCat;
+    /*
     this.budgetCategories = [
       {categoryTitle: 'Housing', amount: 700, visible: true},
       {categoryTitle: 'Transportation', amount: 200, visible: true},
@@ -37,6 +40,7 @@ export class BudgetSliderComponent implements OnInit {
       {categoryTitle: 'Tax Payment', amount: 25, visible: true},
       {categoryTitle: 'Miscellaneous Expense', amount: 200, visible: true},
     ]
+    */
    }
 
 

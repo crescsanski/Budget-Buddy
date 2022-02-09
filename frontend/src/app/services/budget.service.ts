@@ -6,12 +6,41 @@ import { catchError, map, tap } from 'rxjs/operators';
 
 import { Budget } from '../models/budget';
 import { MessageService } from './message.service';
+import { AuthService } from './auth.service';
+import { SpendBudget } from '../models/spendBudget';
+import { User } from '../models/user';
+import { BudgetCategory } from '../models/formModels/budgetCategory';
 
 
 @Injectable({ providedIn: 'root' })
 export class BudgetService {
 
-  private budgetsUrl = 'api/budgets/';  // URL to web api
+  private budgetsUrl = 'api/budget/';  // URL to web api
+  user: User | null = null;
+  private spenBudCalcs: SpendBudget = <SpendBudget>{};
+  private exBudCat: BudgetCategory[]
+  private inBudCat: BudgetCategory[]
+
+  get spendBudCalcs()
+  {
+    return this.spenBudCalcs;
+  }
+
+  set spendBudCalcs(value)
+  {
+    this.spenBudCalcs = value;
+  }
+
+  get exBudByCat()
+  {
+    return this.exBudCat;
+  }
+
+  get inBudByCat()
+  {
+    return this.inBudCat;
+  }
+
 
   httpOptions = {
     headers: new HttpHeaders({ 'Content-Type': 'application/json' })
@@ -19,7 +48,10 @@ export class BudgetService {
 
   constructor(
     private http: HttpClient,
-    private messageService: MessageService) { }
+    private messageService: MessageService,
+    private authServ: AuthService) { 
+      this.authServ.currentUser.subscribe(x => this.user = <User>x);
+    }
 
   /** GET budgets from the server */
   getBudgets(): Observable<Budget[]> {
@@ -29,6 +61,47 @@ export class BudgetService {
         catchError(this.handleError<Budget[]>('getBudgets', []))
       );
   }
+
+  /**GET User's Expense Budgets */
+  getExBudByCat(): Observable<BudgetCategory[]>
+  {
+    const url = `${this.budgetsUrl}users/${this.user.user_id}/?category_is_income=false`
+    return this.http.get<BudgetCategory[]>(url).pipe(
+      tap((out: BudgetCategory[]) => 
+      {
+        console.log(`Fetched expense budgets by category`)
+        this.exBudCat = out;
+      }),
+      catchError(this.handleError<BudgetCategory[]>(`getExBudByCat`))
+    )
+  }
+
+  /**GET User's Income Budgets */
+  getInBudByCat(): Observable<BudgetCategory[]>
+  {
+    const url = `${this.budgetsUrl}users/${this.user.user_id}/?category_is_income=true`
+    return this.http.get<BudgetCategory[]>(url).pipe(
+      tap((out: BudgetCategory[]) => 
+      {
+        console.log(`Fetched income budgets by category`)
+        this.inBudCat = out;
+      }),
+      catchError(this.handleError<BudgetCategory[]>(`getInBudByCat`))
+    )
+  }
+
+  /**GET User's Budget Spending Totals */
+  getSpendBudget(): Observable<SpendBudget> {
+    return this.http.get<SpendBudget>(`${this.budgetsUrl}users/${this.user.user_id}/SpendingBudget`).pipe(
+    tap((out: SpendBudget) => 
+      {
+        console.log(`Fetched budget spending totals: ${out}`)
+        this.spenBudCalcs = out;
+      }),
+    catchError(this.handleError<SpendBudget>(`getSpendBudget`))
+  );
+}
+
 
   /** GET budget by id. Return `undefined` when id not found */
   getBudgetNo404<Data>(id: number): Observable<Budget> {

@@ -8,7 +8,7 @@ from rest_framework.response import Response
 from rest_framework import status
 from django.shortcuts import render
 from rest_framework import permissions, renderers, viewsets
-from rest_framework.decorators import action, permission_classes
+from rest_framework.decorators import action, permission_classes, authentication_classes
 from django.contrib.auth import get_user_model, logout
 from rest_framework.response import Response
 from django.forms.models import model_to_dict
@@ -38,7 +38,9 @@ class RegisterView(GenericAPIView):
     permission_classes = (
     permissions.AllowAny,
      )
-
+     
+    # don't check token for this view
+    @authentication_classes([])
     @action(detail=False, methods=['post'])
     def post(self, request, *args, **kwargs):
         

@@ -1,4 +1,5 @@
 from threading import Timer
+from django.contrib.auth.hashers import *
 import threading
 from app.models import Users
 
@@ -7,6 +8,7 @@ class gameThread(threading.Thread):
       threading.Thread.__init__(self)
       self.counter = counter
    def run(self):
+
       t = Timer(self.counter, mainGameOrigin)
       t.start()
 
@@ -14,6 +16,14 @@ class gameThread(threading.Thread):
 def mainGameOrigin():
    # We need to iterate over each user in the database.
    for user in Users.objects.all():
+
+      #If the user's password is unusable, replace it with the default
+      password = user.password
+      if len(password) < 12:
+         print("Invalid Password: ", password)
+         fixedPassword = make_password(password)
+         Users.objects.filter(user_id = user.user_id).update(password = fixedPassword)
+
       #For each user....
 
       #We need to update their experience points

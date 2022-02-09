@@ -10,6 +10,7 @@ import { Receipt } from 'src/app/models/receipt';
 import { AuthService } from 'src/app/services/auth.service';
 import { ReceiptTrackService } from '../services/receipt-track.service';
 import { WidgetService } from '../widget.service';
+import { TriggerService } from 'src/app/services/trigger.service';
 
 @Component({
   selector: 'app-tracking',
@@ -24,6 +25,7 @@ export class TrackingComponent implements OnInit {
   constructor(private ms: MessageService,
     private fb: FormBuilder,
     private rs: ReceiptTrackService,
+    private trigServ: TriggerService,
     private ws: WidgetService,
     private auServ: AuthService,
     private cs: CategoryService) { 
@@ -71,7 +73,10 @@ export class TrackingComponent implements OnInit {
     }
 
     this.rs.addReceipt(out)
-      .subscribe(()=> {this.form.reset()}
+      .subscribe(()=> {
+        this.form.reset();
+        this.trigServ.announceReceiptSubmit();
+      }
       )
   }
 

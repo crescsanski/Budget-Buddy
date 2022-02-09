@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { Badge } from 'src/app/models/badge';
+import { BadgesEarned } from 'src/app/models/badgesEarned';
 import { AuthService } from 'src/app/services/auth.service';
 import { BadgesEarnedService } from 'src/app/services/badgesEarned.service';
 
@@ -14,12 +15,9 @@ export class BadgesWidgetComponent implements OnInit {
   constructor(baEar: BadgesEarnedService, au: AuthService) { 
 
     let userId = au.currentUserValue.user_id;
-    baEar.getBadgesEarned(userId).subscribe(
-      (res) =>
-      {
-        console.log(res)
-        this.badges = res
-      });
+
+    this.badges = baEar.earnedBadges;
+
 
   }
 

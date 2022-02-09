@@ -7,6 +7,7 @@ from rest_framework.generics import GenericAPIView
 from rest_framework.response import Response
 from rest_framework import status
 from django.shortcuts import render
+from django.db.models import F
 from rest_framework import permissions, renderers, viewsets
 from rest_framework.decorators import action, permission_classes
 from django.contrib.auth import get_user_model, logout
@@ -50,8 +51,10 @@ class BadgesEarnedViewSet(GenericAPIView):
         desiredFields = chFields + ciFields
 
         ex = UserChallengeInventory.objects.filter(user = user).select_related(
-            'challenge').values(
-            *desiredFields
-        )
+            'challenge').annotate(badge_id = F('challenge__userchallengeinventory'),
+                    badge_name = F('challenge__challenge_name'),
+                    badge_description = F('challenge__challenge_description')).values(
+                        'badge_id', 'badge_name', 'badge_description'
+                    )
 
         return Response(ex)

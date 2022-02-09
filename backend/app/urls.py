@@ -30,6 +30,7 @@ urlpatterns = [
     #path('budget/<budgetid>/', views.manageBudget),
     path('budget/users/<userid>/', views.manageUserBudget),
     path('budget/', views.setInitialBudget),
+    path('budget/users/<userid>/SpendingBudget/', views.getSpendBudgetTotal),
 
     path('receipt_upload/<userid>/', views.ReceiptUploadConvertViewSet.as_view()),
     
