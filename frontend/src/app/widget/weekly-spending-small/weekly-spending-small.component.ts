@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { BudgetService } from 'src/app/services/budget.service';
 import { SpendingHistoryService } from 'src/app/services/spending-history.service';
+import { TriggerService } from 'src/app/services/trigger.service';
 
 @Component({
   selector: 'app-weekly-spending-small',
@@ -16,7 +17,12 @@ export class WeeklySpendingSmallComponent implements OnInit {
 
 
   constructor(private budServ: BudgetService,
-    private spenHis: SpendingHistoryService) { }
+    private spenHis: SpendingHistoryService, private trigServ: TriggerService) { 
+      this.trigServ.expenReceiptAnnounced$.subscribe(() =>
+    {
+      this.ngOnInit();
+    })
+    }
 
   ngOnInit(): void {
     //fetch value from database (calculate percentage)

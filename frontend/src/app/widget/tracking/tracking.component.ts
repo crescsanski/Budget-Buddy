@@ -75,7 +75,7 @@ export class TrackingComponent implements OnInit {
     this.rs.addReceipt(out)
       .subscribe(()=> {
         this.form.reset();
-        this.trigServ.announceReceiptSubmit();
+        this.trigServ.announceExpenReceiptSubmit();
       }
       )
   }
