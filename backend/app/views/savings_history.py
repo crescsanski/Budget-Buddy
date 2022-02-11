@@ -39,8 +39,8 @@ def getSavingsHistory(request, user_id):
     weekVal = request.query_params.get('week')
     period = request.query_params.get('period')
 
-    expenseTable = getSpentHistoryInternal(request = request, user_id = user_id)
-    incomeTable = incomeHistoryInternal(request = request, user_id = user_id)
+    expenseTable = getSpentHistoryInternal(params = request.GET, user_id = user_id)
+    incomeTable = incomeHistoryInternal(params = request.GET, user_id = user_id)
 
     id = []
     if period in ['yearly', 'monthly', 'weekly']:

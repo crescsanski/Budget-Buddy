@@ -41,11 +41,25 @@ export class SavingsOverTimeComponent implements OnInit {
             ticks: {
                 color: '#495057'
             },
+            title: {
+                display: true,
+                text: 'Months',
+                font: {
+                    size: 20
+                }
+            },
             grid: { display: false }
         },
         y: {
             ticks: {
                 color: '#495057'
+            },
+            title: {
+                display: true,
+                text: 'Amount (in $)',
+                font: {
+                    size: 20
+                }
             },
             grid: { display: false }
         }

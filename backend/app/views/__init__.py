@@ -8,3 +8,4 @@ from .baseViews import *
 from .spend_history import *
 from .income_history import *
 from .savings_history import *
+from .cum_history import *

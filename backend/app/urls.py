@@ -22,6 +22,9 @@ urlpatterns = [
     path('spend_history/<user_id>/', views.getSpendHistory),
     path('spend_history/<user_id>/<category_id>/', views.getSpendHistory),
 
+    path('cum_spend_history/<user_id>/', views.getCumHistory, {'type': 'totalSpent'}),
+    path('cum_income_history/<user_id>/', views.getCumHistory, {'type': 'totalIncomeReceived'}),
+
     path('income_history/<user_id>/', views.getIncomeHistory),
     path('income_history/<user_id>/<category_id>/', views.getIncomeHistory),
 
