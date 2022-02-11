@@ -3,10 +3,23 @@
         <div class="header">
             <h2>Receipts</h2> 
         </div>
-        <div style="display: inline-flex;">
-            <img src="../../../assets/prototype-images/uploads.png" style="width: 30%; height: 100%;" >
-            <img src="../../../assets/prototype-images/receipt.png" style="width: 70%; margin-left: 3em;">
+        <div style="display: inline-flex; width: 100%">
+            <div class="receipt-list">
+                <div *ngFor="let receipt of userReceipts">
+                    <div style="display: inline-flex">
+                        <div class="descriptions">
+                            <p class="name">{{receipt.receipt_name}}</p>
+                            <p class="description" style="text-align: left; font-size: smaller">{{receipt.receipt_date}}</p>
+                        </div>
+                </div>
+                </div>
+            </div>
+            <div class="image-area" style="display: block; text-align: center;">
+                <img src="{{imageUpload}}">
+                <div *ngIf="imageUpload == noUpload" style="text-align: center;">
+                    <p-button>Upload Receipt</p-button>
+                </div>
+            </div>
         </div>
-    </div>
 </div>
 

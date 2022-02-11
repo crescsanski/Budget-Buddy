@@ -16,8 +16,6 @@ export class BudgetSliderComponent implements OnInit {
 
   ngOnInit(): void {
     
-    this.totalBudget = 1000;
-    this.tempValue = 0;
 
     this.budgetCategories = [
       {categoryTitle: 'Housing', amount: 700, visible: true},
