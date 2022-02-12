@@ -14,6 +14,9 @@ import {ChartModule} from 'primeng/chart';
 import { SavingsOverTimeComponent } from './savings-over-time/savings-over-time.component';
 import { BadgesWidgetComponent } from './badges-widget/badges-widget.component';
 import { BudgetSliderComponent } from './budget-slider/budget-slider.component';
+import {OverlayPanel, OverlayPanelModule} from 'primeng/overlaypanel';
+import {FileUploadModule} from 'primeng/fileupload';
+import {HttpClientModule} from '@angular/common/http';
 
 
 @NgModule({
@@ -35,7 +38,10 @@ import { BudgetSliderComponent } from './budget-slider/budget-slider.component';
     ReactiveFormsModule,
     ProgressBarModule,
     ChartModule,
-    FormsModule
+    FormsModule,
+    OverlayPanelModule,
+    FileUploadModule,
+    HttpClientModule
   ],
   exports: [BasicWidgetComponent, SmallWidgetComponent, ReceiptTrackingComponent, TrackingComponent, WeeklySpendingComponent, 
     WeeklySpendingSmallComponent, IncomeTrackingComponent, SavingsOverTimeComponent, BadgesWidgetComponent, BudgetSliderComponent]
