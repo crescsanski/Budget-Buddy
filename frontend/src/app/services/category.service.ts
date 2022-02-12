@@ -73,7 +73,7 @@ export class CategoryService {
       console.error(error); // log to console instead
 
       // TODO: better job of transforming error for category consumption
-      this.log(`${operation} failed: ${error.message}`);
+      console.log(`${operation} failed: ${error.message}`);
 
       // Let the app keep running by returning an empty result.
       return of(result as T);

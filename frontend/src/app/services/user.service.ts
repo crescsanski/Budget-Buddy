@@ -25,7 +25,7 @@ export class UserService {
   getUsers(): Observable<User[]> {
     return this.http.get<User[]>(this.usersUrl)
       .pipe(
-        tap(_ => this.log('fetched users')),
+        tap(_ => console.log('fetched users')),
         catchError(this.handleError<User[]>('getUsers', []))
       );
   }
@@ -38,7 +38,7 @@ export class UserService {
         map(users => users[0]), // returns a {0|1} element array
         tap(h => {
           const outcome = h ? `fetched` : `did not find`;
-          this.log(`${outcome} user id=${id}`);
+          console.log(`${outcome} user id=${id}`);
         }),
         catchError(this.handleError<User>(`getUser id=${id}`))
       );
@@ -48,7 +48,7 @@ export class UserService {
   getUser(id: number): Observable<User> {
     const url = `${this.usersUrl}/${id}`;
     return this.http.get<User>(url).pipe(
-      tap(_ => this.log(`fetched user id=${id}`)),
+      tap(_ => console.log(`fetched user id=${id}`)),
       catchError(this.handleError<User>(`getUser id=${id}`))
     );
   }
@@ -61,8 +61,8 @@ export class UserService {
     }
     return this.http.get<User[]>(`${this.usersUrl}/?name=${term}`).pipe(
       tap(x => x.length ?
-         this.log(`found users matching "${term}"`) :
-         this.log(`no users matching "${term}"`)),
+         console.log(`found users matching "${term}"`) :
+         console.log(`no users matching "${term}"`)),
       catchError(this.handleError<User[]>('searchUsers', []))
     );
   }
@@ -72,7 +72,7 @@ export class UserService {
   /** POST: add a new user to the server */
   addUser(user: User): Observable<User> {
     return this.http.post<User>(this.usersUrl, user, this.httpOptions).pipe(
-      tap((newUser: User) => this.log(`added user w/ id=${newUser.user_id}`)),
+      tap((newUser: User) => console.log(`added user w/ id=${newUser.user_id}`)),
       catchError(this.handleError<User>('addUser'))
     );
   }
@@ -82,7 +82,7 @@ export class UserService {
     const url = `${this.usersUrl}/${id}`;
 
     return this.http.delete<User>(url, this.httpOptions).pipe(
-      tap(_ => this.log(`deleted user id=${id}`)),
+      tap(_ => console.log(`deleted user id=${id}`)),
       catchError(this.handleError<User>('deleteUser'))
     );
   }
@@ -90,7 +90,7 @@ export class UserService {
   /** PUT: update the user on the server */
   updateUser(user: User): Observable<any> {
     return this.http.put(this.usersUrl, user, this.httpOptions).pipe(
-      tap(_ => this.log(`updated user id=${user.user_id}`)),
+      tap(_ => console.log(`updated user id=${user.user_id}`)),
       catchError(this.handleError<any>('updateUser'))
     );
   }
@@ -108,7 +108,7 @@ export class UserService {
       console.error(error); // log to console instead
 
       // TODO: better job of transforming error for user consumption
-      this.log(`${operation} failed: ${error.message}`);
+      console.log(`${operation} failed: ${error.message}`);
 
       // Let the app keep running by returning an empty result.
       return of(result as T);

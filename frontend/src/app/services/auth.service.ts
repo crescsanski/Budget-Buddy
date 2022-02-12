@@ -46,7 +46,7 @@ export class AuthService {
      map((user) => {
           // store user details and login token in local storage to keep user logged in
           sessionStorage.setItem('currentUser', JSON.stringify(user))
-          this.log(`logged in successfully w/ token=${user.token}`);
+          console.log(`logged in successfully w/ token=${user.token}`);
           this.currentUserSubject.next(user);
           return user;
           }
@@ -119,7 +119,7 @@ export class AuthService {
       console.error(error); // log to console instead
 
       // TODO: better job of transforming error for user consumption
-      this.log(`${operation} failed: ${error.message}`);
+      console.log(`${operation} failed: ${error.message}`);
 
       // Let the app keep running by returning an empty result.
       return of(result as T);

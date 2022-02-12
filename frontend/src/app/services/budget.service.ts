@@ -57,7 +57,7 @@ export class BudgetService {
   getBudgets(): Observable<Budget[]> {
     return this.http.get<Budget[]>(this.budgetsUrl)
       .pipe(
-        tap(_ => this.log('fetched budgets')),
+        tap(_ => console.log('fetched budgets')),
         catchError(this.handleError<Budget[]>('getBudgets', []))
       );
   }
@@ -111,7 +111,7 @@ export class BudgetService {
         map(budgets => budgets[0]), // returns a {0|1} element array
         tap(h => {
           const outcome = h ? `fetched` : `did not find`;
-          this.log(`${outcome} budget id=${id}`);
+          console.log(`${outcome} budget id=${id}`);
         }),
         catchError(this.handleError<Budget>(`getBudget id=${id}`))
       );
@@ -121,7 +121,7 @@ export class BudgetService {
   getBudget(id: number): Observable<Budget> {
     const url = `${this.budgetsUrl}/${id}`;
     return this.http.get<Budget>(url).pipe(
-      tap(_ => this.log(`fetched budget id=${id}`)),
+      tap(_ => console.log(`fetched budget id=${id}`)),
       catchError(this.handleError<Budget>(`getBudget id=${id}`))
     );
   }
@@ -130,8 +130,8 @@ export class BudgetService {
   searchBudgets(term: number): Observable<Budget[]> {
     return this.http.get<Budget[]>(`${this.budgetsUrl}?user=${term}`).pipe(
       tap(x => x.length ?
-         this.log(`found budgets matching "${term}"`) :
-         this.log(`no budgets matching "${term}"`)),
+         console.log(`found budgets matching "${term}"`) :
+         console.log(`no budgets matching "${term}"`)),
       catchError(this.handleError<Budget[]>('searchBudgets', []))
     );
   }
@@ -141,7 +141,7 @@ export class BudgetService {
   /** POST: add a new budget to the server */
   addBudget(budget: Budget): Observable<Budget> {
     return this.http.post<Budget>(this.budgetsUrl, budget, this.httpOptions).pipe(
-      tap((newBudget: Budget) => this.log(`added budget w/ id=${newBudget.budget_id}`)),
+      tap((newBudget: Budget) => console.log(`added budget w/ id=${newBudget.budget_id}`)),
       catchError(this.handleError<Budget>('addBudget'))
     );
   }
@@ -151,7 +151,7 @@ export class BudgetService {
     const url = `${this.budgetsUrl}/${id}`;
 
     return this.http.delete<Budget>(url, this.httpOptions).pipe(
-      tap(_ => this.log(`deleted budget id=${id}`)),
+      tap(_ => console.log(`deleted budget id=${id}`)),
       catchError(this.handleError<Budget>('deleteBudget'))
     );
   }
@@ -159,7 +159,7 @@ export class BudgetService {
   /** PUT: update the budget on the server */
   updateBudget(budget: Budget): Observable<any> {
     return this.http.put(`${this.budgetsUrl}${budget.budget_id}/`, budget, this.httpOptions).pipe(
-      tap(_ => this.log(`updated budget id=${budget.budget_id}`)),
+      tap(_ => console.log(`updated budget id=${budget.budget_id}`)),
       catchError(this.handleError<any>('updateBudget'))
     );
   }
@@ -177,7 +177,7 @@ export class BudgetService {
       console.error(error); // log to console instead
 
       // TODO: better job of transforming error for budget consumption
-      this.log(`${operation} failed: ${error.message}`);
+      console.log(`${operation} failed: ${error.message}`);
 
       // Let the app keep running by returning an empty result.
       return of(result as T);

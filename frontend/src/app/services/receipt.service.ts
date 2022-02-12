@@ -25,7 +25,7 @@ export class ReceiptService {
   getReceipts(): Observable<Receipt[]> {
     return this.http.get<Receipt[]>(this.receiptsUrl)
       .pipe(
-        tap(_ => this.log('fetched receipts')),
+        tap(_ => console.log('fetched receipts')),
         catchError(this.handleError<Receipt[]>('getReceipts', []))
       );
   }
@@ -38,7 +38,7 @@ export class ReceiptService {
         map(receipts => receipts[0]), // returns a {0|1} element array
         tap(h => {
           const outcome = h ? `fetched` : `did not find`;
-          this.log(`${outcome} receipt id=${id}`);
+          console.log(`${outcome} receipt id=${id}`);
         }),
         catchError(this.handleError<Receipt>(`getReceipt id=${id}`))
       );
@@ -48,7 +48,7 @@ export class ReceiptService {
   getReceipt(id: number): Observable<Receipt> {
     const url = `${this.receiptsUrl}/${id}`;
     return this.http.get<Receipt>(url).pipe(
-      tap(_ => this.log(`fetched receipt id=${id}`)),
+      tap(_ => console.log(`fetched receipt id=${id}`)),
       catchError(this.handleError<Receipt>(`getReceipt id=${id}`))
     );
   }
@@ -61,8 +61,8 @@ export class ReceiptService {
     }
     return this.http.get<Receipt[]>(`${this.receiptsUrl}/?name=${term}`).pipe(
       tap(x => x.length ?
-         this.log(`found receipts matching "${term}"`) :
-         this.log(`no receipts matching "${term}"`)),
+         console.log(`found receipts matching "${term}"`) :
+         console.log(`no receipts matching "${term}"`)),
       catchError(this.handleError<Receipt[]>('searchReceipts', []))
     );
   }
@@ -72,7 +72,7 @@ export class ReceiptService {
   /** POST: add a new receipt to the server */
   addReceipt(receipt: Receipt): Observable<Receipt> {
     return this.http.post<Receipt>(this.receiptsUrl, receipt, this.httpOptions).pipe(
-      tap((newReceipt: Receipt) => this.log(`added receipt w/ id=${newReceipt.receipt_id}`)),
+      tap((newReceipt: Receipt) => console.log(`added receipt w/ id=${newReceipt.receipt_id}`)),
       catchError(this.handleError<Receipt>('addReceipt'))
     );
   }
@@ -82,7 +82,7 @@ export class ReceiptService {
     const url = `${this.receiptsUrl}/${id}`;
 
     return this.http.delete<Receipt>(url, this.httpOptions).pipe(
-      tap(_ => this.log(`deleted receipt id=${id}`)),
+      tap(_ => console.log(`deleted receipt id=${id}`)),
       catchError(this.handleError<Receipt>('deleteReceipt'))
     );
   }
@@ -90,7 +90,7 @@ export class ReceiptService {
   /** PUT: update the receipt on the server */
   updateReceipt(receipt: Receipt): Observable<any> {
     return this.http.put(this.receiptsUrl, receipt, this.httpOptions).pipe(
-      tap(_ => this.log(`updated receipt id=${receipt.receipt_id}`)),
+      tap(_ => console.log(`updated receipt id=${receipt.receipt_id}`)),
       catchError(this.handleError<any>('updateReceipt'))
     );
   }
@@ -108,7 +108,7 @@ export class ReceiptService {
       console.error(error); // log to console instead
 
       // TODO: better job of transforming error for receipt consumption
-      this.log(`${operation} failed: ${error.message}`);
+      console.log(`${operation} failed: ${error.message}`);
 
       // Let the app keep running by returning an empty result.
       return of(result as T);
