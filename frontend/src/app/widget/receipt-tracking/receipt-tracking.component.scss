@@ -9,10 +9,10 @@
   width: 67%;
   margin-right: 5vw;
 
- img {
-     width: 30% !important;
-     margin-bottom: 1vh
- }
+  img {
+    width: 30% !important;
+    margin-bottom: 1vh;
+  }
 }
 
 .name {
@@ -23,4 +23,14 @@
 .description {
   margin-top: -17px;
   font-size: smaller;
+}
+
+::ng-deep {
+  .p-fileupload {
+    .p-button {
+      display: inline-flex;
+      text-align: center;
+      width: fit-content;
+    }
+  }
 }

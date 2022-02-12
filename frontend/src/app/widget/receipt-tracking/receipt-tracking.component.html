@@ -17,9 +17,23 @@
             <div class="image-area" style="display: block; text-align: center;">
                 <img src="{{imageUpload}}">
                 <div *ngIf="imageUpload == noUpload" style="text-align: center;">
-                    <p-button>Upload Receipt</p-button>
+                    <p-button (click)="op.toggle($event)">Upload Receipt</p-button>
                 </div>
             </div>
         </div>
+        <p-overlayPanel [showTransitionOptions]="'0ms'" [hideTransitionOptions]="'0ms'" #op [dismissable]="true" [showCloseIcon]="true">
+            <ng-template pTemplate>
+                <p-fileUpload name="demo[]" url="./upload.php" (onUpload)="onUpload($event)"
+                    accept="image/*">
+                    <ng-template pTemplate="content">
+                         <ul *ngIf="receipts.length">
+                            <li *ngFor="let file of receipts">{{file.name}} - {{file.size}} bytes</li>
+                         </ul>
+                     </ng-template>
+                </p-fileUpload>
+            </ng-template>
+        </p-overlayPanel>
+       
+        
 </div>
 

@@ -1,5 +1,5 @@
 import { Receipt } from 'src/app/models/receipt';
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, SecurityContext } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 
 @Component({
@@ -12,7 +12,8 @@ export class ReceiptTrackingComponent implements OnInit {
   form: FormGroup = <FormGroup>{};
   userReceipts: Receipt[] = [];
   noUpload = './../../../assets/icons/budget-icons/receipt.png'
-  imageUpload: string = this.noUpload;
+  imageUpload: any = this.noUpload;
+  receipts: any[] = [];
 
   //mock receipt list
 
@@ -41,8 +42,10 @@ export class ReceiptTrackingComponent implements OnInit {
   });
   }
 
-  upload(){
-    
+  onUpload(event) {
+    for(let receipt of event.files) {
+        this.receipts.push(receipt);
+    }
   }
 
 }
