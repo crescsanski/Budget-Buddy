@@ -1,20 +1,20 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { SpendingOverTime } from '../models/spendingOverTime'
 import { Observable, of } from 'rxjs';
 import { catchError, map, tap } from 'rxjs/operators';
 import { AuthService } from './auth.service';
 import { User } from '../models/user';
 import { TimeService } from './time.service';
+import { IncomeOverTime } from '../models/incomeOverTime';
 
 @Injectable({
   providedIn: 'root'
 })
-export class SpendingHistoryService {
+export class IncomeHistoryService {
 
-  private apiUrl = 'api/spend_history';  // URL to web api
+  private apiUrl = 'api/income_history';  // URL to web api
   user: User | null = null;
-  private weeklySpendingTotal: number;
+  private weeklyIncomeTotal: number;
 
   httpOptions = {
     headers: new HttpHeaders({ 'Content-Type': 'application/json' })
@@ -26,38 +26,31 @@ export class SpendingHistoryService {
 
   }
 
-  
-
-  get weekSpend()
+  get weekIncome()
   {
-    return this.weeklySpendingTotal;
+    return this.weeklyIncomeTotal;
   }
 
-  set weekSpend(value)
-  {
-    this.weeklySpendingTotal = value;
-  }
-
-  /** GET total spending for current week */
-  getCurWeekSpend(): Observable<SpendingOverTime[]> {
+  /** GET total income received for current week */
+  getCurWeeklyIncome(): Observable<IncomeOverTime[]> {
 
     const url = `${this.apiUrl}/${this.user.user_id}/?year=${this.tiServ.year}&month=${this.tiServ.month}&week=${this.tiServ.week}`
     console.log(url)
 
-    return this.http.get<SpendingOverTime[]>(url).pipe(
+    return this.http.get<IncomeOverTime[]>(url).pipe(
       tap(out => 
         {console.log(`Fetched current weekly spending total = ${out}`);
         if (out.length > 0)
         {
-          this.weeklySpendingTotal = out[0].totalSpent;
+          this.weeklyIncomeTotal = out[0].totalIncomeReceived;
         }
         else
         {
-          this.weeklySpendingTotal = 0;
+          this.weeklyIncomeTotal = 0;
         }   
       
         }),
-      catchError(this.handleError<SpendingOverTime[]>(`getSpendOverTimeForCurrentWeek`))
+      catchError(this.handleError<IncomeOverTime[]>(`getIncomeHistoryForCurrentWeek`))
     );
   }
 

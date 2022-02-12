@@ -4,13 +4,17 @@ import { forkJoin, Observable } from "rxjs";
 import { BadgesEarnedService } from "../services/badgesEarned.service";
 import { BudgetService } from "../services/budget.service";
 import { CategoryService } from "../services/category.service";
+import { SavingsHistoryService } from "../services/savings-history.service";
 import { SpendingHistoryService } from "../services/spending-history.service";
+import { TimeService } from "../services/time.service";
 
 @Injectable({ providedIn: 'root' })
 export class DataResolver implements Resolve<any> {
     constructor(private budServ: BudgetService,
         private spenTot: SpendingHistoryService,
         private badServ: BadgesEarnedService,
+        private savServ: SavingsHistoryService,
+        private ts: TimeService,
         private catService: CategoryService) {}
     
     resolve(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): any | Observable<any> | Promise<any> {
@@ -28,6 +32,9 @@ export class DataResolver implements Resolve<any> {
     
         //Fetch Weekly and Monthly Budgets for the app:
         this.budServ.getSpendBudget(),
+
+        //Fetch Default Display for Savings over Time Widget
+        this.savServ.getByMonthCumSavings(),
 
         //Fetch Income and Expense Budgets By Category
         this.budServ.getExBudByCat(),

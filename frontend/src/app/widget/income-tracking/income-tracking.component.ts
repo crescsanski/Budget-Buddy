@@ -11,6 +11,7 @@ import { AuthService } from 'src/app/services/auth.service';
 import { Receipt } from 'src/app/models/receipt';
 import { WidgetService } from '../widget.service';
 import { ReceiptTrackService } from '../services/receipt-track.service';
+import { TriggerService } from 'src/app/services/trigger.service';
 
 @Component({
   selector: 'app-income-tracking',
@@ -26,6 +27,7 @@ form: FormGroup = <FormGroup>{};
     private rs: ReceiptTrackService,
     private auServ: AuthService,
     private ws: WidgetService,
+    private trigServ: TriggerService,
     private fb: FormBuilder,
     private cs: CategoryService) { 
 
@@ -64,6 +66,7 @@ form: FormGroup = <FormGroup>{};
       ],
       receipt:
       {
+        receipt_name: this.form.value['income_name'],
         receipt_date: this.form.value['receipt_date'],
         receipt_is_reccuring: this.form.value['reocurring'],
         receipt_is_income: true
@@ -71,7 +74,10 @@ form: FormGroup = <FormGroup>{};
     }
 
     this.rs.addReceipt(out)
-      .subscribe(()=> {this.form.reset()}
+      .subscribe(()=> {
+        this.form.reset()
+        this.trigServ.announceIncomReceiptSubmit();
+      }
       )
   }
 

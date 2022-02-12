@@ -31,16 +31,19 @@ from app.views.spend_history import getSpentHistoryInternal
 
 @api_view(['GET'])
 def getSavingsHistory(request, user_id):
+    savings = getSavingsHistoryInternal(params = request.GET, user_id = user_id)
+    return Response(savings)
 
-    start_date = request.query_params.get('start_date')
-    end_date = request.query_params.get('end_date')
-    yearVal = request.query_params.get('year')
-    monthVal = request.query_params.get('month')
-    weekVal = request.query_params.get('week')
-    period = request.query_params.get('period')
+def getSavingsHistoryInternal(params, user_id):
+    start_date = params.get('start_date')
+    end_date = params.get('end_date')
+    yearVal = params.get('year')
+    monthVal = params.get('month')
+    weekVal = params.get('week')
+    period = params.get('period')
 
-    expenseTable = getSpentHistoryInternal(params = request.GET, user_id = user_id)
-    incomeTable = incomeHistoryInternal(params = request.GET, user_id = user_id)
+    expenseTable = getSpentHistoryInternal(params = params, user_id = user_id)
+    incomeTable = incomeHistoryInternal(params = params, user_id = user_id)
 
     id = []
     if period in ['yearly', 'monthly', 'weekly']:
@@ -53,20 +56,21 @@ def getSavingsHistory(request, user_id):
     if len(id) > 0:
         incomeDf = pd.DataFrame(incomeTable).set_index(id)
         expenseDf = pd.DataFrame(expenseTable).set_index(id)
-        savingsDf = incomeDf.merge(expenseDf, left_index = True, right_index = True)
+        savingsDf = incomeDf.merge(expenseDf, how = 'outer', left_index = True, right_index = True)
+        savingsDf = savingsDf.fillna(0)
         savingsDf["totalSavings"] = savingsDf["totalIncomeReceived"] - savingsDf["totalSpent"]
         savingsDf = savingsDf.drop(columns = ['totalIncomeReceived', 'totalSpent'])
         savingsDf.reset_index(inplace = True)
         out = savingsDf.to_dict('records')
-    elif len(incomeTable) == 1 and len(expenseTable == 1):
-        out = {"totalSavings": incomeTable[0]['totalIncomeReceived'] - expenseTable[0]['totalSpent']}
+    elif len(incomeTable) == 1 and len(expenseTable) == 1:
+        out = [{"totalSavings": incomeTable[0]['totalIncomeReceived'] - expenseTable[0]['totalSpent']}]
     elif len(incomeTable) == 1:
-        out = {"totalSavings": incomeTable[0]['totalIncomeReceived']}
+        out = [{"totalSavings": incomeTable[0]['totalIncomeReceived']}]
     elif len(expenseTable) == 1:
-        out = {"totalSavings": -1 * incomeTable[0]['totalSpent']}
+        out = [{"totalSavings": -1 * incomeTable[0]['totalSpent']}]
     else:
-        out = {"totalSavings": 0}
+        out = [{"totalSavings": 0}]
 
-    return Response(out)
+    return out
 
 

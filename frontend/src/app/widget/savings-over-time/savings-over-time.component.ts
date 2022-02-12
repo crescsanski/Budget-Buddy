@@ -1,4 +1,8 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
+import { UIChart } from 'primeng/chart';
+import { SavingsHistoryService } from 'src/app/services/savings-history.service';
+import { TimeService } from 'src/app/services/time.service';
+import { TriggerService } from 'src/app/services/trigger.service';
 
 @Component({
   selector: 'app-savings-over-time',
@@ -8,19 +12,36 @@ import { Component, OnInit } from '@angular/core';
 export class SavingsOverTimeComponent implements OnInit {
   chartData: any;
   chartOptions: any;
+  yearSel: number = this.ts.year //default to current year
+  monthNames: string[] = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December']
 
+  @ViewChild('chart') chart: UIChart;
 
-  constructor() { }
+  constructor(private savServ: SavingsHistoryService, private trigServ: TriggerService, private ts: TimeService) { 
+      this.trigServ.incomReceiptAnnounced$.subscribe(() =>
+      {
+          this.getNewData();
+      })
+
+      this.trigServ.expenReceiptAnnounced$.subscribe(() =>
+      {
+          this.getNewData();
+      })
+  }
 
   ngOnInit(): void {
 
+    let data = this.savServ.cumSavingsByMonth.filter((value) => value.year == this.yearSel)
+    let monthLabels = data.map((value) => this.monthNames[value.month - 1])
+    let values = data.map((value) => value.totalSavings)
+
     //TODO: Implement http request
     this.chartData = {
-      labels: ['January', 'February', 'March', 'April', 'May', 'June', 'July'],
+      labels: monthLabels,
       datasets: [
           {
-              label: 'First Dataset',
-              data: [10, 29, 32, 50, 56, 40, 50],
+              label: 'Savings',
+              data: values,
               fill: true,
               borderColor: '#4ec5ca80',
               backgroundColor: '#4ec5ca50',
@@ -67,4 +88,17 @@ export class SavingsOverTimeComponent implements OnInit {
   }
 
 }
+
+    async getNewData()
+    {
+        let newData = this.savServ.cumSavingsByMonth.filter((value) => value.year == this.yearSel)
+        let monthLabels = newData.map((value) => this.monthNames[value.month - 1])
+        let values = newData.map((value) => value.totalSavings)
+
+        this.chartData.labels = monthLabels;
+        this.chartData.datasets[0].data = values;
+        this.chart.reinit();
+
+    }
+
 }

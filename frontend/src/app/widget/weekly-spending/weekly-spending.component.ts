@@ -1,7 +1,6 @@
 import { getSupportedInputTypes } from '@angular/cdk/platform';
 import { Component, OnInit } from '@angular/core';
 import { BudgetService } from 'src/app/services/budget.service';
-import { SpendHistory } from 'src/app/models/spendHistory';
 import { SpendingHistoryService } from 'src/app/services/spending-history.service';
 import { TriggerService } from 'src/app/services/trigger.service';
 

@@ -163,6 +163,7 @@ class Receipt(models.Model):
     receipt_date = models.DateTimeField()
     receipt_is_reccuring = models.IntegerField()
     receipt_is_income = models.BooleanField()
+    receipt_name = models.CharField(max_length=255)
     user = models.ForeignKey('Users', models.DO_NOTHING, blank=True, null=True)
 
     class Meta:

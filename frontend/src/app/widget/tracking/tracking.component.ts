@@ -66,6 +66,7 @@ export class TrackingComponent implements OnInit {
       ],
       receipt:
       {
+        receipt_name: this.form.value['product_name'],
         receipt_date: this.form.value['receipt_date'],
         receipt_is_reccuring: this.form.value['reocurring'],
         receipt_is_income: false

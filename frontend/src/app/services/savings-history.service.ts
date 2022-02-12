@@ -1,20 +1,22 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { SpendingOverTime } from '../models/spendingOverTime'
 import { Observable, of } from 'rxjs';
 import { catchError, map, tap } from 'rxjs/operators';
 import { AuthService } from './auth.service';
 import { User } from '../models/user';
 import { TimeService } from './time.service';
+import { SavingsOverTime } from '../models/savingsOverTime';
 
 @Injectable({
   providedIn: 'root'
 })
-export class SpendingHistoryService {
+export class SavingsHistoryService {
 
-  private apiUrl = 'api/spend_history';  // URL to web api
+  private apiUrl = 'api/savings_history';  // URL to web api
+  private cumUrl = 'api/cum_savings_history';
   user: User | null = null;
-  private weeklySpendingTotal: number;
+  private weeklySavingsTotal: number;
+  private cumSavByMonth: SavingsOverTime[]
 
   httpOptions = {
     headers: new HttpHeaders({ 'Content-Type': 'application/json' })
@@ -26,38 +28,52 @@ export class SpendingHistoryService {
 
   }
 
-  
-
-  get weekSpend()
+  get weekSavings()
   {
-    return this.weeklySpendingTotal;
+    return this.weeklySavingsTotal;
   }
 
-  set weekSpend(value)
+  get cumSavingsByMonth()
   {
-    this.weeklySpendingTotal = value;
+    return this.cumSavByMonth;
   }
 
-  /** GET total spending for current week */
-  getCurWeekSpend(): Observable<SpendingOverTime[]> {
+  /**GET cumulative savings growth by month.*/
+  getByMonthCumSavings(): Observable<SavingsOverTime[]>
+  {
+    const url = `${this.cumUrl}/${this.user.user_id}/?period=monthly`
+
+    return this.http.get<SavingsOverTime[]>(url).pipe(
+      tap(out => 
+        {
+          console.log(`Fetched cumulative savings totals by month = ${out}`);
+          this.cumSavByMonth = out;
+        }
+      
+        ),
+      catchError(this.handleError<SavingsOverTime[]>(`getSavingsHistoryForCurrentWeek`))
+    );
+  }
+
+  /** GET total savings received for current week */
+  getCurWeeklySavings(): Observable<SavingsOverTime[]> {
 
     const url = `${this.apiUrl}/${this.user.user_id}/?year=${this.tiServ.year}&month=${this.tiServ.month}&week=${this.tiServ.week}`
-    console.log(url)
 
-    return this.http.get<SpendingOverTime[]>(url).pipe(
+    return this.http.get<SavingsOverTime[]>(url).pipe(
       tap(out => 
         {console.log(`Fetched current weekly spending total = ${out}`);
         if (out.length > 0)
         {
-          this.weeklySpendingTotal = out[0].totalSpent;
+          this.weeklySavingsTotal = out[0].totalSavings;
         }
         else
         {
-          this.weeklySpendingTotal = 0;
+          this.weeklySavingsTotal = 0;
         }   
       
         }),
-      catchError(this.handleError<SpendingOverTime[]>(`getSpendOverTimeForCurrentWeek`))
+      catchError(this.handleError<SavingsOverTime[]>(`getSavingsHistoryForCurrentWeek`))
     );
   }
 

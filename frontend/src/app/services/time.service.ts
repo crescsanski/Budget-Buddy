@@ -6,10 +6,10 @@ import { Subject } from 'rxjs';
 })
 export class TimeService {
 
-  now: Date = new Date()
-  curWeek: number;
-  curMonth: number;
-  curYear: number;
+  private now: Date = new Date()
+  private curWeek: number;
+  private curMonth: number;
+  private curYear: number;
 
   constructor() { }
 
