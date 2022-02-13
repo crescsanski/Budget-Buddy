@@ -19,7 +19,7 @@
     <br>
     <div style="display:inline-block; text-align: center; justify-content: center; width: 100%">
     <br>
-        <p-button style="text-align: center">Got it!</p-button>
+        <p-button style="text-align: center" (onClick)="this.nextPage()">Got it!</p-button>
     </div>
     <p-dialog header="{{title}}" [(visible)]="displayNeeds">
         <div *ngFor="let item of displayItems" style="display: block; width: 100%; justify-content: left; height: 2vw; margin-bottom: 3vh">

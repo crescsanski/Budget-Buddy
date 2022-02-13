@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, Output, EventEmitter } from '@angular/core';
 import { newBudgetPrompt } from './../../../models/newBudgetPrompt';
 
 
@@ -15,6 +15,12 @@ export class BudgetAdvisorComponent implements OnInit {
   debt: newBudgetPrompt[] = [];
   displayItems: newBudgetPrompt[] = [];
   title = '';
+
+  @Output() pageForward  = new EventEmitter();
+
+  nextPage() {
+    this.pageForward.emit();
+  }
 
   
   displayNeeds = false;
@@ -85,4 +91,5 @@ export class BudgetAdvisorComponent implements OnInit {
     }
     this.displayNeeds = true;
   }
+
 }

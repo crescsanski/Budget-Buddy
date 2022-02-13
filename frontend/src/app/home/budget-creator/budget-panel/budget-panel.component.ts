@@ -42,6 +42,7 @@ export class BudgetPanelComponent implements OnInit {
   totalIncome: number;
   totalExpenses: number;
   availableBudget: number;
+  advisorVisible: boolean;
   
 
   constructor(private ws: WidgetService, private fb: FormBuilder,
@@ -120,7 +121,8 @@ export class BudgetPanelComponent implements OnInit {
 
   ngOnInit(): void {
 
-    this.currentPanel = this.prompts[this.panelNumber];    
+    this.currentPanel = this.prompts[this.panelNumber];  
+    this.advisorVisible = true;  
   }
 
   //simple budget calculations for recommendations:
@@ -154,6 +156,10 @@ export class BudgetPanelComponent implements OnInit {
       this.animationDirection = "forward";
       this.visible = false;
       this.panelNumber++
+      this.advisorVisible = false;
+      if(this.panelNumber == 1) {
+        this.pageForwardStep2();
+      }
     }
   }
 

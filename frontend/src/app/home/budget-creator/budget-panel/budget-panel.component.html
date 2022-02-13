@@ -1,4 +1,4 @@
-<div *ngIf="currentPanel.categoryTitle != 'Advisor' " style="display: inline-flex;">
+<div *ngIf="panelNumber > 0 " style="display: inline-flex;">
     <div>
         <img class="clickable" src="../../../../assets/icons/left-arrow.png" style="height: 5em; margin-top: 16vh; margin-right: 3em; opacity: 95%" (click)="pageBackward()">
     </div>
@@ -72,6 +72,6 @@
 </div>
 <img class="clickable" src="../../../../assets/icons/right-arrow.png" style="height: 5em; margin-top: 16vh; margin-left: 3em; opacity: 95%" (click)="pageForward()">
 </div>
-<div *ngIf="currentPanel.categoryTitle == 'Advisor'">
-    <app-budget-advisor></app-budget-advisor>
+<div *ngIf="currentPanel.categoryTitle == 'Advisor' && advisorVisible">
+    <app-budget-advisor (pageForward)="pageForward(); "></app-budget-advisor>
 </div>
