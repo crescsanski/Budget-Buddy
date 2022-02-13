@@ -37,7 +37,6 @@ export class BudgetPanelComponent implements OnInit {
   currentPanel: any;
   exisBudgets: Budget[]
   panelNumber: number = 0;
-  //frequencyOptions!: SelectItem[];
   visible=true;
   animationDirection: string = "forward";
   totalIncome: number;
@@ -67,6 +66,7 @@ export class BudgetPanelComponent implements OnInit {
   this.prompts = [
     //toggle comments to show finalization page first
       //{icon: '../../../../assets/icons/budget-icons/help.png', categoryTitle: 'Finalization', amount: null},
+      {icon: 'null', categoryTitle: 'Advisor', amount: null},
       {icon: '../../../../assets/icons/budget-icons/help.png', categoryTitle: 'What\'s Your Budget?', amount: null},
       {icon: '../../../../assets/icons/budget-icons/job-income.png', categoryTitle: 'Job Income',  amount: 0, type: 'Income'},
       {icon: '../../../../assets/icons/budget-icons/gift.png', categoryTitle: 'Received Gift',  amount: 0, type: 'Income'},
@@ -93,6 +93,7 @@ export class BudgetPanelComponent implements OnInit {
       {icon: '../../../../assets/icons/budget-icons/misc-income.png', categoryTitle: 'Miscellaneous Expense',  amount: 0, type: 'Expense'},
       {icon: '../../../../assets/icons/budget-icons/help.png', categoryTitle: 'Finalization', amount: null},
       {icon: '../../../../assets/icons/budget-icons/thumbs-up.png', categoryTitle: 'All Done!', amount: null},
+      {icon: 'null', categoryTitle: 'Advisor', amount: null},
     ]
    }
 

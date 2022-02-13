@@ -1,0 +1,31 @@
+<div class="panel">
+    <h1>Understanding Your Budget</h1>
+    <br>
+    <h3>Budget Buddy recommends the 50%, 30%, 20% rule.</h3>
+    <p-chart type="doughnut" [data]="data"  [style]="{'width': '30%'}" [options]="options"></p-chart>
+    <br>
+    <h3>Click on the cagories below to see our recommendations for each.</h3>
+    <div class="card-area">
+        <div class="card" (click)="setDisplay(needs)">
+            <h1>50% <br> Needs</h1>
+        </div>
+        <div class="card" (click)="this.setDisplay(wants)">
+            <h1>30% <br> Wants</h1>
+        </div>
+        <div class="card" (click)="this.setDisplay(debt)">
+            <h1>20% <br> Debt</h1>
+        </div>  
+    </div>
+    <br>
+    <div style="display:inline-block; text-align: center; justify-content: center; width: 100%">
+    <br>
+        <p-button style="text-align: center">Got it!</p-button>
+    </div>
+    <p-dialog header="{{title}}" [(visible)]="displayNeeds">
+        <div *ngFor="let item of displayItems" style="display: block; width: 100%; justify-content: left; height: 2vw; margin-bottom: 3vh">
+            <div style="display: inline-flex;">
+            <img [src]="item.icon" style="width: 2vw; height: 2vw; margin-right: 2em">
+            <p>{{item.categoryTitle}}</p></div>
+        </div>
+    </p-dialog>
+</div>
