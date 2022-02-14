@@ -1,4 +1,4 @@
-<div *ngIf="panelNumber > 0 " style="display: inline-flex;">
+<div *ngIf="currentPanel.categoryTitle != 'Finalization' && panelNumber >0" style="display: inline-flex;">
     <div>
         <img class="clickable" src="../../../../assets/icons/left-arrow.png" style="height: 5em; margin-top: 16vh; margin-right: 3em; opacity: 95%" (click)="pageBackward()">
     </div>
@@ -13,11 +13,11 @@
             <form [formGroup]="c(panelNumber)" (ngSubmit)="track(c(panelNumber))">
                 <div class="content-area">
                     <p>Amount</p>
-                    <p-inputNumber mode="currency" formControlName="amount" currency="USD" [maxFractionDigits]=0 locale="en-US"></p-inputNumber>
+                    <p-inputNumber mode="currency" formControlName="amount" currency="USD" [maxFractionDigits]=0 locale="en-US" [(ngModel)]="val"></p-inputNumber>
                     <br>
         
                     <div style="text-align: center;">
-                        <button style="margin-top: 2em; text-align: center;" class="track button-emphasis" pButton type="submit" label='Track'></button>
+                        <button style="margin-top: 2em; text-align: center;" class="track button-emphasis" pButton type="submit" label='Track' (click)="trackValues()"></button>
                     </div>
                 </div>
             </form>
@@ -29,26 +29,6 @@
                 <br>
             </p>
         </div>
-
-        <div *ngIf="currentPanel.categoryTitle == 'Finalization' ">
-            <p style="color: #003486; text-align: center;">
-                <span style="color: #4ec5ca; font-weight: bolder;">Let's finalize your budget!</span><br><br>
-                <span style="font-size: smaller;">Adjust the sliders to lock in your final monthly allowance.</span>
-                <br>
-            </p>
-            <div style="overflow-y: scroll; height: 30vh; padding: 20px">
-                <div *ngFor="let cat of prompts">
-                    <div *ngIf="cat.amount!=null && cat.type == 'Expense'" class="sliderArea">
-                        <p style="color: #003486; text-align: left; font-weight: bold;">{{cat.categoryTitle}}: <span style="font-weight: lighter;">${{cat.amount}}</span></p>
-                        <p-slider [(ngModel)]="cat.amount" [min]="0" [max]="20"></p-slider>
-                    </div>
-                </div>
-            </div>
-            <div style="margin-top: 2em">
-                <p-button label="Submit"></p-button>
-            </div>
-        </div>
-
         
         <div *ngIf="currentPanel.categoryTitle == 'Halfway There!' ">
             <p style="color: #003486; text-align: center;">
@@ -75,3 +55,7 @@
 <div *ngIf="currentPanel.categoryTitle == 'Advisor' && advisorVisible">
     <app-budget-advisor (pageForward)="pageForward(); "></app-budget-advisor>
 </div>
+<div *ngIf="currentPanel.categoryTitle == 'Finalization' ">
+    <app-budget-adjuster [prompts]="prompts" [totalIncome]="totalIncome" [totalExpenses]="totalExpenses" [availableBudget]="availableBudget" [breakdown]="recalculate()"></app-budget-adjuster>
+</div>
+

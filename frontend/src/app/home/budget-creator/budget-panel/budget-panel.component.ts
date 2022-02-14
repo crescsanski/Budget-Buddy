@@ -1,3 +1,4 @@
+import { BudgetBreakdown } from './../../../models/budgetBreakdown';
 import { newBudgetPrompt } from './../../../models/newBudgetPrompt';
 import { Component, OnInit } from '@angular/core';
 import { Form, FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms';
@@ -38,11 +39,15 @@ export class BudgetPanelComponent implements OnInit {
   exisBudgets: Budget[]
   panelNumber: number = 0;
   visible=true;
+  val = 0;
   animationDirection: string = "forward";
-  totalIncome: number;
-  totalExpenses: number;
-  availableBudget: number;
+  totalIncome: number = 0;
+  totalExpenses: number = 0;
+  availableBudget: number = 0;
   advisorVisible: boolean;
+  wantsValue: number;
+  debtValue: number;
+  needsValue: number;
   
 
   constructor(private ws: WidgetService, private fb: FormBuilder,
@@ -66,35 +71,37 @@ export class BudgetPanelComponent implements OnInit {
     
   this.prompts = [
     //toggle comments to show finalization page first
-      //{icon: '../../../../assets/icons/budget-icons/help.png', categoryTitle: 'Finalization', amount: null},
       {icon: 'null', categoryTitle: 'Advisor', amount: null},
+
       {icon: '../../../../assets/icons/budget-icons/help.png', categoryTitle: 'What\'s Your Budget?', amount: null},
       {icon: '../../../../assets/icons/budget-icons/job-income.png', categoryTitle: 'Job Income',  amount: 0, type: 'Income'},
+      //toggle for debugging
+     // {icon: '../../../../assets/icons/budget-icons/help.png', categoryTitle: 'Finalization', amount: null}, 
       {icon: '../../../../assets/icons/budget-icons/gift.png', categoryTitle: 'Received Gift',  amount: 0, type: 'Income'},
       {icon: '../../../../assets/icons/budget-icons/interest.png', categoryTitle: 'Interest',  amount: 0, type: 'Income'},
       {icon: '../../../../assets/icons/budget-icons/gov-payment.png', categoryTitle: 'Government Payment',  amount: 0, type: 'Income'},
       {icon: '../../../../assets/icons/budget-icons/tax-refund.png', categoryTitle: 'Tax Refund',  amount: 0, type: 'Income'},
       {icon: '../../../../assets/icons/budget-icons/misc-income.png', categoryTitle: 'Miscellaneous Income',  amount: 0, type: 'Income'},
       {icon: '../../../../assets/icons/budget-icons/smile.png', categoryTitle: 'Halfway There!', amount: null},
-      {icon: '../../../../assets/icons/budget-icons/housing.png', categoryTitle: 'Housing',  amount: 0, type: 'Expense'},
-      {icon: '../../../../assets/icons/budget-icons/transportation.png', categoryTitle: 'Transportation',  amount: 0, type: 'Expense'},
-      {icon: '../../../../assets/icons/budget-icons/essential-groceries.png', categoryTitle: 'Essential Groceries',  amount: 0, type: 'Expense'},
+      {icon: '../../../../assets/icons/budget-icons/housing.png', categoryTitle: 'Housing',  amount: 0, type: 'Expense', category: 'need'},
+      {icon: '../../../../assets/icons/budget-icons/transportation.png', categoryTitle: 'Transportation',  amount: 0, type: 'Expense', category: 'need'},
+      {icon: '../../../../assets/icons/budget-icons/essential-groceries.png', categoryTitle: 'Essential Groceries',  amount: 0, type: 'Expense', category: 'need'},
       {icon: '../../../../assets/icons/budget-icons/non-essential-groceries.png', categoryTitle: 'Non-Essential Groceries',  amount: 0, type: 'Expense'},
-      {icon: '../../../../assets/icons/budget-icons/utilities.png', categoryTitle: 'Utilities',  amount: 0, type: 'Expense'},
-      {icon: '../../../../assets/icons/budget-icons/insurance.png', categoryTitle: 'Insurance',  amount: 0, type: 'Expense'},
-      {icon: '../../../../assets/icons/budget-icons/medical.png', categoryTitle: 'Medical',  amount: 0, type: 'Expense'},
-      {icon: '../../../../assets/icons/budget-icons/investment.png', categoryTitle: 'Investment',  amount: 0, type: 'Expense'},
-      {icon: '../../../../assets/icons/budget-icons/restaraunts.png', categoryTitle: 'Restaurants',  amount: 0, type: 'Expense'},
-      {icon: '../../../../assets/icons/budget-icons/entertainment.png', categoryTitle: 'Entertainment',  amount: 0, type: 'Expense'},
-      {icon: '../../../../assets/icons/budget-icons/clothing.png', categoryTitle: 'Clothing',  amount: 0, type: 'Expense'},
-      {icon: '../../../../assets/icons/budget-icons/gift.png', categoryTitle: 'Gifts',  amount: 0, type: 'Expense'},
-      {icon: '../../../../assets/icons/budget-icons/furnishings.png', categoryTitle: 'Furnishings',  amount: 0, type: 'Expense'},
-      {icon: '../../../../assets/icons/budget-icons/pet.png', categoryTitle: 'Pets',  amount: 0, type: 'Expense'},
-      {icon: '../../../../assets/icons/budget-icons/tax-payment.png', categoryTitle: 'Tax Payment', amount: 0, type: 'Expense'},
-      {icon: '../../../../assets/icons/budget-icons/misc-income.png', categoryTitle: 'Miscellaneous Expense',  amount: 0, type: 'Expense'},
+      {icon: '../../../../assets/icons/budget-icons/utilities.png', categoryTitle: 'Utilities',  amount: 0, type: 'Expense', category: 'need'},
+      {icon: '../../../../assets/icons/budget-icons/insurance.png', categoryTitle: 'Insurance',  amount: 0, type: 'Expense', category: 'need'},
+      {icon: '../../../../assets/icons/budget-icons/medical.png', categoryTitle: 'Medical',  amount: 0, type: 'Expense', category: 'need'},
+      {icon: '../../../../assets/icons/budget-icons/investment.png', categoryTitle: 'Investment',  amount: 0, type: 'Expense', category: 'debt'},
+      {icon: '../../../../assets/icons/budget-icons/restaraunts.png', categoryTitle: 'Restaurants',  amount: 0, type: 'Expense', category: 'want'},
+      {icon: '../../../../assets/icons/budget-icons/entertainment.png', categoryTitle: 'Entertainment',  amount: 0, type: 'Expense', category: 'want'},
+      {icon: '../../../../assets/icons/budget-icons/clothing.png', categoryTitle: 'Clothing',  amount: 0, type: 'Expense', category: 'want'},
+      {icon: '../../../../assets/icons/budget-icons/gift.png', categoryTitle: 'Gifts',  amount: 0, type: 'Expense', category: 'want'},
+      {icon: '../../../../assets/icons/budget-icons/furnishings.png', categoryTitle: 'Furnishings',  amount: 0, type: 'Expense', category: 'want'},
+      {icon: '../../../../assets/icons/budget-icons/pet.png', categoryTitle: 'Pets',  amount: 0, type: 'Expense', category: 'need'},
+      {icon: '../../../../assets/icons/budget-icons/tax-payment.png', categoryTitle: 'Tax Payment', amount: 0, type: 'Expense', category: 'need'},
+      {icon: '../../../../assets/icons/budget-icons/misc-income.png', categoryTitle: 'Miscellaneous Expense',  amount: 0, type: 'Expense', category: 'debt'},
+      {icon: '../../../../assets/icons/budget-icons/help.png', categoryTitle: 'What\'s Your Budget?', amount: null},
       {icon: '../../../../assets/icons/budget-icons/help.png', categoryTitle: 'Finalization', amount: null},
       {icon: '../../../../assets/icons/budget-icons/thumbs-up.png', categoryTitle: 'All Done!', amount: null},
-      {icon: 'null', categoryTitle: 'Advisor', amount: null},
     ]
    }
 
@@ -120,23 +127,18 @@ export class BudgetPanelComponent implements OnInit {
    }
 
   ngOnInit(): void {
-
     this.currentPanel = this.prompts[this.panelNumber];  
     this.advisorVisible = true;  
   }
 
-  //simple budget calculations for recommendations:
-  sumTotals() {
-    this.totalIncome = 0
-    this.prompts.forEach(x => {
-      if(x.type == 'Income') {
-        this.totalIncome += x.amount;
-      } else if (x.type == 'Income') {
-        this.totalExpenses += x.amount
-      }
-    });
+  //function to get values for recommendations
+  updateSum() {
+    if (this.currentPanel.type == 'Income') {
+      this.totalIncome += this.currentPanel.amount;
+    } else if (this.currentPanel.type == 'Expense') {
+      this.totalExpenses += this.currentPanel.amount;
+    }
     this.availableBudget = this.totalIncome - this.totalExpenses;
-    return this.availableBudget;
   }
 
   //shortcut to access all form components
@@ -258,5 +260,31 @@ export class BudgetPanelComponent implements OnInit {
     
 }
  
+trackValues() {
+  this.currentPanel.amount = this.val;
+  console.log(this.currentPanel.amount)
+  this.val = 0;
+  this.updateSum();
+}
+
+recalculate() : BudgetBreakdown {
+  this.wantsValue = 0;
+  this.debtValue = 0;
+  this.needsValue = 0;
+
+  this.prompts.forEach(x => {
+      if(x.category == 'debt') {
+        this.debtValue += x.amount;
+      } else if (x.category == 'want'){
+        this.wantsValue += x.amount;
+
+      } else if (x.category == 'need'){
+        this.needsValue += x.amount;
+      }
+  });
+  this.totalExpenses = this.debtValue + this.wantsValue + this.needsValue;
+  this.availableBudget = this.totalIncome - this.totalExpenses;
+  return {want: this.wantsValue, need: this.needsValue, debt: this.debtValue};
+}
 
 }

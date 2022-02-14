@@ -1,0 +1,18 @@
+<div class="panel">
+    <h1>Understanding Your Budget</h1>
+    <p style="font-weight: bolder; text-align: center;">Use the sliders to adjust your budget. We recommend your budget follow the 50-30-20 Rule</p>
+    <p-chart #chart id="chart" type="bar" [data]="stackedData" [options]="stackedOptions" height="100px" style="text-align: center; margin-left: -200px"></p-chart>
+    <p style="margin-top: -10px">Total: ${{totalExpenses}}/<span style="font-weight: bold;">${{totalIncome}}</span></p>
+    <p-dropdown [options]="categories" [(ngModel)]=selectedCategory [showClear]="true" [placeholder]="'Select a Category'" (onChange)="onChange()"></p-dropdown>
+    <div *ngFor="let cat of dropdownPrompts">
+        <div>
+            <p style="color: #003486; text-align: left; font-weight: bold;">{{cat.categoryTitle}}: <span style="font-weight: lighter;">${{cat.amount}}</span></p>
+            <p-slider [(ngModel)]=cat.amount [min]="0" [max]=max [animate]="true" [step]="5" (onSlideEnd)="update($event)"></p-slider>
+        </div>
+    </div>
+    <p-dialog header="Over Budget!" [(visible)]="overBudget">
+        <h3>It looks like you are {{errorPercent}} over budget in the {{errorCategory}} category.</h3>
+        <h3>We recommend you reduce your budget in this category by ${{errorDifference}}.</h3>
+
+    </p-dialog>
+</div>

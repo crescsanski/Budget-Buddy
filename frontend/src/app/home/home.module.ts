@@ -1,3 +1,5 @@
+import { DropdownModule } from 'primeng/dropdown';
+import { MultiSelectModule } from 'primeng/multiselect';
 import { WidgetModule } from '../widget/widget.module';
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
@@ -14,6 +16,7 @@ import {SliderModule} from 'primeng/slider';
 import { BudgetAdvisorComponent } from './budget-creator/budget-advisor/budget-advisor.component';
 import {ChartModule} from 'primeng/chart';
 import {DialogModule} from 'primeng/dialog';
+import { BudgetAdjusterComponent } from './budget-creator/budget-adjuster/budget-adjuster.component';
 
 
 
@@ -28,7 +31,8 @@ import {DialogModule} from 'primeng/dialog';
     MenuComponent,
     NewBudgetComponent,
     BudgetPanelComponent,
-    BudgetAdvisorComponent
+    BudgetAdvisorComponent,
+    BudgetAdjusterComponent
   ],
   imports: [
     CommonModule,
@@ -41,7 +45,9 @@ import {DialogModule} from 'primeng/dialog';
     SliderModule,
     FormsModule,
     ChartModule,
-    DialogModule
+    DialogModule,
+    MultiSelectModule,
+    DropdownModule
     ],
  
 })
