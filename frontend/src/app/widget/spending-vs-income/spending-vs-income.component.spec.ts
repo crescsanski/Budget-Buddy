@@ -1,20 +1,20 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { IncomeOverTimeComponent } from './income-over-time.component';
+import { SpendingVsIncomeComponent } from './spending-vs-income.component';
 
-describe('IncomeOverTimeComponent', () => {
-  let component: IncomeOverTimeComponent;
-  let fixture: ComponentFixture<IncomeOverTimeComponent>;
+describe('SpendingVsIncomeComponent', () => {
+  let component: SpendingVsIncomeComponent;
+  let fixture: ComponentFixture<SpendingVsIncomeComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ IncomeOverTimeComponent ]
+      declarations: [ SpendingVsIncomeComponent ]
     })
     .compileComponents();
   });
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(IncomeOverTimeComponent);
+    fixture = TestBed.createComponent(SpendingVsIncomeComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

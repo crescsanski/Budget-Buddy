@@ -19,8 +19,8 @@
         <div class="large-widgets">
           <app-weekly-spending></app-weekly-spending>
           <app-savings-over-time></app-savings-over-time>
-          <app-spending-over-time></app-spending-over-time>
-          <app-income-over-time></app-income-over-time>
+          <app-spending-vs-income></app-spending-vs-income>
+
         <div *ngFor="let widget of dashboardWidgets" class="large-widgets">
           <app-basic-widget *ngIf="widget.size==='large'" [title]=widget.title [image]=widget.image></app-basic-widget>
         </div>
