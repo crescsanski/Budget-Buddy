@@ -6,7 +6,7 @@ import { Routes, RouterModule } from '@angular/router';
 import { AuthGuard } from './helpers/auth.guard';
 import { RegisterPageComponent } from './register/register-page/register-page.component';
 import { DataResolver } from './resolvers/dataResolver.resolver';
-import { NewBudgetResolver } from './resolvers/newBudgetResolver.resolver copy';
+import { NewBudgetResolver } from './resolvers/newBudgetResolver.resolver';
 
 
 

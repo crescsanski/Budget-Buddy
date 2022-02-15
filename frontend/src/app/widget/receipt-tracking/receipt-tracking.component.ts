@@ -1,6 +1,8 @@
 import { Receipt } from 'src/app/models/receipt';
 import { Component, OnInit, SecurityContext } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { QuickReceipt } from 'src/app/models/simReceipt';
+import { ReceiptUploadService } from 'src/app/services/receipt-upload.service';
 
 @Component({
   selector: 'app-receipt-tracking',
@@ -10,19 +12,21 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 export class ReceiptTrackingComponent implements OnInit {
 
   form: FormGroup = <FormGroup>{};
-  userReceipts: Receipt[] = [];
+  userReceipts: QuickReceipt[] = [];
   noUpload = './../../../assets/icons/budget-icons/receipt.png'
   imageUpload: any = this.noUpload;
   receipts: any[] = [];
+  url: string;
 
   //mock receipt list
 
-  constructor(private fb: FormBuilder) { }
+  constructor(private fb: FormBuilder, public upServ: ReceiptUploadService) { 
+  }
 
   ngOnInit(): void {
     this.userReceipts = [
-      {receipt_id: 1, receipt_name: 'Walmart-Jan1', receipt_amount: 100, receipt_date: '1/1/2022', reccuring: 0, is_income: false, user: null},
-      {receipt_id: 2, receipt_name: 'Stop and Shop', receipt_amount: 200, receipt_date: '1/1/2022', reccuring: 0, is_income: false, user: null},
+      {receipt_id: 1, category: 1, receipt_name: 'Walmart-Jan1', receipt_amount: 100, receipt_date: '1/1/2022', reccuring: false, is_income: false},
+      {receipt_id: 2, category: 1, receipt_name: 'Stop and Shop', receipt_amount: 200, receipt_date: '1/1/2022', reccuring: false, is_income: false},
     ]
 
 
@@ -42,8 +46,17 @@ export class ReceiptTrackingComponent implements OnInit {
   });
   }
 
+
   onUpload(event) {
+    console.log(event)
+  
+    let out = event.originalEvent.body;     
+
     for(let receipt of event.files) {
+        let data = out[receipt.name]
+        let quick: QuickReceipt = {receipt_name: data.receipt.receipt_name, receipt_date: data.receipt.receipt_date,
+          reccuring: false, receipt_amount: 0, is_income: false, category: 0}
+          this.userReceipts.push(quick)
         this.receipts.push(receipt);
     }
   }

@@ -13,8 +13,11 @@ import { IncomeOverTime } from '../models/incomeOverTime';
 export class IncomeHistoryService {
 
   private apiUrl = 'api/income_history';  // URL to web api
+  private cumUrl = 'api/cum_income_history';
   user: User | null = null;
   private weeklyIncomeTotal: number;
+  private cumIncByMonth: IncomeOverTime[]
+  private incByMonth: IncomeOverTime[]
 
   httpOptions = {
     headers: new HttpHeaders({ 'Content-Type': 'application/json' })
@@ -29,6 +32,50 @@ export class IncomeHistoryService {
   get weekIncome()
   {
     return this.weeklyIncomeTotal;
+  }
+
+  get cumIncomeByMonth()
+  {
+    return this.cumIncByMonth;
+  }
+
+  get incomeByMonth()
+  {
+    return this.incByMonth;
+  }
+
+  /**GET cumulative income growth by month.*/
+  getByMonthCumIncome(): Observable<IncomeOverTime[]>
+  {
+    const url = `${this.cumUrl}/${this.user.user_id}/?period=monthly`
+
+    return this.http.get<IncomeOverTime[]>(url).pipe(
+      tap(out => 
+        {
+          console.log(`Fetched cumulative income totals by month = ${out}`);
+          this.cumIncByMonth = out;
+        }
+      
+        ),
+      catchError(this.handleError<IncomeOverTime[]>(`getIncomeHistoryByMonth`))
+    );
+  }
+
+  /**GET income received by month.*/
+  getByMonthIncome(): Observable<IncomeOverTime[]>
+  {
+    const url = `${this.apiUrl}/${this.user.user_id}/?period=monthly`
+
+    return this.http.get<IncomeOverTime[]>(url).pipe(
+      tap(out => 
+        {
+          console.log(`Fetched income totals by month = ${out}`);
+          this.incByMonth = out;
+        }
+      
+        ),
+      catchError(this.handleError<IncomeOverTime[]>(`getIncomeHistoryByMonth`))
+    );
   }
 
   /** GET total income received for current week */

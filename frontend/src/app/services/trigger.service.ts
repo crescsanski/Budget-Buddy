@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Subject } from 'rxjs';
+import { IncomeHistoryService } from './income-history.service';
 import { SavingsHistoryService } from './savings-history.service';
 import { SpendingHistoryService } from './spending-history.service';
 
@@ -22,6 +23,12 @@ export class TriggerService {
     await (this.spenHis.getCurWeekSpend().toPromise());
     // Update savings widget
     await (this.savHis.getByMonthCumSavings().toPromise());
+
+    // Update spending by month values
+    await (this.spenHis.getByMonthCumSpendings().toPromise());
+
+    await (this.spenHis.getByMonthSpendings().toPromise());
+
     this.expenReceiptSubmitAnnounce.next();
   }
 
@@ -29,8 +36,15 @@ export class TriggerService {
   {
     // Update savings widget
     await (this.savHis.getByMonthCumSavings().toPromise());
+
+    // Update income by month values
+    await (this.incHis.getByMonthCumIncome().toPromise());
+
+    await (this.incHis.getByMonthIncome().toPromise());
+
     this.incomReceiptSubmitAnnounce.next();
   }
 
-  constructor(private spenHis: SpendingHistoryService, private savHis: SavingsHistoryService) { }
+  constructor(private spenHis: SpendingHistoryService, private savHis: SavingsHistoryService,
+    private incHis: IncomeHistoryService) { }
 }

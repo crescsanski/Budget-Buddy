@@ -23,7 +23,7 @@
         </div>
         <p-overlayPanel [showTransitionOptions]="'0ms'" [hideTransitionOptions]="'0ms'" #op [dismissable]="true" [showCloseIcon]="true">
             <ng-template pTemplate>
-                <p-fileUpload name="demo[]" url="./upload.php" (onUpload)="onUpload($event)"
+                <p-fileUpload name="files" [multiple]="true" [url]="upServ.recUplURL" (onUpload)="onUpload($event)"
                     accept="image/*">
                     <ng-template pTemplate="content">
                          <ul *ngIf="receipts.length">

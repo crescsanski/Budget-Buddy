@@ -1,10 +1,27 @@
 from django.contrib.auth.models import User
+from django.db import models
 from rest_framework import exceptions, serializers
 from django.contrib.auth.password_validation import CommonPasswordValidator, NumericPasswordValidator, UserAttributeSimilarityValidator, validate_password, MinimumLengthValidator
 from rest_framework.fields import FileField
 from app.models import *
 from app.baseSerializers import *
 
+class ReceiptUploadSerializer(serializers.Serializer):
+    files = serializers.ListField(
+        child=serializers.FileField()
+    )
+
+    class Meta:
+        fields = ['files']
+
+class SimpleReceiptSerializer(serializers.Serializer):
+    receipt_name = serializers.CharField()
+    receipt_amount = serializers.DecimalField(max_digits=10, decimal_places=2) 
+    receipt_date = serializers.DateTimeField() 
+    reccuring = serializers.BooleanField()
+    is_income = serializers.BooleanField() 
+    user_id = serializers.IntegerField()
+    category = serializers.IntegerField()
 
 class InitialBudgetSerializer(serializers.Serializer):
 

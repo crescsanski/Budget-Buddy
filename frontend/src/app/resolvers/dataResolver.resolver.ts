@@ -4,6 +4,7 @@ import { forkJoin, Observable } from "rxjs";
 import { BadgesEarnedService } from "../services/badgesEarned.service";
 import { BudgetService } from "../services/budget.service";
 import { CategoryService } from "../services/category.service";
+import { IncomeHistoryService } from "../services/income-history.service";
 import { SavingsHistoryService } from "../services/savings-history.service";
 import { SpendingHistoryService } from "../services/spending-history.service";
 import { TimeService } from "../services/time.service";
@@ -13,6 +14,7 @@ export class DataResolver implements Resolve<any> {
     constructor(private budServ: BudgetService,
         private spenTot: SpendingHistoryService,
         private badServ: BadgesEarnedService,
+        private incServ: IncomeHistoryService,
         private savServ: SavingsHistoryService,
         private ts: TimeService,
         private catService: CategoryService) {}
@@ -35,6 +37,16 @@ export class DataResolver implements Resolve<any> {
 
         //Fetch Default Display for Savings over Time Widget
         this.savServ.getByMonthCumSavings(),
+
+        //Fetch Default Display for Spending over Time Widget
+        this.spenTot.getByMonthCumSpendings(),
+
+        //Fetch Default Display for Income over Time Widget
+        this.incServ.getByMonthCumIncome(),
+
+        this.incServ.getByMonthIncome(),
+
+        this.spenTot.getByMonthSpendings(),
 
         //Fetch Income and Expense Budgets By Category
         this.budServ.getExBudByCat(),

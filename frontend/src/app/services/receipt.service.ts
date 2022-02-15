@@ -6,6 +6,7 @@ import { catchError, map, tap } from 'rxjs/operators';
 
 import { Receipt } from '../models/receipt';
 import { MessageService } from './message.service';
+import { QuickReceipt } from '../models/simReceipt';
 
 
 @Injectable({ providedIn: 'root' })
@@ -69,11 +70,19 @@ export class ReceiptService {
 
   //////// Save methods //////////
 
-  /** POST: add a new receipt to the server */
+  /** POST: add a new itemized receipt with multiple expenses and incomes to the server */
   addReceipt(receipt: Receipt): Observable<Receipt> {
     return this.http.post<Receipt>(this.receiptsUrl, receipt, this.httpOptions).pipe(
       tap((newReceipt: Receipt) => console.log(`added receipt w/ id=${newReceipt.receipt_id}`)),
       catchError(this.handleError<Receipt>('addReceipt'))
+    );
+  }
+
+  /** POST: add a new simple receipt with only a total amount */
+  addQuickReceipt(receipt: QuickReceipt): Observable<QuickReceipt> {
+    return this.http.post<QuickReceipt>(`${this.receiptsUrl}Simple`, receipt, this.httpOptions).pipe(
+      tap((newReceipt: QuickReceipt) => console.log(`added receipt w/ id=${newReceipt.receipt_id}`)),
+      catchError(this.handleError<QuickReceipt>('addReceipt'))
     );
   }
 

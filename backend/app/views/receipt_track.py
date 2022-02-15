@@ -106,7 +106,6 @@ def postReceipt(request):
     is_income = bool(request.data['receipt']['receipt_is_income'])
     serializer = None
     if is_income:
-        print("Hello world")
         serializer = IncomeReceiptSerializer(data=request.data,
                                         context={'request': request})
     else:
@@ -134,6 +133,37 @@ def postReceipt(request):
         for expense in receiptPackage['expenses']:
             Expense.objects.create(**expense,
             receipt = receipt)   
+    
+    return Response({
+        'receipt_id': receipt.receipt_id
+    })
+
+#Create a new receipt:
+#This API is intended to be used by quick receipt uploads with only a total quantity and no individual items
+@api_view(["POST"])
+def postSimpleReceipt(request):
+    serializer = SimpleReceiptSerializer(data = request.data)
+    serializer.is_valid(raise_exception=True)
+    recDat = serializer.validated_data
+    receipt = Receipt.objects.create(user_id = recDat['user_id'],
+    receipt_name = recDat['receipt_name'],
+    receipt_date = recDat['receipt_date'], 
+    receipt_is_reccuring = recDat['reccuring'],
+    receipt_is_income = recDat['is_income'])
+    if recDat['is_income']:
+        Income.objects.create(
+            income_name = recDat['receipt_name'],
+            income_amount = recDat['receipt_amount'],
+            receipt = receipt,
+            category_id = recDat['category']
+        )
+    else:
+        Expense.objects.create(
+            expense_name = recDat['receipt_name'],
+            expense_price = recDat['receipt_amount'],
+            receipt = receipt,
+            category_id = recDat['category']
+        )
     
     return Response({
         'receipt_id': receipt.receipt_id

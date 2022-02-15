@@ -18,6 +18,7 @@ urlpatterns = [
     path('receipt_track/users/<userid>/', views.getReceiptsByUser),
     path('receipt_track/<receiptid>/', views.singleReceipt),
     path('receipt_track/', views.postReceipt),
+    path('receipt_track/Simple', views.postSimpleReceipt),
 
     path('spend_history/<user_id>/', views.getSpendHistory),
     path('spend_history/<user_id>/<category_id>/', views.getSpendHistory),
@@ -40,7 +41,7 @@ urlpatterns = [
     path('budget/', views.setInitialBudget),
     path('budget/users/<userid>/SpendingBudget/', views.getSpendBudgetTotal),
 
-    path('receipt_upload/<userid>/', views.ReceiptUploadConvertViewSet.as_view()),
+    path('receipt_upload/', views.ReceiptUploadConvertViewSet.as_view()),
     
     path('validate_challenge/<userid>/<challengeid>', views.ValidateChallengeViewSet.as_view()),
     

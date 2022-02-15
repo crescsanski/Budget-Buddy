@@ -4,12 +4,6 @@ from django.contrib.auth.password_validation import CommonPasswordValidator, Num
 from rest_framework.fields import FileField
 from .models import *
 
-class ReceiptUploadSerializer(serializers.Serializer):
-    file_uploaded = FileField()
-    class Meta:
-        fields = ['file_uploaded']
-
-
 class SecurityQuestionSerializer(serializers.ModelSerializer):
     class Meta:
         model = SecurityQuestion

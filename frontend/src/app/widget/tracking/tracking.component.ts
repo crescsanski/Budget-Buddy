@@ -11,6 +11,7 @@ import { AuthService } from 'src/app/services/auth.service';
 import { ReceiptTrackService } from '../services/receipt-track.service';
 import { WidgetService } from '../widget.service';
 import { TriggerService } from 'src/app/services/trigger.service';
+import { QuickReceipt } from 'src/app/models/simReceipt';
 
 @Component({
   selector: 'app-tracking',
@@ -53,29 +54,20 @@ export class TrackingComponent implements OnInit {
       return;
     }
 
-    let out: Receipt =
+    let out: QuickReceipt =
     {
-      userid: this.auServ.currentUserValue.user_id,
-      expenses: [
-        {
-        expense_price: this.form.value['product_price'],
-        expense_name: this.form.value['product_name'],
-        category: this.form.value['category'],
-        expense_is_essential: true
-        }
-      ],
-      receipt:
-      {
-        receipt_name: this.form.value['product_name'],
-        receipt_date: this.form.value['receipt_date'],
-        receipt_is_reccuring: this.form.value['reocurring'],
-        receipt_is_income: false
-      }
+      user_id: this.auServ.currentUserValue.user_id,
+      receipt_amount: this.form.value['product_price'],
+      receipt_name: this.form.value['product_name'],
+      category: this.form.value['category'],
+      receipt_date: this.form.value['receipt_date'],
+      reccuring: false,
+      is_income: false
     }
 
-    this.rs.addReceipt(out)
+    this.rs.addQuickReceipt(out)
       .subscribe(()=> {
-        this.form.reset();
+        this.form.reset()
         this.trigServ.announceExpenReceiptSubmit();
       }
       )

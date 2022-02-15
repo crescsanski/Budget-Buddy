@@ -12,6 +12,7 @@ import { Receipt } from 'src/app/models/receipt';
 import { WidgetService } from '../widget.service';
 import { ReceiptTrackService } from '../services/receipt-track.service';
 import { TriggerService } from 'src/app/services/trigger.service';
+import { QuickReceipt } from 'src/app/models/simReceipt';
 
 @Component({
   selector: 'app-income-tracking',
@@ -54,26 +55,18 @@ form: FormGroup = <FormGroup>{};
       return;
     }
 
-    let out: Receipt =
+    let out: QuickReceipt =
     {
-      userid: this.auServ.currentUserValue.user_id,
-      incomes: [
-        {
-        income_amount: this.form.value['income_amount'],
-        income_name: this.form.value['income_name'],
-        category: this.form.value['category']
-        }
-      ],
-      receipt:
-      {
-        receipt_name: this.form.value['income_name'],
-        receipt_date: this.form.value['receipt_date'],
-        receipt_is_reccuring: this.form.value['reocurring'],
-        receipt_is_income: true
-      }
+      user_id: this.auServ.currentUserValue.user_id,
+      receipt_amount: this.form.value['income_amount'],
+      receipt_name: this.form.value['income_name'],
+      category: this.form.value['category'],
+      receipt_date: this.form.value['receipt_date'],
+      reccuring: false,
+      is_income: true
     }
 
-    this.rs.addReceipt(out)
+    this.rs.addQuickReceipt(out)
       .subscribe(()=> {
         this.form.reset()
         this.trigServ.announceIncomReceiptSubmit();

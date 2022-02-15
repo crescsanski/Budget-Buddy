@@ -5,6 +5,7 @@ import { Observable, of } from 'rxjs';
 import { catchError, map, tap } from 'rxjs/operators';
 
 import { Receipt } from 'src/app/models/receipt';
+import { QuickReceipt } from 'src/app/models/simReceipt';
 
 @Injectable({
   providedIn: 'root'
@@ -28,6 +29,14 @@ export class ReceiptTrackService {
       catchError(this.handleError<Receipt>('addReceipt'))
     );
   }
+
+    /** POST: add a new simple receipt with only a total amount */
+    addQuickReceipt(receipt: QuickReceipt): Observable<QuickReceipt> {
+      return this.http.post<QuickReceipt>(`${this.apiUrl}Simple`, receipt, this.httpOptions).pipe(
+        tap((newReceipt: QuickReceipt) => console.log(`added receipt w/ id=${newReceipt.receipt_id}`)),
+        catchError(this.handleError<QuickReceipt>('addReceipt'))
+      );
+    }
 
   /**
    * Handle Http operation that failed.

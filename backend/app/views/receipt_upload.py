@@ -30,14 +30,26 @@ import re
 import numpy as np
 import shutil
 from django.views.decorators.http import require_http_methods
-from rest_framework.decorators import api_view, throttle_classes
+from rest_framework.decorators import api_view, throttle_classes, parser_classes
+from rest_framework.parsers import MultiPartParser, FormParser
 
 class ReceiptUploadConvertViewSet(GenericAPIView):
     serializer_class = ReceiptUploadSerializer
-
-    @action(detail=False, methods=['post'])
+    parser_classes = [MultiPartParser, FormParser]
+   
     def post(self, request, format=None):
-        file_uploaded = request.FILES.get('file_uploaded')
+        serializer = self.serializer_class(data = request.data)
+        serializer.is_valid(raise_exception=True)
+        package = serializer.validated_data
+        out = {}
+        for f in package['files']:
+            out[f.name] = self.processFile(file_uploaded = f)
+
+        shutil.rmtree('rawReceipts/', True)
+
+        return Response(out)
+
+    def processFile(self, file_uploaded):
         filename = file_uploaded.name
         physical = True #used to indicate whether the uploaded file is of a physical printed receipt or digital version
         metaData = False #used to indicate whether uploaded file contains info about it's origin (ex: the device from which it was taken)
@@ -73,54 +85,15 @@ class ReceiptUploadConvertViewSet(GenericAPIView):
             if exifdata:
                 metaData = True
 
-        for path in finalPaths:
+        for idx, path in enumerate(finalPaths):
 
                 orig = cv2.imread(path)
                 if physical:
-                    image = orig.copy()
-                    image = imutils.resize(image, width=500)
-                    area = image.shape[0] * image.shape[1]
-                    ratio = orig.shape[1] / float(image.shape[1])
-                    gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
-                    blurred = cv2.GaussianBlur(gray, (5, 5,), 0)
-                    edged = cv2.Canny(blurred, 75, 200)
-
-                    #Detect contours in the edged image and process them
-                    cnts = cv2.findContours(edged.copy(), cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
-                    cnts = imutils.grab_contours(cnts)
-                    cnts = sorted(cnts, key=cv2.contourArea, reverse=True)
-
-                    #Determine if the contour contains four vertices
-                    # initialize a contour that corresponds to the receipt outline
-                    receiptCnt = None
-                    # loop over the contours
-                    for c in cnts:
-                        # approximate the contour
-                        peri = cv2.arcLength(c, True)
-                        
-                        approx = cv2.approxPolyDP(c, 0.02 * peri, True)
-                                           
-                        # if our approximated contour has four points, then we can
-                        # assume we have found the outline of the receipt
-                        # if the size of our contours is too small, then we also exit the loop
-                        if cv2.contourArea(approx) / area < 0.4:
-                            break
-                        elif len(approx) == 4:
-                            receiptCnt = approx
-                            break
-                    # if the receipt contour is empty then our script could not find the
-                    # outline and we should be notified
-                    if receiptCnt is None:
-                        raise Exception(("Could not find receipt outline. "
-                            "Try debugging your edge detection and contour steps."))
-
-                    #With the receipt contour found, let's apply our perspective transform to the image
-                    # apply a four-point perspective transform to the *original* image to
-                    # obtain a top-down bird's-eye view of the receipt
-                    receipt = four_point_transform(orig, receiptCnt.reshape(4, 2) * ratio)
-                    cv2.imwrite('savedImage.jpg', receipt)
+                    receipt = self.enhanceImage(input = orig, contourCrop = True)
                 else:
-                    receipt = orig
+                    receipt = input
+        
+                cv2.imwrite(f"savedImage-{filename}-{idx}.jpg", receipt)
 
                 content = pytesseract.image_to_string(receipt)
                 if len(content) > 2:
@@ -148,9 +121,81 @@ class ReceiptUploadConvertViewSet(GenericAPIView):
                     print("The uploaded file doesn't contain any text.")
         
         #Delete the contents of the directory with the original image/PDF files
-        shutil.rmtree('rawReceipts', True)
+        shutil.rmtree('rawReceipts/', True)
 
-        return Response(response)
+        #Create a receipt object with the parsed data, but DO NOT SAVE to the database.
+        data = {}
+        data['receipt'] = {
+            'receipt_date': dates.pop(),
+             'receipt_name': vendorName
+        }
+        itemArray = []
+        for idx, item in enumerate(itemizedLines):
+            ex = {'expense_name': itemNames[idx],
+                        'expense_price': amounts[idx],
+            }
+            itemArray.append(ex)
+        data['expenses'] = itemArray
+
+        return data
+
+    
+    def enhanceImage(self, input, contourCrop = False):
+        
+        image = input.copy()
+        image = imutils.resize(image, width=500)
+        area = image.shape[0] * image.shape[1]
+        ratio = input.shape[1] / float(image.shape[1])
+
+        image = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
+        cv2.imwrite(f"gray.jpg", image)
+  
+        image = cv2.GaussianBlur(image, (5, 5,), 0)
+        cv2.imwrite(f"blurred.jpg", image)
+ 
+        image = cv2.Canny(image, 75, 200)
+        cv2.imwrite(f"edged.jpg", image)
+
+        if contourCrop:
+            #Detect contours in the edged image and process them
+            cnts = cv2.findContours(image.copy(), cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+            cnts = imutils.grab_contours(cnts)
+            cnts = sorted(cnts, key=cv2.contourArea, reverse=True)
+
+            #Determine if the contour contains four vertices
+            # initialize a contour that corresponds to the receipt outline
+            receiptCnt = None
+            # loop over the contours
+            for idx, c in enumerate(cnts):
+                # approximate the contour
+                peri = cv2.arcLength(c, True)
+                
+                approx = cv2.approxPolyDP(c, 0.02 * peri, True)
+
+                #Debug this contour
+                check = input.copy()
+                cv2.drawContours(check, [approx], -1, (0,255,0),2)
+                cv2.imwrite(f"contour-{idx}.jpg", check)
+                                
+                # if our approximated contour has four points, then we can
+                # assume we have found the outline of the receipt
+                if len(approx) == 4:
+                    receiptCnt = approx
+                    break
+            # if the receipt contour is empty then our script could not find the
+            # outline and we should be notified
+            if receiptCnt is None:
+                raise Exception(("Could not find receipt outline. "
+                    "Try debugging your edge detection and contour steps."))
+
+            #With the receipt contour found, let's apply our perspective transform to the image
+            # apply a four-point perspective transform to the *original* image to
+            # obtain a top-down bird's-eye view of the receipt
+            receipt = four_point_transform(input, receiptCnt.reshape(4, 2) * ratio)
+            #cv2.imwrite('savedImage.jpg', receipt)
+            return receipt
+        else:
+            return image
 
         
     def get_text_percentage(self, file_name: str) -> float:
