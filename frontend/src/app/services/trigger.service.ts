@@ -29,6 +29,8 @@ export class TriggerService {
 
     await (this.spenHis.getByMonthSpendings().toPromise());
 
+    await (this.spenHis.getSpendCatBreakdown().toPromise());
+
     this.expenReceiptSubmitAnnounce.next();
   }
 

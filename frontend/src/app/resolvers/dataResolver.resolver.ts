@@ -48,6 +48,8 @@ export class DataResolver implements Resolve<any> {
 
         this.spenTot.getByMonthSpendings(),
 
+        this.spenTot.getSpendCatBreakdown(),
+
         //Fetch Income and Expense Budgets By Category
         this.budServ.getExBudByCat(),
         this.budServ.getInBudByCat(),

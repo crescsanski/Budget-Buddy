@@ -11,6 +11,7 @@ import {CalendarModule} from 'primeng/calendar';
 import {InputNumberModule} from 'primeng/inputnumber';
 import {DropdownModule} from 'primeng/dropdown';
 import {SliderModule} from 'primeng/slider';
+import {MultiSelectModule} from 'primeng/multiselect';
 import { InputTextModule } from 'primeng/inputtext';
 
 @NgModule({
@@ -18,6 +19,7 @@ import { InputTextModule } from 'primeng/inputtext';
   imports: [
     InputNumberModule,
     CalendarModule,
+    MultiSelectModule,
     MessagesModule, 
     DropdownModule,
     PasswordModule,
@@ -36,6 +38,7 @@ import { InputTextModule } from 'primeng/inputtext';
     ButtonModule,
     InputMaskModule,
     CheckboxModule,
+    MultiSelectModule,
     ToastModule,
     DropdownModule,
     SliderModule,

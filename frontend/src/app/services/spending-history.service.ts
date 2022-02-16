@@ -18,6 +18,7 @@ export class SpendingHistoryService {
   private weeklySpendingTotal: number;
   private cumSpenByMonth: SpendingOverTime[];
   private spenByMonth: SpendingOverTime[];
+  private catSpendByMonth: SpendingOverTime[];
 
   httpOptions = {
     headers: new HttpHeaders({ 'Content-Type': 'application/json' })
@@ -49,6 +50,28 @@ export class SpendingHistoryService {
   get spendByMonth()
   {
     return this.spenByMonth;
+  }
+
+  get catSpenByMonth()
+  {
+    return this.catSpendByMonth;
+  }
+
+  /**GET spending by category within each month */
+  getSpendCatBreakdown(): Observable<SpendingOverTime[]>
+  {
+    const url = `${this.apiUrl}/${this.user.user_id}/?period=monthly&category_breakdown=true`
+
+    return this.http.get<SpendingOverTime[]>(url).pipe(
+      tap(out => 
+        {
+          console.log(`Fetched spending totals with category breakdown by month = ${out}`);
+          this.catSpendByMonth = out;
+        }
+      
+        ),
+      catchError(this.handleError<SpendingOverTime[]>(`getSpendingsHistory`))
+    );
   }
 
   /**GET cumulative spending growth by month.*/

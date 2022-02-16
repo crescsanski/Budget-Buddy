@@ -1,0 +1,24 @@
+<div class="panel">
+    <div class="content-area">
+        <div class="header">
+            <h2>Budget vs. Spending</h2> 
+        </div>
+        <p-chart #chart3 type="bar" [data]="chartData" [options]="chartOptions"></p-chart>
+        
+        <div class="formgroup-inline" style="margin-top: 15px;"> 
+           
+                <label class="col-fixed" style="width:65px; margin-top: 3px;" for="month" >Month</label>
+                <p-calendar id="month" inputId="month" 
+                class="inputfield" [(ngModel)]="selDate" view="month" (onSelect)="getNewData()" dateFormat="mm/yy"></p-calendar>
+           
+            <div class="field">
+                <label for="cat" >Categories</label>
+                <p-multiSelect [options]="catOptions" class="inputfield" [(ngModel)]="selectedCats"
+                [maxSelectedLabels]="0" [selectedItemsLabel]="'{0} items selected'" 
+                (onChange)="getNewData()" 
+                inputId="cat"
+                optionLabel="category_name"></p-multiSelect>
+            </div>
+        </div>
+    </div>
+</div>
