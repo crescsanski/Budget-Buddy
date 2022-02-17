@@ -1,5 +1,11 @@
-import { Component, OnInit } from '@angular/core';
-import {ChartModule} from 'primeng/chart';
+import { Component, OnInit, ViewChild } from '@angular/core';
+import { SelectMultipleControlValueAccessor } from '@angular/forms';
+import {ChartModule, UIChart} from 'primeng/chart';
+import { Category } from 'src/app/models/category';
+import { CategoryService } from 'src/app/services/category.service';
+import { SpendingHistoryService } from 'src/app/services/spending-history.service';
+import { TimeService } from 'src/app/services/time.service';
+import { TriggerService } from 'src/app/services/trigger.service';
 
 @Component({
   selector: 'app-spending-by-category',
@@ -10,15 +16,36 @@ export class SpendingByCategoryComponent implements OnInit {
 
 
   data: any;
+  catOptions: Category[] = [];
+  categories: string[] = []
+  curMonthSpendByCat: number[] = [];
+  selDate: Date = new Date();
 
-  constructor() { 
+  @ViewChild('chart3') chart: UIChart;
+
+  constructor(private spenServ: SpendingHistoryService, private catServ: CategoryService, private ts: TimeService, private trigServ: TriggerService) { 
+
+    this.catOptions = this.catServ.expenseCats
+
+    this.trigServ.expenReceiptAnnounced$.subscribe(() =>
+    {
+        this.getNewData();
+    })
+
+    
+
+
+  }
+
+  ngOnInit(): void {
+    this.setupValues();
 
     this.data = {
-      labels: ['Housing', 'Transportation', 'Essential Groceries', 'Non-Essential Groceries', "Utilities", "Insurance", "Medical", "Entertainment", "Lifestyle Essentials", "Lifestyle Non-Essentials"], //Needs to be changed to new categories
+      labels: this.categories, //Needs to be changed to new categories
       datasets: [
           {
               label: 'Spending',
-              data: [65, 59, 80, 81, 20, 50, 40, 39],
+              data: this.curMonthSpendByCat,
               backgroundColor: [
                 "#003486 ",
                 "#4ec5ca",
@@ -31,10 +58,33 @@ export class SpendingByCategoryComponent implements OnInit {
           },
       ]
   }
+  }
+
+  setupValues()
+  {
+    this.curMonthSpendByCat = []
+    this.categories = []
+    let spendData = this.spenServ.catSpenByMonth.filter(value => value.year == this.selDate.getFullYear() && value.month == this.selDate.getMonth() + 1)
+    for (let i of this.catOptions)
+    {
+      let spenValue = spendData.find(value => value.category_id == i.category_id)
+
+      if (spenValue)
+      {
+        this.categories.push(i.category_name)
+        spenValue ? this.curMonthSpendByCat.push(spenValue.totalSpent) : this.curMonthSpendByCat.push(0)
+      }
+      
+    }
 
   }
 
-  ngOnInit(): void {
+  getNewData()
+  {
+    this.setupValues()
+    this.data.labels = this.categories
+    this.data.datasets[0].data = this.curMonthSpendByCat;
+    this.chart.reinit();
   }
 
 }

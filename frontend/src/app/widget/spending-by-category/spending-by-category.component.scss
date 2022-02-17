@@ -1,1 +1,7 @@
 @import "../../../styles.scss";
+
+:host::ng-deep #month
+{
+    width: 150px !important;
+    margin-right: 20px !important;
+}
