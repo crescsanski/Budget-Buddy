@@ -34,6 +34,7 @@
     </div>
     <div *ngIf="currentPage === 'Budget'" class="widget-container" style="width: 73vw;"> 
       <div class="large-widgets">
+        <app-spending-by-category></app-spending-by-category>
         <div *ngFor="let widget of budgetWidgets" class="large-widgets">
           <app-basic-widget *ngIf="widget.size==='large'" [title]=widget.title [image]=widget.image></app-basic-widget>
         </div>

@@ -17,6 +17,7 @@ import { BudgetSliderComponent } from './budget-slider/budget-slider.component';
 import {OverlayPanel, OverlayPanelModule} from 'primeng/overlaypanel';
 import {FileUploadModule} from 'primeng/fileupload';
 import {HttpClientModule} from '@angular/common/http';
+import { SpendingByCategoryComponent } from './spending-by-category/spending-by-category.component';
 
 
 @NgModule({
@@ -30,7 +31,8 @@ import {HttpClientModule} from '@angular/common/http';
     IncomeTrackingComponent,
     SavingsOverTimeComponent,
     BadgesWidgetComponent,
-    BudgetSliderComponent
+    BudgetSliderComponent,
+    SpendingByCategoryComponent
   ],
   imports: [
     CommonModule,
@@ -44,6 +46,6 @@ import {HttpClientModule} from '@angular/common/http';
     HttpClientModule
   ],
   exports: [BasicWidgetComponent, SmallWidgetComponent, ReceiptTrackingComponent, TrackingComponent, WeeklySpendingComponent, 
-    WeeklySpendingSmallComponent, IncomeTrackingComponent, SavingsOverTimeComponent, BadgesWidgetComponent, BudgetSliderComponent]
+    WeeklySpendingSmallComponent, IncomeTrackingComponent, SavingsOverTimeComponent, BadgesWidgetComponent, BudgetSliderComponent, SpendingByCategoryComponent]
 })
 export class WidgetModule { }
