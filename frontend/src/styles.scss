@@ -112,6 +112,15 @@ button {
     font-family: "Century Gothic Pro", sans-serif !important;
     color: white;
     cursor: pointer;
+  }
+  .p-dialog {
+    font-family: "Century Gothic Pro", sans-serif !important;
+    color: $blue;
+    width: 25vw;
+
+    .p-dialog-header {
+      color: $teal;
+    }
 
   }
 }

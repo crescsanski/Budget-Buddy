@@ -11,6 +11,9 @@ import { BudgetPanelComponent } from './budget-creator/budget-panel/budget-panel
 import { PrimengModule } from '../primeng/primeng.module';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import {SliderModule} from 'primeng/slider';
+import { BudgetAdvisorComponent } from './budget-creator/budget-advisor/budget-advisor.component';
+import {ChartModule} from 'primeng/chart';
+import {DialogModule} from 'primeng/dialog';
 
 
 
@@ -24,7 +27,8 @@ import {SliderModule} from 'primeng/slider';
     MainPageComponent,
     MenuComponent,
     NewBudgetComponent,
-    BudgetPanelComponent
+    BudgetPanelComponent,
+    BudgetAdvisorComponent
   ],
   imports: [
     CommonModule,
@@ -35,7 +39,9 @@ import {SliderModule} from 'primeng/slider';
     PrimengModule,
     ReactiveFormsModule,
     SliderModule,
-    FormsModule
+    FormsModule,
+    ChartModule,
+    DialogModule
     ],
  
 })

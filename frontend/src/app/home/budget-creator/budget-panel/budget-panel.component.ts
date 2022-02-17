@@ -39,12 +39,12 @@ export class BudgetPanelComponent implements OnInit {
   amount: number;
   exisBudgets: Budget[]
   panelNumber: number = 0;
-  //frequencyOptions!: SelectItem[];
   visible=true;
   animationDirection: string = "forward";
   totalIncome: number;
   totalExpenses: number;
   availableBudget: number;
+  advisorVisible: boolean;
   
 
   constructor(private ws: WidgetService, private fb: FormBuilder,
@@ -59,6 +59,7 @@ export class BudgetPanelComponent implements OnInit {
   this.prompts = [
     //toggle comments to show finalization page first
       //{icon: '../../../../assets/icons/budget-icons/help.png', categoryTitle: 'Finalization', amount: null},
+      {icon: 'null', categoryTitle: 'Advisor', amount: null},
       {icon: '../../../../assets/icons/budget-icons/help.png', categoryTitle: 'What\'s Your Budget?', amount: null},
       {icon: '../../../../assets/icons/budget-icons/job-income.png', id: 17, categoryTitle: 'Job Income',  amount: 0, type: 'Income'},
       {icon: '../../../../assets/icons/budget-icons/gift.png', id: 18, categoryTitle: 'Received Gift',  amount: 0, type: 'Income'},
@@ -85,6 +86,7 @@ export class BudgetPanelComponent implements OnInit {
       {icon: '../../../../assets/icons/budget-icons/misc-income.png', id: 16, categoryTitle: 'Miscellaneous Expense',  amount: 0, type: 'Expense'},
       {icon: '../../../../assets/icons/budget-icons/help.png', categoryTitle: 'Finalization', amount: null},
       {icon: '../../../../assets/icons/budget-icons/thumbs-up.png', categoryTitle: 'All Done!', amount: null},
+      {icon: 'null', categoryTitle: 'Advisor', amount: null},
     ]
    }
 
@@ -112,7 +114,8 @@ export class BudgetPanelComponent implements OnInit {
 
   ngOnInit(): void {
 
-    this.currentPanel = this.prompts[this.panelNumber];    
+    this.currentPanel = this.prompts[this.panelNumber];  
+    this.advisorVisible = true;  
   }
 
   //simple budget calculations for recommendations:
@@ -146,6 +149,10 @@ export class BudgetPanelComponent implements OnInit {
       this.animationDirection = "forward";
       this.visible = false;
       this.panelNumber++
+      this.advisorVisible = false;
+      if(this.panelNumber == 1) {
+        this.pageForwardStep2();
+      }
     }
   }
 
