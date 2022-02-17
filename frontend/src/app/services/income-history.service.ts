@@ -18,6 +18,7 @@ export class IncomeHistoryService {
   private weeklyIncomeTotal: number;
   private cumIncByMonth: IncomeOverTime[]
   private incByMonth: IncomeOverTime[]
+  private catIncByMonth: IncomeOverTime[]
 
   httpOptions = {
     headers: new HttpHeaders({ 'Content-Type': 'application/json' })
@@ -43,6 +44,28 @@ export class IncomeHistoryService {
   {
     return this.incByMonth;
   }
+
+  get catIncomeByMonth()
+  {
+    return this.catIncByMonth;
+  }
+
+    /**GET income by category within each month */
+    getIncomeCatBreakdown(): Observable<IncomeOverTime[]>
+    {
+      const url = `${this.apiUrl}/${this.user.user_id}/?period=monthly&category_breakdown=true`
+  
+      return this.http.get<IncomeOverTime[]>(url).pipe(
+        tap(out => 
+          {
+            console.log(`Fetched income totals with category breakdown by month = ${out}`);
+            this.catIncByMonth = out;
+          }
+        
+          ),
+        catchError(this.handleError<IncomeOverTime[]>(`getIncomeHistory`))
+      );
+    }
 
   /**GET cumulative income growth by month.*/
   getByMonthCumIncome(): Observable<IncomeOverTime[]>

@@ -19,6 +19,7 @@ import {FileUploadModule} from 'primeng/fileupload';
 import {HttpClientModule} from '@angular/common/http';
 import { SpendingVsIncomeComponent } from './spending-vs-income/spending-vs-income.component';
 import { BudgetVsSpendingComponent } from './budget-vs-spending/budget-vs-spending.component';
+import { ActualVsEstIncomeComponent } from './actual-vs-est-income/actual-vs-est-income.component';
 
 
 @NgModule({
@@ -34,7 +35,8 @@ import { BudgetVsSpendingComponent } from './budget-vs-spending/budget-vs-spendi
     BadgesWidgetComponent,
     BudgetSliderComponent,
     SpendingVsIncomeComponent,
-    BudgetVsSpendingComponent
+    BudgetVsSpendingComponent,
+    ActualVsEstIncomeComponent
   ],
   imports: [
     CommonModule,
@@ -49,6 +51,6 @@ import { BudgetVsSpendingComponent } from './budget-vs-spending/budget-vs-spendi
   ],
   exports: [BasicWidgetComponent, SmallWidgetComponent, ReceiptTrackingComponent, TrackingComponent, WeeklySpendingComponent, 
     WeeklySpendingSmallComponent, IncomeTrackingComponent, SavingsOverTimeComponent, BadgesWidgetComponent, BudgetSliderComponent,
- SpendingVsIncomeComponent, BudgetVsSpendingComponent]
+ SpendingVsIncomeComponent, BudgetVsSpendingComponent, ActualVsEstIncomeComponent]
 })
 export class WidgetModule { }

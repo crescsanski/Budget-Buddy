@@ -44,6 +44,8 @@ export class TriggerService {
 
     await (this.incHis.getByMonthIncome().toPromise());
 
+    await (this.incHis.getIncomeCatBreakdown().toPromise());
+
     this.incomReceiptSubmitAnnounce.next();
   }
 

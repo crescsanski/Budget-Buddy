@@ -109,8 +109,8 @@ def getSpentHistoryInternal(params, user_id, category_id = None):
 
     # data = Expense.objects.select_related('receipt'
     #         ).annotate(year=ExtractYear('receipt__receipt_date'),
-    #                   month=ExtractMonth('receipt__receipt_date'),
-    #                   week=ExtractWeek('receipt__receipt_date')
+    #                 month=ExtractMonth('receipt__receipt_date'),
+    #                 week=ExtractWeek('receipt__receipt_date')
     #         ).filter(receipt__user_id = user_id,
     #                 receipt__receipt_date__range=[start_date, end_date],
     #                 year='2016' ,
@@ -119,7 +119,9 @@ def getSpentHistoryInternal(params, user_id, category_id = None):
     #     ).values('category_id', 'year', 'month', 'week'
     #     ).annotate(totalSpent=Sum('expense_price'))
 
-    #out = data.values('category_id', 'totalSpent', 'year', 'month', 'week')
+    # out = data.values('category_id', 'totalSpent', 'year', 
+    # 'month', 'week').order_by(
+    #     'category_id', 'year', 'month', 'week')
 
     return out
     

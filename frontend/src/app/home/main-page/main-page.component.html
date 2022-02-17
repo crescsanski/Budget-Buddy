@@ -68,6 +68,7 @@
     </div>
     <div *ngIf="currentPage === 'Analytics'" class="widget-container" style="width: 73vw;"> 
       <div class="large-widgets">
+        <app-actual-vs-est-income></app-actual-vs-est-income>
         <div *ngFor="let widget of analyticsWidgets" class="large-widgets">
           <app-basic-widget *ngIf="widget.size==='large'" [title]=widget.title [image]=widget.image></app-basic-widget>
         </div>

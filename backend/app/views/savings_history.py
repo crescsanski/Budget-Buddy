@@ -35,11 +35,7 @@ def getSavingsHistory(request, user_id):
     return Response(savings)
 
 def getSavingsHistoryInternal(params, user_id):
-    start_date = params.get('start_date')
-    end_date = params.get('end_date')
-    yearVal = params.get('year')
-    monthVal = params.get('month')
-    weekVal = params.get('week')
+
     period = params.get('period')
 
     expenseTable = getSpentHistoryInternal(params = params, user_id = user_id)
@@ -56,7 +52,8 @@ def getSavingsHistoryInternal(params, user_id):
     if len(id) > 0:
         incomeDf = pd.DataFrame(incomeTable).set_index(id)
         expenseDf = pd.DataFrame(expenseTable).set_index(id)
-        savingsDf = incomeDf.merge(expenseDf, how = 'outer', left_index = True, right_index = True)
+        savingsDf = incomeDf.merge(expenseDf, how = 'outer', 
+        left_index = True, right_index = True)
         savingsDf = savingsDf.fillna(0)
         savingsDf["totalSavings"] = savingsDf["totalIncomeReceived"] - savingsDf["totalSpent"]
         savingsDf = savingsDf.drop(columns = ['totalIncomeReceived', 'totalSpent'])
