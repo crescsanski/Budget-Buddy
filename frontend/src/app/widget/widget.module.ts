@@ -20,6 +20,7 @@ import {HttpClientModule} from '@angular/common/http';
 import { SpendingVsIncomeComponent } from './spending-vs-income/spending-vs-income.component';
 import { BudgetVsSpendingComponent } from './budget-vs-spending/budget-vs-spending.component';
 import { ActualVsEstIncomeComponent } from './actual-vs-est-income/actual-vs-est-income.component';
+import { SpendingByCategoryComponent } from './spending-by-category/spending-by-category.component';
 
 
 @NgModule({
@@ -36,7 +37,8 @@ import { ActualVsEstIncomeComponent } from './actual-vs-est-income/actual-vs-est
     BudgetSliderComponent,
     SpendingVsIncomeComponent,
     BudgetVsSpendingComponent,
-    ActualVsEstIncomeComponent
+    ActualVsEstIncomeComponent,
+    SpendingByCategoryComponent
   ],
   imports: [
     CommonModule,
@@ -49,8 +51,19 @@ import { ActualVsEstIncomeComponent } from './actual-vs-est-income/actual-vs-est
     FileUploadModule,
     HttpClientModule
   ],
-  exports: [BasicWidgetComponent, SmallWidgetComponent, ReceiptTrackingComponent, TrackingComponent, WeeklySpendingComponent, 
-    WeeklySpendingSmallComponent, IncomeTrackingComponent, SavingsOverTimeComponent, BadgesWidgetComponent, BudgetSliderComponent,
- SpendingVsIncomeComponent, BudgetVsSpendingComponent, ActualVsEstIncomeComponent]
+  exports: [BasicWidgetComponent,
+    SmallWidgetComponent,
+    ReceiptTrackingComponent,
+    TrackingComponent,
+    WeeklySpendingComponent,
+    WeeklySpendingSmallComponent,
+    IncomeTrackingComponent,
+    SavingsOverTimeComponent,
+    BadgesWidgetComponent,
+    BudgetSliderComponent,
+    SpendingVsIncomeComponent,
+    BudgetVsSpendingComponent,
+    ActualVsEstIncomeComponent,
+    SpendingByCategoryComponent]
 })
 export class WidgetModule { }
