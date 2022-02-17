@@ -49,7 +49,7 @@ export class BudgetVsSpendingComponent implements OnInit {
     this.budgetValues = []
     this.categories = []
 
-    let budgetData = this.budServ.exBudByCat
+    let budgetData = this.budServ.exBudByCat.filter(value => value.year == this.selDate.getFullYear() && value.month == this.selDate.getMonth() + 1)
 
     let spendData = this.spenServ.catSpenByMonth.filter(value => value.year == this.selDate.getFullYear() && value.month == this.selDate.getMonth() + 1)
     for (let i of this.selectedCats)

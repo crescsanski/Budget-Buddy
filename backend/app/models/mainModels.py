@@ -188,6 +188,7 @@ class UserCategoryBudget(models.Model):
     user_category_budget_estimated_amount = models.IntegerField(blank=True, null=True)
     user_category_budget_altered_amount = models.IntegerField(blank=True, null=True)
     user_category_budget_last_modified_date = models.DateTimeField(blank=True, null=True)
+    user_category_budget_date_created = models.DateField(blank=True, null=True)
 
     class Meta:
         managed = False

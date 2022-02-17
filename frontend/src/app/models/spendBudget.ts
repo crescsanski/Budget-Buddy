@@ -1,4 +1,6 @@
 export interface SpendBudget {
+    year: number;
+    month: number;
     monthlyBudgetTotal: number;
-    curWeekSpenBudget: number;
+    weeklyBudgetTotal: number;
 }

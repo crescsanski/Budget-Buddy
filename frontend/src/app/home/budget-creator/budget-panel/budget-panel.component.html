@@ -12,12 +12,8 @@
         <div *ngIf="currentPanel.categoryTitle != 'What\'s Your Budget?' && currentPanel.categoryTitle != 'Halfway There!' && currentPanel.categoryTitle != 'All Done!' && currentPanel.categoryTitle != 'Finalization'">
                 <div class="content-area">
                     <p>Amount</p>
-                    <p-inputNumber mode="currency" currency="USD" [(ngModel)]="amount" [maxFractionDigits]=0 locale="en-US"></p-inputNumber>
+                    <p-inputNumber mode="currency" currency="USD" [(ngModel)]="currentPanel.amount" [maxFractionDigits]=0 locale="en-US"></p-inputNumber>
                     <br>
-        
-                    <div style="text-align: center;">
-                        <button style="margin-top: 2em; text-align: center;" (click)='track(panelNumber, amount)' class="track button-emphasis" pButton type="submit" label='Track'></button>
-                    </div>
                 </div>
           
         </div>
@@ -49,7 +45,7 @@
         <br>
     </div>
 </div>
-<img class="clickable" src="../../../../assets/icons/right-arrow.png" style="height: 5em; margin-top: 16vh; margin-left: 3em; opacity: 95%" (click)="pageForward()">
+<img class="clickable" src="../../../../assets/icons/right-arrow.png" style="height: 5em; margin-top: 16vh; margin-left: 3em; opacity: 95%" (click)="trackValues(); pageForward()">
 </div>
 <div *ngIf="currentPanel.categoryTitle == 'Advisor' && advisorVisible">
     <app-budget-advisor (pageForward)="pageForward(); "></app-budget-advisor>

@@ -11,8 +11,8 @@
         </div>
     </div>
     <p-dialog header="Over Budget!" [(visible)]="overBudget">
-        <h3>It looks like you are {{errorPercent}} over budget in the {{errorCategory}} category.</h3>
-        <h3>We recommend you reduce your budget in this category by ${{errorDifference}}.</h3>
+        <h3>It looks like you are {{getErrPerc(errorPercent)}}% over budget in the {{errorCategory}} category.</h3>
+        <h3>We recommend you reduce your budget in this category by ${{getErrPerc(errorDifference)}}.</h3>
 
     </p-dialog>
 </div>

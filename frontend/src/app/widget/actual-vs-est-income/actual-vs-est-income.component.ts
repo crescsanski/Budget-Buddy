@@ -47,7 +47,7 @@ export class ActualVsEstIncomeComponent implements OnInit {
     this.estIncValues = []
     this.categories = []
 
-    let estIncData = this.budServ.inBudByCat
+    let estIncData = this.budServ.inBudByCat.filter(value => value.year == this.selDate.getFullYear() && value.month == this.selDate.getMonth() + 1)
 
     let acIncdData = this.incServ.catIncomeByMonth.filter(value => value.year == this.selDate.getFullYear() && value.month == this.selDate.getMonth() + 1)
     for (let i of this.selectedCats)

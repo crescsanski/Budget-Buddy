@@ -17,7 +17,7 @@ export class BudgetService {
 
   private budgetsUrl = 'api/budget/';  // URL to web api
   user: User | null = null;
-  private spenBudCalcs: SpendBudget = <SpendBudget>{};
+  private spenBudCalcs: SpendBudget[] = [];
   private exBudCat: BudgetCategory[]
   private inBudCat: BudgetCategory[]
 
@@ -91,14 +91,14 @@ export class BudgetService {
   }
 
   /**GET User's Budget Spending Totals */
-  getSpendBudget(): Observable<SpendBudget> {
-    return this.http.get<SpendBudget>(`${this.budgetsUrl}users/${this.user.user_id}/SpendingBudget`).pipe(
-    tap((out: SpendBudget) => 
+  getSpendBudget(): Observable<SpendBudget[]> {
+    return this.http.get<SpendBudget[]>(`${this.budgetsUrl}users/${this.user.user_id}/SpendingBudget`).pipe(
+    tap((out: SpendBudget[]) => 
       {
         console.log(`Fetched budget spending totals: ${out}`)
         this.spenBudCalcs = out;
       }),
-    catchError(this.handleError<SpendBudget>(`getSpendBudget`))
+    catchError(this.handleError<SpendBudget[]>(`getSpendBudget`))
   );
 }
 

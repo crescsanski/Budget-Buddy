@@ -1,5 +1,7 @@
 export interface BudgetCategory {
     categoryTitle: string,
     amount: number,
-    visible?: boolean
+    visible?: boolean,
+    year?: number,
+    month?: number
 }

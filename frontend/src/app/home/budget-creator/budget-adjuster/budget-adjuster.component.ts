@@ -29,7 +29,7 @@ export class BudgetAdjusterComponent implements OnInit {
   errorDifference = 0;
   errorCategory = '';
 
-  overBudget: boolean = true;
+  overBudget: boolean = false;
 
   categories = ['want', 'need', 'debt']
 
@@ -137,6 +137,11 @@ export class BudgetAdjusterComponent implements OnInit {
       this.totalExpenses = this.debtValue + this.wantsValue + this.needsValue;
       this.availableBudget = this.totalIncome-this.totalExpenses;
       this.max = this.availableBudget;
+    }
+
+    getErrPerc(x: number): number
+    {
+      return Math.round(x);
     }
   
     update(event: Event) {

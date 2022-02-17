@@ -17,10 +17,10 @@ export class BudgetSliderComponent implements OnInit {
 
   ngOnInit(): void {
     
-    this.totalBudget = this.budServ.spendBudCalcs.monthlyBudgetTotal;
+    this.totalBudget = this.budServ.spendBudCalcs[0].monthlyBudgetTotal;
     this.tempValue = 0;
 
-    this.budgetCategories = this.budServ.exBudByCat;
+    this.budgetCategories = this.budServ.exBudByCat.slice(0, 17);
     /*
     this.budgetCategories = [
       {categoryTitle: 'Housing', amount: 700, visible: true},

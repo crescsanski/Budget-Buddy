@@ -26,7 +26,7 @@ export class WeeklySpendingSmallComponent implements OnInit {
 
   ngOnInit(): void {
     //fetch value from database (calculate percentage)
-   this.weeklyBudget = this.budServ.spendBudCalcs.curWeekSpenBudget; //need to retreive via api
+   this.weeklyBudget = this.budServ.spendBudCalcs[0].weeklyBudgetTotal; //need to retreive via api
    this.weeklySpent = this.spenHis.weekSpend; //api retrieval
 
    let interval = setInterval(() => {

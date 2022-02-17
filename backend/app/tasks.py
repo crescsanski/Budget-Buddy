@@ -1,7 +1,9 @@
+import datetime
 from threading import Timer
 from django.contrib.auth.hashers import *
 import threading
 from app.models import Users
+from app.models.mainModels import UserCategoryBudget
 
 class gameThread(threading.Thread):
    def __init__(self, counter):
@@ -14,42 +16,49 @@ class gameThread(threading.Thread):
 
 #This function should trigger once every hour to update the state of the game.
 def mainGameOrigin():
-   # We need to iterate over each user in the database.
-   for user in Users.objects.all():
-
-      #If the user's password is unusable, replace it with the default
-      password = user.password
-      if len(password) < 12:
-         print("Invalid Password: ", password)
-         fixedPassword = make_password(password)
-         Users.objects.filter(user_id = user.user_id).update(password = fixedPassword)
-
-      #For each user....
-
-      #We need to update their experience points
-      updateExperPoints(user.pk)
-
-      #We need to modify their level (if applicable)
-      updateLevel(user.pk)
-
-      #We need to call SQL procedures to verify the completion of challenges
-      #If completed, the corresponding reward should be granted.
-      verifyChallenges(user.pk)
-
-      #We need to swap out expired challenges with new ones.
-      assignNewChallenges(user.pk)
-
-def updateExperPoints(userPk):
    pass
+   # today = datetime.date.today()
+   # for budget in UserCategoryBudget.objects.all():
+   #    date = budget.user_category_budget_date_created
+   #    if date is None:
+   #       UserCategoryBudget.objects.filter(pk=budget.pk).update(user_category_budget_date_created = today)
 
-def updateLevel(userPk):
-   pass
+#    # We need to iterate over each user in the database.
+#    for user in Users.objects.all():
 
-def verifyChallenges(userPk):
-   pass
+#       #If the user's password is unusable, replace it with the default
+#       password = user.password
+#       if len(password) < 12:
+#          print("Invalid Password: ", password)
+#          fixedPassword = make_password(password)
+#          Users.objects.filter(user_id = user.user_id).update(password = fixedPassword)
 
-def assignNewChallenges(userPk):
-   pass
+#       #For each user....
+
+#       #We need to update their experience points
+#       updateExperPoints(user.pk)
+
+#       #We need to modify their level (if applicable)
+#       updateLevel(user.pk)
+
+#       #We need to call SQL procedures to verify the completion of challenges
+#       #If completed, the corresponding reward should be granted.
+#       verifyChallenges(user.pk)
+
+#       #We need to swap out expired challenges with new ones.
+#       assignNewChallenges(user.pk)
+
+# def updateExperPoints(userPk):
+#    pass
+
+# def updateLevel(userPk):
+#    pass
+
+# def verifyChallenges(userPk):
+#    pass
+
+# def assignNewChallenges(userPk):
+#    pass
 
 
 
