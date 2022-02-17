@@ -1,0 +1,43 @@
+@import "../../../../styles.scss";
+
+.panel {
+  width: 40vw;
+  text-align: center;
+  padding: 50px;
+  border: 30px;
+  border-style: solid;
+  border-color: white;
+  margin-top: -130px;
+
+}
+
+h1 {
+  text-align: center;
+  color: $blue;
+}
+
+h3 {
+  color: $blue;
+  text-align: center;
+}
+
+.card {
+  text-align: center;
+  width: 8vw;
+  margin: 1vw;
+  margin-top: 2vh;
+  padding-top: 1.5vh;
+  border-radius: 14px;
+  border-style: solid;
+  border-color: $teal;
+  display: block;
+
+}
+
+.card-area {
+  display: inline-flex;
+  width: 34vw;
+  text-align: center;
+  justify-content: space-between;
+  margin-left: 1vw;
+}

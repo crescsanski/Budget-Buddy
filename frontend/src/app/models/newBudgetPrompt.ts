@@ -5,4 +5,5 @@ export interface newBudgetPrompt {
     amount: number; //amount value per item
     type?: string; //income or expense
     id?: number;
+    category?: string; //want, need, debt repayment
 }
