@@ -29,7 +29,7 @@ export class WeeklySpendingComponent implements OnInit {
 
   ngOnInit(): void {
         //fetch value from database (calculate percentage)
-  
+        this.value = 0;
         this.weeklyBudget = this.budServ.spendBudCalcs[0].weeklyBudgetTotal;
      
         this.weeklySpent = this.spenHis.weekSpend;

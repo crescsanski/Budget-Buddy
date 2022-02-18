@@ -41,7 +41,7 @@ export class SpendingByCategoryComponent implements OnInit {
     this.setupValues();
 
     this.data = {
-      labels: this.categories, //Needs to be changed to new categories
+      labels: this.categories, 
       datasets: [
           {
               label: 'Spending',
@@ -53,18 +53,18 @@ export class SpendingByCategoryComponent implements OnInit {
                 "#03fca9",
                 "#93d9f5",
                 "#008048"
-
             ],
           },
       ]
-  }
-  }
+    }
+ }
 
   setupValues()
   {
     this.curMonthSpendByCat = []
     this.categories = []
-    let spendData = this.spenServ.catSpenByMonth.filter(value => value.year == this.selDate.getFullYear() && value.month == this.selDate.getMonth() + 1)
+    let spendData = this.spenServ.catSpenByMonth.filter(value => value.year == this.selDate.getFullYear() 
+    && value.month == this.selDate.getMonth() + 1)
     for (let i of this.catOptions)
     {
       let spenValue = spendData.find(value => value.category_id == i.category_id)
@@ -73,10 +73,8 @@ export class SpendingByCategoryComponent implements OnInit {
       {
         this.categories.push(i.category_name)
         spenValue ? this.curMonthSpendByCat.push(spenValue.totalSpent) : this.curMonthSpendByCat.push(0)
-      }
-      
+      }  
     }
-
   }
 
   getNewData()

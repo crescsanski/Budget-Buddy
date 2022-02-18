@@ -96,7 +96,15 @@ export class BudgetService {
     tap((out: SpendBudget[]) => 
       {
         console.log(`Fetched budget spending totals: ${out}`)
-        this.spenBudCalcs = out;
+        if (out && out.length > 0)
+        {
+          this.spenBudCalcs = out;
+        }
+        else
+        {
+          this.spenBudCalcs = [{weeklyBudgetTotal: 0, monthlyBudgetTotal: 0, month: 0, year: 0}]
+        }
+        
       }),
     catchError(this.handleError<SpendBudget[]>(`getSpendBudget`))
   );

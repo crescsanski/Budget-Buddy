@@ -2,8 +2,7 @@ import datetime
 from threading import Timer
 from django.contrib.auth.hashers import *
 import threading
-from app.models import Users
-from app.models.mainModels import UserCategoryBudget
+from app.models import Users, UserCategoryBudget, Expense, Income, Receipt
 
 class gameThread(threading.Thread):
    def __init__(self, counter):
@@ -16,7 +15,11 @@ class gameThread(threading.Thread):
 
 #This function should trigger once every hour to update the state of the game.
 def mainGameOrigin():
+   UserCategoryBudget.objects.filter
    pass
+   # Expense.objects.filter(receipt__user_id=54).delete()
+   # Income.objects.filter(receipt__user_id=54).delete()
+   # Receipt.objects.filter(user_id = 54).delete()
    # today = datetime.date.today()
    # for budget in UserCategoryBudget.objects.all():
    #    date = budget.user_category_budget_date_created
