@@ -62,31 +62,20 @@ export class BudgetService {
       );
   }
 
-  /**GET User's Expense Budgets */
-  getExBudByCat(): Observable<BudgetCategory[]>
+  /**GET User's Budgets */
+  getBudByCat(): Observable<BudgetCategory[]>
   {
-    const url = `${this.budgetsUrl}users/${this.user.user_id}/?category_is_income=false`
+    const url = `${this.budgetsUrl}users/${this.user.user_id}/`
     return this.http.get<BudgetCategory[]>(url).pipe(
       tap((out: BudgetCategory[]) => 
       {
-        console.log(`Fetched expense budgets by category`)
-        this.exBudCat = out;
+        console.log(`Fetched budgets by category`)
+        let inc = out.filter(value => value.category_type == "income")  
+        let exp = out.filter(value => value.category_type != "income")
+        this.exBudCat = exp;
+        this.inBudCat = inc;
       }),
-      catchError(this.handleError<BudgetCategory[]>(`getExBudByCat`))
-    )
-  }
-
-  /**GET User's Income Budgets */
-  getInBudByCat(): Observable<BudgetCategory[]>
-  {
-    const url = `${this.budgetsUrl}users/${this.user.user_id}/?category_is_income=true`
-    return this.http.get<BudgetCategory[]>(url).pipe(
-      tap((out: BudgetCategory[]) => 
-      {
-        console.log(`Fetched income budgets by category`)
-        this.inBudCat = out;
-      }),
-      catchError(this.handleError<BudgetCategory[]>(`getInBudByCat`))
+      catchError(this.handleError<BudgetCategory[]>(`getBudByCat`))
     )
   }
 

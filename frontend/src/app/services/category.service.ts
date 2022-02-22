@@ -36,29 +36,21 @@ export class CategoryService {
     return this.expenseCategories.value;
   }
 
-   /** GET income categories from the server */
-   getIncomeCategories(): Observable<Category[]> {
-    return this.http.get<Category[]>(`${this.categoriesUrl}?category_is_income=true`)
+   /** GET categories from the server */
+   getCategories(): Observable<Category[]> {
+    return this.http.get<Category[]>(`${this.categoriesUrl}`)
       .pipe(
-        tap((incCats: Category[]) => {
-          console.log('fetched income categories');
-          this.incomeCategories.next(incCats);
+        tap((cats: Category[]) => {
+          console.log('fetched categories');
+
+          let inc = cats.filter(value => value.category_type == "income")
+          let exp = cats.filter(value => value.category_type != "income")
+          this.incomeCategories.next(inc);
+          this.expenseCategories.next(exp)
         }),
         catchError(this.handleError<Category[]>('getCategories', []))
       );
   }
-
-     /** GET spending categories from the server */
-     getSpendingCategories(): Observable<Category[]> {
-      return this.http.get<Category[]>(`${this.categoriesUrl}?category_is_income=false`)
-        .pipe(
-          tap((spenCats: Category[]) => {
-            console.log('fetched spending categories');
-            this.expenseCategories.next(spenCats);
-          }),
-          catchError(this.handleError<Category[]>('getCategories', []))
-        );
-    }
 
   /**
    * Handle Http operation that failed.

@@ -2,6 +2,8 @@ import datetime
 from threading import Timer
 from django.contrib.auth.hashers import *
 import threading
+
+from numpy import fix
 from app.models import Users, UserCategoryBudget, Expense, Income, Receipt
 
 class gameThread(threading.Thread):
@@ -9,32 +11,42 @@ class gameThread(threading.Thread):
       threading.Thread.__init__(self)
       self.counter = counter
    def run(self):
+      pass
+      #fixPasswordAndActivateAccount()
+      #activateBudgetsForThisMonth()
+      #t = Timer(self.counter, mainGameOrigin)
+      #t.start()
 
-      t = Timer(self.counter, mainGameOrigin)
-      t.start()
+def fixPasswordAndActivateAccount():
+   for user in Users.objects.all():
+
+      #If the user's password is unusable, replace it with the default
+      password = user.password
+      
+      if len(password) < 12:
+         print("Invalid Password: ", password)
+         fixedPassword = make_password(password)
+         Users.objects.filter(user_id = user.user_id).update(password = fixedPassword)
+
+      if user.is_active == None:
+         print("The user is inactive.")
+         Users.objects.filter(user_id = user.user_id).update(is_active = True)
+
+def activateBudgetsForThisMonth():
+   today = datetime.date.today()
+   for budget in UserCategoryBudget.objects.all():
+      date = budget.user_category_budget_date
+      if date is None:
+         print("The budget is missing a date.")
+         UserCategoryBudget.objects.filter(pk=budget.pk).update(user_category_budget_date = today)
 
 #This function should trigger once every hour to update the state of the game.
 def mainGameOrigin():
-   UserCategoryBudget.objects.filter
    pass
    # Expense.objects.filter(receipt__user_id=54).delete()
    # Income.objects.filter(receipt__user_id=54).delete()
    # Receipt.objects.filter(user_id = 54).delete()
-   # today = datetime.date.today()
-   # for budget in UserCategoryBudget.objects.all():
-   #    date = budget.user_category_budget_date_created
-   #    if date is None:
-   #       UserCategoryBudget.objects.filter(pk=budget.pk).update(user_category_budget_date_created = today)
-
-#    # We need to iterate over each user in the database.
-#    for user in Users.objects.all():
-
-#       #If the user's password is unusable, replace it with the default
-#       password = user.password
-#       if len(password) < 12:
-#          print("Invalid Password: ", password)
-#          fixedPassword = make_password(password)
-#          Users.objects.filter(user_id = user.user_id).update(password = fixedPassword)
+   # 
 
 #       #For each user....
 

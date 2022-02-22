@@ -52,7 +52,7 @@ class Category(models.Model):
     category_id = models.AutoField(primary_key=True)
     category_name = models.CharField(max_length=255)
     category_description = models.CharField(max_length=255)
-    category_is_income = models.BooleanField()
+    category_type = models.CharField(max_length=255)
 
     class Meta:
         managed = False
@@ -153,7 +153,6 @@ class Expense(models.Model):
     expense_id = models.AutoField(primary_key=True)
     expense_name = models.CharField(max_length=255)
     expense_price = models.DecimalField(max_digits=10, decimal_places=2)
-    expense_is_essential = models.BooleanField(blank=True, null=True)
     receipt = models.ForeignKey('Receipt', models.DO_NOTHING, blank=True, null=True)
     category = models.ForeignKey(Category, models.DO_NOTHING, blank=True, null=True)
 
@@ -241,6 +240,7 @@ class Receipt(models.Model):
     receipt_is_reccuring = models.IntegerField()
     receipt_is_income = models.BooleanField()
     user = models.ForeignKey('Users', models.DO_NOTHING, blank=True, null=True)
+    receipt_name = models.CharField(max_length=255, blank=True, null=True)
 
     class Meta:
         managed = False
@@ -264,6 +264,8 @@ class UserCategoryBudget(models.Model):
     user_category_budget_estimated_amount = models.IntegerField(blank=True, null=True)
     user_category_budget_altered_amount = models.IntegerField(blank=True, null=True)
     user_category_budget_last_modified_date = models.DateTimeField(blank=True, null=True)
+    user_category_budget_date = models.DateTimeField(blank=True, null=True)
+    user_category_budget_favorite = models.BooleanField(blank=True, null=True)
 
     class Meta:
         managed = False
@@ -327,7 +329,6 @@ class Users(models.Model):
     user_registration_date = models.DateField()
     user_birth_date = models.DateField()
     user_has_notifications = models.BooleanField()
-    user_budget_goal_amount = models.IntegerField(blank=True, null=True)
     user_current_experience_points = models.IntegerField(blank=True, null=True)
     user_required_experience_points = models.IntegerField(blank=True, null=True)
     user_level = models.IntegerField(blank=True, null=True)
@@ -336,6 +337,8 @@ class Users(models.Model):
     is_active = models.BooleanField(blank=True, null=True)
     is_admin = models.BooleanField(blank=True, null=True)
     last_login = models.DateTimeField(blank=True, null=True)
+    user_total_logins = models.IntegerField(blank=True, null=True)
+    user_auto_renewal = models.BooleanField(blank=True, null=True)
 
     class Meta:
         managed = False

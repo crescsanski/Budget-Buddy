@@ -14,14 +14,11 @@ export class NewBudgetResolver implements Resolve<any> {
     resolve(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): any | Observable<any> | Promise<any> {
     
     var observArray = []
-    if (this.catService.expenseCats == null)
+    if (this.catService.expenseCats == null || this.catService.incomeCats == null)
     {
-        observArray.push(this.catService.getSpendingCategories())
+        observArray.push(this.catService.getCategories())
     }
-    if (this.catService.incomeCats == null)
-    {
-        observArray.push(this.catService.getIncomeCategories())
-    }
+
     const observable = forkJoin(observArray)
 
     return observable;

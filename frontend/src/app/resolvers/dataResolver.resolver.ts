@@ -22,14 +22,11 @@ export class DataResolver implements Resolve<any> {
     resolve(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): any | Observable<any> | Promise<any> {
     
     var observArray = []
-    if (this.catService.expenseCats == null)
+    if (this.catService.expenseCats == null || this.catService.incomeCats == null)
     {
-        observArray.push(this.catService.getSpendingCategories())
+        observArray.push(this.catService.getCategories())
     }
-    if (this.catService.incomeCats == null)
-    {
-        observArray.push(this.catService.getIncomeCategories())
-    }
+   
     const observable = forkJoin( observArray.concat([
     
         //Fetch Weekly and Monthly Budgets for the app:
@@ -53,8 +50,7 @@ export class DataResolver implements Resolve<any> {
         this.incServ.getIncomeCatBreakdown(),
 
         //Fetch Income and Expense Budgets By Category
-        this.budServ.getExBudByCat(),
-        this.budServ.getInBudByCat(),
+        this.budServ.getBudByCat(),
 
         //Fetch Weekly Spending Total
         this.spenTot.getCurWeekSpend(),

@@ -62,8 +62,8 @@ def setInitialBudget(request):
 
     today = date.today()
     #Next, we need to check if the user already has existing budget budget records for this month.
-    oldRecords = UserCategoryBudget.objects.annotate(year=ExtractYear('user_category_budget_date_created'),
-                      month=ExtractMonth('user_category_budget_date_created'),
+    oldRecords = UserCategoryBudget.objects.annotate(year=ExtractYear('user_category_budget_date'),
+                      month=ExtractMonth('user_category_budget_date'),
             ).filter(user_id=user, year=today.year, month=today.month).count()
     if oldRecords > 0:
         raise ValidationError("Users can only set one budget per month.")
@@ -72,7 +72,7 @@ def setInitialBudget(request):
         for budget in validData['budgets']:
             UserCategoryBudget.objects.create(**budget, user_id=user, 
             user_category_budget_last_modified_date = timezone.now(),
-            user_category_budget_date_created= today)
+            user_category_budget_date= today)
     except:
         raise ValidationError("The user already has an existing budget.")
 
@@ -83,22 +83,21 @@ def setInitialBudget(request):
 #Includes optional filter to retrieve only income
 #or only expense budgets
 def manageUserBudget(request, userid):
-    type = request.query_params.get('category_is_income')
+    type = request.query_params.get('category_type')
     filters = {'user_id': userid}
     if type is not None:
-        if json.loads(type.lower()):
-            filters['category__category_is_income'] = True
-        else:
-            filters['category__category_is_income'] = False
+        filters['category__category_type'] = type
+
 
     if Users.objects.filter(user_id = userid).count() == 0:
         raise ValidationError("A user with the given ID does not exist.")
-    budgets = UserCategoryBudget.objects.annotate(year=ExtractYear('user_category_budget_date_created'),
-                      month=ExtractMonth('user_category_budget_date_created'),
+    budgets = UserCategoryBudget.objects.annotate(year=ExtractYear('user_category_budget_date'),
+                      month=ExtractMonth('user_category_budget_date'),
             ).filter(**filters).annotate(
         categoryTitle = F('category__category_name'),
-        amount = F('user_category_budget_altered_amount')
-    ).values('year', 'month', 'categoryTitle', 'amount').order_by('-year', '-month')
+        amount = F('user_category_budget_altered_amount'),
+        category_type = F('category__category_type')
+    ).values('year', 'month', 'categoryTitle', 'category_type', 'amount').order_by('-year', '-month')
     return Response(budgets)
 
 #Calculate and retrieve a user's monthly and weekly spending budget total for each budget cycle (excludes income categories)
@@ -108,11 +107,11 @@ def getSpendBudgetTotal(request, userid):
     today = date.today()
     now = datetime.now()
     daysInMonth = calendar.monthrange(now.year, now.month)[1]
-    spendBudget = UserCategoryBudget.objects.annotate(year=ExtractYear('user_category_budget_date_created'),
-                      month=ExtractMonth('user_category_budget_date_created'),
+    spendBudget = UserCategoryBudget.objects.annotate(year=ExtractYear('user_category_budget_date'),
+                      month=ExtractMonth('user_category_budget_date'),
             ).filter(
             user_id = userid, 
-            category__category_is_income = False).values('user_id', 'year', 'month').annotate(
+            category__category_type__in = ['want', 'need', 'saving']).values('user_id', 'year', 'month').annotate(
                 monthlyBudgetTotal = Sum('user_category_budget_altered_amount')).annotate(
                 weeklyBudgetTotal = F('monthlyBudgetTotal') * (7 / daysInMonth)).values(
                     'year', 'month', 'monthlyBudgetTotal', 'weeklyBudgetTotal'
