@@ -3,6 +3,7 @@ from django.contrib.auth import password_validation
 from rest_framework.authtoken.views import ObtainAuthToken
 from rest_framework.authtoken.models import Token
 from rest_framework.exceptions import ValidationError
+import os
 from skimage.filters import threshold_local
 from rest_framework.generics import GenericAPIView
 from rest_framework.response import Response
@@ -87,46 +88,32 @@ class ReceiptUploadConvertViewSet(GenericAPIView):
                 metaData = True
 
         for idx, path in enumerate(finalPaths):
+            orig = cv2.imread(path)
+    
+            if physical:
+                receipt = self.cropReceipt(input = orig)
+                if receipt is not None:
+                    enhanceCrop = self.remove_noise_and_smooth(receipt)
+                    cv2.imwrite(self.getSavePath(f'enhanceCrop-{filename}-{idx}.jpg'), enhanceCrop)
 
-                orig = cv2.imread(path)
-                if physical:
-                    #enhanced = self.enhanceImage(input = orig)
-                    receipt = self.cropReceipt(input = orig)
-                    receipt = self.remove_noise_and_smooth(receipt)
-                else:
-                    receipt = input
+                try:
+                    grandTotal, dates, vendorName, itemizedLines, itemNames, amounts = self.runOCR(enhanceCrop, "--psm 6")
+                    
+                except:
+                    try:
+                        regEnhance = self.remove_noise_and_smooth(orig)
+                        cv2.imwrite(self.getSavePath(f"regEnhance-{filename}-{idx}.jpg"), regEnhance)
+                        grandTotal, dates, vendorName, itemizedLines, itemNames, amounts = self.runOCR(regEnhance, "--psm 6")
+                    except:
+                        try:
+                            grandTotal, dates, vendorName, itemizedLines, itemNames, amounts = self.runOCR(orig, "--psm 6")
+                        except:
+                            raise Exception("The receipt API failed to parse the receipt.  Please try retaking the photo.")
+            else:
+                grandTotal, dates, vendorName, itemizedLines, itemNames, amounts = self.runOCR(input)
+                cv2.imwrite(self.getSavePath(f"digitallyRendered-{filename}-{idx}.jpg"), input)
         
-                cv2.imwrite(f"savedImage-{filename}-{idx}.jpg", receipt)
-
-                options = "--psm 4"
-                #bw = cv2.cvtColor(receipt, cv2.COLOR_BGR2RGB)
-                #ret, imgf = cv2.threshold(receipt, 0, 255,cv2.THRESH_BINARY,cv2.THRESH_OTSU)
-               # cv2.imwrite(f"thresholded.jpg", ret)
-                content = pytesseract.image_to_string(receipt, config=options)
-                print(content)
-                if len(content) > 2:
-                    amounts = self.get_amounts(content)
-                    itemizedLines = self.get_items(content)
-                    itemNames = self.get_itemName(itemizedLines)
-                    print("[INFO] price line items:")
-                    print("========================")
-                    print(itemizedLines)
-                    print("ITEM Names")
-                    print(itemNames)
-                    grandTotal = None
-                    if len(amounts) > 0:
-                        grandTotal = max(amounts)
-                    else:
-                        grandTotal = "Not Found"
-                    splits = content.splitlines()
-                    vendorName = splits[0]
-                    dates = self.get_dates(content)
-                    print("Dates: ", dates)
-                    print("Vendor Name: ", vendorName)
-                    print("Amounts: ", amounts)
-                    print("Grand Total: ", grandTotal)
-                else: 
-                    raise Exception("The uploaded file doesn't contain any text.")
+                
         
         #Delete the contents of the directory with the original image/PDF files
         shutil.rmtree('rawReceipts/', True)
@@ -144,22 +131,130 @@ class ReceiptUploadConvertViewSet(GenericAPIView):
             }
             itemArray.append(ex)
         data['expenses'] = itemArray
-
+    
         return data
+    
+    def getSavePath(self, filename):
+        if not os.path.exists(os.path.join(os.getcwd(), 'images')):
+            os.mkdir(os.path.join(os.getcwd(), 'images'))
+        return os.path.join(os.getcwd(), 'images', filename)
+    
+    #Remove garbage detected by OCR
+    def removeGarbage(self, text: str):
+        #Ignore words that have 4 or more consecutive letters or digits
+        fourOrMoreRepeatedNumorLet = r'^.*([a-zA-Z0-9])\1{3,}.*$'
+        newLines = []
+        for row in text.splitlines():
+            words = row.split(sep = ' ')
+            keep = []
+            #We're going to discard lines that contain 3 or more alpha-only words that are less than 3 in length
+            numAlph3OrLess = 0
+            for word in words:
+                numLet = self.countLet(word)
+                numNum = self.countNum(word)
+                if word.isalpha() and len(word) <= 3:
+                    numAlph3OrLess += 1
+                #Text detected by OCR will be garbage if length of word is less
+                #than 3 letters
+                if numNum == 0 and numLet < 3:
+                    continue
+                #Text detected by OCR will be garbage if length of word is greater
+                #than 40
+                if len(word) > 40:
+                    continue
+                #If there 4 consective same letters or digits in a word it will garbage
+                if re.match(fourOrMoreRepeatedNumorLet, word):
+                    continue
+                #Alpha numeric string having length greater than 5 digits will be considered as garbage. 
+                if word.isalnum() and numNum > 5:
+                    continue
+                #If letters to numbers ratio in string /word is greater than 50%, word will treated as a garbage. 
+                if numLet > 0 and numNum > 0:
+                    if numLet / numNum > 0.5:
+                        continue
+                #print("555555555")
+
+                keep.append(word)
+
+            if len(keep) > 0 and keep[0] != '' and numAlph3OrLess < 3:
+                newLines.append(keep)
+        
+        return newLines
+    
+    def countNum(self, word: str):
+        count = 0
+        for char in word:
+            if char.isnumeric():
+                count += 1
+        #print("aaaaaa")
+        return count
+
+    def countLet(self, word: str):
+        count = 0
+        for char in word:
+            if char.isalpha():
+                count += 1
+        #print("bbbbbb")
+        return count
+
+    
+    def runOCR(self, receipt, options = None):
+        #bw = cv2.cvtColor(receipt, cv2.COLOR_BGR2RGB)
+        #ret, imgf = cv2.threshold(receipt, 0, 255,cv2.THRESH_BINARY,cv2.THRESH_OTSU)
+        # cv2.imwrite(f"thresholded.jpg", ret)
+        content = pytesseract.image_to_string(receipt, config=options)
+        print(content)
+        if len(content) < 3:
+            raise Exception("The uploaded file doesn't contain any text.")
+        filtered = self.removeGarbage(content)
+        #print("HELLO WORLD!!!")
+        #print(filtered)
+        #print(content)
+        if len(filtered) > 0:
+            amounts = self.get_amounts(filtered)
+            itemizedLines = self.get_items(filtered)
+            itemNames = self.get_itemName(itemizedLines)
+            print("[INFO] price line items:")
+            print("========================")
+            print(itemizedLines)
+            print("ITEM Names")
+            print(itemNames)
+            grandTotal = None
+            if len(amounts) > 0:
+                grandTotal = max(amounts)
+            else:
+                grandTotal = "Not Found"
+            #splits = content.splitlines()
+            vendorName = filtered[0]
+            dates = self.get_dates(filtered)
+            print("Dates: ", dates)
+            print("Vendor Name: ", vendorName)
+            print("Amounts: ", amounts)
+            print("Grand Total: ", grandTotal)
+            return grandTotal, dates, vendorName, itemizedLines, itemNames, amounts
+        else: 
+            raise Exception("The uploaded file doesn't contain any text.")
     
     #Here, we perform the 3 main 
     def enhanceImage(self, input):
         pass
 
     def remove_noise_and_smooth(self, img):
-        img = img.astype(np.uint8)
-        filtered = cv2.adaptiveThreshold(img, 255, cv2.ADAPTIVE_THRESH_MEAN_C, cv2.THRESH_BINARY, 9, 41)
-        kernel = np.ones((1, 1), np.uint8)
-        opening = cv2.morphologyEx(filtered, cv2.MORPH_OPEN, kernel)
-        closing = cv2.morphologyEx(opening, cv2.MORPH_CLOSE, kernel)
-        img = self.image_smoothening(img)
-        or_image = cv2.bitwise_or(img, closing)
-        return or_image
+        
+        img = self.get_grayscale(img)   
+        img = self.thresholding(img)
+        #img = self.bw_scanner(img)
+ 
+        #img = self.deskew(img)
+        return img
+            # img = img.astype(np.uint8)
+            # filtered = cv2.adaptiveThreshold(img, 255, cv2.ADAPTIVE_THRESH_MEAN_C, cv2.THRESH_BINARY, 9, 41)
+            # kernel = np.ones((1, 1), np.uint8)
+            # opening = cv2.morphologyEx(filtered, cv2.MORPH_OPEN, kernel)
+            # closing = cv2.morphologyEx(opening, cv2.MORPH_CLOSE, kernel)
+            # img = self.image_smoothening(img)
+            # or_image = cv2.bitwise_or(img, closing)
+            # return or_image
     
     def image_smoothening(self, img):
         ret1, th1 = cv2.threshold(img, 180, 255, cv2.THRESH_BINARY)
@@ -189,19 +284,19 @@ class ReceiptUploadConvertViewSet(GenericAPIView):
 
         #convert to grayscale to make it easier to distinguish the background from the foreground
         gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
-        cv2.imwrite(f"gray.png", gray)
+        cv2.imwrite(self.getSavePath(f"gray.png"), gray)
   
         #Get rid of noise with a blur filter
         blurred = cv2.GaussianBlur(gray, (5, 5), 0)
-        cv2.imwrite(f"blurred.png", blurred)
+        cv2.imwrite(self.getSavePath(f"blurred.png"), blurred)
 
         #Detect white regions 
         rectKernel = cv2.getStructuringElement(cv2.MORPH_RECT, (9,9))
         dilated = cv2.dilate(blurred, rectKernel)
-        cv2.imwrite(f"dilated.png", dilated)
+        cv2.imwrite(self.getSavePath(f"dilated.png"), dilated)
  
         edged = cv2.Canny(dilated, 100, 200, apertureSize=3)
-        cv2.imwrite(f"edged.png", edged)
+        cv2.imwrite(self.getSavePath(f"edged.png"), edged)
 
       
         #Detect contours in the edged image and process them
@@ -209,22 +304,20 @@ class ReceiptUploadConvertViewSet(GenericAPIView):
         #cnts = imutils.grab_contours(cnts)
         #Grab the 10 largest contours
         largest_cnts = sorted(cnts, key=cv2.contourArea, reverse=True)[:10]
-        receipt_contour = self.get_receipt_contour(largest_cnts)
 
-        
+        try:
+            receipt_contour = self.get_receipt_contour(largest_cnts)
+            #With the receipt contour found, let's apply our perspective transform to the image
+            # apply a four-point perspective transform to the *original* image to
+            # obtain a top-down bird's-eye view of the receipt
+            #receipt = four_point_transform(input, receiptCnt.reshape(4, 2) * ratio)
 
-        #With the receipt contour found, let's apply our perspective transform to the image
-        # apply a four-point perspective transform to the *original* image to
-        # obtain a top-down bird's-eye view of the receipt
-        #receipt = four_point_transform(input, receiptCnt.reshape(4, 2) * ratio)
-
-        scanned = self.wrap_perspective(original.copy(), self.contour_to_rect(receipt_contour, resize_ratio))
-        cv2.imwrite('perspectiveVersion.png', scanned)
-
-       # final = self.bw_scanner(scanned)
-
-        #cv2.imwrite('savedImage.png', final)
-        return scanned
+            scanned = self.wrap_perspective(original.copy(), self.contour_to_rect(receipt_contour, resize_ratio))
+            cv2.imwrite(self.getSavePath(f'perspectiveVersion.png'), scanned)
+            #cv2.imwrite('savedImage.png', final)
+            return scanned
+        except:
+            return None     
 
     def get_receipt_contour(self, cnts):
         #Determine if the contour contains four vertices
@@ -255,7 +348,7 @@ class ReceiptUploadConvertViewSet(GenericAPIView):
     
     def bw_scanner(self, image):
         gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
-        T = threshold_local(gray, 21, offset = 5, method = "gaussian")
+        T = threshold_local(gray, 11, offset = 10, method = "gaussian")
         return (gray > T).astype("uint8") * 255
     
     def contour_to_rect(self, contour, resize_ratio):
@@ -326,13 +419,15 @@ class ReceiptUploadConvertViewSet(GenericAPIView):
         pricePattern = r'([0-9]+\.[0-9]+)'
         doNotMatch = ['total', 'sub', 'tip', 'change']
         items = []
-        for row in content.splitlines():
-            if re.search(pricePattern, row) is not None:
+        for row in content:
+            str1 = ' '
+            line = str1.join(row)
+            if re.search(pricePattern, line) is not None:
                 for index, item in enumerate(doNotMatch):
-                    if item in row.lower():
+                    if item in line.lower():
                         break
                     elif index == len(doNotMatch) - 1:
-                        items.append(row)
+                        items.append(line)
         return items
 
     #Get names of items

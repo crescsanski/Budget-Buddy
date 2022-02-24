@@ -75,14 +75,13 @@ def incomeHistoryInternal(params, user_id, category_id = None):
         filters['category_id'] = category_id
     
     future = timezone.now() + datetime.timedelta(days=1)
-    futureString = future.isoformat()
-    dawnString = datetime.datetime(1, 1, 1, 0, 0, 0, 0, tzinfo=pytz.UTC).isoformat()
+    dawnString = datetime.datetime(1, 1, 1, 0, 0, 0, 0, tzinfo=pytz.UTC)
     if start_date and end_date:
-        filters['receipt__receipt_date__range'] = [start_date, end_date]
+        filters['receipt__receipt_date__date__range'] = [start_date, end_date]
     elif start_date:
-        filters['receipt__receipt_date__range'] = [start_date, futureString]
+        filters['receipt__receipt_date__date__range'] = [start_date, future]
     elif end_date:
-        filters['receipt__receipt_date__range'] = [dawnString, end_date]
+        filters['receipt__receipt_date__date__range'] = [dawnString, end_date]
     
     if yearVal:
         filters['year'] = yearVal
@@ -110,7 +109,7 @@ def incomeHistoryInternal(params, user_id, category_id = None):
     #                   month=ExtractMonth('receipt__receipt_date'),
     #                   week=ExtractWeek('receipt__receipt_date')
     #         ).filter(receipt__user_id = user_id,
-    #                 receipt__receipt_date__range=[start_date, end_date],
+    #                 receipt__receipt_date__date__range=[start_date, end_date],
     #                 year='2016' ,
     #                 month='8',
     #                 week='31'

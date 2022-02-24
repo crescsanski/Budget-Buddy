@@ -49,7 +49,7 @@ def getSpentHistoryInternal(params, user_id, category_id = None):
     monthVal = params.get('month')
     weekVal = params.get('week')
     period = params.get('period')
-
+    category_type = params.get('category_type')
 
 
     if not category_id and (byCat is not None and json.loads(byCat.lower())):
@@ -74,18 +74,20 @@ def getSpentHistoryInternal(params, user_id, category_id = None):
     filters = {
         'receipt__user_id': user_id
     }
+    if category_type:
+        filters['category__category_type'] = category_type
+
     if category_id:
         filters['category_id'] = category_id
     
     future = timezone.now() + datetime.timedelta(days=1)
-    futureString = future.isoformat()
-    dawnString = datetime.datetime(1, 1, 1, 0, 0, 0, 0, tzinfo=pytz.UTC).isoformat()
+    dawnString = datetime.datetime(1, 1, 1, 0, 0, 0, 0, tzinfo=pytz.UTC)
     if start_date and end_date:
-        filters['receipt__receipt_date__range'] = [start_date, end_date]
+        filters['receipt__receipt_date__date__range'] = [start_date, end_date]
     elif start_date:
-        filters['receipt__receipt_date__range'] = [start_date, futureString]
+        filters['receipt__receipt_date__date__range'] = [start_date, future]
     elif end_date:
-        filters['receipt__receipt_date__range'] = [dawnString, end_date]
+        filters['receipt__receipt_date__date__range'] = [dawnString, end_date]
     
     if yearVal:
         filters['year'] = yearVal
@@ -97,7 +99,7 @@ def getSpentHistoryInternal(params, user_id, category_id = None):
         filters['week'] = weekVal
 
 
-    data = Expense.objects.select_related('receipt'
+    data = Expense.objects.select_related('receipt', 'category'
             ).annotate(year=ExtractYear('receipt__receipt_date'),
                       month=ExtractMonth('receipt__receipt_date'),
                       week=ExtractWeek('receipt__receipt_date')
@@ -112,7 +114,7 @@ def getSpentHistoryInternal(params, user_id, category_id = None):
     #                 month=ExtractMonth('receipt__receipt_date'),
     #                 week=ExtractWeek('receipt__receipt_date')
     #         ).filter(receipt__user_id = user_id,
-    #                 receipt__receipt_date__range=[start_date, end_date],
+    #                 receipt__receipt_date__date__range=[start_date, end_date],
     #                 year='2016' ,
     #                 month='8',
     #                 week='31'
