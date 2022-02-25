@@ -118,3 +118,4 @@ def getSpendBudgetTotal(request, userid):
                 ).order_by('-year', '-month')
     
     return Response(spendBudget)
+

@@ -84,7 +84,7 @@ export class BudgetService {
     return this.http.get<SpendBudget[]>(`${this.budgetsUrl}users/${this.user.user_id}/SpendingBudget`).pipe(
     tap((out: SpendBudget[]) => 
       {
-        console.log(`Fetched budget spending totals: ${out}`)
+        console.log(`Fetched budget spending totals`)
         if (out && out.length > 0)
         {
           this.spenBudCalcs = out;

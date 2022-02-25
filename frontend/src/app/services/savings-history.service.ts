@@ -46,7 +46,7 @@ export class SavingsHistoryService {
     return this.http.get<SavingsOverTime[]>(url).pipe(
       tap(out => 
         {
-          console.log(`Fetched cumulative savings totals by month = ${out}`);
+          console.log(`Fetched cumulative savings totals by month`);
           this.cumSavByMonth = out;
         }
       
@@ -62,7 +62,7 @@ export class SavingsHistoryService {
 
     return this.http.get<SavingsOverTime[]>(url).pipe(
       tap(out => 
-        {console.log(`Fetched current weekly spending total = ${out}`);
+        {console.log(`Fetched current weekly spending total`);
         if (out.length > 0)
         {
           this.weeklySavingsTotal = out[0].totalSavings;

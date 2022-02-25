@@ -3,6 +3,7 @@ from .receipt_track import *
 from .receipt_upload import *
 from .badges_earned import *
 from .loginAuthenticationReg import *
+from .budget_score import *
 from .challenges import *
 from .baseViews import *
 from .spend_history import *

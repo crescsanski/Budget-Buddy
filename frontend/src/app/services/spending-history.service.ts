@@ -65,7 +65,7 @@ export class SpendingHistoryService {
     return this.http.get<SpendingOverTime[]>(url).pipe(
       tap(out => 
         {
-          console.log(`Fetched spending totals with category breakdown by month = ${out}`);
+          console.log(`Fetched spending totals with category breakdown by month`);
           this.catSpendByMonth = out;
         }
       
@@ -82,7 +82,7 @@ export class SpendingHistoryService {
     return this.http.get<SpendingOverTime[]>(url).pipe(
       tap(out => 
         {
-          console.log(`Fetched cumulative spending totals by month = ${out}`);
+          console.log(`Fetched cumulative spending totals by month`);
           this.cumSpenByMonth = out;
         }
       
@@ -99,7 +99,7 @@ export class SpendingHistoryService {
     return this.http.get<SpendingOverTime[]>(url).pipe(
       tap(out => 
         {
-          console.log(`Fetched spending totals by month = ${out}`);
+          console.log(`Fetched spending totals by month`);
           this.spenByMonth = out;
         }
       
@@ -116,7 +116,7 @@ export class SpendingHistoryService {
 
     return this.http.get<SpendingOverTime[]>(url).pipe(
       tap(out => 
-        {console.log(`Fetched current weekly spending total = ${out}`);
+        {console.log(`Fetched current weekly spending total`);
         if (out.length > 0)
         {
           this.weeklySpendingTotal = out[0].totalSpent;

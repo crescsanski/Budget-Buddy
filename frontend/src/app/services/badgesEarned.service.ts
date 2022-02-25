@@ -40,7 +40,7 @@ export class BadgesEarnedService {
       tap((out: BadgesEarned[]) => 
       {
         this.badgesEarned = out;
-        console.log(`fetched badges for user=${this.user.user_id}`)
+        console.log(`fetched badges for user`)
       }),
       catchError(this.handleError<BadgesEarned[]>(`getBadgesEarned id=${this.user.user_id}`))
     );

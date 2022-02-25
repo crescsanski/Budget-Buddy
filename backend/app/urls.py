@@ -47,6 +47,8 @@ urlpatterns = [
     
     path('badges_earned/<userid>/', views.BadgesEarnedViewSet.as_view()),
 
+    path('budget_score/<user_id>/', views.budgetScore),
+
     path('', include(router.urls))
 ]
 

@@ -58,7 +58,7 @@ export class IncomeHistoryService {
       return this.http.get<IncomeOverTime[]>(url).pipe(
         tap(out => 
           {
-            console.log(`Fetched income totals with category breakdown by month = ${out}`);
+            console.log(`Fetched income totals with category breakdown by month`);
             this.catIncByMonth = out;
           }
         
@@ -75,7 +75,7 @@ export class IncomeHistoryService {
     return this.http.get<IncomeOverTime[]>(url).pipe(
       tap(out => 
         {
-          console.log(`Fetched cumulative income totals by month = ${out}`);
+          console.log(`Fetched cumulative income totals by month`);
           this.cumIncByMonth = out;
         }
       
@@ -92,7 +92,7 @@ export class IncomeHistoryService {
     return this.http.get<IncomeOverTime[]>(url).pipe(
       tap(out => 
         {
-          console.log(`Fetched income totals by month = ${out}`);
+          console.log(`Fetched income totals by month`);
           this.incByMonth = out;
         }
       
@@ -109,7 +109,7 @@ export class IncomeHistoryService {
 
     return this.http.get<IncomeOverTime[]>(url).pipe(
       tap(out => 
-        {console.log(`Fetched current weekly spending total = ${out}`);
+        {console.log(`Fetched current weekly spending total`);
         if (out.length > 0)
         {
           this.weeklyIncomeTotal = out[0].totalIncomeReceived;
