@@ -1,3 +1,7 @@
+from collections import namedtuple
+import fnmatch
+import json
+import dateutil
 from PIL.Image import Image
 from django.contrib.auth import password_validation
 from rest_framework.authtoken.views import ObtainAuthToken
@@ -34,6 +38,9 @@ import shutil
 from django.views.decorators.http import require_http_methods
 from rest_framework.decorators import api_view, throttle_classes, parser_classes
 from rest_framework.parsers import MultiPartParser, FormParser
+from difflib import get_close_matches
+import dateutil.parser
+from app.views.receipt_parse import ParseReceipt
 
 class ReceiptUploadConvertViewSet(GenericAPIView):
     serializer_class = ReceiptUploadSerializer
@@ -92,45 +99,47 @@ class ReceiptUploadConvertViewSet(GenericAPIView):
     
             if physical:
                 receipt = self.cropReceipt(input = orig)
-                if receipt is not None:
+                areOr = orig.shape[0] * orig.shape[1]
+                areNew = receipt.shape[0] * receipt.shape[1]
+                if receipt is not None and areNew >= 0.2 * areOr:
                     enhanceCrop = self.remove_noise_and_smooth(receipt)
-                    cv2.imwrite(self.getSavePath(f'enhanceCrop-{filename}-{idx}.jpg'), enhanceCrop)
+                    cv2.imwrite(self.getSavePath(f'enhanceCrop-{idx}.jpg'), enhanceCrop)
 
                 try:
-                    grandTotal, dates, vendorName, itemizedLines, itemNames, amounts = self.runOCR(enhanceCrop, "--psm 6")
+                    data = self.runOCR(enhanceCrop, "--psm 6")
                     
                 except:
                     try:
                         regEnhance = self.remove_noise_and_smooth(orig)
-                        cv2.imwrite(self.getSavePath(f"regEnhance-{filename}-{idx}.jpg"), regEnhance)
-                        grandTotal, dates, vendorName, itemizedLines, itemNames, amounts = self.runOCR(regEnhance, "--psm 6")
+                        cv2.imwrite(self.getSavePath(f"regEnhance-{idx}.jpg"), regEnhance)
+                        data = self.runOCR(regEnhance, "--psm 6")
                     except:
                         try:
-                            grandTotal, dates, vendorName, itemizedLines, itemNames, amounts = self.runOCR(orig, "--psm 6")
+                            data = self.runOCR(orig, "--psm 6")
                         except:
                             raise Exception("The receipt API failed to parse the receipt.  Please try retaking the photo.")
             else:
-                grandTotal, dates, vendorName, itemizedLines, itemNames, amounts = self.runOCR(input)
-                cv2.imwrite(self.getSavePath(f"digitallyRendered-{filename}-{idx}.jpg"), input)
+                data = self.runOCR(input)
+                cv2.imwrite(self.getSavePath(f"digitallyRendered-{idx}.jpg"), input)
         
                 
         
-        #Delete the contents of the directory with the original image/PDF files
-        shutil.rmtree('rawReceipts/', True)
+        # #Delete the contents of the directory with the original image/PDF files
+        # shutil.rmtree('rawReceipts/', True)
 
-        #Create a receipt object with the parsed data, but DO NOT SAVE to the database.
-        data = {}
-        data['receipt'] = {
-            'receipt_date': dates.pop() if len(dates) > 0 else None,
-             'receipt_name': vendorName
-        }
-        itemArray = []
-        for idx, item in enumerate(itemizedLines):
-            ex = {'expense_name': itemNames[idx],
-                        'expense_price': amounts[idx],
-            }
-            itemArray.append(ex)
-        data['expenses'] = itemArray
+        # #Create a receipt object with the parsed data, but DO NOT SAVE to the database.
+        # data = {}
+        # data['receipt'] = {
+        #     'receipt_date': dates.pop() if len(dates) > 0 else None,
+        #      'receipt_name': vendorName
+        # }
+        # itemArray = []
+        # for idx, item in enumerate(itemizedLines):
+        #     ex = {'expense_name': itemNames[idx],
+        #                 'expense_price': amounts[idx],
+        #     }
+        #     itemArray.append(ex)
+        # data['expenses'] = itemArray
     
         return data
     
@@ -139,63 +148,7 @@ class ReceiptUploadConvertViewSet(GenericAPIView):
             os.mkdir(os.path.join(os.getcwd(), 'images'))
         return os.path.join(os.getcwd(), 'images', filename)
     
-    #Remove garbage detected by OCR
-    def removeGarbage(self, text: str):
-        #Ignore words that have 4 or more consecutive letters or digits
-        fourOrMoreRepeatedNumorLet = r'^.*([a-zA-Z0-9])\1{3,}.*$'
-        newLines = []
-        for row in text.splitlines():
-            words = row.split(sep = ' ')
-            keep = []
-            #We're going to discard lines that contain 3 or more alpha-only words that are less than 3 in length
-            numAlph3OrLess = 0
-            for word in words:
-                numLet = self.countLet(word)
-                numNum = self.countNum(word)
-                if word.isalpha() and len(word) <= 3:
-                    numAlph3OrLess += 1
-                #Text detected by OCR will be garbage if length of word is less
-                #than 3 letters
-                if numNum == 0 and numLet < 3:
-                    continue
-                #Text detected by OCR will be garbage if length of word is greater
-                #than 40
-                if len(word) > 40:
-                    continue
-                #If there 4 consective same letters or digits in a word it will garbage
-                if re.match(fourOrMoreRepeatedNumorLet, word):
-                    continue
-                #Alpha numeric string having length greater than 5 digits will be considered as garbage. 
-                if word.isalnum() and numNum > 5:
-                    continue
-                #If letters to numbers ratio in string /word is greater than 50%, word will treated as a garbage. 
-                if numLet > 0 and numNum > 0:
-                    if numLet / numNum > 0.5:
-                        continue
-                #print("555555555")
-
-                keep.append(word)
-
-            if len(keep) > 0 and keep[0] != '' and numAlph3OrLess < 3:
-                newLines.append(keep)
-        
-        return newLines
     
-    def countNum(self, word: str):
-        count = 0
-        for char in word:
-            if char.isnumeric():
-                count += 1
-        #print("aaaaaa")
-        return count
-
-    def countLet(self, word: str):
-        count = 0
-        for char in word:
-            if char.isalpha():
-                count += 1
-        #print("bbbbbb")
-        return count
 
     
     def runOCR(self, receipt, options = None):
@@ -203,37 +156,13 @@ class ReceiptUploadConvertViewSet(GenericAPIView):
         #ret, imgf = cv2.threshold(receipt, 0, 255,cv2.THRESH_BINARY,cv2.THRESH_OTSU)
         # cv2.imwrite(f"thresholded.jpg", ret)
         content = pytesseract.image_to_string(receipt, config=options)
-        print(content)
+        #print(content)
         if len(content) < 3:
             raise Exception("The uploaded file doesn't contain any text.")
-        filtered = self.removeGarbage(content)
-        #print("HELLO WORLD!!!")
-        #print(filtered)
-        #print(content)
-        if len(filtered) > 0:
-            amounts = self.get_amounts(filtered)
-            itemizedLines = self.get_items(filtered)
-            itemNames = self.get_itemName(itemizedLines)
-            print("[INFO] price line items:")
-            print("========================")
-            print(itemizedLines)
-            print("ITEM Names")
-            print(itemNames)
-            grandTotal = None
-            if len(amounts) > 0:
-                grandTotal = max(amounts)
-            else:
-                grandTotal = "Not Found"
-            #splits = content.splitlines()
-            vendorName = filtered[0]
-            dates = self.get_dates(filtered)
-            print("Dates: ", dates)
-            print("Vendor Name: ", vendorName)
-            print("Amounts: ", amounts)
-            print("Grand Total: ", grandTotal)
-            return grandTotal, dates, vendorName, itemizedLines, itemNames, amounts
-        else: 
-            raise Exception("The uploaded file doesn't contain any text.")
+       
+        data = ParseReceipt(raw = content).to_dict()
+        #print(data)
+        return data
     
     #Here, we perform the 3 main 
     def enhanceImage(self, input):
@@ -241,9 +170,9 @@ class ReceiptUploadConvertViewSet(GenericAPIView):
 
     def remove_noise_and_smooth(self, img):
         
-        img = self.get_grayscale(img)   
-        img = self.thresholding(img)
-        #img = self.bw_scanner(img)
+        #img = self.get_grayscale(img)   
+        #img = self.thresholding(img)
+        img = self.bw_scanner(img)
  
         #img = self.deskew(img)
         return img
@@ -347,9 +276,55 @@ class ReceiptUploadConvertViewSet(GenericAPIView):
         return cv2.approxPolyDP(contour, 0.032 * peri, True)
     
     def bw_scanner(self, image):
+        threshold = 5
         gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
-        T = threshold_local(gray, 11, offset = 10, method = "gaussian")
-        return (gray > T).astype("uint8") * 255
+        #T = threshold_local(gray, 11, offset = 5, method = "gaussian")
+        #return (gray > T).astype("uint8") * 255
+         # Original image size
+        orignrows, origncols = gray.shape
+        
+        # Windows size
+        M = int(np.floor(orignrows/16) + 1)
+        N = int(np.floor(origncols/16) + 1)
+        
+        # Image border padding related to windows size
+        Mextend = round(M/2)-1
+        Nextend = round(N/2)-1
+        
+        # Padding image
+        aux =cv2.copyMakeBorder(gray, top=Mextend, bottom=Mextend, left=Nextend,
+                            right=Nextend, borderType=cv2.BORDER_REFLECT)
+        
+        windows = np.zeros((M,N),np.int32)
+        
+        # Image integral calculation
+        imageIntegral = cv2.integral(aux, windows,-1)
+        
+        # Integral image size
+        nrows, ncols = imageIntegral.shape
+        
+        # Memory allocation for cumulative region image
+        result = np.zeros((orignrows, origncols))
+        
+        # Image cumulative pixels in windows size calculation
+        for i in range(nrows-M):
+            for j in range(ncols-N):
+            
+                result[i, j] = imageIntegral[i+M, j+N] - imageIntegral[i, j+N]+ imageIntegral[i, j] - imageIntegral[i+M,j]
+        
+        # Output binary image memory allocation    
+        binar = np.ones((orignrows, origncols), dtype=np.bool)
+        
+        # Gray image weighted by windows size
+        graymult = (gray).astype('float64')*M*N
+        
+        # Output image binarization
+        binar[graymult <= result*(100.0 - threshold)/100.0] = False
+        
+        # binary image to UINT8 conversion
+        binar = (255*binar).astype(np.uint8)
+        
+        return binar
     
     def contour_to_rect(self, contour, resize_ratio):
         pts = contour.reshape(4, 2)
@@ -412,76 +387,6 @@ class ReceiptUploadConvertViewSet(GenericAPIView):
             total_text_area = total_text_area + text_area
         doc.close()
         return total_text_area / total_page_area
-
-
-    # extract lines with itemized details
-    def get_items(self, content):
-        pricePattern = r'([0-9]+\.[0-9]+)'
-        doNotMatch = ['total', 'sub', 'tip', 'change']
-        items = []
-        for row in content:
-            str1 = ' '
-            line = str1.join(row)
-            if re.search(pricePattern, line) is not None:
-                for index, item in enumerate(doNotMatch):
-                    if item in line.lower():
-                        break
-                    elif index == len(doNotMatch) - 1:
-                        items.append(line)
-        return items
-
-    #Get names of items
-    def get_itemName(self, items):
-        namePattern = r'^[a-zA-Z\s-]$'
-        names = []
-        for item in items:
-            nameChoices = self.findall_overlapping(namePattern, item)
-            names.append(nameChoices)
-        return names
-
-
-    # extract dates from receipt
-    def get_dates(self, content):
-        monDDYYYY = r'((\b\d{1,2}\D{0,3})?\b(?:Jan(?:uary)?|Feb(?:ruary)?|Mar(?:ch)?|Apr(?:il)?|May|Jun(?:e)?|Jul(?:y)?|Aug(?:ust)?|Sep(?:tember)?|Oct(?:ober)?|(Nov|Dec)(?:ember)?)\D?)(\d{1,2}(st|nd|rd|th)?)?((\s*[,.\-\/]\s*)\D?)?\s*((19[0-9]\d|20\d{2})|\d{2})*'
-        monthName = r'^(?:Jan(?:uary)?|Feb(?:ruary)?|Mar(?:ch)?|Apr(?:il)?|May|Jun(?:e)?|Jul(?:y)?|Aug(?:ust)?|Sep(?:tember)?|Oct(?:ober)?|(Nov|Dec)(?:ember)?)$'
-        YYYY = r'(19[0-9]\d|20\d{2})'
-        MM = r'(0[1-9]|1[0-2])'
-        DD = r'(0[1-9]|[12][0-9]|3[01])'
-        sep = r'[\-.\/:,]'
-        DDMMYYYY = DD + sep + MM + sep + YYYY
-        YYYYMMDD = YYYY + sep + MM + DD
-        MMDDYYYY = MM + sep + DD + sep + YYYY
-        monDDYYYY = monthName + sep + DD + r', ' + YYYY
-        DDMonYYYY = DD + sep + monthName + r', ' + YYYY
-        YYYYMonDD = YYYY + r', ' + monthName + sep + DD
-        master = '|'.join([monDDYYYY, MMDDYYYY, DDMMYYYY, YYYYMMDD, YYYYMonDD])
-        dates = self.findall_overlapping(master, content) 
-        #unique = list(dict.fromkeys(dates))
-        # Remove duplicate items in tuples
-        datPol = set()
-        for dit in dates:
-            datPol.add(dit.group())                    
-    
-        return datPol
-    
-    def findall_overlapping(self, pattern, string, flags=0):
-        """Find all matches, even ones that overlap."""
-        regex = re.compile(pattern, flags)
-        pos = 0
-        while True:
-            match = regex.search(string, pos)
-            if not match:
-                break
-            yield match
-            pos = match.start() + 1
-
-    
-    # extract itemized and grand total amounts from receipt text
-    def get_amounts(self, content):
-        amounts = re.findall(r'\d+\.\d{2}\b', content)
-        floats = [float(amount) for amount in amounts]
-        unique = list(dict.fromkeys(floats))
-        return unique
     
     # get grayscale image
     def get_grayscale(self, image):
