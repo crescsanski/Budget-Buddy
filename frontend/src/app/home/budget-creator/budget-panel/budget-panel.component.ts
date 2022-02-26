@@ -76,7 +76,7 @@ export class BudgetPanelComponent implements OnInit {
       {icon: '../../../../assets/icons/budget-icons/help.png', categoryTitle: 'What\'s Your Budget?', amount: null},
       {icon: '../../../../assets/icons/budget-icons/job-income.png', categoryTitle: 'Job Income',  amount: 0, type: 'Income'},
       //toggle for debugging
-     // {icon: '../../../../assets/icons/budget-icons/help.png', categoryTitle: 'Finalization', amount: null}, 
+      {icon: '../../../../assets/icons/budget-icons/help.png', categoryTitle: 'Finalization', amount: null}, 
       {icon: '../../../../assets/icons/budget-icons/gift.png', categoryTitle: 'Received Gift',  amount: 0, type: 'Income'},
       {icon: '../../../../assets/icons/budget-icons/interest.png', categoryTitle: 'Interest',  amount: 0, type: 'Income'},
       {icon: '../../../../assets/icons/budget-icons/gov-payment.png', categoryTitle: 'Government Payment',  amount: 0, type: 'Income'},

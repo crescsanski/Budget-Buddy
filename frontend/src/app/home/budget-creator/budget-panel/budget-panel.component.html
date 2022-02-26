@@ -56,6 +56,7 @@
     <app-budget-advisor (pageForward)="pageForward(); "></app-budget-advisor>
 </div>
 <div *ngIf="currentPanel.categoryTitle == 'Finalization' ">
-    <app-budget-adjuster [prompts]="prompts" [totalIncome]="totalIncome" [totalExpenses]="totalExpenses" [availableBudget]="availableBudget" [breakdown]="recalculate()"></app-budget-adjuster>
+    <app-budget-adjuster [prompts]="prompts" [totalIncome]="totalIncome" [totalExpenses]="totalExpenses" 
+    [availableBudget]="availableBudget" [breakdown]="recalculate()"></app-budget-adjuster>
 </div>
 

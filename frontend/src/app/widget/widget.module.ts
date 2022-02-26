@@ -1,3 +1,4 @@
+import { DialogModule } from 'primeng/dialog';
 import { WeeklySpendingSmallComponent } from './weekly-spending-small/weekly-spending-small.component';
 import { SmallWidgetComponent } from './small-widget/small-widget.component';
 import { NgModule } from '@angular/core';
@@ -43,7 +44,8 @@ import { SpendingByCategoryComponent } from './spending-by-category/spending-by-
     FormsModule,
     OverlayPanelModule,
     FileUploadModule,
-    HttpClientModule
+    HttpClientModule,
+    DialogModule
   ],
   exports: [BasicWidgetComponent, SmallWidgetComponent, ReceiptTrackingComponent, TrackingComponent, WeeklySpendingComponent, 
     WeeklySpendingSmallComponent, IncomeTrackingComponent, SavingsOverTimeComponent, BadgesWidgetComponent, BudgetSliderComponent, SpendingByCategoryComponent]
