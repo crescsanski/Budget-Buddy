@@ -45,11 +45,12 @@
             </div>
         </p-dialog>
         <p-dialog header="Verify Upload Values" [(visible)]="receiptUploaded" [appendTo]="receiptList" class="fit">
-            <p-tabView>
-                <p-tabPanel header="{{j.toString()}}" *ngFor="let receipt of form.controls; let j = index" [selected]="j == 0">
-                    <div>
-                        <div *ngIf="receiptUploaded" class="upload-verification">
-                            <form [formGroup]="getReceipt(j)">
+            
+            <p-tabView [(activeIndex)]="inSel">
+                <p-tabPanel [disabled]="!inProgress[j]" header="{{j.toString()}}" *ngFor="let receipt of form.controls; let j = index" [selected]="j == inSel">
+                    <div >
+                        <div *ngIf="receiptUploaded && inProgress[j]" class="upload-verification">
+                            <form #f [formGroup]="getReceipt(j)" (ngSubmit)="track(j)">
                                 <div class="center">
                                     <p>Receipt Name</p>
                                     <input formControlName="receipt_name" type="text" pInputText/>
@@ -57,23 +58,10 @@
                                     <p>Date</p>
                                     <p-calendar formControlName="receipt_date"></p-calendar>
                                     <br>
-                                    <!--
                                     <p>Spending Category</p>
                                     <p-dropdown [options]="catOptions" optionLabel="category_name" optionValue="category_id" 
                                     [autoDisplayFirst]=false
-                                    formControlName="category"></p-dropdown>
-                                    <br>
-                                    <p>Total</p>
-                                    <p-inputNumber formControlName="income_amount" 
-                                    mode="currency" currency="USD" locale="en-US"></p-inputNumber>
-                                    <br>
-                                    <p>Monthly Recurrence</p>
-                                    <p-dropdown [options]="frequencyOptions"
-                                    [autoDisplayFirst]=false
-                                    placeholder="Optional"
-                                    formControlName="reocurring"></p-dropdown>
-                                    <br>
-                                    -->
+                                    formControlName="receipt_category"></p-dropdown>
                                 </div>
                                 <div formArrayName="products" class="grid" >
                                     <div class="col-6">
@@ -94,7 +82,7 @@
                                                 </div>
                                                 <div class="col-4">
                                                     <p-inputNumber class="product" placeholder="Cost" formControlName="item_amount" 
-                                                    mode="currency" currency="USD" locale="en-US"></p-inputNumber>
+                                                    mode="currency" [maxFractionDigits]="2" currency="USD" locale="en-US"></p-inputNumber>
                                                 </div>
                                                 <div class="col-1">
                                                     <button type="button" (click)="removeProduct(j, i)"pButton label="Delete" class="p-button-danger"></button>
@@ -102,6 +90,9 @@
                                             </div>
                                             
                                         </ng-container>
+                                    </div>
+                                    <div class="col-12">
+                                        <p>Total: {{totals[j] | currency}}</p>
                                     </div>
                                     
                                 </div>

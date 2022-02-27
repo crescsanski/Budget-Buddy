@@ -1,6 +1,6 @@
 import { Receipt } from 'src/app/models/receipt';
 import { Component, OnInit, SecurityContext } from '@angular/core';
-import { FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { FormArray, FormBuilder, FormGroup, NgForm, Validators } from '@angular/forms';
 import { CategoryService } from '../../services/category.service';
 import { Category } from 'src/app/models/category';
 import { MessageService, SelectItem } from 'primeng/api';
@@ -8,6 +8,10 @@ import { WidgetService } from '../widget.service';
 import { ReceiptTrackService } from '../services/receipt-track.service';
 import { ReceiptUploadService } from 'src/app/services/receipt-upload.service';
 import { getLocaleDateFormat } from '@angular/common';
+import { tap, throwIfEmpty } from 'rxjs/operators';
+import { Observable, Subscription } from 'rxjs';
+import { AuthService } from 'src/app/services/auth.service';
+import { TriggerService } from 'src/app/services/trigger.service';
 
 @Component({
   selector: 'app-receipt-tracking',
@@ -19,7 +23,12 @@ export class ReceiptTrackingComponent implements OnInit {
   userReceipts: Receipt[] = [];
   noUpload = './../../../assets/icons/budget-icons/receipt.png'
   imageUpload: any = this.noUpload;
+  inProgress: boolean[] = []
   receipts: any[] = [];
+  numComp: number = 0;
+  inSel: number = 0;
+  totals: number[] = []
+  updateObserv: Subscription;
   selectedReceipt: Receipt;
   showReceipt = false;
   receiptUploaded = false;
@@ -32,7 +41,9 @@ export class ReceiptTrackingComponent implements OnInit {
 
   constructor(private ms: MessageService,
     private ws: WidgetService,
+    private as: AuthService,
     private fb: FormBuilder,
+    private ts: TriggerService,
     public upServ: ReceiptUploadService,
     public rs: ReceiptTrackService,
     private cs: CategoryService) { 
@@ -52,7 +63,7 @@ export class ReceiptTrackingComponent implements OnInit {
         
         receipt: {
             receipt_date: new Date().toDateString(),
-            receipt_is_reccuring: false,
+            receipt_is_reccuring: 0,
             receipt_is_income: false,
             receipt_name: 'Walmart',
         },
@@ -70,7 +81,7 @@ export class ReceiptTrackingComponent implements OnInit {
         
       receipt: {
         receipt_date: new Date().toDateString(),
-        receipt_is_reccuring: false,
+        receipt_is_reccuring: 0,
         receipt_is_income: false,
         receipt_name: 'Target',
     },
@@ -89,13 +100,22 @@ export class ReceiptTrackingComponent implements OnInit {
   ngOnInit(): void {
     
     console.log(this.userReceipts)
-    this.form = this.fb.array([
-     ]);
+    this.resetForm();
   }
 
   getReceipt(i: number)
   {
     return this.form.controls[i] as FormGroup;
+  }
+
+  updateTotal(recInd: number)
+  {
+    var sum = 0
+    for (let prod of this.getProducts(recInd).controls)
+    {
+      sum += prod.get('item_amount').value
+    }
+    this.totals[recInd] = sum
   }
 
   getProducts(recIn: number)
@@ -114,7 +134,6 @@ export class ReceiptTrackingComponent implements OnInit {
       this.fb.group({
         products: this.fb.array(Array<FormGroup>()),      
         receipt_category: [cat, Validators.required],
-        reoccurring: [rec, Validators.required],
         receipt_date: [date, Validators.required],
         receipt_name: [name, Validators.required],
     })
@@ -144,20 +163,41 @@ export class ReceiptTrackingComponent implements OnInit {
     this.getProducts(recIn).removeAt(index);
   }
 
+  resetForm()
+  {
+    this.updateObserv ? this.updateObserv.unsubscribe() : null;
+    this.form = this.fb.array([
+    ]);
+  }
+
   onUpload(event) {
     console.log(event)
   
     let out = event.originalEvent.body;     
 
-    this.form.reset()
-
+    this.resetForm();
+    this.totals = Array(event.files.length)
+    this.inProgress = Array(event.files.length).fill(true);
+    this.numComp = 0;
     for(const [i, receipt] of event.files.entries()) {
         let data = out[receipt.name]
         let rec: Receipt = data
         this.loadForm(rec, i)
+        this.updateTotal(i)
 
     }
     this.receiptUploaded = true;
+
+    this.updateObserv = this.form.valueChanges.pipe(
+      tap(() => {
+        for (let i = 0; i < this.totals.length; i++)
+        {
+          this.updateTotal(i);
+        }
+      })
+    ).subscribe()
+
+    
     
   }
 
@@ -171,8 +211,54 @@ export class ReceiptTrackingComponent implements OnInit {
     {
       this.addProduct(coun, ex.expense_name, ex.expense_price)
     }
+  }
 
-    
+  track(i: number)
+  {
+    let f = this.getReceipt(i)
+    let pr = this.getProducts(i)
+
+    if (f.valid)
+    {
+      var receipt: Receipt = {
+        userid: this.as.currentUserValue.user_id,
+        receipt:
+        {
+          receipt_date: f.get('receipt_date').value,
+          receipt_is_income: false,
+          receipt_is_reccuring: 0,
+          receipt_name: f.get('receipt_name').value
+        },
+        expenses: []
+      }
+
+      for (let j = 0; j < pr.length; j++)
+      {
+        let product = this.getProduct(i, j);
+        console.log(product.value)
+        receipt.expenses.push(
+          {
+            expense_name: product.get('item_name').value,
+            expense_price: product.get('item_amount').value,
+            category: f.get('receipt_category').value
+          }
+        )
+      }
+      this.rs.addReceipt(receipt).subscribe(
+        (val) =>
+        {
+          f.disable();
+          this.inSel = (this.inSel == this.form.controls.length - 1) ? 0 : this.inSel + 1;
+          this.inProgress[i] = false
+          this.numComp += 1;
+          if (this.numComp == this.form.controls.length)
+          {
+            this.receiptUploaded = false;
+          }
+          this.ts.announceExpenReceiptSubmit();
+        }
+      )
+    }
   }
 
 
