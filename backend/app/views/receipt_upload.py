@@ -99,11 +99,13 @@ class ReceiptUploadConvertViewSet(GenericAPIView):
     
             if physical:
                 receipt = self.cropReceipt(input = orig)
-                areOr = orig.shape[0] * orig.shape[1]
-                areNew = receipt.shape[0] * receipt.shape[1]
-                if receipt is not None and areNew >= 0.2 * areOr:
-                    enhanceCrop = self.remove_noise_and_smooth(receipt)
-                    cv2.imwrite(self.getSavePath(f'enhanceCrop-{idx}.jpg'), enhanceCrop)
+             
+                if receipt is not None:
+                    areOr = orig.shape[0] * orig.shape[1]
+                    areNew = receipt.shape[0] * receipt.shape[1]
+                    if areNew >= 0.2 * areOr:
+                        enhanceCrop = self.remove_noise_and_smooth(receipt)
+                        cv2.imwrite(self.getSavePath(f'enhanceCrop-{idx}.jpg'), enhanceCrop)
 
                 try:
                     data = self.runOCR(enhanceCrop, "--psm 6")

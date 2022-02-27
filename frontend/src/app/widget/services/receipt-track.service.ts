@@ -38,6 +38,11 @@ export class ReceiptTrackService {
       );
     }
 
+    getTotal(receipt: Receipt)
+    {
+      return receipt.expenses.map(i => i.expense_price).reduce((a,b)=>a+b);
+    }
+
   /**
    * Handle Http operation that failed.
    * Let the app continue.

@@ -195,7 +195,7 @@ export class BudgetAdjusterComponent implements OnInit {
       this.errorDifference = this.breakdown.need-this.needsRecommend;
     } else if(this.actualDebtPercent>.3) {
       this.overBudget = true;
-      this.errorCategory = "wants"
+      this.errorCategory = "debt"
       this.errorPercent = this.actualDebtPercent *100;
       this.errorValue = this.breakdown.debt;
       this.errorDifference = this.breakdown.debt-this.debtRecommend;

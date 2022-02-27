@@ -4,14 +4,16 @@
             <h2>Receipts</h2> 
         </div>
         <div style="display: inline-flex; width: 100%">
-            <div class="receipt-list">
-                <div *ngFor="let receipt of userReceipts">
-                    <div style="display: inline-flex">
-                        <div class="descriptions">
-                            <p class="name">{{receipt.receipt_name}}</p>
-                            <p class="description" style="text-align: left; font-size: smaller">{{receipt.receipt_date}}</p>
-                        </div>
-                </div>
+            <div #receiptList>
+                <div *ngFor="let item of userReceipts" style="display: inline-flex;">
+                    <div *ngIf="item == selectedReceipt" class="receipt-list selected">
+                        <p style="font-weight: bolder; font-size: 800; text-align: left;">{{item.receipt.receipt_name}}</p>
+                        <p style="margin-top: -20px">${{rs.getTotal(item)}} <span style="margin: .3em"></span>{{item.receipt.receipt_date}}</p>
+                    </div>
+                    <div *ngIf="item != selectedReceipt" class="receipt-list" (click)="selectReceipt(item)">
+                        <p style="font-weight: bolder; font-size: 800; text-align: left;">{{item.receipt.receipt_name}}</p>
+                        <p style="margin-top: -20px">${{rs.getTotal(item)}} <span style="margin: .3em"></span>{{item.receipt.receipt_date}}</p>
+                    </div>
                 </div>
             </div>
             <div class="image-area" style="display: block; text-align: center;">
@@ -24,7 +26,7 @@
         <p-overlayPanel [showTransitionOptions]="'0ms'" [hideTransitionOptions]="'0ms'" #op [dismissable]="true" [showCloseIcon]="true">
             <ng-template pTemplate>
                 <p-fileUpload name="files" [multiple]="true" [url]="upServ.recUplURL" (onUpload)="onUpload($event)"
-                    accept="image/*">
+                    accept="image/*,application/pdf">
                     <ng-template pTemplate="content">
                          <ul *ngIf="receipts.length">
                             <li *ngFor="let file of receipts">{{file.name}} - {{file.size}} bytes</li>
@@ -32,8 +34,85 @@
                      </ng-template>
                 </p-fileUpload>
             </ng-template>
-        </p-overlayPanel>
-       
+        </p-overlayPanel> 
+        <p-dialog header="{{selectedReceipt.receipt.receipt_name}}" [(visible)]="showReceipt" [appendTo]="receiptList" style="width:fit-content">
+            <div>
+                <div *ngIf="selectedReceipt">
+                    <p style="text-align: left;"><span style="font-weight: bolder;">Receipt ID: </span>{{selectedReceipt.receipt_id}}</p>
+                    <p style="text-align: left;"><span style="font-weight: bolder;">Date: </span>${{selectedReceipt.receipt.receipt_date}}</p>
+                    <p style="text-align: left;"><span style="font-weight: bolder;">Amount: </span>${{rs.getTotal(selectedReceipt)}}</p>
+                </div>
+            </div>
+        </p-dialog>
+        <p-dialog header="Verify Upload Values" [(visible)]="receiptUploaded" [appendTo]="receiptList" class="fit">
+            <p-tabView>
+                <p-tabPanel header="{{j.toString()}}" *ngFor="let receipt of form.controls; let j = index" [selected]="j == 0">
+                    <div>
+                        <div *ngIf="receiptUploaded" class="upload-verification">
+                            <form [formGroup]="getReceipt(j)">
+                                <div class="center">
+                                    <p>Receipt Name</p>
+                                    <input formControlName="receipt_name" type="text" pInputText/>
+                                    <br>
+                                    <p>Date</p>
+                                    <p-calendar formControlName="receipt_date"></p-calendar>
+                                    <br>
+                                    <!--
+                                    <p>Spending Category</p>
+                                    <p-dropdown [options]="catOptions" optionLabel="category_name" optionValue="category_id" 
+                                    [autoDisplayFirst]=false
+                                    formControlName="category"></p-dropdown>
+                                    <br>
+                                    <p>Total</p>
+                                    <p-inputNumber formControlName="income_amount" 
+                                    mode="currency" currency="USD" locale="en-US"></p-inputNumber>
+                                    <br>
+                                    <p>Monthly Recurrence</p>
+                                    <p-dropdown [options]="frequencyOptions"
+                                    [autoDisplayFirst]=false
+                                    placeholder="Optional"
+                                    formControlName="reocurring"></p-dropdown>
+                                    <br>
+                                    -->
+                                </div>
+                                <div formArrayName="products" class="grid" >
+                                    <div class="col-6">
+                                        <button type="button" (click)="addEmptyProduct(j)" class="p-button-info addButton">+ Add another product</button>
+                                    </div>
+                                                               
+                                    <div class="col-12">
+                                        <ng-container *ngFor="let product of getProducts(j).controls; let i=index" >
+                                            <div [formGroup]="getProduct(j, i)" class="grid center">
+                                                <div *ngIf="i==0" class="col-4 adjust" >
+                                                    <p class="adjust">Item Name</p>
+                                                </div>
+                                                <div *ngIf="i==0" class="col-8">
+                                                    <p class="adjust">Cost</p>
+                                                </div>
+                                                <div class="col-4">
+                                                    <input type="text" class="inputfield" formControlName="item_name" placeholder="Name"pInputText/>
+                                                </div>
+                                                <div class="col-4">
+                                                    <p-inputNumber class="product" placeholder="Cost" formControlName="item_amount" 
+                                                    mode="currency" currency="USD" locale="en-US"></p-inputNumber>
+                                                </div>
+                                                <div class="col-1">
+                                                    <button type="button" (click)="removeProduct(j, i)"pButton label="Delete" class="p-button-danger"></button>
+                                                </div> 
+                                            </div>
+                                            
+                                        </ng-container>
+                                    </div>
+                                    
+                                </div>
+                                <button class="track trackAdj" pButton type="submit" label='Track'></button>
+                            </form>
+                        </div>
+                    </div>
+                </p-tabPanel>
+            </p-tabView>
+
+        </p-dialog> 
         
 </div>
 

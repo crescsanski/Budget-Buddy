@@ -13,6 +13,7 @@ import {DropdownModule} from 'primeng/dropdown';
 import {SliderModule} from 'primeng/slider';
 import {MultiSelectModule} from 'primeng/multiselect';
 import { InputTextModule } from 'primeng/inputtext';
+import {TabViewModule} from 'primeng/tabview';
 
 @NgModule({
   declarations: [  ],
@@ -29,6 +30,7 @@ import { InputTextModule } from 'primeng/inputtext';
     ToastModule,
     SliderModule,
     InputTextModule,
+    TabViewModule,
   ],
   exports: [
     InputNumberModule,
@@ -43,6 +45,7 @@ import { InputTextModule } from 'primeng/inputtext';
     DropdownModule,
     SliderModule,
     InputTextModule,
+    TabViewModule,
   ],
   providers: [
     MessageService
