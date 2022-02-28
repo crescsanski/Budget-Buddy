@@ -41,6 +41,5 @@ export class WeeklySpendingSmallComponent implements OnInit {
       this.status = "Right on track!"
   }
 
-
   }
 }

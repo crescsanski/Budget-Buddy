@@ -25,8 +25,8 @@ export class MainPageComponent implements OnInit {
 
 
   constructor(private authService: AuthService, private messageService: MessageService) { 
-   //this.currentPage = 'Dashboard';
-   this.currentPage = 'Tracking';
+   this.currentPage = 'Dashboard';
+   //this.currentPage = 'Tracking';
   }
 
   ngOnInit(): void {

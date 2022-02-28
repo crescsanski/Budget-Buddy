@@ -1,0 +1,12 @@
+@import "../../../styles.scss";
+
+.emphasis {
+  font-size: 4em;
+  font-weight: bolder;
+  color: $blue;
+}
+
+p {
+  text-align: center !important;
+  width: 100%;
+}
