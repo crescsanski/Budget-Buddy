@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { BudgetScoreService } from 'src/app/services/budget_score.service';
 
 @Component({
   selector: 'app-letter-grade',
@@ -11,11 +12,11 @@ export class LetterGradeComponent implements OnInit {
   status: string = "error loading report card";
 
 
-  constructor() { }
+  constructor(private budScServ: BudgetScoreService) { }
 
   ngOnInit(): void {
     //fetch budget score via api
-    this.budgetScore = 'A+'
+    this.budgetScore = this.budScServ.letterGrade;
     this.getMessage()
   }
 

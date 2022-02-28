@@ -3,6 +3,7 @@ import { ActivatedRouteSnapshot, Resolve, RouterStateSnapshot } from "@angular/r
 import { forkJoin, Observable } from "rxjs";
 import { BadgesEarnedService } from "../services/badgesEarned.service";
 import { BudgetService } from "../services/budget.service";
+import { BudgetScoreService } from "../services/budget_score.service";
 import { CategoryService } from "../services/category.service";
 import { IncomeHistoryService } from "../services/income-history.service";
 import { SavingsHistoryService } from "../services/savings-history.service";
@@ -13,6 +14,7 @@ import { TimeService } from "../services/time.service";
 export class DataResolver implements Resolve<any> {
     constructor(private budServ: BudgetService,
         private spenTot: SpendingHistoryService,
+        private budSco: BudgetScoreService,
         private badServ: BadgesEarnedService,
         private incServ: IncomeHistoryService,
         private savServ: SavingsHistoryService,
@@ -57,6 +59,9 @@ export class DataResolver implements Resolve<any> {
 
         //Fetch Badges
         this.badServ.getBadgesEarned(),
+
+        //Fetch BudgetScore
+        this.budSco.getBudgetScore()
     ]))
 
     return observable;

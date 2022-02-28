@@ -77,24 +77,9 @@ export class ReceiptTrackingComponent implements OnInit {
     },
     ]
 
-    this.selectedReceipt = {
-        
-      receipt: {
-        receipt_date: new Date().toDateString(),
-        receipt_is_reccuring: 0,
-        receipt_is_income: false,
-        receipt_name: 'Target',
-    },
-    expenses: [
-      {
-        expense_name: "Shampoo",
-        expense_price: 4.23,
-        category: null
-      }
-    ] 
-}
+    //this.selectedReceipt = this.userReceipts[0]
     
-    //this.receiptUploaded = true;
+ 
   }
 
   ngOnInit(): void {
@@ -244,6 +229,7 @@ export class ReceiptTrackingComponent implements OnInit {
           }
         )
       }
+      this.userReceipts.push(receipt)
       this.rs.addReceipt(receipt).subscribe(
         (val) =>
         {
@@ -263,6 +249,7 @@ export class ReceiptTrackingComponent implements OnInit {
 
 
   selectReceipt(x: Receipt) {
+    console.log("hello")
     this.showReceipt = false;
     this.selectedReceipt = null;
     this.selectedReceipt = x;

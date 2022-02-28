@@ -8,11 +8,11 @@
                 <div *ngFor="let item of userReceipts" style="display: inline-flex;">
                     <div *ngIf="item == selectedReceipt" class="receipt-list selected">
                         <p style="font-weight: bolder; font-size: 800; text-align: left;">{{item.receipt.receipt_name}}</p>
-                        <p style="margin-top: -20px">${{rs.getTotal(item)}} <span style="margin: .3em"></span>{{item.receipt.receipt_date}}</p>
+                        <p style="margin-top: -20px">{{rs.getTotal(item) | currency}} <span style="margin: .3em"></span>{{item.receipt.receipt_date | date:'shortDate'}}</p>
                     </div>
                     <div *ngIf="item != selectedReceipt" class="receipt-list" (click)="selectReceipt(item)">
                         <p style="font-weight: bolder; font-size: 800; text-align: left;">{{item.receipt.receipt_name}}</p>
-                        <p style="margin-top: -20px">${{rs.getTotal(item)}} <span style="margin: .3em"></span>{{item.receipt.receipt_date}}</p>
+                        <p style="margin-top: -20px">{{rs.getTotal(item) | currency}} <span style="margin: .3em"></span>{{item.receipt.receipt_date | date:'shortDate'}}</p>
                     </div>
                 </div>
             </div>
@@ -35,12 +35,12 @@
                 </p-fileUpload>
             </ng-template>
         </p-overlayPanel> 
-        <p-dialog header="{{selectedReceipt.receipt.receipt_name}}" [(visible)]="showReceipt" [appendTo]="receiptList" style="width:fit-content">
+        <p-dialog *ngIf="selectedReceipt" (onHide)="selectedReceipt = null;" header="{{selectedReceipt.receipt.receipt_name}}" [(visible)]="showReceipt" [appendTo]="receiptList" class="fit">
             <div>
                 <div *ngIf="selectedReceipt">
-                    <p style="text-align: left;"><span style="font-weight: bolder;">Receipt ID: </span>{{selectedReceipt.receipt_id}}</p>
-                    <p style="text-align: left;"><span style="font-weight: bolder;">Date: </span>${{selectedReceipt.receipt.receipt_date}}</p>
-                    <p style="text-align: left;"><span style="font-weight: bolder;">Amount: </span>${{rs.getTotal(selectedReceipt)}}</p>
+                    <p style="text-align: left;"><span style="font-weight: bolder;">Receipt Name: </span>{{selectedReceipt.receipt.receipt_name}}</p>
+                    <p style="text-align: left;"><span style="font-weight: bolder;">Date: </span>{{selectedReceipt.receipt.receipt_date | date: 'longDate'}}</p>
+                    <p style="text-align: left;"><span style="font-weight: bolder;">Amount: </span>{{rs.getTotal(selectedReceipt) | currency}}</p>
                 </div>
             </div>
         </p-dialog>
