@@ -22,6 +22,7 @@ import { SpendingVsIncomeComponent } from './spending-vs-income/spending-vs-inco
 import { BudgetVsSpendingComponent } from './budget-vs-spending/budget-vs-spending.component';
 import { ActualVsEstIncomeComponent } from './actual-vs-est-income/actual-vs-est-income.component';
 import { SpendingByCategoryComponent } from './spending-by-category/spending-by-category.component';
+import { LetterGradeComponent } from './letter-grade/letter-grade.component';
 
 
 @NgModule({
@@ -39,7 +40,8 @@ import { SpendingByCategoryComponent } from './spending-by-category/spending-by-
     SpendingVsIncomeComponent,
     BudgetVsSpendingComponent,
     ActualVsEstIncomeComponent,
-    SpendingByCategoryComponent
+    SpendingByCategoryComponent,
+    LetterGradeComponent
   ],
   imports: [
     CommonModule,
@@ -66,6 +68,7 @@ import { SpendingByCategoryComponent } from './spending-by-category/spending-by-
     SpendingVsIncomeComponent,
     BudgetVsSpendingComponent,
     ActualVsEstIncomeComponent,
-    SpendingByCategoryComponent]
+    SpendingByCategoryComponent,
+    LetterGradeComponent]
 })
 export class WidgetModule { }

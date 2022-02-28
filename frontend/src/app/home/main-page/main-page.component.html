@@ -26,12 +26,9 @@
         </div>
       </div>
       <div class="small-widgets">
-        <app-budget-slider></app-budget-slider>
+        <app-letter-grade></app-letter-grade>
         <app-weekly-spending-small></app-weekly-spending-small>
         <app-badges-widget></app-badges-widget>
-        <div *ngFor="let widget of dashboardWidgets" class="small-widgets">
-          <app-small-widget *ngIf="widget.size==='small'" [title]=widget.title [image]=widget.image></app-small-widget>
-        </div>
       </div>
     </div>
     <div *ngIf="currentPage === 'Budget'" class="widget-container" style="width: 73vw;"> 
