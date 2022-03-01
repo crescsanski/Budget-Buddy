@@ -17,7 +17,9 @@ def budgetScore(request, user_id):
     totalIncome = incomeHistoryInternal(params={'start_date':sixMonths},user_id=user_id)
     totalWantsTwo = totalWants[0]['totalSpent'] if len(totalWants) > 0 else 0
     totalIncomeTwo = totalIncome[0]['totalIncomeReceived'] if len(totalIncome) > 0 else 0
-    wantScoreInput = ((totalWantsTwo/totalIncomeTwo) * 100)
+
+   
+
 # //want score variables (past 6 months only)
 #         double totalWants = 30.00; //change me (min 0)
 #         double totalIncome = 100.00; //change me
@@ -84,8 +86,8 @@ def budgetScore(request, user_id):
                 receipt__receipt_date__date__gte = onlyMonths,
     ).exclude(month = monthCurDate).aggregate(totalIncomeReceived=Sum('income_amount'))
 
-    totalExpensesEstimator = totExpQuery['totalSpent']
-    totalIncomeEstimator = totIncQuery['totalIncomeReceived']
+    totalExpensesEstimator = totExpQuery['totalSpent'] if totExpQuery['totalSpent'] is not None else 0
+    totalIncomeEstimator = totIncQuery['totalIncomeReceived'] if totIncQuery['totalIncomeReceived'] is not None else 0
     actualAmounts = totalExpensesEstimator + totalIncomeEstimator
     #tempUserInfoTwo = UserCategoryBudget.objects.filter(user_id=user_id).values('user_category_budget_estimated_amount')
 
@@ -99,7 +101,6 @@ def budgetScore(request, user_id):
                 sumEst = Sum('user_category_budget_estimated_amount'))
 
     estimatedAmounts = budgEstQuery['sumEst'] if budgEstQuery['sumEst'] is not None else 0
-
 
     estimatorScore = None
 
@@ -135,14 +136,18 @@ def budgetScore(request, user_id):
     totalBudgetScore = None
     
 # //WANT SCORE LOGIC
-    if wantScoreInput < 23:
-        wantScore = 100         
-    elif wantScoreInput >= 23 and wantScoreInput <= 99:
-        wantScore = (((1.52292 * (10**-4)) * (wantScoreInput**3)) 
-            + (-.03198 * (wantScoreInput**2))
-            + (.715773 * wantScoreInput) + (98.62937))      
+    if totalIncomeTwo == 0:
+        wantScore = 75
     else:
-        wantScore = 0
+        wantScoreInput = ((totalWantsTwo/totalIncomeTwo) * 100)
+        if wantScoreInput < 23:
+            wantScore = 100         
+        elif wantScoreInput >= 23 and wantScoreInput <= 99:
+            wantScore = (((1.52292 * (10**-4)) * (wantScoreInput**3)) 
+                + (-.03198 * (wantScoreInput**2))
+                + (.715773 * wantScoreInput) + (98.62937))      
+        else:
+            wantScore = 0
 
 # //APP USAGE LOGIC
     if useScoreInput > 85:
@@ -155,12 +160,15 @@ def budgetScore(request, user_id):
         useScore = 0
 
 # //ESTIMATION ACCURACY LOGIC
-    if actualAmounts >= estimatedAmounts and actualAmounts/estimatedAmounts < 2:
-        estimatorScore = 100 - (((actualAmounts/estimatedAmounts) - 1) * 100)
-    elif actualAmounts < estimatedAmounts:
-        estimatorScore = (actualAmounts/estimatedAmounts) * 100         
+    if estimatedAmounts == 0:
+        estimatorScore = 75
     else:
-        estimatorScore = 0    
+        if actualAmounts >= estimatedAmounts and actualAmounts/estimatedAmounts < 2:
+            estimatorScore = 100 - (((actualAmounts/estimatedAmounts) - 1) * 100)
+        elif actualAmounts < estimatedAmounts:
+            estimatorScore = (actualAmounts/estimatedAmounts) * 100         
+        else:
+            estimatorScore = 0    
     
 # //WEIGHTED SCORES
     out = (int)((wantScore * .5) + (useScore * .3) + (estimatorScore * .2))
