@@ -24,6 +24,8 @@ export class ReceiptTrackingComponent implements OnInit {
   catOptions!: Category[];
   frequencyOptions!: SelectItem[];
   uploadedReceipt: Receipt;
+  editReceipt = false;
+
 
   //mock receipt list
 
@@ -50,7 +52,6 @@ export class ReceiptTrackingComponent implements OnInit {
 
     this.selectedReceipt = {receipt_amount: null, receipt_date: null, reccuring: 0,  is_income: false, user: null};
     
-    this.receiptUploaded = true;
   }
 
   ngOnInit(): void {
@@ -82,6 +83,15 @@ export class ReceiptTrackingComponent implements OnInit {
     this.selectedReceipt = null;
     this.selectedReceipt = x;
     this.showReceipt = true;
+  }
+
+  openReceiptEditor(x: Receipt) {
+    this.editReceipt = false;
+    this.showReceipt = false;
+    this.selectedReceipt = null;
+    this.selectedReceipt = x;
+    this.editReceipt = true;
+    
   }
 
 }

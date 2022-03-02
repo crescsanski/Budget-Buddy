@@ -6,13 +6,13 @@
         <div style="display: inline-flex; width: 100%">
             <div #receiptList>
                 <div *ngFor="let item of userReceipts" style="display: inline-flex;">
-                    <div *ngIf="item == selectedReceipt" class="receipt-list selected">
-                        <p style="font-weight: bolder; font-size: 800; text-align: left;">{{item.receipt_name}}</p>
-                        <p style="margin-top: -20px">${{item.receipt_amount}} <span style="margin: .3em"></span>{{item.receipt_date}}</p>
+                    <div *ngIf="item == selectedReceipt" class="receipt-list selected" style="position: relative">
+                        <p style="font-weight: bolder; font-size: 800; text-align: left;">{{item.receipt_name}} <img class="edit-button" src="../../../assets/icons/edit-icon.png" style="width:1em; position: absolute; right: 1em" (click)="openReceiptEditor(item)"></p>
+                        <p style="margin-top: -15px">${{item.receipt_amount}} <span style="text-align: left; margin-left: 2.5em">{{item.receipt_date}}</span></p>
                     </div>
-                    <div *ngIf="item != selectedReceipt" class="receipt-list" (click)="selectReceipt(item)">
-                        <p style="font-weight: bolder; font-size: 800; text-align: left;">{{item.receipt_name}}</p>
-                        <p style="margin-top: -20px">${{item.receipt_amount}} <span style="margin: .3em"></span>{{item.receipt_date}}</p>
+                    <div *ngIf="item != selectedReceipt" class="receipt-list" (click)="selectReceipt(item)" style="position: relative">
+                        <p style="font-weight: bolder; font-size: 800; text-align: left;">{{item.receipt_name}} <img class="edit-button" src="../../../assets/icons/edit-icon.png" style="width:1em; position: absolute; right: 1em; border-radius: 100" (click)="openReceiptEditor(item)"></p>
+                        <p style="margin-top: -15px">${{item.receipt_amount}} <span style="text-align: left; margin-left: 2.5em">{{item.receipt_date}}</span></p>
                     </div>
                 </div>
             </div>
@@ -35,6 +35,33 @@
                 </p-fileUpload>
             </ng-template>
         </p-overlayPanel> 
+        <p-dialog header="Edit: {{selectedReceipt.receipt_name}}" [(visible)]="editReceipt" [appendTo]="receiptList" style="width:fit-content">
+            <div>
+                <div *ngIf="selectedReceipt">
+                    <form [formGroup]="form">
+                        <div style="text-align: center;">
+                            <p style="text-align: left;">Name</p>
+                            <input formControlName="receipt_name" type="text" placeholder="{{selectedReceipt.receipt_name}}" pInputText/>
+                            <br>
+                            <p style="text-align: left;">Date</p>
+                            <p-calendar formControlName="receipt_date" placeholder="{{selectedReceipt.receipt_date}}"></p-calendar>
+                            <br>
+                            <p style="text-align: left;">Amount</p>
+                            <p-inputNumber style="text-align: left;" formControlName="income_amount" placeholder="{{selectedReceipt.receipt_amount}}"
+                            mode="currency" currency="USD" locale="en-US"></p-inputNumber>
+                            <br>
+                            <p style="text-align: left;">Monthly Recurrence</p>
+                            <p-dropdown [options]="frequencyOptions"
+                            [autoDisplayFirst]=false
+                            placeholder="Optional"
+                            formControlName="reocurring"></p-dropdown>
+                            <br>
+                            <button style="margin-top: 2em; display: inline-flex; text-align: center;" class="track" pButton type="submit" label='Track'></button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </p-dialog>
         <p-dialog header="{{selectedReceipt.receipt_name}}" [(visible)]="showReceipt" [appendTo]="receiptList" style="width:fit-content">
             <div>
                 <div *ngIf="selectedReceipt">
