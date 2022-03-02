@@ -19,6 +19,15 @@
                 inputId="cat"
                 optionLabel="category_name"></p-multiSelect>
             </div>
+
+            <div class="field">
+                <label for="cat" >Type</label>
+                <p-multiSelect [options]="typeOptions" class="inputfield" [(ngModel)]="selectedTypes"
+                [maxSelectedLabels]="0" [selectedItemsLabel]="'{0} items selected'" 
+                (onChange)="getNewData()" 
+                inputId="cat"
+                ></p-multiSelect>
+            </div>
         </div>
     </div>
 </div>

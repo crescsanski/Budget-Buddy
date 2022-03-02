@@ -1,9 +1,10 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { SelectItem } from 'primeng/api';
 import { UIChart } from 'primeng/chart';
+import {Chart} from 'chart.js';
 import { Category } from 'src/app/models/category';
 import { BudgetService } from 'src/app/services/budget.service';
-
+import ChartDataLabels from 'chartjs-plugin-datalabels';
 import { CategoryService } from 'src/app/services/category.service';
 import { IncomeHistoryService } from 'src/app/services/income-history.service';
 import { TimeService } from 'src/app/services/time.service';
@@ -30,7 +31,7 @@ export class ActualVsEstIncomeComponent implements OnInit {
     private incServ: IncomeHistoryService,
     private catServ: CategoryService,
     private trigServ: TriggerService, private ts: TimeService) { 
-
+      Chart.register(ChartDataLabels)
       this.catOptions = this.catServ.incomeCats
       this.selectedCats = this.catServ.incomeCats
 
@@ -80,7 +81,13 @@ export class ActualVsEstIncomeComponent implements OnInit {
               data: this.actIncValues,
               fill: true,
               borderColor: '#4ec5ca80',
-              backgroundColor: '#4ec5ca50',
+              barPercentage: 0.9,
+              backgroundColor: (context) => {   
+                  let sum = this.actIncValues[context.dataIndex]
+                  let value = this.estIncValues[context.dataIndex]
+                  let percentage = (sum*100 / value);
+                  return this.getColorLight(percentage)
+              },
               tension: 0,
               
           },
@@ -88,8 +95,10 @@ export class ActualVsEstIncomeComponent implements OnInit {
             label: 'Estimated Income',
             data: this.estIncValues,
             fill: true,
-            borderColor: '#64e3dd',
-            backgroundColor: '#64e3dd',
+            borderColor: 'rgba(0, 0, 0, 0.5)',
+            backgroundColor: 'rgba(0, 0, 0, 0.1)',
+            borderWidth: 1,
+            barPercentage: 1,
             tension: 0,
             
         },
@@ -98,12 +107,46 @@ export class ActualVsEstIncomeComponent implements OnInit {
 
   this.chartOptions = {
     plugins: {
+        datalabels: {
+          align: 'end',
+          anchor: 'end',
+          backgroundColor: (context) => {
+            if (context.dataset.label == 'Estimated Income')
+            {
+              let sum = this.actIncValues[context.dataIndex]
+              let value = this.estIncValues[context.dataIndex]
+              let percentage = (sum*100 / value);
+              return this.getColor(percentage)
+            }
+          return ""
+        },
+          borderRadius: 4,
+          font: {
+            weight: 'bold'
+          },
+          display: (context) => {
+           // console.log(context)
+            return context.dataset.label == 'Estimated Income'
+          },
+          formatter: (value, context) => {
+              if (context.dataset.label == 'Estimated Income')
+              {
+               // console.log(value)
+                let sum = this.actIncValues[context.dataIndex]
+                let percentage = (sum*100 / value).toFixed(2)+"%";
+                return percentage;
+              }
+            return ""
+          },
+          color: 'white',
+      },
         legend: {
             display: true,
         }
     },
     scales: {
         x: {
+          stacked: true,
             ticks: {
                 color: '#495057'
             },
@@ -117,6 +160,7 @@ export class ActualVsEstIncomeComponent implements OnInit {
             grid: { display: false }
         },
         y: {
+          stacked: false,
             ticks: {
                 color: '#495057'
             },
@@ -141,6 +185,32 @@ export class ActualVsEstIncomeComponent implements OnInit {
         this.chartData.datasets[0].data = this.actIncValues
         this.chartData.datasets[1].data = this.estIncValues
         this.chart.reinit();
+    }
+
+    getColor(num: number)
+    {
+      if (num <= 100)
+      {
+        return 'rgba(44, 28, 150, 1)'
+
+      }
+      else
+      {
+        return 'rgba(76, 192, 94, 1)'
+      }
+    }
+
+    getColorLight(num: number)
+    {
+      if (num <= 100)
+      {
+        return 'rgba(44, 28, 150, 0.5)'
+
+      }
+      else
+      {
+        return 'rgba(76, 192, 94, 0.5)'
+      }
     }
 
 }

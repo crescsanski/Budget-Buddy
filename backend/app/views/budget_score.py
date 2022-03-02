@@ -40,6 +40,7 @@ def budgetScore(request, user_id):
 #USE SCORE VARIABLES
     tempUserInfo = Users.objects.filter(pk=user_id).values('user_registration_date','user_total_logins')
     numberDaysInput = (datetime.datetime.today().date() - tempUserInfo[0]['user_registration_date'] + datetime.timedelta(days=1)).days
+    
     totalLogins = tempUserInfo[0]['user_total_logins']
     numberDays = None
     if numberDaysInput > 180:
@@ -137,7 +138,7 @@ def budgetScore(request, user_id):
     
 # //WANT SCORE LOGIC
     if totalIncomeTwo == 0:
-        wantScore = 75
+        wantScore = 0
     else:
         wantScoreInput = ((totalWantsTwo/totalIncomeTwo) * 100)
         if wantScoreInput < 23:

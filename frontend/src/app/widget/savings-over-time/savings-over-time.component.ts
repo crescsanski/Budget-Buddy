@@ -53,6 +53,7 @@ export class SavingsOverTimeComponent implements OnInit {
 
   this.chartOptions = {
     plugins: {
+        datalabels: { display: false },
         legend: {
             display: false,
         }

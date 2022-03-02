@@ -266,6 +266,7 @@ class ParseReceipt(object):
         self.byWord = newLines
         self.byLine = newContent
         self.allTog = '\n'.join(newContent)
+        #print(self.allTog)
     
     def countFeat(self, word: str):
         counPunc = 0

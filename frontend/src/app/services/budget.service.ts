@@ -41,6 +41,12 @@ export class BudgetService {
     return this.inBudCat;
   }
 
+  types = [
+    {label: 'Want', value: 'want'},
+    {label: 'Need', value: 'need'},
+    {label: 'Savings', value: 'saving'}
+  ]
+
 
   httpOptions = {
     headers: new HttpHeaders({ 'Content-Type': 'application/json' })

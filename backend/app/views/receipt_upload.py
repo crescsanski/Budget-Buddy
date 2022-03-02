@@ -159,6 +159,7 @@ class ReceiptUploadConvertViewSet(GenericAPIView):
         # cv2.imwrite(f"thresholded.jpg", ret)
         content = pytesseract.image_to_string(receipt, config=options)
         #print(content)
+        #print(content)
         if len(content) < 3:
             raise Exception("The uploaded file doesn't contain any text.")
        

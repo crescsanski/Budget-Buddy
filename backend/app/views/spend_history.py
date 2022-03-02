@@ -51,10 +51,9 @@ def getSpentHistoryInternal(params, user_id, category_id = None):
     period = params.get('period')
     category_type = params.get('category_type')
 
-
     if not category_id and (byCat is not None and json.loads(byCat.lower())):
-        firstValues = ['category_id']
-        secondValues = ['category_id', 'totalSpent']
+        firstValues = ['category__category_type', 'category_id']
+        secondValues = ['category__category_type', 'category_id', 'totalSpent']
     else:
         firstValues = ['receipt__user_id']
         secondValues = ['totalSpent']

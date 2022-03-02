@@ -2,6 +2,8 @@ import { Component, OnInit, ViewChild } from '@angular/core';
 import { UIChart } from 'primeng/chart';
 import { IncomeHistoryService } from 'src/app/services/income-history.service';
 import { SpendingHistoryService } from 'src/app/services/spending-history.service';
+import ChartDataLabels from 'chartjs-plugin-datalabels';
+import {Chart} from 'chart.js';
 import { TimeService } from 'src/app/services/time.service';
 import { TriggerService } from 'src/app/services/trigger.service';
 
@@ -24,6 +26,7 @@ export class SpendingVsIncomeComponent implements OnInit {
   constructor(private spenServ: SpendingHistoryService, 
     private incServ: IncomeHistoryService,
     private trigServ: TriggerService, private ts: TimeService) { 
+      Chart.register(ChartDataLabels)
       this.trigServ.incomReceiptAnnounced$.subscribe(() =>
       {
           this.getNewData();
@@ -68,8 +71,14 @@ export class SpendingVsIncomeComponent implements OnInit {
               label: 'Spending',
               data: this.values,
               fill: true,
-              borderColor: '#4ec5ca80',
-              backgroundColor: '#4ec5ca50',
+              borderColor: 'rgba(0, 0, 255, 0.5)',
+              barPercentage: 0.9,
+              backgroundColor: (context) => {   
+                  let sum = this.values[context.dataIndex]
+                  let value = this.values2[context.dataIndex]
+                  let percentage = (sum*100 / value);
+                  return this.getColorLight(percentage)
+              },
               tension: 0,
               
           },
@@ -77,8 +86,10 @@ export class SpendingVsIncomeComponent implements OnInit {
             label: 'Income',
             data: this.values2,
             fill: true,
-            borderColor: '#64e3dd',
-            backgroundColor: '#64e3dd',
+            borderColor: 'rgba(0, 0, 0, 0.5)',
+            borderWidth: 1,
+            barPercentage: 1,
+            backgroundColor: 'rgba(0, 0, 0, 0.1)',
             tension: 0,
             
         },
@@ -86,13 +97,48 @@ export class SpendingVsIncomeComponent implements OnInit {
   };
 
   this.chartOptions = {
-    plugins: {
+        plugins: {
+            datalabels: {
+              align: 'end',
+              anchor: 'end',
+              backgroundColor: (context) => {
+                if (context.dataset.label == 'Income')
+                {
+                  let sum = this.values[context.dataIndex]
+                  let value = this.values2[context.dataIndex]
+                  let percentage = (sum*100 / value);
+                  return this.getColor(percentage)
+                }
+              return ""
+            },
+              borderRadius: 4,
+              font: {
+                weight: 'bold'
+              },
+              display: (context) => {
+               // console.log(context)
+                return context.dataset.label == 'Income'
+              },
+              formatter: (value, context) => {
+                  if (context.dataset.label == 'Income')
+                  {
+                   // console.log(value)
+                    let sum = this.values[context.dataIndex]
+                    let percentage = (sum*100 / value).toFixed(2)+"%";
+                    return percentage;
+                  }
+                return ""
+              },
+              color: 'white',
+          },
+        
         legend: {
             display: true,
         }
-    },
+  },
     scales: {
         x: {
+            stacked: true,
             ticks: {
                 color: '#495057'
             },
@@ -106,6 +152,7 @@ export class SpendingVsIncomeComponent implements OnInit {
             grid: { display: false }
         },
         y: {
+          stacked: false,
             ticks: {
                 color: '#495057'
             },
@@ -130,6 +177,32 @@ export class SpendingVsIncomeComponent implements OnInit {
         this.chartData.datasets[0].data = this.values;
         this.chartData.datasets[1].data = this.values2;
         this.chart.reinit();
+    }
+
+    getColor(num: number)
+    {
+      if (num <= 100)
+      {
+        return 'rgba(76, 192, 94, 1)'
+
+      }
+      else
+      {
+        return 'rgba(255, 0, 0, 1)'
+      }
+    }
+
+    getColorLight(num: number)
+    {
+      if (num <= 100)
+      {
+        return 'rgba(76, 192, 94, 0.5)'
+
+      }
+      else
+      {
+        return 'rgba(255, 0, 0, 0.5)'
+      }
     }
 
 }

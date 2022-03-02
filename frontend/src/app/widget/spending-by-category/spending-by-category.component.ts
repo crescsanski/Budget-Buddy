@@ -16,6 +16,7 @@ export class SpendingByCategoryComponent implements OnInit {
 
 
   data: any;
+  chartOptions: any;
   catOptions: Category[] = [];
   categories: string[] = []
   curMonthSpendByCat: number[] = [];
@@ -57,6 +58,11 @@ export class SpendingByCategoryComponent implements OnInit {
           },
       ]
     }
+
+    this.chartOptions = {
+      plugins: {
+          datalabels: { display: false },
+      }}
  }
 
   setupValues()
