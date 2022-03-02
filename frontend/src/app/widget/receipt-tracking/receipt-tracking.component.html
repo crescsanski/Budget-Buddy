@@ -7,11 +7,11 @@
             <div #receiptList>
                 <div *ngFor="let item of userReceipts" style="display: inline-flex;">
                     <div *ngIf="item == selectedReceipt" class="receipt-list selected" style="position: relative">
-                        <p style="font-weight: bolder; font-size: 800; text-align: left;">{{item.receipt_name}} <img class="edit-button" src="../../../assets/icons/edit-icon.png" style="width:1em; position: absolute; right: 1em" (click)="openReceiptEditor(item)"></p>
+                        <p style="font-weight: bolder; font-size: 800; text-align: left;">{{item.receipt_name}} <img class="edit-button" src="../../../assets/icons/trash.png" style="width:1em; position: absolute; right: 1em; border-radius: 100" (click)="openDeleteReceipt(item)"><img class="edit-button" src="../../../assets/icons/edit-icon.png" style="width:1em; position: absolute; right: 2.5em; border-radius: 100" (click)="openReceiptEditor(item)"></p>
                         <p style="margin-top: -15px">${{item.receipt_amount}} <span style="text-align: left; margin-left: 2.5em">{{item.receipt_date}}</span></p>
                     </div>
                     <div *ngIf="item != selectedReceipt" class="receipt-list" (click)="selectReceipt(item)" style="position: relative">
-                        <p style="font-weight: bolder; font-size: 800; text-align: left;">{{item.receipt_name}} <img class="edit-button" src="../../../assets/icons/edit-icon.png" style="width:1em; position: absolute; right: 1em; border-radius: 100" (click)="openReceiptEditor(item)"></p>
+                        <p style="font-weight: bolder; font-size: 800; text-align: left;">{{item.receipt_name}} <img class="edit-button" src="../../../assets/icons/trash.png" style="width:1em; position: absolute; right: 1em; border-radius: 100" (click)="openDeleteReceipt(item)"><img class="edit-button" src="../../../assets/icons/edit-icon.png" style="width:1em; position: absolute; right: 2.5em; border-radius: 100" (click)="openReceiptEditor(item)"></p>
                         <p style="margin-top: -15px">${{item.receipt_amount}} <span style="text-align: left; margin-left: 2.5em">{{item.receipt_date}}</span></p>
                     </div>
                 </div>
@@ -56,7 +56,7 @@
                             placeholder="Optional"
                             formControlName="reocurring"></p-dropdown>
                             <br>
-                            <button style="margin-top: 2em; display: inline-flex; text-align: center;" class="track" pButton type="submit" label='Track'></button>
+                            <button style="margin-top: 2em; display: inline-flex; text-align: center;" class="track" pButton type="submit" label='Track' (click)="updateReceipt()"></button>
                         </div>
                     </form>
                 </div>
@@ -69,6 +69,15 @@
                     <p style="text-align: left;"><span style="font-weight: bolder;">Date: </span>${{selectedReceipt.receipt_date}}</p>
                     <p style="text-align: left;"><span style="font-weight: bolder;">Amount: </span>${{selectedReceipt.receipt_amount}}</p>
                 </div>
+            </div>
+        </p-dialog>
+        <p-dialog header="Delete: {{selectedReceipt.receipt_name}}" [(visible)]="deleteReceipt" [appendTo]="receiptList" style="width:fit-content">
+            <div style="text-align: center;">
+                <h3 class="message">Are you sure? <br> You are about to delete:<br><br><span style="color:#4ec5ca; font-size: larger;"> {{selectedReceipt.receipt_name}}</span><br><br>
+                This cannot be undone.</h3>
+            
+                <button style="margin: 1em; display: inline-flex; text-align: center;" class="track" pButton type="submit" label='Yes, Delete' (click)="confirmDeleteReceipt()"></button>
+                <button style="margin: 1em; display: inline-flex; text-align: center;" class="button-secondary"pButton type="submit" label='No, Keep' (click)="denyDeleteReceipt()"></button>
             </div>
         </p-dialog>
         <p-dialog header="Verify Upload Values" [(visible)]="receiptUploaded" [appendTo]="receiptList" style="width:fit-content">
