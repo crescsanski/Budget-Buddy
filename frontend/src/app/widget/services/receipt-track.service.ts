@@ -6,6 +6,7 @@ import { catchError, map, tap } from 'rxjs/operators';
 
 import { Receipt } from 'src/app/models/receipt';
 import { QuickReceipt } from 'src/app/models/simReceipt';
+import { AuthService } from 'src/app/services/auth.service';
 
 @Injectable({
   providedIn: 'root'
@@ -13,14 +14,41 @@ import { QuickReceipt } from 'src/app/models/simReceipt';
 export class ReceiptTrackService {
 
   private apiUrl = 'api/receipt_track/';  // URL to web api
+  private userReceipts: Receipt[]
 
   httpOptions = {
     headers: new HttpHeaders({ 'Content-Type': 'application/json' })
   };
 
-  constructor(
-    private http: HttpClient) { }
+  get receipts()
+  {
+    return this.userReceipts;
+  }
 
+  constructor(
+    private http: HttpClient, private as: AuthService) { }
+
+  /**GET receipts */
+  getReceipts(): Observable<Receipt[]> {
+    return this.http.get<Receipt[]>(`${this.apiUrl}users/${this.as.currentUserValue.user_id}/`).pipe(
+      tap((receipts: Receipt[]) => {
+        this.userReceipts = receipts;
+        console.log("Fetched receipts")
+      }),
+      catchError(this.handleError<Receipt[]>('fetchReceipts'))
+    )
+  }
+
+  /**DELETE a receipt and its contents */
+  deleteReceipt(id: number): Observable<Receipt>
+  {
+    return this.http.delete(`${this.apiUrl}${id}/`).pipe(
+      tap((receipt: Receipt) => {
+        console.log(`Receipt deleted with id ${id}`)
+      }),
+      catchError(this.handleError<Receipt>('deleteReceipt'))
+    )
+  }
 
   /** POST: add a new receipt to the server */
   addReceipt(receipt: Receipt): Observable<Receipt> {
@@ -35,6 +63,13 @@ export class ReceiptTrackService {
       return this.http.post<QuickReceipt>(`${this.apiUrl}Simple`, receipt, this.httpOptions).pipe(
         tap((newReceipt: QuickReceipt) => console.log(`added receipt w/ id=${newReceipt.receipt_id}`)),
         catchError(this.handleError<QuickReceipt>('addReceipt'))
+      );
+    }
+
+    updateReceipt(receipt: Receipt): Observable<any> {
+      return this.http.put<Receipt>(`${this.apiUrl}/${receipt.receipt_id}/`, receipt, this.httpOptions).pipe(
+        tap(_ => console.log(`updated receipt w/ id=${receipt.receipt_id}`)),
+        catchError(this.handleError<Receipt>('updateReceipt'))
       );
     }
 

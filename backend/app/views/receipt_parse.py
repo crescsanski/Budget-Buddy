@@ -318,6 +318,8 @@ class ParseReceipt(object):
         :return: dict
             Convert Receipt object to dict
         """
+        for exp in self.expenses: exp['expense_price'] = round(exp['expense_price'], 2)
+        
         object_data = {
             "receipt": {
                 "receipt_date": self.date, 

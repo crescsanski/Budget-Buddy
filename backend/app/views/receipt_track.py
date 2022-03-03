@@ -62,17 +62,40 @@ def singleReceipt(request, receiptid):
             receipt.update(**recData)
             is_income = None
             serializer = None
-            if request.data['incomes']:
+            if request.data.get('incomes'):
+                cur = list(Income.objects.filter(receipt_id = receiptid).values('income_id'))
+                cur = [i.get('income_id') for i in cur]
                 for income in request.data['incomes']:
-                    Income.objects.filter(income_id=income['income_id']).update(
+                    query = Income.objects.filter(income_id=income.get('income_id'))
+                    if query.count() == 0:
+                        query.create(
                     **income,
-                    receipt = receiptid,
+                    receipt_id = receiptid,
                     )
-            elif request.data['expenses']:
+                    else:
+                        query.update(
+                    **income,
+                    receipt_id = receiptid,
+                    )
+                    cur = [i for i in cur if i != income.get('income_id')]
+                # Remove any associated incomes not included in the package    
+                Income.objects.filter(income_id__in = cur).delete()
+            elif request.data.get('expenses'):
+                cur2 = list(Expense.objects.filter(receipt_id = receiptid).values('expense_id'))
+                cur2 = [i.get('expense_id') for i in cur2]
                 for expense in request.data['expenses']:
-                    Expense.objects.filter(product_id=expense['product_id']).update(
+                    query = Expense.objects.filter(expense_id=expense.get('expense_id'))
+                    if query.count() == 0:
+                        query.create(
                     **expense,
-                    receipt = receiptid)  
+                    receipt_id = receiptid)  
+                    else:
+                        query.update(
+                    **expense,
+                    receipt_id = receiptid)  
+                    cur2 = [i for i in cur2 if i != expense.get('expense_id')]
+                # Remove any associated expenses not included in the package
+                Expense.objects.filter(expense_id__in = cur2).delete()
             return Response(f"Receipt with id {receiptid} has been updated.")
     
     
@@ -83,7 +106,7 @@ def getReceiptsByUser(request, userid):
 
     user = Users.objects.get(user_id = userid)
 
-    allReceipts = Receipt.objects.filter(user = user)[:20]
+    allReceipts = Receipt.objects.filter(user = user).order_by('-pk')[:10][::-1]
 
     incomeReceipts = Income.objects.select_related('receipt').filter(receipt__user = user)
     
@@ -93,6 +116,7 @@ def getReceiptsByUser(request, userid):
         object = {'incomes': incomeReceipts.filter(receipt__receipt_id = rec.receipt_id).values(),
                     'expenses': expenseReceipts.filter(receipt__receipt_id = rec.receipt_id).values()}
         object['receipt'] = Receipt.objects.filter(receipt_id = rec.receipt_id).values()[0]
+        object['receipt_id'] = rec.receipt_id
         out.append(object)
 
     return Response(out)

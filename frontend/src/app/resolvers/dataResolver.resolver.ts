@@ -9,6 +9,7 @@ import { IncomeHistoryService } from "../services/income-history.service";
 import { SavingsHistoryService } from "../services/savings-history.service";
 import { SpendingHistoryService } from "../services/spending-history.service";
 import { TimeService } from "../services/time.service";
+import { ReceiptTrackService } from "../widget/services/receipt-track.service";
 
 @Injectable({ providedIn: 'root' })
 export class DataResolver implements Resolve<any> {
@@ -16,6 +17,7 @@ export class DataResolver implements Resolve<any> {
         private spenTot: SpendingHistoryService,
         private budSco: BudgetScoreService,
         private badServ: BadgesEarnedService,
+        private rs: ReceiptTrackService,
         private incServ: IncomeHistoryService,
         private savServ: SavingsHistoryService,
         private ts: TimeService,
@@ -33,6 +35,9 @@ export class DataResolver implements Resolve<any> {
     
         //Fetch Weekly and Monthly Budgets for the app:
         this.budServ.getSpendBudget(),
+
+        //Fetch receipts for user:
+        this.rs.getReceipts(),
 
         //Fetch Default Display for Savings over Time Widget
         this.savServ.getByMonthCumSavings(),

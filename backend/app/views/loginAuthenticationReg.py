@@ -1,3 +1,4 @@
+import datetime
 from PIL.Image import Image
 from django.contrib.auth import password_validation
 from rest_framework.authtoken.views import ObtainAuthToken
@@ -78,6 +79,9 @@ class CustomAuthToken(ObtainAuthToken):
 
         # Create a new token for the user
         token = Token.objects.create(user=user)
+
+        # Update the user_last_login field
+        Users.objects.filter(user_id = user.user_id).update(last_login = datetime.datetime.now())
 
         return Response({
             'token': token.key,
