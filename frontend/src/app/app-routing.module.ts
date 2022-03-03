@@ -7,12 +7,13 @@ import { AuthGuard } from './helpers/auth.guard';
 import { RegisterPageComponent } from './register/register-page/register-page.component';
 import { DataResolver } from './resolvers/dataResolver.resolver';
 import { NewBudgetResolver } from './resolvers/newBudgetResolver.resolver';
+import { BudgetGuard } from './helpers/budget.guard';
 
 
 
 const routes: Routes = [
   { path: '', redirectTo: '/main-page', pathMatch: 'full' },
-  {path: 'main-page', component: MainPageComponent, canActivate: [AuthGuard],
+  {path: 'main-page', component: MainPageComponent, canActivate: [AuthGuard, BudgetGuard],
         resolve: {dataPackage: DataResolver}
   },
   {path: 'login-page', component: LoginPageComponent},
