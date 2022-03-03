@@ -36,6 +36,10 @@ export class ReceiptTrackingComponent implements OnInit {
   catOptions!: Category[];
   frequencyOptions!: SelectItem[];
   uploadedReceipt: Receipt;
+  editReceipt = false;
+  deleteReceipt = false;
+
+
 
   //mock receipt list
 
@@ -79,7 +83,6 @@ export class ReceiptTrackingComponent implements OnInit {
 
     //this.selectedReceipt = this.userReceipts[0]
     
- 
   }
 
   ngOnInit(): void {
@@ -254,6 +257,36 @@ export class ReceiptTrackingComponent implements OnInit {
     this.selectedReceipt = null;
     this.selectedReceipt = x;
     this.showReceipt = true;
+  }
+
+  openReceiptEditor(x: Receipt) {
+    this.editReceipt = false;
+    this.showReceipt = false;
+    this.selectedReceipt = null;
+    this.selectedReceipt = x;
+    this.resetForm();
+    this.loadForm(this.selectedReceipt, 0)
+    this.editReceipt = true;
+  }
+
+  openDeleteReceipt(x: Receipt) {
+    this.editReceipt = false;
+    this.showReceipt = false;
+    this.selectedReceipt = null;
+    this.selectedReceipt = x;
+    this.deleteReceipt = true;
+  }
+
+  updateReceipt(){
+    //TO DO: update receipt API call
+  }
+
+  confirmDeleteReceipt(){
+    //TO DO: delete receipt API call
+  }
+
+  denyDeleteReceipt(){
+    this.deleteReceipt=false;
   }
 
 }

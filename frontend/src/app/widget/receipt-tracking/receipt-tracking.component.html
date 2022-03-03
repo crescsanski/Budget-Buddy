@@ -7,11 +7,11 @@
             <div #receiptList>
                 <div *ngFor="let item of userReceipts" style="display: inline-flex;">
                     <div *ngIf="item == selectedReceipt" class="receipt-list selected">
-                        <p style="font-weight: bolder; font-size: 800; text-align: left;">{{item.receipt.receipt_name}}</p>
+                        <p style="font-weight: bolder; font-size: 800; text-align: left;">{{item.receipt.receipt_name}}<img class="edit-button" src="../../../assets/icons/trash.png" style="width:1em; position: absolute; right: 1em; border-radius: 100" (click)="openDeleteReceipt(item)"><img class="edit-button" src="../../../assets/icons/edit-icon.png" style="width:1em; position: absolute; right: 2.5em; border-radius: 100" (click)="openReceiptEditor(item)"></p>
                         <p style="margin-top: -20px">{{rs.getTotal(item) | currency}} <span style="margin: .3em"></span>{{item.receipt.receipt_date | date:'shortDate'}}</p>
                     </div>
                     <div *ngIf="item != selectedReceipt" class="receipt-list" (click)="selectReceipt(item)">
-                        <p style="font-weight: bolder; font-size: 800; text-align: left;">{{item.receipt.receipt_name}}</p>
+                        <p style="font-weight: bolder; font-size: 800; text-align: left;">{{item.receipt.receipt_name}}<img class="edit-button" src="../../../assets/icons/trash.png" style="width:1em; position: absolute; right: 1em; border-radius: 100" (click)="openDeleteReceipt(item)"><img class="edit-button" src="../../../assets/icons/edit-icon.png" style="width:1em; position: absolute; right: 2.5em; border-radius: 100" (click)="openReceiptEditor(item)"></p>
                         <p style="margin-top: -20px">{{rs.getTotal(item) | currency}} <span style="margin: .3em"></span>{{item.receipt.receipt_date | date:'shortDate'}}</p>
                     </div>
                 </div>
@@ -35,7 +35,61 @@
                 </p-fileUpload>
             </ng-template>
         </p-overlayPanel> 
-        <p-dialog *ngIf="selectedReceipt" (onHide)="selectedReceipt = null;" header="{{selectedReceipt.receipt.receipt_name}}" [(visible)]="showReceipt" [appendTo]="receiptList" class="fit">
+        <p-dialog *ngIf="editReceipt" header="Edit: {{selectedReceipt.receipt.receipt_name}}" [(visible)]="editReceipt" [appendTo]="receiptList" class="fit">
+            <div>
+                <div *ngIf="selectedReceipt">
+                    <form #f [formGroup]="getReceipt(0)" (ngSubmit)="track(0)">
+                        <div class="center">
+                            <p>Receipt Name</p>
+                            <input formControlName="receipt_name" type="text" pInputText/>
+                            <br>
+                            <p>Date</p>
+                            <p-calendar formControlName="receipt_date"></p-calendar>
+                            <br>
+                            <p>Spending Category</p>
+                            <p-dropdown [options]="catOptions" optionLabel="category_name" optionValue="category_id" 
+                            [autoDisplayFirst]=false
+                            formControlName="receipt_category"></p-dropdown>
+                        </div>
+                        <div formArrayName="products" class="grid" >
+                            <div class="col-6">
+                                <button type="button" (click)="addEmptyProduct(0)" class="p-button-info addButton">+ Add another product</button>
+                            </div>
+                                                       
+                            <div class="col-12">
+                                <ng-container *ngFor="let product of getProducts(0).controls; let i=index" >
+                                    <div [formGroup]="getProduct(0, i)" class="grid center">
+                                        <div *ngIf="i==0" class="col-4 adjust" >
+                                            <p class="adjust">Item Name</p>
+                                        </div>
+                                        <div *ngIf="i==0" class="col-8">
+                                            <p class="adjust">Cost</p>
+                                        </div>
+                                        <div class="col-4">
+                                            <input type="text" class="inputfield" formControlName="item_name" placeholder="Name"pInputText/>
+                                        </div>
+                                        <div class="col-4">
+                                            <p-inputNumber class="product" placeholder="Cost" formControlName="item_amount" 
+                                            mode="currency" [maxFractionDigits]="2" currency="USD" locale="en-US"></p-inputNumber>
+                                        </div>
+                                        <div class="col-1">
+                                            <button type="button" (click)="removeProduct(0, i)"pButton label="Delete" class="p-button-danger"></button>
+                                        </div> 
+                                    </div>
+                                    
+                                </ng-container>
+                            </div>
+                            <div class="col-12">
+                                <p>Total: {{totals[0] | currency}}</p>
+                            </div>
+                            
+                        </div>
+                        <button class="track trackAdj" pButton type="submit" label='Track'></button>
+                    </form>
+                </div>
+            </div>
+        </p-dialog>
+        <p-dialog *ngIf="selectedReceipt" header="{{selectedReceipt.receipt.receipt_name}}" [(visible)]="showReceipt" [appendTo]="receiptList" class="fit">
             <div>
                 <div *ngIf="selectedReceipt">
                     <p style="text-align: left;"><span style="font-weight: bolder;">Receipt Name: </span>{{selectedReceipt.receipt.receipt_name}}</p>
@@ -44,6 +98,7 @@
                 </div>
             </div>
         </p-dialog>
+
         <p-dialog header="Verify Upload Values" [(visible)]="receiptUploaded" [appendTo]="receiptList" class="fit">
             
             <p-tabView [(activeIndex)]="inSel">
@@ -98,6 +153,16 @@
                                 </div>
                                 <button class="track trackAdj" pButton type="submit" label='Track'></button>
                             </form>
+
+        <p-dialog header="Delete: {{selectedReceipt.receipt.receipt_name}}" [(visible)]="deleteReceipt" [appendTo]="receiptList" class="fit">
+            <div style="text-align: center;">
+                <h3 class="message">Are you sure? <br> You are about to delete:<br><br><span style="color:#4ec5ca; font-size: larger;"> {{selectedReceipt.receipt.receipt_name}}</span><br><br>
+                This cannot be undone.</h3>
+            
+                <button style="margin: 1em; display: inline-flex; text-align: center;" class="track" pButton type="submit" label='Yes, Delete' (click)="confirmDeleteReceipt()"></button>
+                <button style="margin: 1em; display: inline-flex; text-align: center;" class="button-secondary"pButton type="submit" label='No, Keep' (click)="denyDeleteReceipt()"></button>
+            </div>
+        </p-dialog>
                         </div>
                     </div>
                 </p-tabPanel>
