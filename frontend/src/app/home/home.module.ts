@@ -1,3 +1,4 @@
+import { OverlayPanelModule } from 'primeng/overlaypanel';
 import { DropdownModule } from 'primeng/dropdown';
 import { MultiSelectModule } from 'primeng/multiselect';
 import { WidgetModule } from '../widget/widget.module';
@@ -17,6 +18,7 @@ import { BudgetAdvisorComponent } from './budget-creator/budget-advisor/budget-a
 import {ChartModule} from 'primeng/chart';
 import {DialogModule} from 'primeng/dialog';
 import { BudgetAdjusterComponent } from './budget-creator/budget-adjuster/budget-adjuster.component';
+
 
 
 
@@ -47,7 +49,8 @@ import { BudgetAdjusterComponent } from './budget-creator/budget-adjuster/budget
     ChartModule,
     DialogModule,
     MultiSelectModule,
-    DropdownModule
+    DropdownModule,
+    OverlayPanelModule
     ],
  
 })

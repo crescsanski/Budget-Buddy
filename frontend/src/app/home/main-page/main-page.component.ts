@@ -1,9 +1,10 @@
-
+import { Router } from '@angular/router';
 import { Component, OnChanges, OnInit, SimpleChanges } from '@angular/core';
 import {MenuItem} from 'primeng/api';
 import { MessageService } from 'src/app/services/message.service';
 import { first } from 'rxjs/operators';
 import { AuthService } from 'src/app/services/auth.service';
+
 
 @Component({
   selector: 'app-main-page',
@@ -21,10 +22,12 @@ export class MainPageComponent implements OnInit {
   rewardsWidgets: any[] | undefined;
   roomWidgets: any[] | undefined;
   hidden: boolean = true;
+  name: string = undefined;
+  level: number = undefined;
 
 
 
-  constructor(private authService: AuthService, private messageService: MessageService) { 
+  constructor(private authService: AuthService, private messageService: MessageService, private router: Router) { 
    this.currentPage = 'Dashboard';
    //this.currentPage = 'Tracking';
   }
@@ -94,6 +97,10 @@ export class MainPageComponent implements OnInit {
             }
         }
     });
+  }
+
+  goToNewBudget(){
+    this.router.navigate(['/new-budget'])
   }
 
 
