@@ -18,6 +18,7 @@ import { BudgetAdvisorComponent } from './budget-creator/budget-advisor/budget-a
 import {ChartModule} from 'primeng/chart';
 import {DialogModule} from 'primeng/dialog';
 import { BudgetAdjusterComponent } from './budget-creator/budget-adjuster/budget-adjuster.component';
+import {ListboxModule} from 'primeng/listbox';
 
 
 
@@ -50,7 +51,8 @@ import { BudgetAdjusterComponent } from './budget-creator/budget-adjuster/budget
     DialogModule,
     MultiSelectModule,
     DropdownModule,
-    OverlayPanelModule
+    OverlayPanelModule,
+    ListboxModule
     ],
  
 })

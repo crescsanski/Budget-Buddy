@@ -42,8 +42,19 @@
             <h2>Friends</h2>
             <p style="margin-top: -.75em;">View your friends list</p>
           </div>
+          <div class="setting-item" style="display: block" (click)="showFavorites()">
+            <h2>Favorites</h2>
+            <p style="margin-top: -.75em;">Set your favorite categories</p>
+          </div>
       </ng-template>
   </p-overlayPanel>
+
+  <p-dialog header="Favorites" [(visible)]="favoriteMenu">
+    <p-listbox [options]="budgetCategories" [(ngModel)]="selectedCategories"  [listStyle]="{'max-height':'20vh'}" optionLabel="categoryTitle" [multiple]="true"  [filter]="true" [filterPlaceHolder]="'Search'" [checkbox]="true"></p-listbox>
+    <button  pButton pRipple  type="button" (click)="setFavorites()" style="display: block; text-align: center; width: 99%; margin-top: 2em" >Submit</button>
+</p-dialog>
+
+
     <p-menu #menu [popup]="true" [model]="settings"></p-menu>
     </div>
     <div *ngIf='hidden === false'>
