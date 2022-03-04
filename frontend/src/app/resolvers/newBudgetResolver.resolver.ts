@@ -1,6 +1,6 @@
 import { Injectable } from "@angular/core";
 import { ActivatedRouteSnapshot, Resolve, RouterStateSnapshot } from "@angular/router";
-import { forkJoin, Observable } from "rxjs";
+import { EMPTY, forkJoin, Observable } from "rxjs";
 import { BadgesEarnedService } from "../services/badgesEarned.service";
 import { BudgetService } from "../services/budget.service";
 import { CategoryService } from "../services/category.service";
@@ -11,7 +11,7 @@ export class NewBudgetResolver implements Resolve<any> {
     constructor(
         private catService: CategoryService) {}
     
-    resolve(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): any | Observable<any> | Promise<any> {
+    resolve(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): Observable<any> {
     
     var observArray = []
     if (this.catService.expenseCats == null || this.catService.incomeCats == null)
@@ -21,7 +21,15 @@ export class NewBudgetResolver implements Resolve<any> {
 
     const observable = forkJoin(observArray)
 
-    return observable;
+    if (observArray.length > 0)
+    {
+        return observable;
+    }
+    else
+    {
+        return {} as Observable<any>;
+    }
+  
     
     }
 }

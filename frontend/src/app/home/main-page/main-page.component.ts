@@ -135,7 +135,7 @@ export class MainPageComponent implements OnInit {
  
 
   goToNewBudget(){
-    this.router.navigate(['/new-budget'])
+    this.router.navigateByUrl('/new-budget')
   }
 
   showFavorites(){

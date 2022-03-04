@@ -60,7 +60,7 @@ export class BudgetPanelComponent implements OnInit {
     private ms: MessageService) {
 
 
-      
+      /*
       this.cs.getCategories().pipe(
         mergeMap((cats: Category[]) => 
         {
@@ -73,6 +73,7 @@ export class BudgetPanelComponent implements OnInit {
          // this.initializeForm();
         })
       ).subscribe();
+      */
 
   this.panels = [
     'Advisor','Income', 'Expenses', 'Finalization'

@@ -28,7 +28,7 @@ export class BudgetGuard implements CanActivate {
                 {
                     return true;
                 }
-                this.router.navigateByUrl('/new-budget');
+                this.router.navigate(['new-budget']);
                 return false;
             })
         )        
