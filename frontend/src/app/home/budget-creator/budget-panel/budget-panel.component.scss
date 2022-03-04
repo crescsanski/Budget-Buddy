@@ -4,16 +4,34 @@
   background-color: white;
   color: $teal;
   padding: 1em;
-  width: 25vw;
-  min-width: 20em;
-  max-width: 30em;
+  width: 50vw;
+  min-width: 50em;
+  max-width: 70em;
   border-radius: 62px;
   text-align: left;
   box-shadow: 3px 3px 10px $light-gray;
+  height: 32vh;
+  display: block;
+}
+
+.panel-expenses {
+  height: 60vh;
 }
 
 .content {
   padding: 2em;
+}
+
+.column {
+  float: left;
+  width: 50%;
+  margin-left: 3em;
+}
+
+.column:after {
+  content:"";
+  display: table;
+  clear: both;
 }
 
 input {

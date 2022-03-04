@@ -10,7 +10,7 @@ import { BudgetService } from 'src/app/services/budget.service';
 })
 export class BudgetSliderComponent implements OnInit {
   budgetCategories: BudgetCategory[];
-  totalBudget: number;
+  totalBudget: number = 2000;
   tempValue = 0;
   
   constructor(private budServ: BudgetService) { }
