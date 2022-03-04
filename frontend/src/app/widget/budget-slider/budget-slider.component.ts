@@ -9,7 +9,7 @@ import { Component, OnInit } from '@angular/core';
 })
 export class BudgetSliderComponent implements OnInit {
   budgetCategories: BudgetCategory[];
-  totalBudget: number;
+  totalBudget: number = 2000;
   tempValue = 0;
   
   constructor() { }
