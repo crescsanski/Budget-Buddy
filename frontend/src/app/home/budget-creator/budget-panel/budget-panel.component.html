@@ -1,61 +1,54 @@
-<div *ngIf="currentPanel.categoryTitle != 'Finalization' && panelNumber >0" style="display: inline-flex;">
-    <div>
-        <img class="clickable" src="../../../../assets/icons/left-arrow.png" style="height: 5em; margin-top: 16vh; margin-right: 3em; opacity: 95%" (click)="pageBackward()">
-    </div>
-<div *ngIf="visible && currentPanel.categoryTitle != 'Final Budget'" [@slideInOut] (@slideInOut.start)="slideInOutStart($event)" (@slideInOut.done)="slideInOutEnd($event)" class="panel">
-    <div class="content" style="text-align: center;">
-        <div style="text-align: center; margin-bottom: 2vh">
-            <img [src]="currentPanel.icon" style="width: 5vw; margin-bottom: 1em;">
-            <br>
-            <h1>{{ currentPanel.categoryTitle }}</h1>
-        </div>
-        <div *ngIf="currentPanel.categoryTitle != 'What\'s Your Budget?' && currentPanel.categoryTitle != 'Halfway There!' && currentPanel.categoryTitle != 'All Done!' && currentPanel.categoryTitle != 'Finalization'">
-            <form [formGroup]="c(panelNumber)" (ngSubmit)="track(c(panelNumber))">
-                <div class="content-area">
-                    <p>Amount</p>
-                    <p-inputNumber mode="currency" formControlName="amount" currency="USD" [maxFractionDigits]=0 locale="en-US" [(ngModel)]="val"></p-inputNumber>
-                    <br>
-        
-                    <div style="text-align: center;">
-                        <button style="margin-top: 2em; text-align: center;" class="track button-emphasis" pButton type="submit" label='Track' (click)="trackValues()"></button>
-                    </div>
-                </div>
-            </form>
-        </div>
-        <div *ngIf="currentPanel.categoryTitle == 'What\'s Your Budget?' ">
-            <p style="color: #003486; text-align: center;">
-                <span style="color: #4ec5ca; font-weight: bolder;">Let's build your inital budget!</span><br><br>
-                <span style="font-size: smaller;">Enter your estimated monthly <br> <span style="font-weight: bolder; font-size: larger;">INCOME</span><br>in each of the following.</span>
-                <br>
-            </p>
-        </div>
-        
-        <div *ngIf="currentPanel.categoryTitle == 'Halfway There!' ">
-            <p style="color: #003486; text-align: center;">
-                <span style="color: #4ec5ca; font-weight: bolder;">Great job tracking income, let's move on to spending!</span><br><br>
-                <span style="font-size: smaller;">Enter your estimated monthly <br> <span style="font-weight: bolder; font-size: larger;">SPENDING</span><br>in each of the following.</span>
-                <br>
-            </p>
-        </div>
-        <div *ngIf="currentPanel.categoryTitle == 'All Done!' ">
-            <p style="color: #003486; text-align: center;">
-                <span style="color: #4ec5ca; font-weight: bolder;">That's everything we needed!</span><br><br>
-                <span style="font-size: smaller;">Your budget has been assembled. Time to visit your dashboard!<br></span>
-                <br>
-            </p>
-            <div style="text-align: center;">
-                <a [routerLink]="['/main-page']"><button style="margin-top: 2em; text-align: center;" class="track button-emphasis" pButton type="submit" label='Get Started'></button></a>
-            </div>
-        </div>
-        <br>
-    </div>
-</div>
-<img class="clickable" src="../../../../assets/icons/right-arrow.png" style="height: 5em; margin-top: 16vh; margin-left: 3em; opacity: 95%" (click)="pageForward()">
-</div>
-<div *ngIf="currentPanel.categoryTitle == 'Advisor' && advisorVisible">
+<div *ngIf="currentPanel == 'Advisor' && advisorVisible">
     <app-budget-advisor (pageForward)="pageForward(); "></app-budget-advisor>
 </div>
-<div *ngIf="currentPanel.categoryTitle == 'Finalization' ">
+<div *ngIf="currentPanel == 'Income' && advisorVisible" class="panel" style="padding:2em">
+    <div>
+    <div>
+        <div class="header">
+            <h1>Income</h1> 
+        </div>
+        <div *ngFor="let item of income; let i=index">
+            <div *ngIf="i<10" style="width: 40%; display: block" class="column">
+                <h3>{{item.categoryTitle}}</h3>
+                <p-inputNumber placeholder="$0.00" mode="currency" currency="USD" locale="en-US"></p-inputNumber>
+            </div>
+        </div>
+        <div *ngFor="let item of income; let i=index">
+            <div *ngIf="i>=10" style="width: 40%; display: block" class="column">
+                <h3>{{item.categoryTitle}}</h3>
+                <p-inputNumber placeholder="$0.00" mode="currency" currency="USD" locale="en-US"></p-inputNumber>
+            </div>
+        </div>
+        </div>
+    </div>
+    <button pButton style="margin-left: 2.5em; margin-top: 3em; width: 88%" type="submit" label='Track' (click)="pageForward()"></button>
+</div>
+
+<div *ngIf="currentPanel == 'Expenses' && advisorVisible" class="panel panel-expenses" style="padding:2em">
+    <div>
+    <div>
+        <div class="header">
+            <h1>Expenses</h1> 
+        </div>
+        <div *ngFor="let item of expenses; let i=index">
+            <div *ngIf="i<10" style="width: 40%; display: block" class="column">
+                <h3>{{item.categoryTitle}}</h3>
+                <p-inputNumber placeholder="$0.00" mode="currency" currency="USD" locale="en-US"></p-inputNumber>
+            </div>
+        </div>
+        <div *ngFor="let item of expenses; let i=index">
+            <div *ngIf="i>=10" style="width: 40%; display: block" class="column">
+                <h3>{{item.categoryTitle}}</h3>
+                <p-inputNumber placeholder="$0.00" mode="currency" currency="USD" locale="en-US"></p-inputNumber>
+            </div>
+        </div>
+        </div>
+    </div>
+    <button pButton style="margin-left: 2.5em; margin-top: 3em; width: 88%" type="submit" label='Track' (click)="pageForward()"></button>
+</div>
+
+
+<div *ngIf="currentPanel =='Finalization' " style="top:20vh">
     <app-budget-adjuster [prompts]="prompts" [totalIncome]="totalIncome" [totalExpenses]="totalExpenses" 
     [availableBudget]="availableBudget" [breakdown]="recalculate()"></app-budget-adjuster>
 </div>
