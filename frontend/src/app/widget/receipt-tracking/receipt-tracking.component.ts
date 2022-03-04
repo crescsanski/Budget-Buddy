@@ -63,7 +63,7 @@ export class ReceiptTrackingComponent implements OnInit {
 
       this.frequencyOptions = this.ws.frequencyOptions;
 
-      this.userReceipts = this.rs.receipts.filter(val => val.expenses.length > 0)
+      this.userReceipts = this.rs.receipts.filter(val => val.expenses.length > 0).slice(-4)
 
     /*this.userReceipts = [
       {
