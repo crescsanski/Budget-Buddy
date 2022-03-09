@@ -2,6 +2,7 @@ from datetime import datetime
 import json
 from PIL.Image import Image
 from django.contrib.auth import password_validation
+import pandas as pd
 from rest_framework.authtoken.views import ObtainAuthToken
 from rest_framework.authtoken.models import Token
 from rest_framework.exceptions import ValidationError
@@ -72,44 +73,96 @@ def setInitialBudget(request):
         for budget in validData['budgets']:
             UserCategoryBudget.objects.create(**budget, user_id=user, 
             user_category_budget_last_modified_date = timezone.now(),
-            user_category_budget_date= today)
+            user_category_budget_date= timezone.now())
     except:
         raise ValidationError("The user already has an existing budget.")
 
     return Response(f"An initial budget has been set for user_id {user}")
 
-@api_view(["GET"])
+@api_view(["GET", "PUT", "DELETE"])
 #Retrieve budgets for a specified user
 #Includes optional filter to retrieve only income
 #or only expense budgets
+#On put requests, it should modify the user's altered amounts for the current budget cycle
 def manageUserBudget(request, userid):
-    type = request.query_params.get('category_type')
-    filters = {'user_id': userid}
-    if type is not None:
-        filters['category__category_type'] = type
+    if request.method == 'GET':
+        type = request.query_params.get('category_type')
+        month = request.query_params.get('month')
+        year = request.query_params.get('year')
+
+        filters = {'user_id': userid}
+        if type is not None:
+            filters['category__category_type'] = type
+        if month is not None:
+            filters['month'] = month
+        if year is not None:
+            filters['year'] = year
 
 
-    if Users.objects.filter(user_id = userid).count() == 0:
-        raise ValidationError("A user with the given ID does not exist.")
-    budgets = UserCategoryBudget.objects.annotate(year=ExtractYear('user_category_budget_date'),
-                      month=ExtractMonth('user_category_budget_date'),
-            ).filter(**filters).annotate(
-        categoryTitle = F('category__category_name'),
-        amount = F('user_category_budget_altered_amount'),
-        category_type = F('category__category_type')
-    ).values('year', 'month', 'categoryTitle', 'category_type', 'amount').order_by('-year', '-month')
-    return Response(budgets)
+        if Users.objects.filter(user_id = userid).count() == 0:
+            raise ValidationError("A user with the given ID does not exist.")
+        budgets = UserCategoryBudget.objects.annotate(year=ExtractYear('user_category_budget_date'),
+                        month=ExtractMonth('user_category_budget_date'),
+                ).filter(**filters).annotate(
+            categoryTitle = F('category__category_name'),
+            altered_amount = F('user_category_budget_altered_amount'),
+            estimated_amount = F('user_category_budget_estimated_amount'),
+            category_type = F('category__category_type'),
+            is_favorite = F('user_category_budget_favorite')
+        ).values('year', 'month', 'categoryTitle', 'category_id', 'category_type', 'altered_amount', 'estimated_amount', 'is_favorite').order_by('-year', '-month')
+        return Response(budgets)
+    elif request.method == 'PUT':
+        serializer = UpdateBudgetSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        data = serializer._validated_data
+        
+        newBudg = data.get('budgets')
+        if len(newBudg) < 1:
+            raise ValidationError("Please provide budget data for at least one category.")
+
+        today = date.today()
+        #Next, let's pull user's existing budget record for this month.
+        oldRecords = UserCategoryBudget.objects.annotate(year=ExtractYear('user_category_budget_date'),
+                        month=ExtractMonth('user_category_budget_date'),
+                ).filter(user_id=userid, year=today.year, month=today.month)
+        
+        if oldRecords.count() == 0:
+            raise ValidationError("The user has yet to set a budget for this month.  The user cannot update their budgets if they do not yet exist.")
+        
+        for bud in newBudg:
+            record = oldRecords.all().filter(category=bud.get('category'))
+            record.update(**bud, user_category_budget_last_modified_date = timezone.now())
+
+        return Response(f"The budgets for user {userid} have been updated.")
+        #update user's budget record
+    elif request.method == "DELETE":
+        #On a delete request, we'll delete the user's budget records for the current month
+        today = date.today()
+        #Next, let's pull user's existing budget record for this month.
+        oldRecords = UserCategoryBudget.objects.annotate(year=ExtractYear('user_category_budget_date'),
+                        month=ExtractMonth('user_category_budget_date'),
+                ).filter(user_id=userid, year=today.year, month=today.month)
+        
+        if oldRecords.count() == 0:
+            raise ValidationError("The user has yet to set a budget for this month.  The user cannot delete their budgets if they do not yet exist.")
+        
+        oldRecords.delete()
+
+        return Response(f"The budgets for user {userid} have been deleted.")
+ 
+    else:
+        return Response(f"A request of type {request.method} is not accepted", exception=True)
 
 #Calculate and retrieve a user's monthly and weekly spending budget total for each budget cycle (excludes income categories)
 @api_view(["GET"])
-def getSpendBudgetTotal(request, userid):
+def getBudgetTotals(request, userid):
 
     today = date.today()
     now = datetime.now()
     daysInMonth = calendar.monthrange(now.year, now.month)[1]
     spendBudget = UserCategoryBudget.objects.annotate(year=ExtractYear('user_category_budget_date'),
                       month=ExtractMonth('user_category_budget_date'),
-            ).filter(
+            ).exclude(year = None, month = None).filter(
             user_id = userid, 
             category__category_type__in = ['want', 'need', 'saving']).values('user_id', 'year', 'month').annotate(
                 monthlyBudgetTotal = Sum('user_category_budget_altered_amount')).annotate(
@@ -117,5 +170,27 @@ def getSpendBudgetTotal(request, userid):
                     'year', 'month', 'monthlyBudgetTotal', 'weeklyBudgetTotal'
                 ).order_by('-year', '-month')
     
-    return Response(spendBudget)
+    if spendBudget.count() == 0:
+        raise ValidationError("The user has not set a budget for the current month.")
+    
+    incomeBudget = UserCategoryBudget.objects.annotate(year=ExtractYear('user_category_budget_date'),
+                      month=ExtractMonth('user_category_budget_date'),
+            ).exclude(year = None, month = None).filter(
+            user_id = userid, 
+            category__category_type__in = ['income']).values('user_id', 'year', 'month').annotate(
+                monthlyEstIncome = Sum('user_category_budget_altered_amount')).values(
+                    'year', 'month', 'monthlyEstIncome'
+                ).order_by('-year', '-month')
+    
+    incomeDf = pd.DataFrame(incomeBudget).set_index(['year', 'month'])
+    expenseDf = pd.DataFrame(spendBudget).set_index(['year', 'month'])
+
+    mergeDf = incomeDf.merge(expenseDf, how = 'outer', 
+            left_index = True, right_index = True)
+    mergeDf = mergeDf.fillna(0)
+    mergeDf = mergeDf.round(2)
+    mergeDf.reset_index(inplace=True)
+    out = mergeDf.to_dict('records')
+    
+    return Response(out)
 

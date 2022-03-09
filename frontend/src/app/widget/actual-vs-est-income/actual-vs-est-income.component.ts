@@ -60,7 +60,7 @@ export class ActualVsEstIncomeComponent implements OnInit {
       {
         this.categories.push(i.category_name)
         acIncValue ? this.actIncValues.push(acIncValue.totalIncomeReceived) : this.actIncValues.push(0)
-        estIncValue ? this.estIncValues.push(estIncValue.amount) : this.estIncValues.push(0)
+        estIncValue ? this.estIncValues.push(estIncValue.altered_amount) : this.estIncValues.push(0)
       }
       
     }

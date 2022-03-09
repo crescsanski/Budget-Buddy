@@ -33,10 +33,26 @@ class InitialBudgetSerializer(serializers.Serializer):
     class CustomCatUsBudgetSerializer(serializers.ModelSerializer):
         class Meta:
             model = UserCategoryBudget
-            fields = ['category', 'user_category_budget_estimated_amount', 'user_category_budget_altered_amount']
+            fields = ['category', 'user_category_budget_estimated_amount', 'user_category_budget_altered_amount', 'user_category_budget_favorite']
     
     budgets = CustomCatUsBudgetSerializer(UserCategoryBudget.objects.all(), many = True)
 
+    class Meta:
+        fields = ['budgets']
+
+class UpdateBudgetSerializer(serializers.Serializer):
+
+    class CustomUserSerializer(serializers.ModelSerializer):
+        class Meta:
+            model = Users 
+            fields = ['user_id']
+
+    class CustomCatUsBudgetSerializer(serializers.ModelSerializer):
+        class Meta:
+            model = UserCategoryBudget
+            fields = ['category', 'user_category_budget_altered_amount', 'user_category_budget_favorite']
+    
+    budgets = CustomCatUsBudgetSerializer(UserCategoryBudget.objects.all(), many = True)
     class Meta:
         fields = ['budgets']
 

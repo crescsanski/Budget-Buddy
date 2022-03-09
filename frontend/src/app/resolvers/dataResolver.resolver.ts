@@ -34,7 +34,7 @@ export class DataResolver implements Resolve<any> {
     const observable = forkJoin( observArray.concat([
     
         //Fetch Weekly and Monthly Budgets for the app:
-        this.budServ.getSpendBudget(),
+        this.budServ.getBudgetTotals(),
 
         //Fetch receipts for user:
         this.rs.getReceipts(),

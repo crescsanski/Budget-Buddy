@@ -7,7 +7,7 @@ import { catchError, map, tap } from 'rxjs/operators';
 import { Budget } from '../models/budget';
 import { MessageService } from './message.service';
 import { AuthService } from './auth.service';
-import { SpendBudget } from '../models/spendBudget';
+import { BudgetTotals } from '../models/spendBudget';
 import { User } from '../models/user';
 import { BudgetCategory } from '../models/formModels/budgetCategory';
 

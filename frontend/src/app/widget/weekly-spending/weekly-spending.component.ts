@@ -24,13 +24,18 @@ export class WeeklySpendingComponent implements OnInit {
     {
       this.ngOnInit();
     })
+
+    this.trigServ.budgetUpdatedAnnounced$.subscribe(() =>
+    {
+      this.ngOnInit();
+    })
     
   }
 
   ngOnInit(): void {
         //fetch value from database (calculate percentage)
         this.value = 0;
-        this.weeklyBudget = Math.round(this.budServ.spendBudCalcs[0].weeklyBudgetTotal);
+        this.weeklyBudget = Math.round(this.budServ.curBudCalcs.weeklyBudgetTotal);
      
         this.weeklySpent = this.spenHis.weekSpend;
         this.percentage = Math.round(this.weeklySpent/this.weeklyBudget *100);

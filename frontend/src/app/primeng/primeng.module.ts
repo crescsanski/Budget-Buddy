@@ -15,12 +15,14 @@ import {MultiSelectModule} from 'primeng/multiselect';
 import { InputTextModule } from 'primeng/inputtext';
 import {TabViewModule} from 'primeng/tabview';
 import {ProgressSpinnerModule} from 'primeng/progressspinner';
+import {ProgressBarModule} from 'primeng/progressbar';
 
 @NgModule({
   declarations: [  ],
   imports: [
     InputNumberModule,
     ProgressSpinnerModule,
+    ProgressBarModule,
     CalendarModule,
     MultiSelectModule,
     MessagesModule, 
@@ -37,6 +39,7 @@ import {ProgressSpinnerModule} from 'primeng/progressspinner';
   exports: [
     InputNumberModule,
     CalendarModule,
+    ProgressBarModule,
     MessagesModule,
     PasswordModule,
     ProgressSpinnerModule,

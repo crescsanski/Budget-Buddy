@@ -1,6 +1,13 @@
 export interface Budget {
-    budget_id?: number;
-    category: number;
-    user_category_budget_estimated_amount: number;
-    user_category_budget_altered_amount: number;
+    year: number, 
+    month: number, 
+    categoryTitle: string, 
+    category_id: number, 
+    category_type: string, 
+    altered_amount: number, 
+    estimated_amount: number, 
+    is_favorite: boolean,
+    max?: number,
+    new_amount: number,
+    visible?: boolean
 }

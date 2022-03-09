@@ -7,9 +7,10 @@ import { catchError, map, tap } from 'rxjs/operators';
 import { Budget } from '../models/budget';
 import { MessageService } from './message.service';
 import { AuthService } from './auth.service';
-import { SpendBudget } from '../models/spendBudget';
+import { BudgetTotals } from '../models/spendBudget';
 import { User } from '../models/user';
 import { BudgetCategory } from '../models/formModels/budgetCategory';
+import { TimeService } from './time.service';
 
 
 @Injectable({ providedIn: 'root' })
@@ -17,18 +18,19 @@ export class BudgetService {
 
   private budgetsUrl = 'api/budget/';  // URL to web api
   user: User | null = null;
-  private spenBudCalcs: SpendBudget[] = [];
-  private exBudCat: BudgetCategory[]
-  private inBudCat: BudgetCategory[]
+  private bud_Calcs: BudgetTotals[] = [];
+  private curMonthCalcs: BudgetTotals;
+  private exBudCat: Budget[]
+  private inBudCat: Budget[]
 
-  get spendBudCalcs()
+  get budCalcs()
   {
-    return this.spenBudCalcs;
+    return this.bud_Calcs;
   }
 
-  set spendBudCalcs(value)
+  get curBudCalcs()
   {
-    this.spenBudCalcs = value;
+    return this.curMonthCalcs;
   }
 
   get exBudByCat()
@@ -55,25 +57,42 @@ export class BudgetService {
   constructor(
     private http: HttpClient,
     private messageService: MessageService,
-    private authServ: AuthService) { 
+    private authServ: AuthService, private ts: TimeService) { 
       this.authServ.currentUser.subscribe(x => this.user = <User>x);
     }
 
-  /** GET budgets from the server */
-  getBudgets(): Observable<Budget[]> {
-    return this.http.get<Budget[]>(this.budgetsUrl)
-      .pipe(
-        tap(_ => console.log('fetched budgets')),
-        catchError(this.handleError<Budget[]>('getBudgets', []))
-      );
+  /**Update altered amounts in budget */
+  updateBudget(budgets: Budget[]): Observable<any> {
+    const url = `${this.budgetsUrl}users/${this.user.user_id}/`
+    const object = {
+      budgets: budgets
+    }
+    return this.http.put(url, object, this.httpOptions)
+    .pipe(
+      tap(_ => console.log('updated budgets')),
+      catchError(this.handleError<any>('updateBudgets', 'error'))
+    )
+  }
+
+  /**Set initial budget */
+  setInitialBudget(budgets: Budget[]): Observable<any> {
+    const object = {
+      user_id: this.user.user_id,
+      budgets: budgets
+    }
+    return this.http.post(this.budgetsUrl, object, this.httpOptions)
+    .pipe(
+      tap(_ => console.log('set initial budgets')),
+      catchError(this.handleError<any>('initBudgets'))
+    )
   }
 
   /**GET User's Budgets */
-  getBudByCat(): Observable<BudgetCategory[]>
+  getBudByCat(): Observable<Budget[]>
   {
     const url = `${this.budgetsUrl}users/${this.user.user_id}/`
-    return this.http.get<BudgetCategory[]>(url).pipe(
-      tap((out: BudgetCategory[]) => 
+    return this.http.get<Budget[]>(url).pipe(
+      tap((out: Budget[]) => 
       {
         console.log(`Fetched budgets by category`)
         let inc = out.filter(value => value.category_type == "income")  
@@ -81,92 +100,32 @@ export class BudgetService {
         this.exBudCat = exp;
         this.inBudCat = inc;
       }),
-      catchError(this.handleError<BudgetCategory[]>(`getBudByCat`))
+      catchError(this.handleError<Budget[]>(`getBudByCat`))
     )
   }
 
-  /**GET User's Budget Spending Totals */
-  getSpendBudget(): Observable<SpendBudget[]> {
-    return this.http.get<SpendBudget[]>(`${this.budgetsUrl}users/${this.user.user_id}/SpendingBudget`).pipe(
-    tap((out: SpendBudget[]) => 
+  /**GET User's Budget Totals */
+  getBudgetTotals(): Observable<BudgetTotals[]> {
+    return this.http.get<BudgetTotals[]>(`${this.budgetsUrl}users/${this.user.user_id}/totals`).pipe(
+    tap((out: BudgetTotals[]) => 
       {
-        console.log(`Fetched budget spending totals`)
+        console.log(`Fetched budget totals`)
         if (out && out.length > 0)
         {
-          this.spenBudCalcs = out;
+          this.bud_Calcs = out;
+          let temp = out.filter(val => val.year == this.ts.year && val.month == this.ts.month)
+          temp && temp.length > 0 ? this.curMonthCalcs = temp[0] : this.curMonthCalcs = {weeklyBudgetTotal: 0, monthlyBudgetTotal: 0, monthlyEstIncome: 0, month: this.ts.month, year: this.ts.year}
         }
         else
         {
-          this.spenBudCalcs = [{weeklyBudgetTotal: 0, monthlyBudgetTotal: 0, month: 0, year: 0}]
+          this.bud_Calcs = [{weeklyBudgetTotal: 0, monthlyBudgetTotal: 0, monthlyEstIncome: 0, month: 0, year: 0}]
+          this.curMonthCalcs = {weeklyBudgetTotal: 0, monthlyBudgetTotal: 0, monthlyEstIncome: 0, month: 0, year: 0}
         }
         
       }),
-    catchError(this.handleError<SpendBudget[]>(`getSpendBudget`))
+    catchError(this.handleError<BudgetTotals[]>(`getBudgetTotals`))
   );
 }
-
-
-  /** GET budget by id. Return `undefined` when id not found */
-  getBudgetNo404<Data>(id: number): Observable<Budget> {
-    const url = `${this.budgetsUrl}/?id=${id}`;
-    return this.http.get<Budget[]>(url)
-      .pipe(
-        map(budgets => budgets[0]), // returns a {0|1} element array
-        tap(h => {
-          const outcome = h ? `fetched` : `did not find`;
-          console.log(`${outcome} budget id=${id}`);
-        }),
-        catchError(this.handleError<Budget>(`getBudget id=${id}`))
-      );
-  }
-
-  /** GET budget by id. Will 404 if id not found */
-  getBudget(id: number): Observable<Budget> {
-    const url = `${this.budgetsUrl}/${id}`;
-    return this.http.get<Budget>(url).pipe(
-      tap(_ => console.log(`fetched budget id=${id}`)),
-      catchError(this.handleError<Budget>(`getBudget id=${id}`))
-    );
-  }
-
-  /* GET budgets whose name contains search term */
-  searchBudgets(term: number): Observable<Budget[]> {
-    return this.http.get<Budget[]>(`${this.budgetsUrl}?user=${term}`).pipe(
-      tap(x => x.length ?
-         console.log(`found budgets matching "${term}"`) :
-         console.log(`no budgets matching "${term}"`)),
-      catchError(this.handleError<Budget[]>('searchBudgets', []))
-    );
-  }
-
-  //////// Save methods //////////
-
-  /** POST: add a new budget to the server */
-  addBudget(budget: Budget): Observable<Budget> {
-    return this.http.post<Budget>(this.budgetsUrl, budget, this.httpOptions).pipe(
-      tap((newBudget: Budget) => console.log(`added budget w/ id=${newBudget.budget_id}`)),
-      catchError(this.handleError<Budget>('addBudget'))
-    );
-  }
-
-  /** DELETE: delete the budget from the server */
-  deleteBudget(id: number): Observable<Budget> {
-    const url = `${this.budgetsUrl}/${id}`;
-
-    return this.http.delete<Budget>(url, this.httpOptions).pipe(
-      tap(_ => console.log(`deleted budget id=${id}`)),
-      catchError(this.handleError<Budget>('deleteBudget'))
-    );
-  }
-
-  /** PUT: update the budget on the server */
-  updateBudget(budget: Budget): Observable<any> {
-    return this.http.put(`${this.budgetsUrl}${budget.budget_id}/`, budget, this.httpOptions).pipe(
-      tap(_ => console.log(`updated budget id=${budget.budget_id}`)),
-      catchError(this.handleError<any>('updateBudget'))
-    );
-  }
-
   /**
    * Handle Http operation that failed.
    * Let the app continue.

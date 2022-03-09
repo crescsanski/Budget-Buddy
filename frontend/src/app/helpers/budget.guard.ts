@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Router, CanActivate, ActivatedRouteSnapshot, RouterStateSnapshot } from '@angular/router';
 import { map } from 'rxjs/operators';
+import { Budget } from '../models/budget';
 import { BudgetCategory } from '../models/formModels/budgetCategory';
 
 import { AuthService } from '../services/auth.service'
@@ -21,7 +22,7 @@ export class BudgetGuard implements CanActivate {
     canActivate(route: ActivatedRouteSnapshot, state: RouterStateSnapshot) {
     
         return this.budgServ.getBudByCat().pipe(
-            map((val: BudgetCategory[]) => {
+            map((val: Budget[]) => {
                 let cur = val.filter(value => value.year == this.timeServ.year 
                     && value.month == this.timeServ.month)
                 if (cur.length == 23)

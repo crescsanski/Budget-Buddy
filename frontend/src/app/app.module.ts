@@ -18,7 +18,7 @@ import { RegisterPanelComponent } from './register/register-panel/register-panel
 import { RegisterNavComponent } from './register/register-nav/register-nav.component';
 import { RegisterPageComponent } from './register/register-page/register-page.component';
 import { PrimengModule } from './primeng/primeng.module';
-import { CurrencyPipe, DatePipe } from '@angular/common';
+import { CurrencyPipe, DatePipe, DecimalPipe, PercentPipe } from '@angular/common';
 import {TooltipModule} from 'primeng/tooltip';
 
 @NgModule({
@@ -54,7 +54,7 @@ import {TooltipModule} from 'primeng/tooltip';
   providers: [
     { provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true },
     { provide: HTTP_INTERCEPTORS, useClass: ErrorInterceptor, multi: true },
-    DatePipe, CurrencyPipe
+    DatePipe, CurrencyPipe, PercentPipe, DecimalPipe
   ],
   bootstrap: [AppComponent]
 })

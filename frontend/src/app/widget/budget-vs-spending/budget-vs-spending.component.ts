@@ -47,6 +47,11 @@ export class BudgetVsSpendingComponent implements OnInit {
       {
           this.getNewData();
       })
+
+      this.trigServ.budgetUpdatedAnnounced$.subscribe(() =>
+      {
+        this.getNewData();
+      })
   }
 
   setupValues()
@@ -78,7 +83,7 @@ export class BudgetVsSpendingComponent implements OnInit {
       {
         this.categories.push(i.category_name)
         this.spendingValues.push(spend)
-        this.budgetValues.push(budgetValue.amount)
+        this.budgetValues.push(budgetValue.altered_amount)
       }
       
     }

@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Subject } from 'rxjs';
+import { BudgetService } from './budget.service';
 import { IncomeHistoryService } from './income-history.service';
 import { SavingsHistoryService } from './savings-history.service';
 import { SpendingHistoryService } from './spending-history.service';
@@ -12,10 +13,21 @@ export class TriggerService {
   // Observable sources
   private expenReceiptSubmitAnnounce = new Subject<void>();
   private incomReceiptSubmitAnnounce = new Subject<void>();
+  private budgetUpdateAnnounce = new Subject<void>();
 
   //Obsevable streams
   expenReceiptAnnounced$ = this.expenReceiptSubmitAnnounce.asObservable();
   incomReceiptAnnounced$ = this.incomReceiptSubmitAnnounce.asObservable();
+  budgetUpdatedAnnounced$ = this.budgetUpdateAnnounce.asObservable();
+
+  async announceBudgetUpdate()
+  {
+    await (this.budServ.getBudByCat().toPromise());
+
+    await (this.budServ.getBudgetTotals().toPromise());
+
+    this.budgetUpdateAnnounce.next();
+  }
 
   async announceExpenReceiptSubmit()
   {
@@ -50,5 +62,5 @@ export class TriggerService {
   }
 
   constructor(private spenHis: SpendingHistoryService, private savHis: SavingsHistoryService,
-    private incHis: IncomeHistoryService) { }
+    private incHis: IncomeHistoryService, private budServ: BudgetService) { }
 }
