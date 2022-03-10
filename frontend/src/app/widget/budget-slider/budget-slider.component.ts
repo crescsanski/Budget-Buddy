@@ -75,6 +75,45 @@ export class BudgetSliderComponent implements OnInit {
      this.show = true;
    }
 
+   getWants()
+   {
+     return this.budgetCategories.filter(val => val.category_type == "want")
+   }
+
+   getNeeds()
+   {
+     return this.budgetCategories.filter(val => val.category_type == "need")
+   }
+
+   getSavings()
+   {
+     return this.budgetCategories.filter(val => val.category_type == "saving")
+   }
+
+   getCurBreakDown(): {want: number, need: number, debt: number}
+   {
+      var want = 0;
+      var need = 0;
+      var debt = 0;
+      for (let bud of this.budgetCategories)
+      {
+        switch (bud.category_type)
+        {
+          case "want": 
+            want += bud.new_amount;
+            break;
+          case "need":
+            need += bud.new_amount;
+            break;
+          case "saving":
+            debt += bud.new_amount;
+            break;
+        }
+      }
+
+      return {want: want, need: need, debt: debt}
+   }
+
    updateMaxes()
    {
     

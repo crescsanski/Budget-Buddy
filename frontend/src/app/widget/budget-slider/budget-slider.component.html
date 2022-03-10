@@ -3,24 +3,35 @@
         <div class="content-area">
             <h2>My Budget</h2> 
         </div>
-        <div  class="content-area scrollbox">
-        <div *ngFor="let cat of budgetCategories">
-            <div class="sliderArea" *ngIf="cat.visible != false">
-                <p style="color: #003486; text-align: left; font-weight: bold;">{{cat.categoryTitle}}: <span style="font-weight: lighter;">${{cat.new_amount}}/${{cat.max}} ({{cat.new_amount/getConfigTotal() | percent:'1.0-2'}})</span></p>
-                <p-slider *ngIf="refresh" (onChange)="sliderChange()" (onSlideEnd)="this.updateVisibility();" [(ngModel)]=cat.new_amount [min]="0" [max]=cat.max [animate]="true" [step]="5" ptoolT></p-slider>
-                <p-slider *ngIf="!refresh" (onChange)="sliderChange()" (onSlideEnd)="this.updateVisibility();" [(ngModel)]=cat.new_amount [min]="0" [max]=cat.max [animate]="true" [step]="5" ptoolT></p-slider>
-            </div>
-        </div>
+        
     </div>
     <div class="grid">
-        <div class="col-3">
-            <p style="margin-top: 9px; color: #003486; font-size: 1.4em; text-align: center; font-weight: lighter;">Using: <span style="font-weight: bold;">${{getConfigTotal()}}/${{maxTotalBudget}}</span></p>
+        <div class="col-6">
+            <div class="grid">
+                <div class="col-12">
+                    <app-budget-breakdown-chart [availableBudget]="this.maxTotalBudget - getConfigTotal()"
+                    [breakdown]="getCurBreakDown()"></app-budget-breakdown-chart>
+                </div>
+                <div class="col-12">
+                    <p style="margin-top: 9px; color: #003486; font-size: 1.4em; text-align: center; font-weight: lighter;">Using: <span style="font-weight: bold;">${{getConfigTotal()}}/${{maxTotalBudget}}</span></p>
+                    <p-progressBar value="{{getConfigTotal()/maxTotalBudget * 100 | number: '1.0-0'}}"></p-progressBar>
+                </div>
+            </div>
+            
         </div>
-        <div class="col-9">
-            <p-progressBar value="{{getConfigTotal()/maxTotalBudget * 100 | number: '1.0-0'}}"></p-progressBar>
+        <div class="col-6">
+            <div  class="content-area scrollbox">
+                <div *ngFor="let cat of budgetCategories">
+                    <div class="sliderArea" *ngIf="cat.visible != false">
+                        <p style="color: #003486; text-align: left; font-weight: bold;">{{cat.categoryTitle}}: <span style="font-weight: lighter;">${{cat.new_amount}}/${{cat.max}} ({{cat.new_amount/getConfigTotal() | percent:'1.0-2'}})</span></p>
+                        <p-slider *ngIf="refresh" (onChange)="sliderChange()" (onSlideEnd)="this.updateVisibility();" [(ngModel)]=cat.new_amount [min]="0" [max]=cat.max [animate]="true" [step]="5" ptoolT></p-slider>
+                        <p-slider *ngIf="!refresh" (onChange)="sliderChange()" (onSlideEnd)="this.updateVisibility();" [(ngModel)]=cat.new_amount [min]="0" [max]=cat.max [animate]="true" [step]="5" ptoolT></p-slider>
+                    </div>
+                </div>
+            </div>
         </div>
-    </div>
-       
+    </div> 
+           
     <div style="text-align: center;" class="grid" *ngIf="show">
         <div class="col-6">
             <button style="margin-right: 10px; width: 10em;" (click)="reset()">Reset</button>
@@ -29,6 +40,5 @@
             <button (click)="applyChanges()"> Apply Changes</button>
         </div>       
     </div>
-    </div>
-    
 </div>
+    
