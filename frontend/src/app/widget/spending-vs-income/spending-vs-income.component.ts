@@ -176,7 +176,7 @@ export class SpendingVsIncomeComponent implements OnInit {
         this.chartData.labels = this.monthValues
         this.chartData.datasets[0].data = this.values;
         this.chartData.datasets[1].data = this.values2;
-        this.chart.reinit();
+        this.chart.refresh();
     }
 
     getColor(num: number)

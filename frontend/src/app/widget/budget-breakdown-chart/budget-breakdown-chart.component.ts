@@ -1,6 +1,6 @@
 import { Component, Input, OnChanges, OnInit, SimpleChanges, ViewChild } from '@angular/core';
 import { UIChart } from 'primeng/chart';
-import {Chart} from 'chart.js';
+import {Chart, ChartItem} from 'chart.js';
 import ChartDataLabels from 'chartjs-plugin-datalabels';
 
 @Component({
@@ -8,7 +8,7 @@ import ChartDataLabels from 'chartjs-plugin-datalabels';
   templateUrl: './budget-breakdown-chart.component.html',
   styleUrls: ['./budget-breakdown-chart.component.scss']
 })
-export class BudgetBreakdownChartComponent implements OnInit, OnChanges {
+export class BudgetBreakdownChartComponent implements OnInit {
   stackedData: any;
   stackedOptions: any;
 
@@ -18,54 +18,26 @@ export class BudgetBreakdownChartComponent implements OnInit, OnChanges {
 
   @Input() availableBudget: number;
   @Input() breakdown: {want: number, need: number, debt: number}
-  @ViewChild('chart') chart: UIChart; 
+  myChart: Chart 
 
   constructor() { 
     Chart.register(ChartDataLabels)
   }
 
-  ngOnChanges(changes: SimpleChanges) {
-    if (this.stackedData)
-    {
-      var update = false;
-      
-      
-      if ('availableBudget' in changes && changes['availableBudget'].previousValue != this.availableBudget)
-      {
-        //console.log(changes['availableBudget'].previousValue)
-        //console.log(this.availableBudget)
-        update = true;
-      }  
-      if ('breakdown' in changes)
-      {
-        if (changes['breakdown'].previousValue.need != this.breakdown.need)
-        {
-          update = true;
-        }
-        if (changes['breakdown'].previousValue.debt != this.breakdown.debt)
-        {
-          update = true;
-        }
-        if (changes['breakdown'].previousValue.want != this.breakdown.want)
-        {
-          update = true;
-        }
-      }
-      
-      if (update)
-      {
-        this.ngOnInit();
-      }
-    }
-   
+  refresh()
+  {
+    this.myChart.data.datasets[0].data = [this.breakdown.want, this.breakdown.need, this.breakdown.debt]
+    this.myChart.update()
   }
     
     
 
   ngOnInit(): void {
-
-    this.stackedData = {
-      labels: ['Wants', 'Needs', 'Savings'], 
+    const ctx = document.getElementById('chart') as ChartItem;
+    this.myChart = new Chart(ctx, {
+      type: 'pie',
+      data: { 
+        labels: ['Wants', 'Needs', 'Savings'], 
       datasets: [
           {
               label: 'Spending',
@@ -89,7 +61,7 @@ export class BudgetBreakdownChartComponent implements OnInit, OnChanges {
                   borderColor: 'white',
                   borderWidth: 2,
                   borderRadius: 4,
-                  font: {size: '20em'},
+                  font: {size: 20},
                   formatter: function(value, ctx) {
                     return ctx.chart.data.labels[ctx.dataIndex];
                   }
@@ -97,13 +69,14 @@ export class BudgetBreakdownChartComponent implements OnInit, OnChanges {
                 value: {
                   align: 'bottom',
                   backgroundColor: 'white',
-                  font: {size: '20em'},
+                  font: {size: 20},
                   borderColor: 'white',
                   borderWidth: 2,
                   borderRadius: 4,
                   color: 'black',
                   formatter: function(value, ctx) {
-                    let sum = ctx.dataset.data.reduce((a, b) => a + b, 0)
+                    let dataset = ctx.dataset.data as number[]
+                    let sum = dataset.reduce((a, b) => a + b, 0)
                     let percen = Math.round(value*100 / sum)+"%";
                     return percen;
                   },
@@ -113,29 +86,27 @@ export class BudgetBreakdownChartComponent implements OnInit, OnChanges {
               }
             }
           }]
-    }
 
-  
-
-
- this.stackedOptions = {
-            plugins: {
-              legend: {
-                display: false,
+      },
+      options: {
+        plugins: {
+          legend: {
+            display: false,
+        },
+          datalabels: {
+            color: 'white',
+            display: true,
+            font: {
+              weight: 'bold',
             },
-              datalabels: {
-                color: 'white',
-                display: true,
-                font: {
-                  weight: 'bold',
-                },
-                offset: 0,
-                padding: 0
-              }
-            }
-        };
-    }
-
+            offset: 0,
+            padding: 0
+          }
+        }
+      }
+    })
   }
+
+}
 
 

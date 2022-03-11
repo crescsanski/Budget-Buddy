@@ -184,7 +184,7 @@ export class ActualVsEstIncomeComponent implements OnInit {
         this.chartData.labels = this.categories
         this.chartData.datasets[0].data = this.actIncValues
         this.chartData.datasets[1].data = this.estIncValues
-        this.chart.reinit();
+        this.chart.refresh();
     }
 
     getColor(num: number)

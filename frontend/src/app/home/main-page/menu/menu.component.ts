@@ -11,7 +11,7 @@ import { AuthService } from 'src/app/services/auth.service';
 })
 export class MenuComponent implements OnInit {
   name: string = 'John Doe';
-  level: string = '';
+  level: number;
   selected: string = '';
   main: MainPageComponent | undefined;
   
@@ -23,11 +23,11 @@ export class MenuComponent implements OnInit {
     if (authServ.currentUserValue)
     {
       this.name = authServ.currentUserValue.user_first_name + " " + authServ.currentUserValue.user_last_name;
+      this.level = authServ.currentUserValue.user_level;
     }      
    }
 
   ngOnInit(): void {
-    this.level = 'Level 1';
     this.selected = 'Dashboard';
     
   }

@@ -3,8 +3,9 @@
         <div class="header">
             <h2>Spending By Category</h2> 
         </div>
-        <p-chart #chart3 type="pie" [options]="chartOptions" [data]="data"></p-chart>
-
+        <div [style]="{'width': '50%'}">
+            <p-chart #chart3 type="pie"  [options]="chartOptions" [data]="data"></p-chart>
+        </div>
         <div class="formgroup-inline" style="margin-top: 15px;"> 
            
             <label class="col-fixed" style="width:65px; margin-top: 3px;" 

@@ -1,9 +1,10 @@
 import { Budget } from 'src/app/models/budget';
 import { BudgetCategory } from '../../models/formModels/budgetCategory';
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { BudgetService } from 'src/app/services/budget.service';
 import { TimeService } from 'src/app/services/time.service';
 import { TriggerService } from 'src/app/services/trigger.service';
+import { BudgetBreakdownChartComponent } from '../budget-breakdown-chart/budget-breakdown-chart.component';
 
 @Component({
   selector: 'app-budget-slider',
@@ -11,6 +12,9 @@ import { TriggerService } from 'src/app/services/trigger.service';
   styleUrls: [ './budget-slider.component.scss', './../basic-widget/basic-widget.component.scss']
 })
 export class BudgetSliderComponent implements OnInit {
+
+  @ViewChild('chart') chart: BudgetBreakdownChartComponent;
+
   budgetCategories: Budget[];
   curTotalBudget: number = 2000;
   maxTotalBudget: number;
@@ -142,6 +146,7 @@ export class BudgetSliderComponent implements OnInit {
 
    updateVisibility(): void {
     this.refresh = false;
+    this.chart.refresh(); //refresh chart
     setTimeout(() => this.refresh = true, 0);
   }
 

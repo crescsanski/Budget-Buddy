@@ -5,6 +5,11 @@ import {MenuItem} from 'primeng/api';
 import { MessageService } from 'src/app/services/message.service';
 import { first } from 'rxjs/operators';
 import { AuthService } from 'src/app/services/auth.service';
+import { Category } from 'src/app/models/category';
+import { CategoryService } from 'src/app/services/category.service';
+import { BudgetService } from 'src/app/services/budget.service';
+import { TimeService } from 'src/app/services/time.service';
+import { Budget } from 'src/app/models/budget';
 
 
 @Component({
@@ -26,13 +31,20 @@ export class MainPageComponent implements OnInit {
   name: string = undefined;
   level: number = undefined;
   favoriteMenu: boolean = false;
-  budgetCategories: any[];
-  selectedCategories: any[];
+  budgetCategories: Category[];
+  selectedCategories: Category[];
 
 
 
-  constructor(private authService: AuthService, private messageService: MessageService, private router: Router) { 
+  constructor(private authService: AuthService, private ts: TimeService, private budServ: BudgetService, private catServ: CategoryService, private messageService: MessageService, private router: Router) { 
    this.currentPage = 'Dashboard';
+   if (authService.currentUserValue)
+    {
+      this.name = authService.currentUserValue.user_first_name + " " + authService.currentUserValue.user_last_name;
+      this.level = authService.currentUserValue.user_level;
+    }   
+
+    this.budgetCategories = this.catServ.expenseCats.concat(this.catServ.incomeCats)
    //this.currentPage = 'Tracking';
   }
 
@@ -78,34 +90,15 @@ export class MainPageComponent implements OnInit {
       
     ]
 
-    this.budgetCategories = [
-
-        {icon: '../../../../assets/icons/budget-icons/job-income.png', categoryTitle: 'Job Income',  amount: 0, type: 'Income'},
-        {icon: '../../../../assets/icons/budget-icons/gift.png', categoryTitle: 'Received Gift',  amount: 0, type: 'Income'},
-        {icon: '../../../../assets/icons/budget-icons/interest.png', categoryTitle: 'Interest',  amount: 0, type: 'Income'},
-        {icon: '../../../../assets/icons/budget-icons/gov-payment.png', categoryTitle: 'Government Payment',  amount: 0, type: 'Income'},
-        {icon: '../../../../assets/icons/budget-icons/tax-refund.png', categoryTitle: 'Tax Refund',  amount: 0, type: 'Income'},
-        {icon: '../../../../assets/icons/budget-icons/misc-income.png', categoryTitle: 'Miscellaneous Income',  amount: 0, type: 'Income'},
-        {icon: '../../../../assets/icons/budget-icons/housing.png', categoryTitle: 'Housing',  amount: 0, type: 'Expense', category: 'need'},
-          {icon: '../../../../assets/icons/budget-icons/transportation.png', categoryTitle: 'Transportation',  amount: 0, type: 'Expense', category: 'need'},
-          {icon: '../../../../assets/icons/budget-icons/essential-groceries.png', categoryTitle: 'Essential Groceries',  amount: 0, type: 'Expense', category: 'need'},
-          {icon: '../../../../assets/icons/budget-icons/non-essential-groceries.png', categoryTitle: 'Non-Essential Groceries',  amount: 0, type: 'Expense'},
-          {icon: '../../../../assets/icons/budget-icons/utilities.png', categoryTitle: 'Utilities',  amount: 0, type: 'Expense', category: 'need'},
-          {icon: '../../../../assets/icons/budget-icons/insurance.png', categoryTitle: 'Insurance',  amount: 0, type: 'Expense', category: 'need'},
-          {icon: '../../../../assets/icons/budget-icons/medical.png', categoryTitle: 'Medical',  amount: 0, type: 'Expense', category: 'need'},
-          {icon: '../../../../assets/icons/budget-icons/investment.png', categoryTitle: 'Investment',  amount: 0, type: 'Expense', category: 'debt'},
-          {icon: '../../../../assets/icons/budget-icons/restaraunts.png', categoryTitle: 'Restaurants',  amount: 0, type: 'Expense', category: 'want'},
-          {icon: '../../../../assets/icons/budget-icons/entertainment.png', categoryTitle: 'Entertainment',  amount: 0, type: 'Expense', category: 'want'},
-          {icon: '../../../../assets/icons/budget-icons/clothing.png', categoryTitle: 'Clothing',  amount: 0, type: 'Expense', category: 'want'},
-          {icon: '../../../../assets/icons/budget-icons/gift.png', categoryTitle: 'Gifts',  amount: 0, type: 'Expense', category: 'want'},
-          {icon: '../../../../assets/icons/budget-icons/furnishings.png', categoryTitle: 'Furnishings',  amount: 0, type: 'Expense', category: 'want'},
-          {icon: '../../../../assets/icons/budget-icons/pet.png', categoryTitle: 'Pets',  amount: 0, type: 'Expense', category: 'need'},
-          {icon: '../../../../assets/icons/budget-icons/tax-payment.png', categoryTitle: 'Tax Payment', amount: 0, type: 'Expense', category: 'need'},
-          {icon: '../../../../assets/icons/budget-icons/misc-income.png', categoryTitle: 'Miscellaneous Expense',  amount: 0, type: 'Expense', category: 'debt'}
-    ];
-
-    this.selectedCategories = [];
+    let fetch = this.budServ.exBudByCat.concat(this.budServ.inBudByCat).filter(val => val.year == this.ts.year && 
+      val.month == this.ts.month && val.is_favorite == true)
+      //console.log(fetch)
+    this.selectedCategories = this.budgetCategories.filter((val) => 
+    {
+        return fetch.find(val2 => val.category_id == val2.category_id)
+    }
     
+    )
   }
 
   onNotify(page:string) {
@@ -143,8 +136,26 @@ export class MainPageComponent implements OnInit {
   }
 
   setFavorites(){
-    this.favoriteMenu = false;
     //TODO: API TO SET FAVORITES
+    var post: Budget[] = []
+    this.budgetCategories.forEach((val) => {
+      if (this.selectedCategories.find(val2 => val2.category_id == val.category_id))
+      {
+        post.push({
+          user_category_budget_favorite: true,
+          category: val.category_id,
+        });
+      }
+      else
+      {
+        post.push({
+          user_category_budget_favorite: false,
+          category: val.category_id,
+        })
+      }
+    })
+   
+    this.budServ.updateBudget(post).subscribe(() => {this.favoriteMenu = false;})
   }
 
 

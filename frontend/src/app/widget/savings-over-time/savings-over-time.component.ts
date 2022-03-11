@@ -98,7 +98,7 @@ export class SavingsOverTimeComponent implements OnInit {
 
         this.chartData.labels = monthLabels;
         this.chartData.datasets[0].data = values;
-        this.chart.reinit();
+        this.chart.refresh();
 
     }
 

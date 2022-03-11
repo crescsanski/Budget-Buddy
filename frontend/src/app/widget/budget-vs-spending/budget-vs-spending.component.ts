@@ -208,7 +208,7 @@ export class BudgetVsSpendingComponent implements OnInit {
         this.chartData.labels = this.categories
         this.chartData.datasets[0].data = this.spendingValues
         this.chartData.datasets[1].data = this.budgetValues
-        this.chart.reinit();
+        this.chart.refresh();
     }
 
     getColor(num: number)

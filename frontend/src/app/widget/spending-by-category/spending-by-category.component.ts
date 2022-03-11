@@ -88,7 +88,7 @@ export class SpendingByCategoryComponent implements OnInit {
     this.setupValues()
     this.data.labels = this.categories
     this.data.datasets[0].data = this.curMonthSpendByCat;
-    this.chart.reinit();
+    this.chart.refresh()
   }
 
 }

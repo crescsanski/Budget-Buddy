@@ -16,8 +16,8 @@
               <img style="width: 5em; height: 5em; display: block; text-align: right;" src="../../assets/budget-buddy-avatar.png" alt="Budget Buddy Logo">
             </div>
             <div class="setting-item" style="float: left; width: 60%; margin-left: 1em; display: block" >
-              <h3 style="margin-top: .5em">Name:{{name}}</h3>
-              <p style="margin-top: -1em">Level:{{level}}</p>
+              <h3 style="margin-top: .5em; white-space: nowrap !important;">Name: {{name}}</h3>
+              <p style="margin-top: -1em">Level: {{level}}</p>
             </div>
           </div>
           <div class="setting-item" style="display: block">
@@ -50,7 +50,7 @@
   </p-overlayPanel>
 
   <p-dialog header="Favorites" [(visible)]="favoriteMenu">
-    <p-listbox [options]="budgetCategories" [(ngModel)]="selectedCategories"  [listStyle]="{'max-height':'20vh'}" optionLabel="categoryTitle" [multiple]="true"  [filter]="true" [filterPlaceHolder]="'Search'" [checkbox]="true"></p-listbox>
+    <p-listbox [options]="budgetCategories" [(ngModel)]="selectedCategories"  [listStyle]="{'max-height':'20vh'}" optionLabel="category_name" [multiple]="true"  [filter]="true" [filterPlaceHolder]="'Search'" [checkbox]="true"></p-listbox>
     <button  pButton pRipple  type="button" (click)="setFavorites()" style="display: block; text-align: center; width: 99%; margin-top: 2em" >Submit</button>
 </p-dialog>
 

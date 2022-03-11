@@ -9,7 +9,7 @@
         <div class="col-6">
             <div class="grid">
                 <div class="col-12">
-                    <app-budget-breakdown-chart [availableBudget]="this.maxTotalBudget - getConfigTotal()"
+                    <app-budget-breakdown-chart #chart [availableBudget]="this.maxTotalBudget - getConfigTotal()"
                     [breakdown]="getCurBreakDown()"></app-budget-breakdown-chart>
                 </div>
                 <div class="col-12">

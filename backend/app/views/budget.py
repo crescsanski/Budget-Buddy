@@ -115,6 +115,7 @@ def manageUserBudget(request, userid):
         serializer = UpdateBudgetSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         data = serializer._validated_data
+        #print(data)
         
         newBudg = data.get('budgets')
         if len(newBudg) < 1:
