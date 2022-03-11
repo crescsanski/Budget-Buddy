@@ -1,0 +1,19 @@
+<div class="panel">
+    <div>
+        <div class="content-area">
+        <div>
+            <h2>Trophies</h2> 
+        </div>
+    </div>
+       <div class="badges" *ngFor="let trophy of trophies">
+        <div style="display: inline-flex">
+            <img src="../../../assets/icons/Icon ionic-md-trophy.png"/>
+        <div class="descriptions">
+            <p class="name">{{trophy.trophy_name}}</p>
+            <p class="description">{{trophy.trophy_description}}</p>
+        </div>
+        </div>
+    </div> 
+    </div>
+    
+</div>
