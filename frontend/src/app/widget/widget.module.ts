@@ -20,6 +20,7 @@ import {FileUploadModule} from 'primeng/fileupload';
 import {HttpClientModule} from '@angular/common/http';
 import { SpendingByCategoryComponent } from './spending-by-category/spending-by-category.component';
 import { LetterGradeComponent } from './letter-grade/letter-grade.component';
+import { TrophiesComponent } from './trophies/trophies.component';
 
 
 @NgModule({
@@ -35,7 +36,8 @@ import { LetterGradeComponent } from './letter-grade/letter-grade.component';
     BadgesWidgetComponent,
     BudgetSliderComponent,
     SpendingByCategoryComponent,
-    LetterGradeComponent
+    LetterGradeComponent,
+    TrophiesComponent
   ],
   imports: [
     CommonModule,
@@ -50,6 +52,7 @@ import { LetterGradeComponent } from './letter-grade/letter-grade.component';
     DialogModule
   ],
   exports: [BasicWidgetComponent, SmallWidgetComponent, ReceiptTrackingComponent, TrackingComponent, WeeklySpendingComponent, 
-    WeeklySpendingSmallComponent, IncomeTrackingComponent, SavingsOverTimeComponent, BadgesWidgetComponent, BudgetSliderComponent, SpendingByCategoryComponent, LetterGradeComponent]
+    WeeklySpendingSmallComponent, IncomeTrackingComponent, SavingsOverTimeComponent, BadgesWidgetComponent, BudgetSliderComponent, SpendingByCategoryComponent, 
+    LetterGradeComponent, TrophiesComponent]
 })
 export class WidgetModule { }
