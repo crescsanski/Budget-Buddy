@@ -101,7 +101,7 @@ export class BudgetVsSpendingComponent implements OnInit {
       labels: this.categories,
       datasets: [
           {
-              label: 'Actual',
+              label: 'Actual Expenses',
               data: this.spendingValues,
               fill: true,
               borderColor: 'rgba(0, 0, 255, 0.5)',
@@ -116,7 +116,7 @@ export class BudgetVsSpendingComponent implements OnInit {
               
           },
           {
-            label: 'Target',
+            label: 'Estimated Expenses',
             data: this.budgetValues,
             fill: true,
             borderColor: 'rgba(0, 0, 0, 0.5)',
@@ -138,7 +138,7 @@ export class BudgetVsSpendingComponent implements OnInit {
           align: 'end',
           anchor: 'end',
           backgroundColor: (context) => {
-            if (context.dataset.label == 'Target')
+            if (context.dataset.label == 'Estimated Expenses')
             {
               let sum = this.spendingValues[context.dataIndex]
               let value = this.budgetValues[context.dataIndex]
@@ -153,10 +153,10 @@ export class BudgetVsSpendingComponent implements OnInit {
           },
           display: (context) => {
            // console.log(context)
-            return context.dataset.label == 'Target'
+            return context.dataset.label == 'Estimated Expenses'
           },
           formatter: (value, context) => {
-              if (context.dataset.label == 'Target')
+              if (context.dataset.label == 'Estimated Expenses')
               {
                // console.log(value)
                 let sum = this.spendingValues[context.dataIndex]

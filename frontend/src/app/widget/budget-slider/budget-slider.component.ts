@@ -17,6 +17,9 @@ export class BudgetSliderComponent implements OnInit {
 
   budgetCategories: Budget[];
   curTotalBudget: number = 2000;
+  configTotal: number;
+  percenUsed: number;
+  breakdown: {want: number, need: number, debt: number};
   maxTotalBudget: number;
   show: boolean = false; //whether to display buttons
   refresh: boolean = true;
@@ -41,7 +44,13 @@ export class BudgetSliderComponent implements OnInit {
 
     this.refreshNewValues();
 
+    this.updateConfigTotal();
+
     this.updateMaxes();
+
+    this.updatePercenUsed();
+
+    this.updateCurBreakDown();
     /*
     this.budgetCategories = [
       {categoryTitle: 'Housing', amount: 700, visible: true},
@@ -64,17 +73,16 @@ export class BudgetSliderComponent implements OnInit {
     */
    }
 
-   getConfigTotal(): number
+  updateConfigTotal(): void
    {
-     let total = this.budgetCategories.reduce(function (accumulator, item) {
+     this.configTotal = this.budgetCategories.reduce(function (accumulator, item) {
        return accumulator + item.new_amount;
      }, 0);
-
-     return total;
    }
 
    sliderChange()
    {
+     this.updateConfigTotal();
      this.updateMaxes();
      this.show = true;
    }
@@ -94,7 +102,7 @@ export class BudgetSliderComponent implements OnInit {
      return this.budgetCategories.filter(val => val.category_type == "saving")
    }
 
-   getCurBreakDown(): {want: number, need: number, debt: number}
+   updateCurBreakDown(): void
    {
       var want = 0;
       var need = 0;
@@ -115,13 +123,13 @@ export class BudgetSliderComponent implements OnInit {
         }
       }
 
-      return {want: want, need: need, debt: debt}
+      this.breakdown = {want: want, need: need, debt: debt}
    }
 
    updateMaxes()
    {
     
-    let available = this.maxTotalBudget - this.getConfigTotal();
+    let available = this.maxTotalBudget - this.configTotal;
     for (let bud in this.budgetCategories)
     {
       let cur = this.budgetCategories[bud].new_amount
@@ -140,14 +148,24 @@ export class BudgetSliderComponent implements OnInit {
    reset()
    {
      this.refreshNewValues();
+     this.updateConfigTotal();
      this.updateMaxes();
+     this.updatePercenUsed();
+     this.updateCurBreakDown();
      this.show = false;
    }
 
    updateVisibility(): void {
     this.refresh = false;
     this.chart.refresh(); //refresh chart
+    this.updateConfigTotal();
+    this.updatePercenUsed();
+    this.updateCurBreakDown();
     setTimeout(() => this.refresh = true, 0);
+  }
+
+  updatePercenUsed(): void {
+    this.percenUsed = Math.round(this.configTotal/this.maxTotalBudget * 100);
   }
 
   applyChanges()
