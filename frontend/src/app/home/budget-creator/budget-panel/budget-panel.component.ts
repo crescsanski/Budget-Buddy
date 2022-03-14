@@ -49,7 +49,7 @@ export class BudgetPanelComponent implements OnInit {
   debtValue: number;
   needsValue: number;
   panels: string[];
-  income: { icon: string; categoryTitle: string; amount: number; type: string; }[];
+  income: any[];
   expenses: any[];
   
 
@@ -59,25 +59,14 @@ export class BudgetPanelComponent implements OnInit {
     private cs: CategoryService,
     private ms: MessageService) {
 
-
-      /*
-      this.cs.getCategories().pipe(
-        mergeMap((cats: Category[]) => 
-        {
-          this.catOptions = cats;
-          return this.bs.searchBudgets(this.as.currentUserValue.user_id);
-        }),
-        map((res: Budget[]) => 
-        {
-          this.exisBudgets = res;
-         // this.initializeForm();
-        })
-      ).subscribe();
-      */
-
   this.panels = [
     'Advisor','Income', 'Expenses', 'Finalization'
   ]
+
+  this.income = this.cs.incomeCats.map(obj => ({...obj, amount: 0, category: obj.category_type, categoryTitle: obj.category_name}));
+  this.expenses = this.cs.expenseCats.map(obj => ({...obj, amount: 0, category: obj.category_type, categoryTitle: obj.category_name}));
+
+  /*
 
   this.income = [
     {icon: '../../../../assets/icons/budget-icons/job-income.png', categoryTitle: 'Job Income',  amount: 0, type: 'Income'},
@@ -106,6 +95,7 @@ export class BudgetPanelComponent implements OnInit {
       {icon: '../../../../assets/icons/budget-icons/tax-payment.png', categoryTitle: 'Tax Payment', amount: 0, type: 'Expense', category: 'need'},
       {icon: '../../../../assets/icons/budget-icons/misc-income.png', categoryTitle: 'Miscellaneous Expense',  amount: 0, type: 'Expense', category: 'debt'},
   ]
+  */
     
   this.prompts = [
     //toggle comments to show finalization page first
@@ -149,28 +139,6 @@ export class BudgetPanelComponent implements OnInit {
     this.advisorVisible = true;  
   }
 
-  //function to get values for recommendations
-  updateSum() {
-    if (this.currentPanel.type == 'Income') {
-      this.totalIncome += this.currentPanel.amount;
-    } else if (this.currentPanel.type == 'Expense') {
-      this.totalExpenses += this.currentPanel.amount;
-    }
-    this.availableBudget = this.totalIncome - this.totalExpenses;
-  }
-
-  //shortcut to access all form components
-  get f()
-  {
-    return this.form.controls;
-  }
-
-  //shortcut to access one form component
-  c(index: number): FormGroup
-  {
-    return this.f[index] as FormGroup
-  }
-
   pageForward(){
     this.panelNumber+=1;
     this.currentPanel = this.panels[this.panelNumber]
@@ -208,85 +176,22 @@ export class BudgetPanelComponent implements OnInit {
     }
   }
 
-  
-  track(x: FormGroup)
-  {
-    /*stop here if the form is invalid
-    if (x.invalid)
-    {
-      this.ms.addInfo("Invalid Entry", "Some fields are incomplete or invalid.")
-        return;
-    }
-
-    let catID = this.catOptions.find(val => 
-      this.currentPanel.categoryTitle.includes(val.category_name)).category_id
-
-    let budget: Budget = {
-      budget_id: x.get('budget_id').value,
-      user: this.as.currentUserValue.user_id,
-      category: catID,
-      estimated_amount: x.get('amount').value,
-      last_modified_date: new Date().toISOString()
-    }
-    if(x.get('budget_id').value == undefined)
-    {
-      this.bs.addBudget(budget)
-      .pipe(first())
-      .subscribe({
-          next: (res: Budget) => {
-              if (res && res.budget_id)
-              {
-                this.ms.addSuccess('Budget Successfully Record', "");
-                x.get('budget_id').setValue(res.budget_id)
-                this.pageForward();
-              }
-              else
-              {
-                this.ms.addError(`Error in Recording Budget`, "");
-              }
-          },
-          error: error => {
-              for (const key in error)
-              {
-                this.ms.addError(`Error in Recording Budget: ${key}`, error[key]);
-              }
-          }
-      });
-    }
-    else
-    {
-      this.bs.updateBudget(budget)
-      .pipe(first())
-      .subscribe({
-          next: () => {
-              this.ms.addSuccess('Budget Successfully Updated', "");
-              this.pageForward();
-          },
-          error: error => {
-              for (const key in error)
-              {
-                this.ms.addError(`Error in Updating Budget: ${key}`, error[key]);
-              }
-          }
-      });
-    }
-    */
-}
- 
-trackValues() {
-  this.currentPanel.amount = this.val;
-  console.log(this.currentPanel.amount)
-  this.val = 0;
-  this.updateSum();
+getBreakdown(): BudgetBreakdown {
+  return {want: this.wantsValue, need: this.needsValue, debt: this.debtValue};
 }
 
-recalculate() : BudgetBreakdown {
+recalculate() {
   this.wantsValue = 0;
   this.debtValue = 0;
   this.needsValue = 0;
 
-  this.prompts.forEach(x => {
-      if(x.category == 'debt') {
+  this.totalIncome = this.income.reduce(function (accumulator, item) {
+    return accumulator + item.amount;
+  }, 0);
+  console.log("Total Income: ", this.totalIncome)
+
+  this.expenses.forEach(x => {
+      if(x.category == 'saving') {
         this.debtValue += x.amount;
       } else if (x.category == 'want'){
         this.wantsValue += x.amount;
@@ -297,7 +202,7 @@ recalculate() : BudgetBreakdown {
   });
   this.totalExpenses = this.debtValue + this.wantsValue + this.needsValue;
   this.availableBudget = this.totalIncome - this.totalExpenses;
-  return {want: this.wantsValue, need: this.needsValue, debt: this.debtValue};
+  console.log("Available Budget: ", this.availableBudget)
 }
 
 }

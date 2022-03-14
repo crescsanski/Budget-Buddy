@@ -8,6 +8,8 @@ export interface Budget {
     altered_amount?: number, 
     estimated_amount?: number, 
     is_favorite?: boolean,
+    user_category_budget_estimated_amount?: number,
+    user_category_budget_altered_amount?: number,
     user_category_budget_favorite?: boolean,
     max?: number,
     new_amount?: number,

@@ -74,6 +74,16 @@ export class BudgetService {
     )
   }
 
+  /**Reset budget for current month (delete all budget entries for current month) */
+  resetBudget(): Observable<any> {
+    const url = `${this.budgetsUrl}users/${this.user.user_id}/`
+    return this.http.delete(url, this.httpOptions)
+    .pipe(
+      tap(_ => console.log('reset budget')),
+      catchError(this.handleError<any>('deleteBudgets', 'error'))
+    )
+  }
+
   /**Set initial budget */
   setInitialBudget(budgets: Budget[]): Observable<any> {
     const object = {
@@ -83,7 +93,7 @@ export class BudgetService {
     return this.http.post(this.budgetsUrl, object, this.httpOptions)
     .pipe(
       tap(_ => console.log('set initial budgets')),
-      catchError(this.handleError<any>('initBudgets'))
+      catchError(this.handleError<any>('initBudgets', 'error'))
     )
   }
 

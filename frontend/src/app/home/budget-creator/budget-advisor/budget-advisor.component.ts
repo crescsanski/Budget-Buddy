@@ -1,4 +1,5 @@
 import { Component, OnInit, Output, EventEmitter } from '@angular/core';
+import { CategoryService } from 'src/app/services/category.service';
 import { newBudgetPrompt } from './../../../models/newBudgetPrompt';
 
 
@@ -25,11 +26,11 @@ export class BudgetAdvisorComponent implements OnInit {
   
   displayNeeds = false;
 
-  constructor() { }
+  constructor(private cs: CategoryService) { }
 
   ngOnInit() {
     this.data = {
-        labels: ['Debt Repayment','Wants','Needs'],
+        labels: ['Savings','Wants','Needs'],
         datasets: [
             {
                 data: [20, 30, 50],
@@ -52,6 +53,11 @@ export class BudgetAdvisorComponent implements OnInit {
       maintainAspectRatio: false
     };
 
+    this.wants = this.cs.expenseCats.map(obj => ({...obj, amount: 0, category: obj.category_type, categoryTitle: obj.category_name})).filter(obj => obj.category_type == "want");
+    this.debt = this.cs.expenseCats.map(obj => ({...obj, amount: 0, category: obj.category_type, categoryTitle: obj.category_name})).filter(obj => obj.category_type == "saving");
+    this.needs = this.cs.expenseCats.map(obj => ({...obj, amount: 0, category: obj.category_type, categoryTitle: obj.category_name})).filter(obj => obj.category_type == "need");
+
+    /*
      this.wants =[
       {icon: '../../../../assets/icons/budget-icons/restaraunts.png', categoryTitle: 'Restaurants',  amount: 0, type: 'Expense'},
       {icon: '../../../../assets/icons/budget-icons/entertainment.png', categoryTitle: 'Entertainment',  amount: 0, type: 'Expense'},
@@ -62,7 +68,7 @@ export class BudgetAdvisorComponent implements OnInit {
   
     ]
     this.debt = [
-      {icon: '../../../../assets/icons/budget-icons/investment.png', categoryTitle: 'Investment',  amount: 0, type: 'Expense'},
+      {icon: '../../../../assets/icons/budget-icons/investment.png', categoryTitle: 'Investment/Savings',  amount: 0, type: 'Expense'},
       {icon: '../../../../assets/icons/budget-icons/misc-income.png', categoryTitle: 'Miscellaneous Expense',  amount: 0, type: 'Expense'},
     ];
     this.needs = [
@@ -75,6 +81,7 @@ export class BudgetAdvisorComponent implements OnInit {
       {icon: '../../../../assets/icons/budget-icons/transportation.png', categoryTitle: 'Transportation',  amount: 0, type: 'Expense'},
       {icon: '../../../../assets/icons/budget-icons/essential-groceries.png', categoryTitle: 'Essential Groceries',  amount: 0, type: 'Expense'},
     ];
+    */
 
   }
 
@@ -83,7 +90,7 @@ export class BudgetAdvisorComponent implements OnInit {
     if (this.displayItems == this.needs) {
       this.title = '50% Needs';
     } else if (this.displayItems == this.debt) {
-      this.title = '20% Debt Repayment';
+      this.title = '20% Savings';
     } else  if (this.displayItems == this.wants) {
       this.title = '30% Wants';
     } else {

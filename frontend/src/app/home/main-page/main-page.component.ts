@@ -128,7 +128,14 @@ export class MainPageComponent implements OnInit {
  
 
   goToNewBudget(){
-    this.router.navigateByUrl('/new-budget')
+    //First, we'll wipe the user's current budgets.
+    this.budServ.resetBudget().subscribe((out: string) => {
+      if (out != "error")
+      {
+        this.router.navigateByUrl('/new-budget')
+      }
+    })
+    
   }
 
   showFavorites(){

@@ -10,6 +10,7 @@
             <p-slider [(ngModel)]=cat.amount [min]="0" [max]=max [animate]="true" [step]="5" (onSlideEnd)="update($event)"></p-slider>
         </div>
     </div>
+    <button pButton style="margin-left: 2.5em; margin-top: 3em; width: 88%" type="submit" label='Submit Final Budget' (click)="submit()"></button>
     <p-dialog header="Over Budget!" [(visible)]="overBudget">
         <h3>It looks like you are {{getErrPerc(errorPercent)}}% over budget in the {{errorCategory}} category.</h3>
         <h3>We recommend you reduce your budget in this category by ${{getErrPerc(errorDifference)}}.</h3>

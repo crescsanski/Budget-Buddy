@@ -1,6 +1,9 @@
 import { newBudgetPrompt } from './../../../models/newBudgetPrompt';
 import { Component, Input, OnInit, ViewChild } from '@angular/core';
 import { UIChart } from 'primeng/chart';
+import { BudgetService } from 'src/app/services/budget.service';
+import { Budget } from 'src/app/models/budget';
+import { Router } from '@angular/router';
 
 
 @Component({
@@ -31,22 +34,24 @@ export class BudgetAdjusterComponent implements OnInit {
 
   overBudget: boolean = false;
 
-  categories = ['want', 'need', 'debt']
+  categories = ['want', 'need', 'saving']
 
   selectedCategory = "";
 
   @Input() prompts: newBudgetPrompt[];
   @Input() totalIncome: number;
   @Input() totalExpenses: number;
+  @Input() incomes: any[];
+  @Input() expenses: any[];
   @Input() availableBudget: number;
   @Input() breakdown: {want: number, need: number, debt: number}
   @ViewChild('chart') chart: UIChart; 
 
-  constructor() { }
+  constructor(private budServ: BudgetService, private router: Router) { }
 
   onChange(){
     this.dropdownPrompts = [];
-    this.prompts.forEach(x => {
+    this.expenses.forEach(x => {
       if(x.category  == (this.selectedCategory.toLowerCase())) {
         this.dropdownPrompts.push(x);
       }
@@ -72,7 +77,7 @@ export class BudgetAdjusterComponent implements OnInit {
           data: [this.wantsValue]
       }, {
           type: 'bar',
-          label: 'Debt',
+          label: 'Savings',
           backgroundColor: '#4eca9f',
           data: [this.debtValue]
       }, {
@@ -123,8 +128,8 @@ export class BudgetAdjusterComponent implements OnInit {
       this.debtValue = 0;
       this.needsValue = 0;
 
-      this.prompts.forEach(x => {
-         if(x.category == 'debt') {
+      this.expenses.forEach(x => {
+         if(x.category == 'saving') {
             this.debtValue += x.amount;
           } else if (x.category == 'want'){
             this.wantsValue += x.amount;
@@ -161,7 +166,7 @@ export class BudgetAdjusterComponent implements OnInit {
           data: [this.breakdown.want]
       }, {
           type: 'bar',
-          label: 'Debt',
+          label: 'Savings',
           backgroundColor: '#4eca9f',
           data: [this.breakdown.debt]
       }, {
@@ -170,6 +175,31 @@ export class BudgetAdjusterComponent implements OnInit {
         backgroundColor: '#00000020',
         data: [this.availableBudget]
     }]}
+  }
+
+  submit()
+  {
+    var post: Budget[] = []
+    this.incomes.forEach((obj) =>
+    {
+      post.push({category: obj.category_id, 
+      user_category_budget_estimated_amount: obj.amount,
+    user_category_budget_altered_amount: obj.amount});
+    })
+    this.expenses.forEach((obj) =>
+      {
+        post.push({category: obj.category_id, 
+          user_category_budget_estimated_amount: obj.amount,
+        user_category_budget_altered_amount: obj.amount});
+      })
+    
+    this.budServ.setInitialBudget(post).subscribe((val) =>
+    {
+      if (val != "error")
+      {
+        this.router.navigate(['main-page'])
+      }
+    })
   }
 
   makeRecommendations(){
@@ -195,7 +225,7 @@ export class BudgetAdjusterComponent implements OnInit {
       this.errorDifference = this.breakdown.need-this.needsRecommend;
     } else if(this.actualDebtPercent>.3) {
       this.overBudget = true;
-      this.errorCategory = "debt"
+      this.errorCategory = "savings"
       this.errorPercent = this.actualDebtPercent *100;
       this.errorValue = this.breakdown.debt;
       this.errorDifference = this.breakdown.debt-this.debtRecommend;

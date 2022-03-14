@@ -20,7 +20,8 @@ export class BudgetGuard implements CanActivate {
     ) {}
 
     canActivate(route: ActivatedRouteSnapshot, state: RouterStateSnapshot) {
-    
+        const user = this.authService.currentUserValue
+        if (user && user.token) {
         return this.budgServ.getBudByCat().pipe(
             map((val: Budget[]) => {
                 let cur = val.filter(value => value.year == this.timeServ.year 
@@ -32,7 +33,10 @@ export class BudgetGuard implements CanActivate {
                 this.router.navigate(['new-budget']);
                 return false;
             })
-        )        
+        )}
+             // not logged in so redirect to login page
+             this.router.navigate(['login-page']);
+             return false;
     } 
     
 

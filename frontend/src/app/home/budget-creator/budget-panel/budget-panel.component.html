@@ -10,18 +10,18 @@
         <div *ngFor="let item of income; let i=index">
             <div *ngIf="i<10" style="width: 40%; display: block" class="column">
                 <h3>{{item.categoryTitle}}</h3>
-                <p-inputNumber placeholder="$0.00" mode="currency" currency="USD" locale="en-US"></p-inputNumber>
+                <p-inputNumber placeholder="$0.00" mode="currency" [(ngModel)]="item.amount" currency="USD" locale="en-US"></p-inputNumber>
             </div>
         </div>
         <div *ngFor="let item of income; let i=index">
             <div *ngIf="i>=10" style="width: 40%; display: block" class="column">
                 <h3>{{item.categoryTitle}}</h3>
-                <p-inputNumber placeholder="$0.00" mode="currency" currency="USD" locale="en-US"></p-inputNumber>
+                <p-inputNumber placeholder="$0.00" mode="currency" [(ngModel)]="item.amount" currency="USD" locale="en-US"></p-inputNumber>
             </div>
         </div>
         </div>
     </div>
-    <button pButton style="margin-left: 2.5em; margin-top: 3em; width: 88%" type="submit" label='Track' (click)="pageForward()"></button>
+    <button pButton style="margin-left: 2.5em; margin-top: 3em; width: 88%" type="submit" label='Track' (click)="recalculate(); pageForward()"></button>
 </div>
 
 <div *ngIf="currentPanel == 'Expenses' && advisorVisible" class="panel panel-expenses" style="padding:2em">
@@ -33,23 +33,23 @@
         <div *ngFor="let item of expenses; let i=index">
             <div *ngIf="i<10" style="width: 40%; display: block" class="column">
                 <h3>{{item.categoryTitle}}</h3>
-                <p-inputNumber placeholder="$0.00" mode="currency" currency="USD" locale="en-US"></p-inputNumber>
+                <p-inputNumber placeholder="$0.00" mode="currency" [(ngModel)]="item.amount" currency="USD" locale="en-US"></p-inputNumber>
             </div>
         </div>
         <div *ngFor="let item of expenses; let i=index">
             <div *ngIf="i>=10" style="width: 40%; display: block" class="column">
                 <h3>{{item.categoryTitle}}</h3>
-                <p-inputNumber placeholder="$0.00" mode="currency" currency="USD" locale="en-US"></p-inputNumber>
+                <p-inputNumber placeholder="$0.00" mode="currency" [(ngModel)]="item.amount" currency="USD" locale="en-US"></p-inputNumber>
             </div>
         </div>
         </div>
     </div>
-    <button pButton style="margin-left: 2.5em; margin-top: 3em; width: 88%" type="submit" label='Track' (click)="pageForward()"></button>
+    <button pButton style="margin-left: 2.5em; margin-top: 3em; width: 88%" type="submit" label='Track' (click)="recalculate(); pageForward()"></button>
 </div>
 
 
 <div *ngIf="currentPanel =='Finalization' " style="top:20vh">
-    <app-budget-adjuster [prompts]="prompts" [totalIncome]="totalIncome" [totalExpenses]="totalExpenses" 
-    [availableBudget]="availableBudget" [breakdown]="recalculate()"></app-budget-adjuster>
+    <app-budget-adjuster [prompts]="prompts" [expenses]="expenses" [incomes]="income" [totalIncome]="totalIncome" [totalExpenses]="totalExpenses" 
+    [availableBudget]="availableBudget" [breakdown]="getBreakdown()"></app-budget-adjuster>
 </div>
 
