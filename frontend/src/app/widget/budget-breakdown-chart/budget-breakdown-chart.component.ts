@@ -16,17 +16,16 @@ export class BudgetBreakdownChartComponent implements OnInit {
 
   selectedCategory = "";
 
-  @Input() availableBudget: number;
-  @Input() breakdown: {want: number, need: number, debt: number}
+  @Input() defaultBreakdown: {want: number, need: number, debt: number}
   myChart: Chart 
 
   constructor() { 
     Chart.register(ChartDataLabels)
   }
 
-  refresh()
+  refresh(breakdown: {want: number, need: number, debt: number})
   {
-    this.myChart.data.datasets[0].data = [this.breakdown.want, this.breakdown.need, this.breakdown.debt]
+    this.myChart.data.datasets[0].data = [breakdown.want, breakdown.need, breakdown.debt]
     this.myChart.update()
   }
     
@@ -41,7 +40,7 @@ export class BudgetBreakdownChartComponent implements OnInit {
       datasets: [
           {
               label: 'Spending',
-              data: [this.breakdown.want, this.breakdown.need, this.breakdown.debt],
+              data: [this.defaultBreakdown.want, this.defaultBreakdown.need, this.defaultBreakdown.debt],
               backgroundColor: [
                 "#003486 ",
                 "#4ec5ca",

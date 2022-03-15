@@ -18,8 +18,8 @@ export class BudgetSliderComponent implements OnInit {
   budgetCategories: Budget[];
   curTotalBudget: number = 2000;
   configTotal: number;
+  actualBreakdown: {want: number, need: number, debt: number}
   percenUsed: number;
-  breakdown: {want: number, need: number, debt: number};
   maxTotalBudget: number;
   show: boolean = false; //whether to display buttons
   refresh: boolean = true;
@@ -36,6 +36,7 @@ export class BudgetSliderComponent implements OnInit {
   ngOnInit(): void {
     
     this.curTotalBudget = this.budServ.curBudCalcs.monthlyBudgetTotal;
+    this.configTotal = this.curTotalBudget;
     this.maxTotalBudget = this.budServ.curBudCalcs.monthlyEstIncome;
 
     this.tempValue = 0;
@@ -44,46 +45,31 @@ export class BudgetSliderComponent implements OnInit {
 
     this.refreshNewValues();
 
-    this.updateConfigTotal();
+    this.updateParameters( this.curTotalBudget);
 
-    this.updateMaxes();
+    this.actualBreakdown = this.getCurBreakDown();
 
-    this.updatePercenUsed();
-
-    this.updateCurBreakDown();
-    /*
-    this.budgetCategories = [
-      {categoryTitle: 'Housing', amount: 700, visible: true},
-      {categoryTitle: 'Transportation', amount: 200, visible: true},
-      {categoryTitle: 'Essential Groceries', amount: 200, visible: true},
-      {categoryTitle: 'Non-Essential Groceries', amount: 80, visible: true},
-      {categoryTitle: 'Utilities', amount: 150, visible: true},
-      {categoryTitle: 'Insurance', amount: 120, visible: true},
-      {categoryTitle: 'Medical', amount: 200, visible: true},
-      {categoryTitle: 'Investment', amount: 80, visible: true},
-      {categoryTitle: 'Restaurants', amount: 140, visible: true},
-      {categoryTitle: 'Entertainment', amount: 120, visible: true},
-      {categoryTitle: 'Clothing', amount: 50, visible: true},
-      {categoryTitle: 'Gifts', amount: 40, visible: true},
-      {categoryTitle: 'Furnishings', amount: 0, visible: true},
-      {categoryTitle: 'Pets', amount: 50, visible: true},
-      {categoryTitle: 'Tax Payment', amount: 25, visible: true},
-      {categoryTitle: 'Miscellaneous Expense', amount: 200, visible: true},
-    ]
-    */
    }
 
-  updateConfigTotal(): void
+   updateParameters(total: number)
    {
-     this.configTotal = this.budgetCategories.reduce(function (accumulator, item) {
+    this.updateMaxes(total);
+
+    this.updatePercenUsed(total);
+   }
+
+ getConfigTotal(): number
+   {
+     return this.budgetCategories.reduce(function (accumulator, item) {
        return accumulator + item.new_amount;
      }, 0);
    }
 
    sliderChange()
    {
-     this.updateConfigTotal();
-     this.updateMaxes();
+     console.log("Slider value has been changed")
+     this.configTotal = this.getConfigTotal();
+     //this.updateMaxes(this.configTotal);
      this.show = true;
    }
 
@@ -102,7 +88,7 @@ export class BudgetSliderComponent implements OnInit {
      return this.budgetCategories.filter(val => val.category_type == "saving")
    }
 
-   updateCurBreakDown(): void
+   getCurBreakDown(): any
    {
       var want = 0;
       var need = 0;
@@ -122,14 +108,12 @@ export class BudgetSliderComponent implements OnInit {
             break;
         }
       }
-
-      this.breakdown = {want: want, need: need, debt: debt}
+      return {want: want, need: need, debt: debt}
    }
 
-   updateMaxes()
+   updateMaxes(total: number)
    {
-    
-    let available = this.maxTotalBudget - this.configTotal;
+    let available = this.maxTotalBudget - total;
     for (let bud in this.budgetCategories)
     {
       let cur = this.budgetCategories[bud].new_amount
@@ -148,24 +132,20 @@ export class BudgetSliderComponent implements OnInit {
    reset()
    {
      this.refreshNewValues();
-     this.updateConfigTotal();
-     this.updateMaxes();
-     this.updatePercenUsed();
-     this.updateCurBreakDown();
+     this.updateVisibility();
      this.show = false;
    }
 
    updateVisibility(): void {
     this.refresh = false;
-    this.chart.refresh(); //refresh chart
-    this.updateConfigTotal();
-    this.updatePercenUsed();
-    this.updateCurBreakDown();
+    this.configTotal = this.getConfigTotal();
+    this.updateParameters(this.configTotal);
+    this.chart.refresh(this.getCurBreakDown()); //refresh chart
     setTimeout(() => this.refresh = true, 0);
   }
 
-  updatePercenUsed(): void {
-    this.percenUsed = Math.round(this.configTotal/this.maxTotalBudget * 100);
+  updatePercenUsed(total: number): void {
+    this.percenUsed = Math.round(total/this.maxTotalBudget * 100);
   }
 
   applyChanges()
