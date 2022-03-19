@@ -66,9 +66,10 @@ export class TrackingComponent implements OnInit {
     }
 
     this.rs.addQuickReceipt(out)
-      .subscribe(()=> {
+      .subscribe((res: any)=> {
         this.form.reset()
-        this.trigServ.announceExpenReceiptSubmit();
+        out.receipt_id = res.receipt_id
+        this.trigServ.announceExpenReceiptSubmit(this.rs.convert(out));
       }
       )
   }

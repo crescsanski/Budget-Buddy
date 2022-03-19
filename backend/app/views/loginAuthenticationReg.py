@@ -81,7 +81,7 @@ class CustomAuthToken(ObtainAuthToken):
         token = Token.objects.create(user=user)
 
         # Update the user_last_login field
-        Users.objects.filter(user_id = user.user_id).update(last_login = datetime.datetime.now())
+        Users.objects.filter(user_id = user.user_id).update(last_login = datetime.datetime.now(datetime.timezone.utc))
 
         return Response({
             'token': token.key,

@@ -62,7 +62,13 @@ def singleReceipt(request, receiptid):
             receipt.update(**recData)
             is_income = None
             serializer = None
-            if request.data.get('incomes'):
+
+            if recData.get('receipt_is_income'):
+                Expense.objects.all().filter(receipt_id = receiptid).delete()
+            elif not request.data.get('receipt_is_income'):
+                Income.objects.all().filter(receipt_id = receiptid).delete()
+            
+            if request.data.get('incomes') and recData.get('receipt_is_income'):
                 cur = list(Income.objects.filter(receipt_id = receiptid).values('income_id'))
                 cur = [i.get('income_id') for i in cur]
                 for income in request.data['incomes']:
@@ -80,7 +86,7 @@ def singleReceipt(request, receiptid):
                     cur = [i for i in cur if i != income.get('income_id')]
                 # Remove any associated incomes not included in the package    
                 Income.objects.filter(income_id__in = cur).delete()
-            elif request.data.get('expenses'):
+            elif request.data.get('expenses') and not recData.get('receipt_is_income'):
                 cur2 = list(Expense.objects.filter(receipt_id = receiptid).values('expense_id'))
                 cur2 = [i.get('expense_id') for i in cur2]
                 for expense in request.data['expenses']:
@@ -174,6 +180,7 @@ def postSimpleReceipt(request):
     receipt_date = recDat['receipt_date'], 
     receipt_is_reccuring = recDat['reccuring'],
     receipt_is_income = recDat['is_income'])
+
     if recDat['is_income']:
         Income.objects.create(
             income_name = recDat['receipt_name'],

@@ -73,9 +73,49 @@ export class ReceiptTrackService {
       );
     }
 
+    convert(rec: QuickReceipt): Receipt
+    {
+      let trans: Receipt = <Receipt>{}
+      trans.quick = true;
+      trans.receipt_id = rec.receipt_id
+      trans.userid = rec.user_id
+      trans.receipt = {
+        receipt_date: rec.receipt_date,
+        receipt_is_income: rec.is_income,
+        receipt_name: rec.receipt_name,
+        receipt_is_reccuring: 0
+
+      }
+      if (rec.is_income)
+      {
+        trans.incomes = []
+        trans.incomes.push({income_amount: rec.receipt_amount,
+        income_name: rec.receipt_name, income_id: undefined, category_id: rec.category})
+      }
+      else
+      {
+        trans.expenses = []
+        trans.expenses.push({expense_price: rec.receipt_amount,
+          expense_name: rec.receipt_name, expense_id: undefined, category_id: rec.category})
+      }
+      return trans;
+    }
+
     getTotal(receipt: Receipt)
     {
-      return receipt.expenses.map(i => i.expense_price).reduce((a,b)=>a+b);
+      if (receipt.receipt.receipt_is_income && receipt.incomes.length > 0)
+      {
+        return receipt.incomes.map(i => i.income_amount).reduce((a,b)=>a+b);
+      }
+      else if (receipt.expenses.length > 0)
+      {
+        return receipt.expenses.map(i => i.expense_price).reduce((a,b)=>a+b);
+      }
+      else
+      {
+        return 0;
+      }
+     
     }
 
   /**

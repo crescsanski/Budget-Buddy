@@ -1,5 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Subject } from 'rxjs';
+import { Receipt } from '../models/receipt';
+import { QuickReceipt } from '../models/simReceipt';
 import { BudgetService } from './budget.service';
 import { IncomeHistoryService } from './income-history.service';
 import { SavingsHistoryService } from './savings-history.service';
@@ -11,8 +13,8 @@ import { SpendingHistoryService } from './spending-history.service';
 export class TriggerService {
 
   // Observable sources
-  private expenReceiptSubmitAnnounce = new Subject<void>();
-  private incomReceiptSubmitAnnounce = new Subject<void>();
+  private expenReceiptSubmitAnnounce = new Subject<Receipt | QuickReceipt>();
+  private incomReceiptSubmitAnnounce = new Subject<Receipt | QuickReceipt>();
   private budgetUpdateAnnounce = new Subject<void>();
 
   //Obsevable streams
@@ -29,7 +31,7 @@ export class TriggerService {
     this.budgetUpdateAnnounce.next();
   }
 
-  async announceExpenReceiptSubmit()
+  async announceExpenReceiptSubmit(rec: Receipt | QuickReceipt)
   {
     // Update weekly spending total
     await (this.spenHis.getCurWeekSpend().toPromise());
@@ -43,10 +45,10 @@ export class TriggerService {
 
     await (this.spenHis.getSpendCatBreakdown().toPromise());
 
-    this.expenReceiptSubmitAnnounce.next();
+    this.expenReceiptSubmitAnnounce.next(rec);
   }
 
-  async announceIncomReceiptSubmit()
+  async announceIncomReceiptSubmit(rec: Receipt | QuickReceipt)
   {
     // Update savings widget
     await (this.savHis.getByMonthCumSavings().toPromise());
@@ -58,7 +60,7 @@ export class TriggerService {
 
     await (this.incHis.getIncomeCatBreakdown().toPromise());
 
-    this.incomReceiptSubmitAnnounce.next();
+    this.incomReceiptSubmitAnnounce.next(rec);
   }
 
   constructor(private spenHis: SpendingHistoryService, private savHis: SavingsHistoryService,

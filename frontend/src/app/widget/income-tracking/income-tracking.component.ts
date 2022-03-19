@@ -67,9 +67,10 @@ form: FormGroup = <FormGroup>{};
     }
 
     this.rs.addQuickReceipt(out)
-      .subscribe(()=> {
+      .subscribe((res: any)=> {
         this.form.reset()
-        this.trigServ.announceIncomReceiptSubmit();
+        out.receipt_id = res.receipt_id
+        this.trigServ.announceIncomReceiptSubmit(this.rs.convert(out));
       }
       )
   }

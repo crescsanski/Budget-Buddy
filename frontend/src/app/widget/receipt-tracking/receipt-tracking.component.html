@@ -51,54 +51,69 @@
             </ng-template>
         </p-overlayPanel> 
         <p-dialog *ngIf="editReceipt" header="Edit: {{selectedReceipt.receipt.receipt_name}}" [(visible)]="editReceipt" [appendTo]="receiptList" style="width:fit-content">
-                    <div >
+                    <p-progressSpinner *ngIf="load[0]"></p-progressSpinner>
+                    <div *ngIf="!load[0]">
                         <div *ngIf="selectedReceipt" class="upload-verification">
                             <form #f [formGroup]="getReceipt(0)" (ngSubmit)="updateReceipt()">
                                 <div class="center">
                                     <p>Receipt Name</p>
                                     <input formControlName="receipt_name" type="text" pInputText/>
                                     <br>
-                                    <p>Date</p>
+                                    <p>Date of Transaction</p>
                                     <p-calendar formControlName="receipt_date"></p-calendar>
                                     <br>
-                                    <p>Spending Category</p>
-                                    <p-dropdown [options]="catOptions" optionLabel="category_name" optionValue="category_id" 
-                                    [autoDisplayFirst]=false
-                                    formControlName="receipt_category"></p-dropdown>
+                                   
                                 </div>
-                                <div formArrayName="products" class="grid" >
-                                    <div class="col-6">
-                                        <button type="button" (click)="addEmptyProduct(0)" class="p-button-info addButton">+ Add another product</button>
-                                    </div>
+                                <div formArrayName="items" style="margin-top: 5px;" class="grid" >
+                                
                                                                
                                     <div class="col-12">
-                                        <ng-container *ngFor="let product of getProducts(0).controls; let i=index" >
-                                            <div [formGroup]="getProduct(0, i)" class="grid center">
+                                        <ng-container *ngFor="let item of getItems(0).controls; let i=index" >
+                                            <div [formGroup]="getItem(0, i)" class="grid center">
                                                 <div *ngIf="i==0" class="col-4 adjust" >
                                                     <p class="adjust">Item Name</p>
                                                 </div>
                                                 <div *ngIf="i==0" class="col-8">
-                                                    <p class="adjust">Cost</p>
+                                                    <p class="adjust">Amount</p>
                                                 </div>
                                                 <div class="col-4">
                                                     <input type="text" class="inputfield" formControlName="item_name" placeholder="Name"pInputText/>
                                                 </div>
                                                 <div class="col-4">
-                                                    <p-inputNumber class="product" placeholder="Cost" formControlName="item_amount" 
+                                                    <p-inputNumber class="item" placeholder="Amount" formControlName="item_amount" 
                                                     mode="currency" [maxFractionDigits]="2" currency="USD" locale="en-US"></p-inputNumber>
                                                 </div>
                                                 <div class="col-1">
-                                                    <button type="button" (click)="removeProduct(0, i)"pButton label="Delete" class="p-button-danger"></button>
+                                                    <button type="button" (click)="removeItem(0, i)"pButton label="Delete" class="p-button-danger"></button>
                                                 </div> 
                                             </div>
                                             
                                         </ng-container>
                                     </div>
+                                    <div class="col-6">
+                                        <button type="button" (click)="addEmptyItem(0)" class="p-button-info addButton">+ Add another item</button>
+                                    </div>
                                     <div class="col-12">
                                         <p>Total: {{totals[0] | currency}}</p>
                                     </div>
-                                    
+  
                                 </div>
+
+                                <p>Is this an income or a spending transaction?</p>
+                                <p-dropdown [options]="tyOptions" 
+                                [autoDisplayFirst]=false
+                                optionLabel="label"
+                                dataKey="value"
+                                optionValue="value"
+                                formControlName="receipt_is_income"></p-dropdown>
+
+                                <div *ngIf="getReceipt(0).get('receipt_is_income').value != null">
+                                    <p>How would you categorize this receipt?</p>
+                                    <p-dropdown [options]="getOptions(0)" optionLabel="category_name" optionValue="category_id" 
+                                    [autoDisplayFirst]=false
+                                    formControlName="receipt_category"></p-dropdown>
+                                 </div>
+
                                 <button class="track trackAdj" pButton type="submit" label='Update'></button>
                             </form>
                         </div>
@@ -125,55 +140,69 @@
         </p-dialog>
         <p-dialog header="Verify Upload Values" [(visible)]="receiptUploaded" [appendTo]="receiptList" style="width:fit-content">
             <p-tabView [(activeIndex)]="inSel">
-                <p-tabPanel [disabled]="!inProgress[j]" header="{{j.toString()}}" *ngFor="let receipt of form.controls; let j = index" [selected]="j == inSel">
-                    <div >
+                <p-tabPanel [disabled]="!inProgress[j]" [header]="getReceipt(j).get('receipt_name').value" *ngFor="let receipt of form.controls; let j = index" [selected]="j == inSel">
+                    <p-progressSpinner *ngIf="load[j]"></p-progressSpinner>
+                    <div *ngIf="!load[j]">
                         <div *ngIf="receiptUploaded && inProgress[j]" class="upload-verification">
                             <form #f [formGroup]="getReceipt(j)" (ngSubmit)="track(j)">
                                 <div class="center">
                                     <p>Receipt Name</p>
                                     <input formControlName="receipt_name" type="text" pInputText/>
                                     <br>
-                                    <p>Date</p>
+                                    <p>Date of Transaction</p>
                                     <p-calendar formControlName="receipt_date"></p-calendar>
                                     <br>
-                                    <p>Spending Category</p>
-                                    <p-dropdown [options]="catOptions" optionLabel="category_name" optionValue="category_id" 
-                                    [autoDisplayFirst]=false
-                                    formControlName="receipt_category"></p-dropdown>
+                                   
                                 </div>
-                                <div formArrayName="products" class="grid" >
-                                    <div class="col-6">
-                                        <button type="button" (click)="addEmptyProduct(j)" class="p-button-info addButton">+ Add another product</button>
-                                    </div>
+                                <div formArrayName="items" style="margin-top: 5px;" class="grid" >
+                                
                                                                
                                     <div class="col-12">
-                                        <ng-container *ngFor="let product of getProducts(j).controls; let i=index" >
-                                            <div [formGroup]="getProduct(j, i)" class="grid center">
+                                        <ng-container *ngFor="let item of getItems(j).controls; let i=index" >
+                                            <div [formGroup]="getItem(j, i)" class="grid center">
                                                 <div *ngIf="i==0" class="col-4 adjust" >
                                                     <p class="adjust">Item Name</p>
                                                 </div>
                                                 <div *ngIf="i==0" class="col-8">
-                                                    <p class="adjust">Cost</p>
+                                                    <p class="adjust">Amount</p>
                                                 </div>
                                                 <div class="col-4">
                                                     <input type="text" class="inputfield" formControlName="item_name" placeholder="Name"pInputText/>
                                                 </div>
                                                 <div class="col-4">
-                                                    <p-inputNumber class="product" placeholder="Cost" formControlName="item_amount" 
+                                                    <p-inputNumber class="item" placeholder="Amount" formControlName="item_amount" 
                                                     mode="currency" [maxFractionDigits]="2" currency="USD" locale="en-US"></p-inputNumber>
                                                 </div>
                                                 <div class="col-1">
-                                                    <button type="button" (click)="removeProduct(j, i)"pButton label="Delete" class="p-button-danger"></button>
+                                                    <button type="button" (click)="removeItem(j, i)"pButton label="Delete" class="p-button-danger"></button>
                                                 </div> 
                                             </div>
                                             
                                         </ng-container>
                                     </div>
+                                    <div class="col-6">
+                                        <button type="button" (click)="addEmptyItem(j)" class="p-button-info addButton">+ Add another item</button>
+                                    </div>
                                     <div class="col-12">
                                         <p>Total: {{totals[j] | currency}}</p>
                                     </div>
+
+                                   
                                     
                                 </div>
+
+                                <p>Is this an income or a spending transaction?</p>
+                                <p-dropdown [options]="tyOptions" 
+                                [autoDisplayFirst]=false
+                                optionLabel="label" optionValue="value" dataKey="value"
+                                formControlName="receipt_is_income"></p-dropdown>
+
+                                <div *ngIf="getReceipt(j).get('receipt_is_income').value != null">
+                                    <p>How would you categorize this receipt?</p>
+                                    <p-dropdown [options]="getOptions(j)" optionLabel="category_name" optionValue="category_id" 
+                                    [autoDisplayFirst]=false
+                                    formControlName="receipt_category"></p-dropdown>
+                                 </div>
                                 <button class="track trackAdj" pButton type="submit" label='Track'></button>
                             </form>
                         </div>
