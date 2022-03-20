@@ -5,6 +5,8 @@ import { BudgetService } from 'src/app/services/budget.service';
 import { TimeService } from 'src/app/services/time.service';
 import { TriggerService } from 'src/app/services/trigger.service';
 import { BudgetBreakdownChartComponent } from '../budget-breakdown-chart/budget-breakdown-chart.component';
+import { Category } from 'src/app/models/category';
+import { map } from 'rxjs/operators';
 
 @Component({
   selector: 'app-budget-slider',
@@ -16,6 +18,7 @@ export class BudgetSliderComponent implements OnInit {
   @ViewChild('chart') chart: BudgetBreakdownChartComponent;
 
   budgetCategories: Budget[];
+  filteredCats: Budget[];
   curTotalBudget: number = 2000;
   configTotal: number;
   actualBreakdown: {want: number, need: number, debt: number}
@@ -41,8 +44,13 @@ export class BudgetSliderComponent implements OnInit {
 
     this.tempValue = 0;
 
-    this.budgetCategories = this.budServ.exBudByCat.filter(val => val.year == this.ts.year && val.month == this.ts.month).sort((a, b) => (a.category_id > b.category_id) ? 1 : -1)
-
+    this.budgetCategories = this.budServ.exBudByCat.filter(val => val.year == this.ts.year && val.month == this.ts.month)
+      .map(val => {
+        val.visible = val.is_favorite;
+        return val;})
+      .sort((a, b) => (a.category_id > b.category_id) ? 1 : -1)
+    this.filteredCats = this.budgetCategories.filter(val => val.visible);
+    
     this.refreshNewValues();
 
     this.updateParameters( this.curTotalBudget);
@@ -57,6 +65,20 @@ export class BudgetSliderComponent implements OnInit {
 
     this.updatePercenUsed(total);
    }
+
+  updateCategories()
+  {
+    this.budgetCategories.forEach((val) => {
+      if (this.filteredCats.find(val2 => val2.category_id == val.category_id))
+      {
+        val.visible = true;
+      }
+      else
+      {
+        val.visible = false;
+      }
+    })
+  }
 
  getConfigTotal(): number
    {

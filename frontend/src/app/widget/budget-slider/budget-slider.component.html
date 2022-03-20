@@ -1,7 +1,7 @@
 <div class="panel">
     <div style="width: 100%">
         <div class="content-area">
-            <h2>My Budget</h2> sadf
+            <h2>My Budget</h2> 
         </div>
         
     </div>
@@ -20,15 +20,29 @@
             
         </div>
         <div class="col-6">
-            <div  class="content-area scrollbox">
-                <div *ngFor="let cat of budgetCategories">
-                    <div class="sliderArea" *ngIf="cat.visible != false">
-                        <p style="color: #003486; text-align: left; font-weight: bold;">{{cat.categoryTitle}}: <span style="font-weight: lighter;">${{cat.new_amount}}/${{cat.max}} ({{cat.new_amount/configTotal | percent:'1.0-2'}})</span></p>
-                        <p-slider *ngIf="refresh" (onChange)="sliderChange()" (onSlideEnd)="this.updateVisibility();" [(ngModel)]=cat.new_amount [min]="0" [max]=cat.max [animate]="true" [step]="5" ptoolT></p-slider>
-                        <p-slider *ngIf="!refresh" (onChange)="sliderChange()" [(ngModel)]=cat.new_amount [min]="0" [max]=cat.max [animate]="true" [step]="5" ptoolT></p-slider>
+            <div class="grid">
+                <div class="col-12">
+                    <div class="field">
+                        <label for="cat" >Selected Categories</label>
+                        <p-multiSelect [options]="budgetCategories" class="inputfield" [(ngModel)]="filteredCats"
+                        [maxSelectedLabels]="0" [selectedItemsLabel]="'{0} items selected'" 
+                        (onChange)="updateCategories()" 
+                        inputId="cat"
+                        optionLabel="categoryTitle"></p-multiSelect>
                     </div>
                 </div>
-            </div>
+                <div class="col-12">
+                    <div  class="content-area scrollbox">
+                        <div *ngFor="let cat of budgetCategories">
+                            <div class="sliderArea" *ngIf="cat.visible != false">
+                                <p style="color: #003486; text-align: left; font-weight: bold;">{{cat.categoryTitle}}: <span style="font-weight: lighter;">${{cat.new_amount}}/${{cat.max}} ({{cat.new_amount/configTotal | percent:'1.0-2'}})</span></p>
+                                <p-slider *ngIf="refresh" (onChange)="sliderChange()" (onSlideEnd)="this.updateVisibility();" [(ngModel)]=cat.new_amount [min]="0" [max]=cat.max [animate]="true" [step]="5" ptoolT></p-slider>
+                                <p-slider *ngIf="!refresh" (onChange)="sliderChange()" [(ngModel)]=cat.new_amount [min]="0" [max]=cat.max [animate]="true" [step]="5" ptoolT></p-slider>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+               
         </div>
     </div> 
            

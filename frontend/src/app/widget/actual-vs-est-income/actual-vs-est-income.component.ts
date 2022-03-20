@@ -9,6 +9,8 @@ import { CategoryService } from 'src/app/services/category.service';
 import { IncomeHistoryService } from 'src/app/services/income-history.service';
 import { TimeService } from 'src/app/services/time.service';
 import { TriggerService } from 'src/app/services/trigger.service';
+import { BudgetCategory } from 'src/app/models/formModels/budgetCategory';
+import { Budget } from 'src/app/models/budget';
 
 @Component({
   selector: 'app-actual-vs-est-income',
@@ -19,8 +21,8 @@ export class ActualVsEstIncomeComponent implements OnInit {
   chartData: any;
   chartOptions: any;
   categories: string[] = []
-  catOptions: Category[] = []
-  selectedCats: Category[] = []
+  catOptions: Budget[] = []
+  selectedCats: Budget[] = []
   estIncValues: number[];
   actIncValues: number[] = []
   selDate: Date = new Date();
@@ -32,8 +34,9 @@ export class ActualVsEstIncomeComponent implements OnInit {
     private catServ: CategoryService,
     private trigServ: TriggerService, private ts: TimeService) { 
       Chart.register(ChartDataLabels)
-      this.catOptions = this.catServ.incomeCats
-      this.selectedCats = this.catServ.incomeCats
+      this.catOptions = this.budServ.inBudByCat.filter(val => val.year == this.ts.year && val.month == this.ts.month)
+
+      this.selectedCats = this.catOptions.filter(val => val.is_favorite);
 
       this.trigServ.incomReceiptAnnounced$.subscribe(() =>
       {
@@ -54,11 +57,11 @@ export class ActualVsEstIncomeComponent implements OnInit {
     for (let i of this.selectedCats)
     {
       let acIncValue = acIncdData.find(value => value.category_id == i.category_id)
-      let estIncValue = estIncData.find(value => value.categoryTitle == i.category_name)
+      let estIncValue = estIncData.find(value => value.categoryTitle == i.categoryTitle)
 
       if (acIncValue || estIncValue)
       {
-        this.categories.push(i.category_name)
+        this.categories.push(i.categoryTitle)
         acIncValue ? this.actIncValues.push(acIncValue.totalIncomeReceived) : this.actIncValues.push(0)
         estIncValue ? this.estIncValues.push(estIncValue.altered_amount) : this.estIncValues.push(0)
       }
