@@ -28,6 +28,7 @@ export class MainPageComponent implements OnInit {
   favoriteMenu: boolean = false;
   budgetCategories: any[];
   selectedCategories: any[];
+  welcomeMessage: boolean = true; 
 
 
 

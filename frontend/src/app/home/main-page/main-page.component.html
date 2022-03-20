@@ -54,6 +54,23 @@
     <button  pButton pRipple  type="button" (click)="setFavorites()" style="display: block; text-align: center; width: 99%; margin-top: 2em" >Submit</button>
 </p-dialog>
 
+<p-dialog header="Welcome" [(visible)]="welcomeMessage" [style]="{width: '50vw'}">
+  <h2 style="text-align: center;">Welcome!</h2>
+  <p style="text-align: center;">Now that we've set up your budget, let's learn about Budget Buddy!<br>In the menu to the left, we have several options.</p>
+  <h2>Dashboard</h2>
+  <p>This is where we keep your favorite widgets</p>
+  <h2>Budget</h2>
+  <p>Here you can adjust your budget and view your spending for the week</p>
+  <h2>Analytics</h2>
+  <p>Looking for more insights of your spending over time? Check out Analytics.</p>
+  <h2>My Room</h2>
+  <p>As you earn rewards, customize your Budget Buddy's room!</p>
+  <h2>Competitions</h2>
+  <p>Add friends and challenge them to competitions here! May the best Budget Buddy win!</p>
+
+
+</p-dialog>
+
 
     <p-menu #menu [popup]="true" [model]="settings"></p-menu>
     </div>
