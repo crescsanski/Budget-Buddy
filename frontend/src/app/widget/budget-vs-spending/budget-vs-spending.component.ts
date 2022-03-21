@@ -13,6 +13,7 @@ import { SpendingHistoryService } from 'src/app/services/spending-history.servic
 import { TimeService } from 'src/app/services/time.service';
 import { TriggerService } from 'src/app/services/trigger.service';
 import { getLocaleDateFormat } from '@angular/common';
+import { Budget } from 'src/app/models/budget';
 
 @Component({
   selector: 'app-budget-vs-spending',
@@ -23,10 +24,10 @@ export class BudgetVsSpendingComponent implements OnInit {
   chartData: any;
   chartOptions: any;
   categories: string[] = []
-  catOptions: Category[] = []
+  catOptions: Budget[] = []
   typeOptions: SelectItem[] = []
-  selectedCats: Category[] = []
-  selectedTypes: string[] = ['want']
+  selectedCats: Budget[] = []
+  selectedTypes: string[] = ['want', 'need', 'saving']
   budgetValues: number[];
   spendingValues: number[] = []
   selDate: Date = new Date();
@@ -40,8 +41,9 @@ export class BudgetVsSpendingComponent implements OnInit {
       Chart.register(ChartDataLabels)
       this.typeOptions = this.budServ.types;
 
-      this.catOptions = this.catServ.expenseCats
-      this.selectedCats = this.catServ.expenseCats
+      this.catOptions = this.budServ.exBudByCat.filter(val => val.year == this.ts.year && val.month == this.ts.month)
+
+      this.selectedCats = this.catOptions.filter(val => val.is_favorite);
 
       this.trigServ.expenReceiptAnnounced$.subscribe(() =>
       {
@@ -69,7 +71,7 @@ export class BudgetVsSpendingComponent implements OnInit {
     for (let i of this.selectedCats)
     {
       let spenValue = spendData.find(value => value.category_id == i.category_id)
-      let budgetValue = budgetData.find(value => value.categoryTitle == i.category_name)
+      let budgetValue = budgetData.find(value => value.categoryTitle == i.categoryTitle)
       var spend;
       if (spenValue == null)
       {
@@ -81,7 +83,7 @@ export class BudgetVsSpendingComponent implements OnInit {
       }
       if (budgetValue)
       {
-        this.categories.push(i.category_name)
+        this.categories.push(i.categoryTitle)
         this.spendingValues.push(spend)
         this.budgetValues.push(budgetValue.altered_amount)
       }
