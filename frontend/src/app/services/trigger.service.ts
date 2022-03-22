@@ -35,43 +35,55 @@ export class TriggerService {
 
  announceReceiptDelete(rec: Receipt)
 {
-  if (rec.receipt.receipt_is_income)
-  {
-    this.incHis.updateValues(rec, "delete");
-  }
-  else
-  {
-    this.spenHis.updateValues(rec, "delete");
-  }
-  this.savHis.updateValues(rec, "delete");
+  this.recDeleteProcess(rec);
 
   rec.operation = "delete"
 
   rec.receipt.receipt_is_income ? this.incomReceiptChange.next(rec) : this.expenReceiptChange.next(rec)
   
 }
- announceReceiptUpdate(rec: Receipt)
+
+  recDeleteProcess(rec: Receipt)
   {
     if (rec.receipt.receipt_is_income)
     {
-      this.incHis.updateValues(rec, "update");
+      this.incHis.updateValues(rec, "delete");
     }
     else
     {
-      this.spenHis.updateValues(rec, "update");
+      this.spenHis.updateValues(rec, "delete");
     }
-    this.savHis.updateValues(rec, "update");
+    this.savHis.updateValues(rec, "delete");
+  }
 
-    rec.operation = "update"
+  recAddProcess(rec: Receipt)
+  {
+    if (rec.receipt.receipt_is_income)
+    {
+      this.incHis.updateValues(rec, "new");
+    }
+    else
+    {
+      this.spenHis.updateValues(rec, "new")
+    }
+    this.savHis.updateValues(rec, "new")
+  }
 
-    rec.receipt.receipt_is_income ? this.incomReceiptChange.next(rec) : this.expenReceiptChange.next(rec)
+ announceReceiptUpdate(oldReceipt: Receipt, rec: Receipt)
+  {
+
+      this.recDeleteProcess(oldReceipt)
+      this.recAddProcess(rec);  
+
+       rec.operation = "update"
+
+      rec.receipt.receipt_is_income ? this.incomReceiptChange.next(rec) : this.expenReceiptChange.next(rec)
   }
 
   announceExpenReceiptSubmit(rec: Receipt)
   {
 
-    this.spenHis.updateValues(rec, "new")
-    this.savHis.updateValues(rec, "new")
+    this.recAddProcess(rec)
 
     rec.operation = "new"
 
@@ -80,9 +92,8 @@ export class TriggerService {
 
   announceIncomReceiptSubmit(rec: Receipt)
   {
-    this.incHis.updateValues(rec, "new");
-    this.savHis.updateValues(rec, "new");
-
+    
+    this.recAddProcess(rec)
     rec.operation = "new"
 
     this.incomReceiptChange.next(rec);

@@ -6,6 +6,8 @@ export interface Receipt {
     userid?: number;
     quick?: boolean;
     preTotal?: number //used to store previous total (after an update)
+    preDate?: string //used to store previous date
+    pre_is_income?: boolean //used to store previous income/spending type
     operation?: string //defines a CRUD function
     receipt?: {
         receipt_date: string;

@@ -161,7 +161,6 @@ export class ReceiptTrackingComponent implements OnInit {
 
   addReceipt(cat: number, rec: boolean, date: string, name: string, id: number, is_income: boolean)
   {
-    console.log("Date: ", date.length)
     this.form.push(
       this.fb.group({
         items: this.fb.array(Array<FormGroup>()),      
@@ -434,8 +433,9 @@ export class ReceiptTrackingComponent implements OnInit {
        
         this.selectedReceipt = receipt;
         let index = this.userReceipts.findIndex(i => i.receipt_id == receipt.receipt_id)
-        let oldTotal = this.rs.getTotal(this.userReceipts[index])
-        receipt.preTotal = oldTotal
+    
+        let oldReceipt = this.userReceipts[index]
+       
         this.userReceipts[index] = receipt;
         //update master data
         let index2 = this.rs.receipts.findIndex(i => i.receipt_id == receipt.receipt_id)
@@ -444,7 +444,7 @@ export class ReceiptTrackingComponent implements OnInit {
         this.editReceipt = false;
         this.load[0] = false;
 
-        this.ts.announceReceiptUpdate(receipt)
+        this.ts.announceReceiptUpdate(oldReceipt, receipt)
       })
   }
 
