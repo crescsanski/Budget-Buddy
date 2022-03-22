@@ -38,7 +38,7 @@ export class ActualVsEstIncomeComponent implements OnInit {
 
       this.selectedCats = this.catOptions.filter(val => val.is_favorite);
 
-      this.trigServ.incomReceiptAnnounced$.subscribe(() =>
+      this.trigServ.incomReceiptChanged$.subscribe(() =>
       {
           this.getNewData();
       })

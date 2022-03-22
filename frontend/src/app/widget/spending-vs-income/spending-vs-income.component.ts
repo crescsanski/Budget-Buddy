@@ -27,12 +27,12 @@ export class SpendingVsIncomeComponent implements OnInit {
     private incServ: IncomeHistoryService,
     private trigServ: TriggerService, private ts: TimeService) { 
       Chart.register(ChartDataLabels)
-      this.trigServ.incomReceiptAnnounced$.subscribe(() =>
+      this.trigServ.incomReceiptChanged$.subscribe(() =>
       {
           this.getNewData();
       })
 
-      this.trigServ.expenReceiptAnnounced$.subscribe(() =>
+      this.trigServ.expenReceiptChanged$.subscribe(() =>
       {
           this.getNewData();
       })

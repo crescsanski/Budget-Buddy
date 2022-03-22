@@ -176,6 +176,7 @@ export class BudgetSliderComponent implements OnInit {
     let send: any[] = []
     for (let i in budCopy)
     {
+      budCopy[i].altered_amount = budCopy[i].new_amount
       send.push({category: budCopy[i].category_id, 
         user_category_budget_altered_amount: budCopy[i].new_amount})
     }
@@ -184,7 +185,7 @@ export class BudgetSliderComponent implements OnInit {
       (val: string) => {
         if (val != "error")
         {
-          this.trigServ.announceBudgetUpdate();
+          this.trigServ.announceBudgetUpdate(budCopy);
         }
       }
     ))

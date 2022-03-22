@@ -4,6 +4,6 @@
             <h2>Weekly Spending</h2> 
         </div>
         <p-progressBar class="progress-bar" [value]="value"></p-progressBar>
-            <p class="subtitle">${{ weeklySpent }} / <span style="font-weight:bold">${{ weeklyBudget }}</span></p>
+            <p class="subtitle">{{ weeklySpent | currency}} / <span style="font-weight:bold">{{ weeklyBudget | currency}}</span></p>
     </div>
 </div>

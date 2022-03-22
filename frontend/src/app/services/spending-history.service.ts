@@ -6,6 +6,9 @@ import { catchError, map, tap } from 'rxjs/operators';
 import { AuthService } from './auth.service';
 import { User } from '../models/user';
 import { TimeService } from './time.service';
+import { QuickReceipt } from '../models/simReceipt';
+import { Receipt } from '../models/receipt';
+import { ReceiptTrackService } from '../widget/services/receipt-track.service';
 
 @Injectable({
   providedIn: 'root'
@@ -24,7 +27,9 @@ export class SpendingHistoryService {
     headers: new HttpHeaders({ 'Content-Type': 'application/json' })
   };
 
-  constructor(private http: HttpClient, private auServ: AuthService, private tiServ: TimeService) { 
+  constructor(private http: HttpClient, 
+    private rs: ReceiptTrackService,
+    private auServ: AuthService, private tiServ: TimeService) { 
     this.auServ.currentUser.subscribe(x => this.user = <User>x);
 
 
@@ -55,6 +60,71 @@ export class SpendingHistoryService {
   get catSpenByMonth()
   {
     return this.catSpendByMonth;
+  }
+
+  //Update amounts given new receipt
+  updateValues(re: Receipt, mode: string)
+  {
+    let date = new Date(re.receipt.receipt_date)
+    let month = date.getMonth() + 1
+    let total = this.rs.getTotal(re)
+    switch (mode)
+    {
+      case "delete":
+        total = -1 * total;
+        break;
+      case "update":
+        total = total - re.preTotal
+        break;
+    }
+
+    if (!re.receipt.receipt_is_income)
+    {
+      if (date.getFullYear() == this.tiServ.year && month == this.tiServ.month)
+      {
+        if (this.tiServ.getWeek(date) == this.tiServ.week)
+        {
+          this.weeklySpendingTotal += total;
+        }    
+      }
+      
+      for (let i in this.catSpenByMonth) 
+      {
+       
+        if (this.catSpenByMonth[i].year == date.getFullYear() && this.catSpenByMonth[i].month == month)
+        {
+          for (let exp of re.expenses)
+          {
+            if (this.catSpenByMonth[i].category_id == exp.category_id)
+            {
+              this.catSpenByMonth[i].totalSpent += exp.expense_price;
+            }
+          }
+        }
+        
+      }
+      
+      for (let i in this.spenByMonth) 
+      {
+        if (this.spenByMonth[i].year == date.getFullYear() && this.spenByMonth[i].month == month)
+        {
+          this.spenByMonth[i].totalSpent += total;
+          break;
+        }
+      }
+      for (let i in this.cumSpenByMonth)
+      {
+        if ((this.cumSpenByMonth[i].year == date.getFullYear() && this.cumSpenByMonth[i].month >= month)
+          || this.cumSpenByMonth[i].year > date.getFullYear())
+        {
+          this.cumSpenByMonth[i].totalSpent += total;
+        }
+      }
+      
+    }
+    
+    
+
   }
 
   /**GET spending by category within each month */

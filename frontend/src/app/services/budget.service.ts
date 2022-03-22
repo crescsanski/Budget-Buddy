@@ -61,6 +61,35 @@ export class BudgetService {
       this.authServ.currentUser.subscribe(x => this.user = <User>x);
     }
 
+  updateValues(budgets: Budget[])
+  {
+    this.inBudCat = budgets.filter(val => val.category_type == "income")
+    this.exBudCat = budgets.filter(val => val.category_type != "income")
+
+    let sum = this.exBudCat.reduce(function (accumulator, item) {
+      return accumulator + item.altered_amount;
+    }, 0);
+
+    if (this.inBudCat.length > 0)
+    {
+      let sum2 = this.inBudCat.reduce(function (accumulator, item) {
+        return accumulator + item.altered_amount;
+      }, 0);
+      this.curMonthCalcs.monthlyEstIncome = sum2;
+    }
+    
+    this.curMonthCalcs.monthlyBudgetTotal = sum;
+
+    let numDays = this.ts.getNumDays(this.ts.year, this.ts.month)
+    this.curMonthCalcs.weeklyBudgetTotal = sum * (7 / numDays)
+
+    
+
+    let index = this.bud_Calcs.findIndex((val) => val.month == this.ts.month && val.year == this.ts.year)
+    this.bud_Calcs[index] = this.curMonthCalcs;
+
+  }
+
   /**Update altered amounts in budget */
   updateBudget(budgets: Budget[]): Observable<any> {
     const url = `${this.budgetsUrl}users/${this.user.user_id}/`

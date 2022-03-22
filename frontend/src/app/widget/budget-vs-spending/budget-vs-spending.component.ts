@@ -45,7 +45,7 @@ export class BudgetVsSpendingComponent implements OnInit {
 
       this.selectedCats = this.catOptions.filter(val => val.is_favorite);
 
-      this.trigServ.expenReceiptAnnounced$.subscribe(() =>
+      this.trigServ.expenReceiptChanged$.subscribe(() =>
       {
           this.getNewData();
       })

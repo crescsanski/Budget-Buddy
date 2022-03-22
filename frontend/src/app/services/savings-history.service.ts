@@ -6,6 +6,8 @@ import { AuthService } from './auth.service';
 import { User } from '../models/user';
 import { TimeService } from './time.service';
 import { SavingsOverTime } from '../models/savingsOverTime';
+import { ReceiptTrackService } from '../widget/services/receipt-track.service';
+import { Receipt } from '../models/receipt';
 
 @Injectable({
   providedIn: 'root'
@@ -22,11 +24,50 @@ export class SavingsHistoryService {
     headers: new HttpHeaders({ 'Content-Type': 'application/json' })
   };
 
-  constructor(private http: HttpClient, private auServ: AuthService, private tiServ: TimeService) { 
+  constructor(private http: HttpClient, private rs: ReceiptTrackService, private auServ: AuthService, private tiServ: TimeService) { 
     this.auServ.currentUser.subscribe(x => this.user = <User>x);
 
 
   }
+
+    //Update amounts given new receipt
+    updateValues(re: Receipt, mode: string)
+    {
+      let date = new Date(re.receipt.receipt_date)
+      let month = date.getMonth() + 1
+      let total = this.rs.getTotal(re)
+      switch (mode)
+      {
+        case "delete":
+          total = -1 * total;
+          break;
+        case "update":
+          total = total - re.preTotal
+          break;
+      }
+  
+      if (!re.receipt.receipt_is_income)
+      {
+        if (date.getFullYear() == this.tiServ.year && month == this.tiServ.month)
+        {
+          if (this.tiServ.getWeek(date) == this.tiServ.week)
+          {
+            re.receipt.receipt_is_income ? this.weeklySavingsTotal += total : this.weeklySavingsTotal -= total;
+          }    
+        }
+        
+        
+        for (let i in this.cumSavByMonth)
+        {
+          if ((this.cumSavByMonth[i].year == date.getFullYear() && this.cumSavByMonth[i].month >= month)
+            || this.cumSavByMonth[i].year > date.getFullYear())
+          {
+            re.receipt.receipt_is_income ? this.cumSavByMonth[i].totalSavings += total : this.cumSavByMonth[i].totalSavings -= total;
+          }
+        }
+        
+      }
+    }
 
   get weekSavings()
   {

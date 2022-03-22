@@ -20,7 +20,7 @@ export class WeeklySpendingComponent implements OnInit {
   constructor(private spenHis: SpendingHistoryService, private trigServ: TriggerService,
     private budServ: BudgetService) { 
 
-    this.trigServ.expenReceiptAnnounced$.subscribe(() =>
+    this.trigServ.expenReceiptChanged$.subscribe(() =>
     {
       this.ngOnInit();
     })

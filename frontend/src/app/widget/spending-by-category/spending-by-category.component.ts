@@ -28,7 +28,7 @@ export class SpendingByCategoryComponent implements OnInit {
 
     this.catOptions = this.catServ.expenseCats
 
-    this.trigServ.expenReceiptAnnounced$.subscribe(() =>
+    this.trigServ.expenReceiptChanged$.subscribe(() =>
     {
         this.getNewData();
     })

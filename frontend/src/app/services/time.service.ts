@@ -17,7 +17,7 @@ export class TimeService {
   {
     if(this.curWeek == null)
     {
-      this.curWeek = this.getWeek()
+      this.curWeek = this.getWeek(new Date(this.now.getTime()))
     }
     return this.curWeek
   }
@@ -41,8 +41,8 @@ export class TimeService {
   }
 
   // Returns the ISO week of the date.
-  getWeek() {
-    var date = new Date(this.now.getTime());
+  getWeek(date: Date) {
+    //var date = new Date(this.now.getTime());
     date.setHours(0, 0, 0, 0);
     // Thursday in current week decides the year.
     date.setDate(date.getDate() + 3 - (date.getDay() + 6) % 7);
@@ -51,6 +51,12 @@ export class TimeService {
     // Adjust to Thursday in week 1 and count number of weeks from date to week1.
     return 1 + Math.round(((date.getTime() - week1.getTime()) / 86400000
                           - 3 + (week1.getDay() + 6) % 7) / 7);
+  }
+
+  //return number of days in specified month
+  getNumDays(year: number, month: number)
+  {
+    return new Date(year, month, 0).getDate()
   }
 
   // Returns ISO month of the date

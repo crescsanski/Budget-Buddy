@@ -5,6 +5,8 @@ export interface Receipt {
     receipt_id?: number;
     userid?: number;
     quick?: boolean;
+    preTotal?: number //used to store previous total (after an update)
+    operation?: string //defines a CRUD function
     receipt?: {
         receipt_date: string;
         receipt_is_reccuring: number;

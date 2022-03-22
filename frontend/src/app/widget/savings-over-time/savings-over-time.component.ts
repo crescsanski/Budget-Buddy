@@ -18,12 +18,12 @@ export class SavingsOverTimeComponent implements OnInit {
   @ViewChild('chart') chart: UIChart;
 
   constructor(private savServ: SavingsHistoryService, private trigServ: TriggerService, private ts: TimeService) { 
-      this.trigServ.incomReceiptAnnounced$.subscribe(() =>
+      this.trigServ.incomReceiptChanged$.subscribe(() =>
       {
           this.getNewData();
       })
 
-      this.trigServ.expenReceiptAnnounced$.subscribe(() =>
+      this.trigServ.expenReceiptChanged$.subscribe(() =>
       {
           this.getNewData();
       })

@@ -6,6 +6,8 @@ import { AuthService } from './auth.service';
 import { User } from '../models/user';
 import { TimeService } from './time.service';
 import { IncomeOverTime } from '../models/incomeOverTime';
+import { ReceiptTrackService } from '../widget/services/receipt-track.service';
+import { Receipt } from '../models/receipt';
 
 @Injectable({
   providedIn: 'root'
@@ -24,9 +26,67 @@ export class IncomeHistoryService {
     headers: new HttpHeaders({ 'Content-Type': 'application/json' })
   };
 
-  constructor(private http: HttpClient, private auServ: AuthService, private tiServ: TimeService) { 
+  constructor(private http: HttpClient, private rs: ReceiptTrackService, private auServ: AuthService, private tiServ: TimeService) { 
     this.auServ.currentUser.subscribe(x => this.user = <User>x);
 
+
+  }
+
+  //Update amounts given new receipt
+  updateValues(re: Receipt, mode: string)
+  {
+    let date = new Date(re.receipt.receipt_date)
+    let month = date.getMonth() + 1
+    let total = this.rs.getTotal(re)
+    switch (mode)
+    {
+      case "delete":
+        total = -1 * total;
+        break;
+      case "update":
+        total = total - re.preTotal
+        break;
+    }
+
+    if (re.receipt.receipt_is_income)
+    {
+            
+      for (let i in this.catIncByMonth) 
+      {
+       
+        if (this.catIncByMonth[i].year == date.getFullYear() && this.catIncByMonth[i].month == month)
+        {
+          for (let inc of re.incomes)
+          {
+            if (this.catIncByMonth[i].category_id == inc.category_id)
+            {
+              this.catIncByMonth[i].totalIncomeReceived += inc.income_amount;
+            }
+          }
+        }
+        
+      }
+      
+      for (let i in this.incByMonth) 
+      {
+        if (this.incByMonth[i].year == date.getFullYear() && this.incByMonth[i].month == month)
+        {
+          this.incByMonth[i].totalIncomeReceived += total;
+          break;
+        }
+      }
+      for (let i in this.cumIncByMonth)
+      {
+        if ((this.cumIncByMonth[i].year == date.getFullYear() && this.cumIncByMonth[i].month >= month)
+          || this.cumIncByMonth[i].year > date.getFullYear())
+        {
+          this.cumIncByMonth[i].totalIncomeReceived += total;
+        }
+      }
+      
+    }
+    
+    
 
   }
 

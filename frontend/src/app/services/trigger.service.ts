@@ -1,5 +1,7 @@
+import { THIS_EXPR } from '@angular/compiler/src/output/output_ast';
 import { Injectable } from '@angular/core';
 import { Subject } from 'rxjs';
+import { Budget } from '../models/budget';
 import { Receipt } from '../models/receipt';
 import { QuickReceipt } from '../models/simReceipt';
 import { BudgetService } from './budget.service';
@@ -13,54 +15,77 @@ import { SpendingHistoryService } from './spending-history.service';
 export class TriggerService {
 
   // Observable sources
-  private expenReceiptSubmitAnnounce = new Subject<Receipt | QuickReceipt>();
-  private incomReceiptSubmitAnnounce = new Subject<Receipt | QuickReceipt>();
-  private budgetUpdateAnnounce = new Subject<void>();
+  private expenReceiptChange = new Subject<Receipt>();
+  private incomReceiptChange = new Subject<Receipt>();
 
-  //Obsevable streams
-  expenReceiptAnnounced$ = this.expenReceiptSubmitAnnounce.asObservable();
-  incomReceiptAnnounced$ = this.incomReceiptSubmitAnnounce.asObservable();
+  private budgetUpdateAnnounce = new Subject<Budget[]>();
+
+  //Observable streams
+  expenReceiptChanged$ = this.expenReceiptChange.asObservable();
+  incomReceiptChanged$ = this.incomReceiptChange.asObservable();
+
   budgetUpdatedAnnounced$ = this.budgetUpdateAnnounce.asObservable();
 
-  async announceBudgetUpdate()
+  announceBudgetUpdate(budgets: Budget[])
   {
-    await (this.budServ.getBudByCat().toPromise());
-
-    await (this.budServ.getBudgetTotals().toPromise());
-
+    this.budServ.updateValues(budgets)
+    
     this.budgetUpdateAnnounce.next();
   }
 
-  async announceExpenReceiptSubmit(rec: Receipt | QuickReceipt)
+ announceReceiptDelete(rec: Receipt)
+{
+  if (rec.receipt.receipt_is_income)
   {
-    // Update weekly spending total
-    await (this.spenHis.getCurWeekSpend().toPromise());
-    // Update savings widget
-    await (this.savHis.getByMonthCumSavings().toPromise());
+    this.incHis.updateValues(rec, "delete");
+  }
+  else
+  {
+    this.spenHis.updateValues(rec, "delete");
+  }
+  this.savHis.updateValues(rec, "delete");
 
-    // Update spending by month values
-    await (this.spenHis.getByMonthCumSpendings().toPromise());
+  rec.operation = "delete"
 
-    await (this.spenHis.getByMonthSpendings().toPromise());
+  rec.receipt.receipt_is_income ? this.incomReceiptChange.next(rec) : this.expenReceiptChange.next(rec)
+  
+}
+ announceReceiptUpdate(rec: Receipt)
+  {
+    if (rec.receipt.receipt_is_income)
+    {
+      this.incHis.updateValues(rec, "update");
+    }
+    else
+    {
+      this.spenHis.updateValues(rec, "update");
+    }
+    this.savHis.updateValues(rec, "update");
 
-    await (this.spenHis.getSpendCatBreakdown().toPromise());
+    rec.operation = "update"
 
-    this.expenReceiptSubmitAnnounce.next(rec);
+    rec.receipt.receipt_is_income ? this.incomReceiptChange.next(rec) : this.expenReceiptChange.next(rec)
   }
 
-  async announceIncomReceiptSubmit(rec: Receipt | QuickReceipt)
+  announceExpenReceiptSubmit(rec: Receipt)
   {
-    // Update savings widget
-    await (this.savHis.getByMonthCumSavings().toPromise());
 
-    // Update income by month values
-    await (this.incHis.getByMonthCumIncome().toPromise());
+    this.spenHis.updateValues(rec, "new")
+    this.savHis.updateValues(rec, "new")
 
-    await (this.incHis.getByMonthIncome().toPromise());
+    rec.operation = "new"
 
-    await (this.incHis.getIncomeCatBreakdown().toPromise());
+    this.expenReceiptChange.next(rec);
+  }
 
-    this.incomReceiptSubmitAnnounce.next(rec);
+  announceIncomReceiptSubmit(rec: Receipt)
+  {
+    this.incHis.updateValues(rec, "new");
+    this.savHis.updateValues(rec, "new");
+
+    rec.operation = "new"
+
+    this.incomReceiptChange.next(rec);
   }
 
   constructor(private spenHis: SpendingHistoryService, private savHis: SavingsHistoryService,

@@ -69,14 +69,20 @@ export class ReceiptTrackingComponent implements OnInit {
 
       this.userReceipts = this.rs.receipts.slice(-4)
 
-      this.ts.expenReceiptAnnounced$.subscribe((rec: Receipt | QuickReceipt) =>
+      this.ts.expenReceiptChanged$.subscribe((rec: Receipt) =>
       {
-        this.loadTable(rec);
-        
+        if (rec.operation == "new")
+        {
+          this.loadTable(rec);
+        }        
       })
 
-      this.ts.incomReceiptAnnounced$.subscribe((rec: Receipt | QuickReceipt) => {
-        this.loadTable(rec);
+      this.ts.incomReceiptChanged$.subscribe((rec: Receipt) => {
+        if (rec.operation == "new")
+        {
+          this.loadTable(rec);
+        }
+   
       })
 
     this.selectedReceipt = this.getBlankReceipt();
@@ -334,6 +340,7 @@ export class ReceiptTrackingComponent implements OnInit {
         {
           receipt.receipt_id = val.receipt_id;
           this.userReceipts.push(receipt)
+          this.rs.receipts.push(receipt)
           this.inSel = (this.inSel == this.form.controls.length - 1) ? 0 : this.inSel + 1;
           this.inProgress[i] = false
           this.load[i] = true
@@ -424,11 +431,20 @@ export class ReceiptTrackingComponent implements OnInit {
     let receipt = this.fromFormToReceipt(0);
     this.rs.updateReceipt(receipt).subscribe(() =>
       {
+       
         this.selectedReceipt = receipt;
         let index = this.userReceipts.findIndex(i => i.receipt_id == receipt.receipt_id)
+        let oldTotal = this.rs.getTotal(this.userReceipts[index])
+        receipt.preTotal = oldTotal
         this.userReceipts[index] = receipt;
+        //update master data
+        let index2 = this.rs.receipts.findIndex(i => i.receipt_id == receipt.receipt_id)
+        this.rs.receipts[index2] = receipt;
+
         this.editReceipt = false;
         this.load[0] = false;
+
+        this.ts.announceReceiptUpdate(receipt)
       })
   }
 
@@ -438,8 +454,22 @@ export class ReceiptTrackingComponent implements OnInit {
       (val) => {
         let index = this.userReceipts.findIndex(i => i.receipt_id == this.selectedReceipt.receipt_id)
         this.userReceipts.splice(index, 1)
+
+        //update master data
+        let index2 = this.rs.receipts.findIndex(i => i.receipt_id == this.selectedReceipt.receipt_id)
+        this.rs.receipts.splice(index2, 1)
+
+        //grab the next oldest receipt record (if it exists)
+        let nexIn = this.rs.receipts.length - 5
+        if (nexIn >= 0)
+        {
+          this.userReceipts.push(this.rs.receipts[nexIn])
+        }
+
+        this.ts.announceReceiptDelete(this.selectedReceipt)
         this.selectedReceipt = this.getBlankReceipt();
         this.deleteReceipt = false;
+
       }
     );
 

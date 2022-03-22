@@ -107,8 +107,30 @@ def singleReceipt(request, receiptid):
     
 
 #Get all receipts for a user and its content
+#Optional query parameters to filter by date, type, category, etc
 @api_view(["GET"])
 def getReceiptsByUser(request, userid):
+
+    # Pull receipts associated with only these categories.
+    categories = request.query_params.get('categories')
+
+    # Pull only income or only expense or both types of receipts.
+    types = request.query_params.get('types')
+
+    # Pull receipts with a date no earlier than ...
+    start_date = request.query_params.get('start_date')
+
+    # Pull receipts with a date no later than ...
+    end_date = request.query_params.get('end_date')
+
+    # Pull only this number of receipts
+    numRecords = request.query_params.get('numRecords')
+
+    # Minimum Total Amount
+    minAmount = request.query_params.get('minAmount')
+
+    # Maximum Total Amount
+    maxAmount = request.query_params.get('maxAmount')
 
     user = Users.objects.get(user_id = userid)
 
