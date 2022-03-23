@@ -2,6 +2,7 @@ import { THIS_EXPR } from '@angular/compiler/src/output/output_ast';
 import { Injectable } from '@angular/core';
 import { Subject } from 'rxjs';
 import { Budget } from '../models/budget';
+import { Category } from '../models/category';
 import { Receipt } from '../models/receipt';
 import { QuickReceipt } from '../models/simReceipt';
 import { BudgetService } from './budget.service';
@@ -19,17 +20,24 @@ export class TriggerService {
   private incomReceiptChange = new Subject<Receipt>();
 
   private budgetUpdateAnnounce = new Subject<Budget[]>();
+  private favoritesAnnounce = new Subject<void>();
 
   //Observable streams
   expenReceiptChanged$ = this.expenReceiptChange.asObservable();
   incomReceiptChanged$ = this.incomReceiptChange.asObservable();
-
+  favoritesAnnounced$ = this.favoritesAnnounce.asObservable();
   budgetUpdatedAnnounced$ = this.budgetUpdateAnnounce.asObservable();
 
   announceBudgetUpdate(budgets: Budget[])
   {
     this.budServ.updateValues(budgets)
     
+    this.budgetUpdateAnnounce.next();
+  }
+
+  announceFavoritesChange(favorites: Category[])
+  {
+    this.budServ.updateFavorites(favorites)
     this.budgetUpdateAnnounce.next();
   }
 

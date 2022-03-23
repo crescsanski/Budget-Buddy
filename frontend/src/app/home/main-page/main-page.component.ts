@@ -10,6 +10,7 @@ import { CategoryService } from 'src/app/services/category.service';
 import { BudgetService } from 'src/app/services/budget.service';
 import { TimeService } from 'src/app/services/time.service';
 import { Budget } from 'src/app/models/budget';
+import { TriggerService } from 'src/app/services/trigger.service';
 
 
 @Component({
@@ -21,6 +22,7 @@ export class MainPageComponent implements OnInit {
   pageLabel: String = '';
   currentPage: String = '';
   settings: MenuItem[] = [];
+  loading: boolean = false;
   dashboardWidgets: any[] | undefined;
   budgetWidgets: any[] | undefined;
   trackingWidgets: any[] | undefined;
@@ -36,7 +38,7 @@ export class MainPageComponent implements OnInit {
 
 
 
-  constructor(private authService: AuthService, private ts: TimeService, private budServ: BudgetService, private catServ: CategoryService, private messageService: MessageService, private router: Router) { 
+  constructor(private authService: AuthService, private trigServ: TriggerService, private ts: TimeService, private budServ: BudgetService, private catServ: CategoryService, private messageService: MessageService, private router: Router) { 
    this.currentPage = 'Dashboard';
    if (authService.currentUserValue)
     {
@@ -144,6 +146,7 @@ export class MainPageComponent implements OnInit {
 
   setFavorites(){
     //TODO: API TO SET FAVORITES
+    this.loading = true;
     var post: Budget[] = []
     this.budgetCategories.forEach((val) => {
       if (this.selectedCategories.find(val2 => val2.category_id == val.category_id))
@@ -162,7 +165,11 @@ export class MainPageComponent implements OnInit {
       }
     })
    
-    this.budServ.updateBudget(post).subscribe(() => {this.favoriteMenu = false;})
+    this.budServ.updateBudget(post).subscribe(() => {
+      this.favoriteMenu = false;
+      this.loading = false;
+      this.trigServ.announceFavoritesChange(this.selectedCategories)
+    })
   }
 
 

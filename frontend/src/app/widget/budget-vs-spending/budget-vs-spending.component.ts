@@ -54,6 +54,15 @@ export class BudgetVsSpendingComponent implements OnInit {
       {
         this.getNewData();
       })
+
+      this.trigServ.budgetUpdatedAnnounced$.subscribe(() =>
+      {
+        this.catOptions = this.budServ.exBudByCat.filter(val => val.year == this.ts.year && val.month == this.ts.month)
+
+        this.selectedCats = this.catOptions.filter(val => val.is_favorite);
+
+        this.getNewData();
+      })
   }
 
   setupValues()

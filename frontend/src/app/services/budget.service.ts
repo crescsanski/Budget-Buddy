@@ -11,6 +11,7 @@ import { BudgetTotals } from '../models/spendBudget';
 import { User } from '../models/user';
 import { BudgetCategory } from '../models/formModels/budgetCategory';
 import { TimeService } from './time.service';
+import { Category } from '../models/category';
 
 
 @Injectable({ providedIn: 'root' })
@@ -60,6 +61,32 @@ export class BudgetService {
     private authServ: AuthService, private ts: TimeService) { 
       this.authServ.currentUser.subscribe(x => this.user = <User>x);
     }
+
+  updateFavorites(selected: Category[])
+  {
+    this.inBudByCat.forEach((val) =>
+    {
+      if(selected.find(val2 => val.category_id == val2.category_id))
+      {
+        val.is_favorite = true;
+      }
+      else
+      {
+        val.is_favorite = false;
+      }
+    })
+    this.exBudByCat.forEach((val) =>
+    {
+      if(selected.find(val2 => val.category_id == val2.category_id))
+      {
+        val.is_favorite = true;
+      }
+      else
+      {
+        val.is_favorite = false;
+      }
+    })
+  }
 
   updateValues(budgets: Budget[])
   {
