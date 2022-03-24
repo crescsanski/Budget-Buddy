@@ -30,6 +30,11 @@ h1 {
 
   p {
     margin-top: -0.75em;
+    color: $blue;
+  }
+
+  h2 {
+    color: $teal;
   }
 
   &:hover {
