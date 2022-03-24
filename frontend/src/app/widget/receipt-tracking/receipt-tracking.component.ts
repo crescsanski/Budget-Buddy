@@ -92,7 +92,10 @@ export class ReceiptTrackingComponent implements OnInit {
   //Remove the oldest item in the table and replace it with the new receipt
   loadTable(rec: Receipt | QuickReceipt)
   {
-    this.userReceipts = this.userReceipts.slice(1); //remove the oldest record
+    if (this.userReceipts.length >= 4)
+    {
+      this.userReceipts = this.userReceipts.slice(1); //remove the oldest record
+    }
     if ((rec as Receipt).incomes || (rec as Receipt).expenses)
     {
       //This is a standard receipt

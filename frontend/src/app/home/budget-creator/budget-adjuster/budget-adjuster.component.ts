@@ -15,6 +15,7 @@ export class BudgetAdjusterComponent implements OnInit {
   stackedData: any;
   stackedOptions: any;
   wantsValue: number = 0;
+  loading: boolean = false;
   needsValue: number = 0;
   debtValue: number = 0;
   dropdownPrompts = [];
@@ -199,6 +200,7 @@ export class BudgetAdjusterComponent implements OnInit {
 
   submit()
   {
+    this.loading = true;
     var post: Budget[] = []
     this.incomes.forEach((obj) =>
     {
