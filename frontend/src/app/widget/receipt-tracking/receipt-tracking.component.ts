@@ -21,6 +21,8 @@ import { QuickReceipt } from 'src/app/models/simReceipt';
 })
 export class ReceiptTrackingComponent implements OnInit {
 
+  viewAllReceipts = false;
+  allReceipts: Receipt[] = [];
   userReceipts: Receipt[] = [];
   noUpload = './../../../assets/icons/budget-icons/receipt.png'
   imageUpload: any = this.noUpload;
@@ -67,7 +69,9 @@ export class ReceiptTrackingComponent implements OnInit {
 
       this.frequencyOptions = this.ws.frequencyOptions;
 
-      this.userReceipts = this.rs.receipts.slice(-4)
+      this.userReceipts = this.rs.receipts
+
+      this.allReceipts = this.rs.receipts;
 
       this.ts.expenReceiptChanged$.subscribe((rec: Receipt) =>
       {
@@ -92,10 +96,6 @@ export class ReceiptTrackingComponent implements OnInit {
   //Remove the oldest item in the table and replace it with the new receipt
   loadTable(rec: Receipt | QuickReceipt)
   {
-    if (this.userReceipts.length >= 4)
-    {
-      this.userReceipts = this.userReceipts.slice(1); //remove the oldest record
-    }
     if ((rec as Receipt).incomes || (rec as Receipt).expenses)
     {
       //This is a standard receipt
@@ -480,6 +480,10 @@ export class ReceiptTrackingComponent implements OnInit {
 
   denyDeleteReceipt(){
     this.deleteReceipt=false;
+  }
+
+  showAllReceipts() {
+    this.viewAllReceipts = true;
   }
 
 }

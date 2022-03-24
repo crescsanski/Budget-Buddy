@@ -1,10 +1,11 @@
 <div class="panel">
     <div class="content-area" style="margin-left: 0; ">
-        <div class="header">
-            <h2>Receipts</h2> 
+        <div class="header" style="width: 160%">
+            <h2>Receipts</h2>
+            <button style="text-align: right;" pButton pRipple pTooltip="View All Receipts" tooltipPosition="bottom" type="button" icon="pi pi-list" class="p-button-rounded p-button-outlined" (click)="showAllReceipts()"></button>
         </div>
         <div style="display: inline-flex; width: 100%">
-            <div #receiptList>
+            <div #receiptList style= "height: 25vh; overflow-y: scroll; width: 50%">
                 <div *ngFor="let item of userReceipts" style="display: inline-flex;">
                     <div *ngIf="item == selectedReceipt" class="receipt-list selected" style="position: relative">
                         <p style="font-weight: bolder; font-size: 800; text-align: left; height: 1.3em; overflow-y: hidden; overflow-x: hidden; width: 115px;">{{item.receipt.receipt_name}} 
@@ -25,6 +26,7 @@
                     </div>
                 </div>
             </div>
+            
             <div class="image-area" style="display: block; text-align: center;">
                 <img src="{{imageUpload}}">
                 <div *ngIf="imageUpload == noUpload" style="text-align: center;">
@@ -118,8 +120,32 @@
                             </form>
                         </div>
                     </div>
-              
         </p-dialog>
+
+        <p-dialog header="All Receipts" [(visible)]="viewAllReceipts" [style]="{width: '20vw', height: '55vh'}">
+            <div #receiptList style= "height: 44vh; overflow-y: scroll; width: 100%">
+                <div *ngFor="let item of allReceipts" style="display: inline-flex;">
+                    <div *ngIf="item == selectedReceipt" class="receipt-list selected" style="position: relative">
+                        <p style="font-weight: bolder; font-size: 800; text-align: left; height: 1.3em; overflow-y: hidden; overflow-x: hidden; width: 115px;">{{item.receipt.receipt_name}} 
+                            <img class="edit-button" src="../../../assets/icons/trash.png" 
+                            style="width:1em; position: absolute; top: 0.5em; right: 1em; border-radius: 100" (click)="openDeleteReceipt(item)">
+                            <img class="edit-button" src="../../../assets/icons/edit-icon.png" 
+                            style="width:1em; position: absolute; top: 0.5em; right: 2.5em; border-radius: 100" (click)="openReceiptEditor(item)"></p>
+                        <p style="margin-top: -15px;">{{rs.getTotal(item) | currency}} <span style="text-align: left; margin-left: 2.5em">{{item.receipt.receipt_date | date:'shortDate'}}</span></p>
+                    </div>
+                    <div *ngIf="item != selectedReceipt" class="receipt-list" (click)="selectReceipt(item)" style="position: relative">
+                        <p style="font-weight: bolder; font-size: 800; text-align: left; 
+                        height: 1.3em; overflow-y: hidden; overflow-x: hidden; width: 115px;">{{item.receipt.receipt_name}} <img class="edit-button" 
+                        src="../../../assets/icons/trash.png" style="width:1em; top: 0.5em; position: absolute; right: 1em; border-radius: 100" 
+                        (click)="openDeleteReceipt(item)"><img class="edit-button" src="../../../assets/icons/edit-icon.png" 
+                        style="width:1em; top: 0.5em; position: absolute; right: 2.5em; border-radius: 100" (click)="openReceiptEditor(item)"></p>
+                        <p style="margin-top: -15px;">{{rs.getTotal(item) | currency}} 
+                            <span style="text-align: left; margin-left: 2.5em">{{item.receipt.receipt_date | date:'shortDate'}}</span></p>
+                    </div>
+                </div>
+            </div>
+        </p-dialog>
+        
         <p-dialog header="{{selectedReceipt.receipt.receipt_name}}" [(visible)]="showReceipt" [appendTo]="receiptList" style="width:fit-content">
             <div>
                 <div *ngIf="selectedReceipt">
