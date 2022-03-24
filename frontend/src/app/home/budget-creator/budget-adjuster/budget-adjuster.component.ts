@@ -50,10 +50,15 @@ export class BudgetAdjusterComponent implements OnInit {
   constructor(private budServ: BudgetService, private router: Router) { }
 
   onChange(){
-    this.dropdownPrompts = [];
+    //this.dropdownPrompts = [];
     this.expenses.forEach(x => {
       if(x.category  == (this.selectedCategory.toLowerCase())) {
-        this.dropdownPrompts.push(x);
+        //this.dropdownPrompts.push(x);
+        x.visible = true;
+      }
+      else
+      {
+        x.visible = false;
       }
   });
   }
@@ -62,6 +67,7 @@ export class BudgetAdjusterComponent implements OnInit {
 
     this.recalculate();
     this.max = this.availableBudget;
+
 
     this.stackedData = {
       labels: ['My Budget Breakdown'],
@@ -139,9 +145,23 @@ export class BudgetAdjusterComponent implements OnInit {
 
           }
       });
+      this.breakdown = {want: this.wantsValue, need: this.needsValue, debt: this.debtValue}
       this.totalExpenses = this.debtValue + this.wantsValue + this.needsValue;
       this.availableBudget = this.totalIncome-this.totalExpenses;
       this.max = this.availableBudget;
+      if (this.max >= 0)
+      {
+        this.expenses.forEach(x => {
+          x.max = x.amount + this.max;
+       });
+      }
+      else
+      {
+        this.expenses.forEach(x => {
+          x.max = x.amount;
+       });
+      }
+ 
     }
 
     getErrPerc(x: number): number
@@ -197,7 +217,7 @@ export class BudgetAdjusterComponent implements OnInit {
     {
       if (val != "error")
       {
-        this.router.navigate(['main-page'])
+        this.router.navigate(['main-page'], {state: {newUser: true}})
       }
     })
   }
@@ -214,19 +234,19 @@ export class BudgetAdjusterComponent implements OnInit {
     if(this.actualWantsPercent>.3) {
       this.overBudget = true;
       this.errorCategory = "wants"
-      this.errorPercent = this.actualWantsPercent *100;
+      this.errorPercent = (this.actualWantsPercent-.3) *100;
       this.errorValue = this.breakdown.want;
       this.errorDifference = this.breakdown.want-this.wantsRecommend;
-    } else if(this.actualNeedsPercent>.3) {
+    } else if(this.actualNeedsPercent>.5) {
       this.overBudget = true;
       this.errorCategory = "needs"
-      this.errorPercent = this.actualNeedsPercent *100;
+      this.errorPercent = (this.actualNeedsPercent - 0.5)*100;
       this.errorValue = this.breakdown.need;
       this.errorDifference = this.breakdown.need-this.needsRecommend;
-    } else if(this.actualDebtPercent>.3) {
+    } else if(this.actualDebtPercent>.2) {
       this.overBudget = true;
       this.errorCategory = "savings"
-      this.errorPercent = this.actualDebtPercent *100;
+      this.errorPercent = (this.actualDebtPercent-.2) *100;
       this.errorValue = this.breakdown.debt;
       this.errorDifference = this.breakdown.debt-this.debtRecommend;
     }

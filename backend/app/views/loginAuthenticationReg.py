@@ -58,7 +58,8 @@ class RegisterView(GenericAPIView):
             raise Exception("A user with the given username already exists.  Please enter a different username.")
                 
         # Otherwise, if all correct, we create the user
- 
+        # ensure, the is_active flag is set to true; otherwise, the user will be mistaken as invalid:
+        user['is_active'] = True
         auth.get_user_model().objects.create_user(username = user['user_user_name'], password=user['password'], extra=user)
         return Response("User has been registered successfully!")
 

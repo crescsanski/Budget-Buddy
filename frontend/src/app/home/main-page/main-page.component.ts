@@ -35,12 +35,20 @@ export class MainPageComponent implements OnInit {
   favoriteMenu: boolean = false;
   budgetCategories: Category[];
   selectedCategories: Category[];
-  welcomeMessage: boolean = true; 
+  welcomeMessage: boolean = false; 
 
 
 
   constructor(private authService: AuthService, private trigServ: TriggerService, private ts: TimeService, private budServ: BudgetService, private catServ: CategoryService, private messageService: MessageService, private router: Router) { 
-   this.currentPage = 'Dashboard';
+    
+    try{
+      this.router.getCurrentNavigation().extras.state.newUser;
+      this.welcomeMessage = true;
+      }
+    catch(e) {}
+    
+
+    this.currentPage = 'Dashboard';
    if (authService.currentUserValue)
     {
       this.name = authService.currentUserValue.user_first_name + " " + authService.currentUserValue.user_last_name;

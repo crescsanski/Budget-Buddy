@@ -53,9 +53,9 @@ export class BudgetAdvisorComponent implements OnInit {
       maintainAspectRatio: false
     };
 
-    this.wants = this.cs.expenseCats.map(obj => ({...obj, amount: 0, category: obj.category_type, categoryTitle: obj.category_name})).filter(obj => obj.category_type == "want");
-    this.debt = this.cs.expenseCats.map(obj => ({...obj, amount: 0, category: obj.category_type, categoryTitle: obj.category_name})).filter(obj => obj.category_type == "saving");
-    this.needs = this.cs.expenseCats.map(obj => ({...obj, amount: 0, category: obj.category_type, categoryTitle: obj.category_name})).filter(obj => obj.category_type == "need");
+    this.wants = this.cs.expenseCats.map(obj => ({...obj, visible: true, max: 0, amount: 0, category: obj.category_type, categoryTitle: obj.category_name})).filter(obj => obj.category_type == "want");
+    this.debt = this.cs.expenseCats.map(obj => ({...obj, visible: true, max: 0, amount: 0, category: obj.category_type, categoryTitle: obj.category_name})).filter(obj => obj.category_type == "saving");
+    this.needs = this.cs.expenseCats.map(obj => ({...obj, visible: true, max: 0, amount: 0, category: obj.category_type, categoryTitle: obj.category_name})).filter(obj => obj.category_type == "need");
 
     /*
      this.wants =[

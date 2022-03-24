@@ -259,6 +259,7 @@ class MyUserManager(BaseUserManager):
         """
         userFields = [a.name for a in Users._meta.get_fields() if a.name != 'user_user_name']
         default = dict.fromkeys(userFields, "")
+        default['is_active'] = True
                      
         if extra == None:
             user = self.model(

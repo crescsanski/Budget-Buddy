@@ -47,7 +47,10 @@ def budgetScore(request, user_id):
         numberDays = 180
     else:
         numberDays = numberDaysInput
-    useScoreInput = ((totalLogins/numberDays) * 100)
+    if numberDays is not None and totalLogins is not None and numberDays > 0:
+        useScoreInput = ((totalLogins/numberDays) * 100)
+    else:
+        useScoreInput = 0
     useScore = None
 # //usage score variables (past 180 days only)
 #         double totalLogins = 90; //change me (min 0, max <= numberDays)
