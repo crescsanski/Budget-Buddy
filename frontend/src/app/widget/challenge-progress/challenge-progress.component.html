@@ -1,0 +1,13 @@
+<div class="panel">
+    <div class="content-area">
+        <div class="header">
+            <h2>My Competitions</h2> 
+        </div>
+        <div *ngFor="let x of challenges">
+            <h3 style="width: 100%">{{x.challenge__challenge_name}} <span style="font-weight: 200; font-size: smaller; margin-left: .5em">{{x.challenge__challenge_description}}</span></h3>
+            <p-progressBar class="progress-bar" [value]="x.currentProgress"></p-progressBar>
+            <p style="margin-top: 6px"> <span style=" float: left">{{x.user_challenge_completion_date}}</span> {{x.user_challenge_current_amount }} / {{ x.challenge__challenge_completion_amount }} {{x.challenge_value_label}}</p>
+        </div>
+        <br>
+    </div>
+</div>

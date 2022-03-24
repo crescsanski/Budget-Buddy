@@ -147,6 +147,7 @@
     </div>
     <div *ngIf="currentPage === 'Rewards' || currentPage === 'Competitions'" class="widget-container" style="width: 73vw;"> 
       <div class="large-widgets">
+        <app-challenge-progress></app-challenge-progress>
         <div *ngFor="let widget of rewardsWidgets" class="large-widgets">
           <app-basic-widget *ngIf="widget.size==='large'" [title]=widget.title [image]=widget.image></app-basic-widget>
         </div>
