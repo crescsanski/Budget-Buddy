@@ -1,0 +1,14 @@
+<div class="panel">
+    <div class="content-area">
+        <div class="header">
+            <h2>Available Challenges</h2> 
+        </div>
+        <div *ngFor="let x of challenges" style="text-align: left;">
+            <h3 style="width: 100%">{{x.challenge__challenge_name}}</h3>
+            <p>{{x.challenge__challenge_description}}</p>
+            <button style="width: 100%; background-color:#003486; border-color:#003486;">Activate</button>
+            <br>
+        </div>
+        <br>
+    </div>
+</div>

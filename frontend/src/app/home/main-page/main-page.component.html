@@ -153,6 +153,7 @@
         </div>
       </div>
       <div class="small-widgets">
+        <app-available-challenges></app-available-challenges>
         <app-trophies></app-trophies>
         <div *ngFor="let widget of analyticsWidgets" class="small-widgets">
           <app-small-widget *ngIf="widget.size==='small'" [title]=widget.title [image]=widget.image></app-small-widget>

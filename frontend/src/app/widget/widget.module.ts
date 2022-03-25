@@ -26,6 +26,7 @@ import { LetterGradeComponent } from './letter-grade/letter-grade.component';
 import { BudgetBreakdownChartComponent } from './budget-breakdown-chart/budget-breakdown-chart.component';
 import { TrophiesComponent } from './trophies/trophies.component';
 import { ChallengeProgressComponent } from './challenge-progress/challenge-progress.component';
+import { AvailableChallengesComponent } from './available-challenges/available-challenges.component';
 
 
 @NgModule({
@@ -47,7 +48,8 @@ import { ChallengeProgressComponent } from './challenge-progress/challenge-progr
     LetterGradeComponent,
     BudgetBreakdownChartComponent,
     TrophiesComponent,
-    ChallengeProgressComponent
+    ChallengeProgressComponent,
+    AvailableChallengesComponent
   ],
   imports: [
     CommonModule,
@@ -78,6 +80,7 @@ import { ChallengeProgressComponent } from './challenge-progress/challenge-progr
     BudgetBreakdownChartComponent,
     TrophiesComponent,
     LetterGradeComponent,
-    ChallengeProgressComponent]
+    ChallengeProgressComponent,
+  AvailableChallengesComponent]
 })
 export class WidgetModule { }
