@@ -15,6 +15,14 @@ body {
   font-family: "Century Gothic Pro", sans-serif !important;
 }
 
+.center
+{
+    position: absolute;
+    top: 50%; left: 50%;
+    transform: translate(-50%,-50%);
+    text-align: left;
+}
+
 button {
   background-color: $teal;
   border-radius: 15px;

@@ -3,13 +3,20 @@
         <div class="header">
             <h2>Estimated vs. Actual Expenses</h2> 
         </div>
-        <p-chart #chart3 type="bar" [data]="chartData" [options]="chartOptions"></p-chart>
+        <div style="position: relative;">
+            <div *ngIf="!dataExists" class="center">
+                <span>There is no data to display because there are neither logged expenses nor estimated budget expenses for the selected month.</span>
+            </div>
+            <p-chart [ngStyle]="{'visibility': dataExists ? 'visible' : 'hidden'}" #chart3 type="bar" [data]="chartData" [options]="chartOptions"></p-chart>
+          
+        </div>
+     
         
         <div class="formgroup-inline" style="margin-top: 15px;"> 
            
                 <label class="col-fixed" style="width:65px; margin-top: 3px;" for="month" >Month</label>
                 <p-calendar id="month" inputId="month" 
-                class="inputfield" [(ngModel)]="selDate" view="month" (onSelect)="getNewData()" dateFormat="mm/yy"></p-calendar>
+                class="inputfield" [(ngModel)]="selDate" [minDate]="ts.minDate" [maxDate]="ts.maxDate" view="month" (onSelect)="getNewData()" dateFormat="mm/yy"></p-calendar>
            
             <div class="field">
                 <label for="cat" >Categories</label>

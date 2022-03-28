@@ -21,6 +21,7 @@ import { Budget } from 'src/app/models/budget';
   styleUrls: ['./budget-vs-spending.component.scss', './../basic-widget/basic-widget.component.scss']
 })
 export class BudgetVsSpendingComponent implements OnInit {
+  dataExists: boolean = false;
   chartData: any;
   chartOptions: any;
   categories: string[] = []
@@ -37,32 +38,38 @@ export class BudgetVsSpendingComponent implements OnInit {
   constructor(private spenServ: SpendingHistoryService, private budServ: BudgetService,
     private incServ: IncomeHistoryService,
     private catServ: CategoryService,
-    private trigServ: TriggerService, private ts: TimeService) { 
+    private trigServ: TriggerService, public ts: TimeService) { 
       Chart.register(ChartDataLabels)
       this.typeOptions = this.budServ.types;
 
       this.catOptions = this.budServ.exBudByCat.filter(val => val.year == this.ts.year && val.month == this.ts.month)
 
-      this.selectedCats = this.catOptions.filter(val => val.is_favorite);
+      this.refreshFavorites();
 
       this.trigServ.expenReceiptChanged$.subscribe(() =>
       {
           this.getNewData();
       })
 
-      this.trigServ.budgetUpdatedAnnounced$.subscribe(() =>
-      {
-        this.getNewData();
-      })
 
       this.trigServ.budgetUpdatedAnnounced$.subscribe(() =>
       {
         this.catOptions = this.budServ.exBudByCat.filter(val => val.year == this.ts.year && val.month == this.ts.month)
 
-        this.selectedCats = this.catOptions.filter(val => val.is_favorite);
+        this.refreshFavorites();
 
         this.getNewData();
       })
+  }
+
+  refreshFavorites()
+  {
+    this.selectedCats = this.catOptions.filter(val => val.is_favorite);
+
+    if (this.selectedCats.length == 0)
+    {
+      this.selectedCats = this.catOptions;
+    }
   }
 
   setupValues()
@@ -97,6 +104,15 @@ export class BudgetVsSpendingComponent implements OnInit {
         this.budgetValues.push(budgetValue.altered_amount)
       }
       
+    }
+
+    if (spendData.length == 0 && budgetData.length == 0)
+    {
+      this.dataExists = false;
+    }
+    else
+    {
+      this.dataExists = true;
     }
   }
 

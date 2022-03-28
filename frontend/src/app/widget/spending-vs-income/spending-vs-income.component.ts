@@ -14,6 +14,7 @@ import { TriggerService } from 'src/app/services/trigger.service';
 })
 export class SpendingVsIncomeComponent implements OnInit {
   chartData: any;
+  dataExists: boolean = false;
   chartOptions: any;
   values: number[] = []
   values2: number[] = []
@@ -25,7 +26,7 @@ export class SpendingVsIncomeComponent implements OnInit {
 
   constructor(private spenServ: SpendingHistoryService, 
     private incServ: IncomeHistoryService,
-    private trigServ: TriggerService, private ts: TimeService) { 
+    private trigServ: TriggerService, public ts: TimeService) { 
       Chart.register(ChartDataLabels)
       this.trigServ.incomReceiptChanged$.subscribe(() =>
       {
@@ -56,6 +57,15 @@ export class SpendingVsIncomeComponent implements OnInit {
         this.values.push(val1 ? val1.totalSpent : 0)
         this.values2.push(val2 ? val2.totalIncomeReceived : 0)
       }  
+    }
+
+    if (data.length == 0 && data2.length == 0)
+    {
+      this.dataExists = false;
+    }
+    else
+    {
+      this.dataExists = true;
     }
   }
 

@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Subject } from 'rxjs';
+import { AuthService } from './auth.service';
 
 @Injectable({
   providedIn: 'root'
@@ -10,8 +11,17 @@ export class TimeService {
   private curWeek: number;
   private curMonth: number;
   private curYear: number;
+  minDate: Date;
+  maxDate: Date;
+  minYear: number;
+  maxYear: number;
 
-  constructor() { }
+  constructor(private authServ: AuthService) { 
+    this.minDate = new Date(this.authServ.currentUserValue.user_registration_date)
+    this.minYear = this.minDate.getFullYear()
+    this.maxDate = this.now;
+    this.maxYear = this.year;
+  }
 
   get week()
   {
@@ -38,6 +48,11 @@ export class TimeService {
       this.curYear = this.getYear()
     }
     return this.curYear;
+  }
+
+  getToday()
+  {
+    return this.now;
   }
 
   // Returns the ISO week of the date.

@@ -11,13 +11,14 @@ import { TriggerService } from 'src/app/services/trigger.service';
 })
 export class SavingsOverTimeComponent implements OnInit {
   chartData: any;
+  dataExists: boolean = false;
   chartOptions: any;
   yearSel: number = this.ts.year //default to current year
   monthNames: string[] = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December']
 
   @ViewChild('chart') chart: UIChart;
 
-  constructor(private savServ: SavingsHistoryService, private trigServ: TriggerService, private ts: TimeService) { 
+  constructor(private savServ: SavingsHistoryService, private trigServ: TriggerService, public ts: TimeService) { 
       this.trigServ.incomReceiptChanged$.subscribe(() =>
       {
           this.getNewData();
@@ -93,6 +94,14 @@ export class SavingsOverTimeComponent implements OnInit {
     async getNewData()
     {
         let newData = this.savServ.cumSavingsByMonth.filter((value) => value.year == this.yearSel)
+        if (newData.length > 0)
+        {
+            this.dataExists = true;
+        }
+        else
+        {
+            this.dataExists = false;
+        }
         let monthLabels = newData.map((value) => this.monthNames[value.month - 1])
         let values = newData.map((value) => value.totalSavings)
 

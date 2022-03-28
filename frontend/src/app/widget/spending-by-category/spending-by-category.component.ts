@@ -1,5 +1,7 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { SelectMultipleControlValueAccessor } from '@angular/forms';
+import { Chart } from 'chart.js';
+import annotationPlugin from 'chartjs-plugin-annotation';
 import {ChartModule, UIChart} from 'primeng/chart';
 import { Category } from 'src/app/models/category';
 import { CategoryService } from 'src/app/services/category.service';
@@ -14,7 +16,7 @@ import { TriggerService } from 'src/app/services/trigger.service';
 })
 export class SpendingByCategoryComponent implements OnInit {
 
-
+  dataExists: boolean = false;
   data: any;
   chartOptions: any;
   catOptions: Category[] = [];
@@ -24,8 +26,8 @@ export class SpendingByCategoryComponent implements OnInit {
 
   @ViewChild('chart3') chart: UIChart;
 
-  constructor(private spenServ: SpendingHistoryService, private catServ: CategoryService, private ts: TimeService, private trigServ: TriggerService) { 
-
+  constructor(private spenServ: SpendingHistoryService, private catServ: CategoryService, public ts: TimeService, private trigServ: TriggerService) { 
+    Chart.register(annotationPlugin)
     this.catOptions = this.catServ.expenseCats
 
     this.trigServ.expenReceiptChanged$.subscribe(() =>
@@ -62,6 +64,21 @@ export class SpendingByCategoryComponent implements OnInit {
     this.chartOptions = {
       plugins: {
           datalabels: { display: false },
+          annotation: {
+            annotations: {
+              label1: {
+                type: 'label',
+                font: {
+                  size: 18
+                },
+                textAlign: 'center',
+                backgroundColor: 'rgba(245,245,245)',
+                display: true,
+                content: ['There is no data to display because there are no logged purchases for the selected month.']
+              }
+            }
+
+          }
       }}
  }
 
@@ -80,6 +97,15 @@ export class SpendingByCategoryComponent implements OnInit {
         this.categories.push(i.category_name)
         spenValue ? this.curMonthSpendByCat.push(spenValue.totalSpent) : this.curMonthSpendByCat.push(0)
       }  
+    }
+
+    if (spendData.length > 0)
+    {
+      this.dataExists = true
+    }
+    else
+    {
+      this.dataExists = false;
     }
   }
 

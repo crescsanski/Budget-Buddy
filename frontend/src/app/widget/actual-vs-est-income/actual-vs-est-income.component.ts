@@ -11,6 +11,7 @@ import { TimeService } from 'src/app/services/time.service';
 import { TriggerService } from 'src/app/services/trigger.service';
 import { BudgetCategory } from 'src/app/models/formModels/budgetCategory';
 import { Budget } from 'src/app/models/budget';
+import { AuthService } from 'src/app/services/auth.service';
 
 @Component({
   selector: 'app-actual-vs-est-income',
@@ -20,23 +21,30 @@ import { Budget } from 'src/app/models/budget';
 export class ActualVsEstIncomeComponent implements OnInit {
   chartData: any;
   chartOptions: any;
+  dataExists: boolean = false;
   categories: string[] = []
   catOptions: Budget[] = []
   selectedCats: Budget[] = []
   estIncValues: number[];
   actIncValues: number[] = []
   selDate: Date = new Date();
+  today: Date = new Date();
+  regDate: Date;
+  yearRange: string;
 
   @ViewChild('chart3') chart: UIChart;
 
   constructor(private budServ: BudgetService,
     private incServ: IncomeHistoryService,
+    private athServ: AuthService,
     private catServ: CategoryService,
-    private trigServ: TriggerService, private ts: TimeService) { 
+    private trigServ: TriggerService, public ts: TimeService) { 
+      this.regDate = new Date(this.athServ.currentUserValue.user_registration_date)
+      this.yearRange = this.regDate.getFullYear() + ":" + this.today.getFullYear()
       Chart.register(ChartDataLabels)
       this.catOptions = this.budServ.inBudByCat.filter(val => val.year == this.ts.year && val.month == this.ts.month)
 
-      this.selectedCats = this.catOptions.filter(val => val.is_favorite);
+      this.refreshFavorites();
 
       this.trigServ.incomReceiptChanged$.subscribe(() =>
       {
@@ -47,10 +55,20 @@ export class ActualVsEstIncomeComponent implements OnInit {
       {
         this.catOptions = this.budServ.inBudByCat.filter(val => val.year == this.ts.year && val.month == this.ts.month)
 
-        this.selectedCats = this.catOptions.filter(val => val.is_favorite);
+        this.refreshFavorites();
 
         this.getNewData();
       })
+  }
+
+  refreshFavorites()
+  {
+    this.selectedCats = this.catOptions.filter(val => val.is_favorite);
+
+    if (this.selectedCats.length == 0)
+    {
+      this.selectedCats = this.catOptions;
+    }
   }
 
   setupValues()
@@ -75,6 +93,15 @@ export class ActualVsEstIncomeComponent implements OnInit {
         estIncValue ? this.estIncValues.push(estIncValue.altered_amount) : this.estIncValues.push(0)
       }
       
+    }
+
+    if (estIncData.length == 0 && acIncdData.length == 0)
+    {
+      this.dataExists = false;
+    }
+    else
+    {
+      this.dataExists = true;
     }
   }
 

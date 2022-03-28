@@ -49,6 +49,7 @@ export class BudgetAdvisorComponent implements OnInit {
     };
 
     this.options = {
+      datalabels: { display: false },
       responsive: false,
       maintainAspectRatio: false
     };

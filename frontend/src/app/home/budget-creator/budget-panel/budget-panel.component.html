@@ -1,7 +1,7 @@
 <div *ngIf="currentPanel == 'Advisor' && advisorVisible">
     <app-budget-advisor (pageForward)="pageForward(); "></app-budget-advisor>
 </div>
-<div *ngIf="currentPanel == 'Income' && advisorVisible" class="panel" style="padding:2em">
+<div *ngIf="currentPanel == 'Income' && advisorVisible" class="panel" style="padding:2em; height: 65vh; overflow-y: auto">
     <div>
     <div>
         <div class="header">
@@ -24,7 +24,7 @@
     <button pButton style="margin-left: 2.5em; margin-top: 3em; width: 88%" type="submit" label='Track' (click)="recalculate(); pageForward()"></button>
 </div>
 
-<div *ngIf="currentPanel == 'Expenses' && advisorVisible" class="panel panel-expenses" style="padding:2em">
+<div *ngIf="currentPanel == 'Expenses' && advisorVisible" class="panel panel-expenses" style="padding:2em; height: 65vh; overflow-y: scroll">
     <div>
     <div>
         <div class="header">
