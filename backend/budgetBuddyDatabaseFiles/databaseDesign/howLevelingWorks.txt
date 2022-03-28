@@ -1,0 +1,5 @@
+set x = current experience points
+set y = current expereience points plus gained experience
+if experience level at y is greater than experience level at x
+	add all items and challenges to user inventories
+add experience to user

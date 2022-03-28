@@ -1,0 +1,2 @@
+when a user levels up check items that they should get and add to inventory
+when a user levels up check challenges that they should get and add to inventory

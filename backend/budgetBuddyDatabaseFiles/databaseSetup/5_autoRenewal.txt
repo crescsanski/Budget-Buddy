@@ -1,0 +1,37 @@
+/* BUDGET AUTO RENEWAL PROCEDURE */
+
+CREATE OR REPLACE PROCEDURE budgetbuddy.auto_renewal_procedure()
+LANGUAGE plpgsql
+AS $$
+begin
+IF (SELECT EXTRACT(MONTH FROM current_timestamp)) = 1
+THEN
+    INSERT INTO budgetBuddy.user_category_budget(user_id, category_id, 
+	user_category_budget_estimated_amount,user_category_budget_altered_amount, user_category_budget_last_modified_date,
+	user_category_budget_date,user_category_budget_favorite)
+	SELECT DISTINCT b.user_id, b.category_id, 
+	b.user_category_budget_altered_amount,b.user_category_budget_altered_amount,(select current_timestamp),
+	(select current_timestamp),b.user_category_budget_favorite	
+	FROM budgetbuddy.users u, budgetbuddy.user_category_budget b
+	WHERE u.user_auto_renewal = true
+	AND (SELECT EXTRACT(MONTH FROM b.user_category_budget_date)) = 12
+	AND (SELECT EXTRACT(YEAR FROM b.user_category_budget_date)) = (SELECT EXTRACT(YEAR FROM (current_timestamp - INTERVAL '1 YEAR')));
+
+ELSE
+    INSERT INTO budgetBuddy.user_category_budget(user_id, category_id, 
+	user_category_budget_estimated_amount,user_category_budget_altered_amount, user_category_budget_last_modified_date,
+	user_category_budget_date,user_category_budget_favorite)
+	SELECT DISTINCT b.user_id, b.category_id, 
+	b.user_category_budget_altered_amount,b.user_category_budget_altered_amount,(select current_timestamp),
+	(select current_timestamp),b.user_category_budget_favorite	
+	FROM budgetbuddy.users u, budgetbuddy.user_category_budget b
+	WHERE u.user_auto_renewal = true
+	AND (SELECT EXTRACT(MONTH FROM b.user_category_budget_date)) = (SELECT EXTRACT(MONTH FROM(select current_timestamp - INTERVAL '1 MONTH')))
+	AND (SELECT EXTRACT(YEAR FROM b.user_category_budget_date)) = (SELECT EXTRACT(YEAR FROM current_timestamp));
+
+END IF;
+end$$;
+
+
+/* CALL BUDGET AUTO RENEWAL PROCEDURE */
+CALL budgetbuddy.auto_renewal_procedure();

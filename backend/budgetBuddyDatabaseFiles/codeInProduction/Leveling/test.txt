@@ -1,0 +1,259 @@
+INSERT INTO budgetBuddy.users(user_first_name, user_last_name, user_user_name,
+user_email, password, user_phone_number, user_registration_date, user_birth_date,
+user_has_notifications, user_budget_goal_amount, user_current_experience_points, 
+user_required_experience_points,user_level,security_question_id,
+user_security_question_answer) 
+VALUES ('Stephen', 'Ippolito', 'srippolito',
+'stephen@gmail.com', 'password', '6083200857', '2021-01-01', '1997-01-27',
+false, 20, 0,250,1,1,'dog');
+
+INSERT INTO budgetBuddy.users(user_first_name, user_last_name, user_user_name,
+user_email, password, user_phone_number, user_registration_date, user_birth_date,
+user_has_notifications, user_budget_goal_amount, user_current_experience_points, 
+user_required_experience_points,user_level,security_question_id,
+user_security_question_answer) 
+VALUES ('Stephen', 'Ippolito', 'srippolito2',
+'stephen@gmail2.com', 'password', '6083200855', '2021-01-01', '1997-01-27',
+false, 20, 0,250,1,1,'dog');
+
+
+CREATE OR REPLACE FUNCTION update_level_procedure()
+RETURNS TRIGGER 
+AS $update_level_procedure$
+begin
+	IF NEW.user_current_experience_points > NEW.user_required_experience_points 
+	THEN
+	UPDATE budgetbuddy.users SET user_level = 6 WHERE user_id = NEW.user_id;
+	END IF;
+	RETURN new;
+end;
+$update_level_procedure$ LANGUAGE plpgsql;
+
+
+CREATE OR REPLACE TRIGGER update_level_procedure 
+AFTER UPDATE OF user_current_experience_points ON budgetbuddy.users
+FOR EACH ROW 
+EXECUTE PROCEDURE update_level_procedure();
+
+UPDATE budgetbuddy.users SET user_current_experience_points = 257 WHERE user_id = 3;
+
+select * from budgetbuddy.users
+
+
+
+
+-------------------------------------------------------------------
+
+
+CREATE OR REPLACE FUNCTION add_update()
+RETURNS TRIGGER AS $add_update$
+BEGIN
+  IF (NEW.user_current_experience_points > NEW.user_required_experience_points	  
+     ) THEN
+    NEW.user_level := 5;
+  END IF;
+  RETURN new;
+END;
+$add_update$ LANGUAGE plpgsql;
+
+CREATE OR REPLACE TRIGGER add_update
+AFTER UPDATE ON budgetbuddy.users
+FOR EACH ROW
+EXECUTE PROCEDURE add_update();
+
+
+
+
+
+
+
+
+
+
+
+
+CREATE OR REPLACE FUNCTION level_up() RETURNS trigger AS $level_up$
+    BEGIN
+        IF new.user_current_experience_points >new. user_required_experience_points
+		THEN
+        UPDATE users SET user_level = 5;
+        END IF;        
+    END;
+$level_up$ LANGUAGE plpgsql;
+
+CREATE OR REPLACE TRIGGER level_up 
+AFTER UPDATE ON budgetbuddy.users
+FOR EACH ROW EXECUTE FUNCTION level_up();
+
+select * from budgetbuddy.users
+
+UPDATE budgetbuddy.users SET user_current_experience_points = 256 WHERE user_id = 2;
+
+UPDATE budgetbuddy.users SET user_level = 1 WHERE user_current_experience_points > user_required_experience_points;
+
+DROP procedure update_level_procedure() ON budgetbuddy.users;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+CREATE FUNCTION level_up() RETURNS trigger AS $level_up$
+    BEGIN
+        IF NEW.user_current_experience_points > NEW.user_required_experience_points
+		THEN
+        NEW.user_level := 5;
+        END IF;        
+        RETURN NEW;
+    END;
+$level_up$ LANGUAGE plpgsql;
+
+CREATE TRIGGER level_up AFTER UPDATE ON budgetbuddy.users
+    FOR EACH ROW EXECUTE FUNCTION level_up();
+-----------------------------------------------------
+
+
+CREATE OR REPLACE FUNCTION add_update()
+RETURNS TRIGGER
+LANGUAGE plpgsql
+AS $$
+BEGIN
+  IF (NEW.news_name IS DISTINCT FROM NEW.news_name OR
+      OLD.news_description IS DISTINCT FROM NEW.news_description OR
+      OLD.news_text IS DISTINCT FROM NEW.news_text
+     ) THEN
+    NEW.news_update_date := current_date;
+    NEW.news_update_time := current_time;
+  END IF;
+  RETURN new;
+END;
+$$;
+
+CREATE OR REPLACE TRIGGER update_points
+AFTER UPDATE ON budgetbuddy.users
+FOR EACH ROW
+EXECUTE PROCEDURE add_update();
+
+--------------------------------------------
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+select * from budgetbuddy.users
+
+ALTER TRIGGER tr_app_bread_crumbs_afterupdate
+ON [dbo].[app_bread_crumbs]
+AFTER UPDATE
+AS
+BEGIN 
+    UPDATE [dbo].[app_bread_crumbs]
+    SET last_updated_by = SYSTEM_USER,
+    last_updated_on = GETDATE()
+    FROM dbo.app_bread_crumbs abc
+    WHERE EXISTS (SELECT 1 FROM inserted i WHERE i.id = abc.id);
+END
+
+
+/* GIVE USER 1 ESTIMATED EXPENSES AND INCOMES FOR EACH CATEGORY*/
+CREATE OR REPLACE PROCEDURE fill_user_category_budget_table()
+LANGUAGE plpgsql
+AS $$
+declare 
+   counter integer := 1;      
+begin
+   while counter <= (SELECT COUNT(*) FROM budgetBuddy.category)	loop
+   insert into budgetBuddy.user_category_budget(user_id, category_id, 
+	user_category_budget_estimated_amount,user_category_budget_altered_amount, user_category_budget_last_modified_date)
+values(1,counter,(counter * 100),(counter * 100),current_timestamp);
+	counter := counter + 1;
+   end loop;
+end$$;
+
+CALL fill_user_category_budget_table();
+
+
+
+
+
+
+CREATE TRIGGER level_up
+AFTER UPDATE ON budgetbuddy.users.user_current_experience_points
+LANGUAGE plpgsql
+AS $$
+declare 
+   counter integer := 1;
+   current_experience integer := inserted.user_current_experience_points
+   required_experience integer := inserted.user_required_experience_points   
+begin
+	IF current_experience >= required_experience THEN
+	UPDATE films SET user_level = 5
+END IF;
+counter := counter + 1;
+   end loop;
+end$$;

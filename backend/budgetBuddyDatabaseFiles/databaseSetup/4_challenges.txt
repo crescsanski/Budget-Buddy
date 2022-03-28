@@ -1,0 +1,240 @@
+/* FILL CHALLENGE TABLE PROCEDURE */
+CREATE OR REPLACE PROCEDURE budgetbuddy.insert_challenges()
+LANGUAGE SQL
+AS $$
+INSERT INTO budgetBuddy.challenge(challenge_name, challenge_description, challenge_type,
+challenge_time_given, challenge_is_repeatable, challenge_is_active, challenge_experience_points,
+challenge_start_amount, challenge_completion_amount, item_id, difficulty, challenge_trigger,
+experience_level_unlock) 
+VALUES ('Login1', 'Log into account 4 times','login',-1,false, true, 100,1,4,
+null,null,'login',1),('Login2', 'Log into account 4 times','login',-1,false, true, 100,1,4,
+null,null,'login',2),('Login3', 'Log into account 4 times','login',-1,false, true, 100,1,4,
+null,null,'login',3),('expense1', 'record 2 expenses','record_expense',-1,false, true, 100,0,2,
+null,null,'record_expense',1),('expense2', 'record 2 expenses','record_expense',-1,false, true, 100,0,2,
+null,null,'record_expense',2),('expense3', 'record 2 expenses','record_expense',-1,false, true, 100,0,2,
+null,null,'record_expense',3),('income1', 'record 2 incomes','record_income',-1,false, true, 100,0,2,
+null,null,'record_income',1),('income2', 'record 2 incomes','record_income',-1,false, true, 100,0,2,
+null,null,'record_income',2),('income3', 'record 2 incomes','record_income',-1,false, true, 100,0,2,
+null,null,'record_income',3);
+$$;
+
+/* FILL CHALLENGE TABLE */
+CALL budgetbuddy.insert_challenges();
+
+
+
+
+
+
+/* NEW USER CHALLENGES PROCEDURE AND TRIGGER*/
+
+CREATE OR REPLACE FUNCTION budgetbuddy.new_user_creation_challenges_procedure()
+RETURNS TRIGGER 
+AS $new_user_creation_challenges_procedure$
+begin
+	INSERT INTO budgetbuddy.user_challenge_inventory (user_challenge_start_date,
+	user_challenge_current_amount, challenge_id,
+	user_id)
+	SELECT (select current_date),challenge_start_amount, challenge_id, NEW.user_id 
+	FROM budgetbuddy.challenge
+	WHERE experience_level_unlock=1;	
+	RETURN new;
+end;
+$new_user_creation_challenges_procedure$ LANGUAGE plpgsql;
+
+
+CREATE TRIGGER new_user_creation_challenges_procedure 
+AFTER INSERT ON budgetbuddy.users
+FOR EACH ROW 
+EXECUTE PROCEDURE budgetbuddy.new_user_creation_challenges_procedure();
+
+
+/* DROP NEW USER CHALLENGE PROCEDURE AND TRIGGERS */
+
+drop trigger new_user_creation_challenges_procedure on budgetbuddy.users
+drop function budgetbuddy.new_user_creation_challenges_procedure()
+
+
+
+
+
+/* LEVEL UP CHALLENGES PROCEDURE AND TRIGGER*/
+
+CREATE OR REPLACE FUNCTION budgetbuddy.level_up_challenges_procedure()
+RETURNS TRIGGER 
+AS $level_up_challenges_procedure$
+begin
+	INSERT INTO budgetbuddy.user_challenge_inventory (user_challenge_start_date,
+	user_challenge_current_amount, challenge_id,
+	user_id)
+	SELECT (select current_date),challenge_start_amount, challenge_id, NEW.user_id 
+	FROM budgetbuddy.challenge
+	WHERE experience_level_unlock=NEW.user_level;	
+	RETURN new;
+end;
+$level_up_challenges_procedure$ LANGUAGE plpgsql;
+
+
+CREATE TRIGGER level_up_challenges_procedure 
+AFTER UPDATE OF user_level ON budgetbuddy.users
+FOR EACH ROW 
+EXECUTE PROCEDURE budgetbuddy.level_up_challenges_procedure();
+
+
+/* DROP LEVEL UP CHALLENGE PROCEDURE AND TRIGGERS */
+
+drop trigger level_up_challenges_procedure on budgetbuddy.users
+drop function budgetbuddy.level_up_challenges_procedure()
+
+
+
+
+/* LOGIN CHALLENGES CHECK PROCEDURE AND TRIGGER*/
+
+CREATE OR REPLACE FUNCTION budgetbuddy.login_challenges_check_procedure()
+RETURNS TRIGGER 
+AS $login_challenges_check_procedure$
+begin
+
+	IF (OLD.last_login::date) != NEW.last_login::date
+	THEN
+
+	UPDATE budgetbuddy.user_challenge_inventory
+	SET user_challenge_current_amount = user_challenge_current_amount + 1
+	FROM budgetbuddy.challenge
+	WHERE budgetbuddy.user_challenge_inventory.challenge_id = budgetbuddy.challenge.challenge_id
+	AND budgetbuddy.user_challenge_inventory.user_id=NEW.user_id 
+	AND budgetbuddy.user_challenge_inventory.user_challenge_completion_date IS NULL
+	AND budgetbuddy.challenge.challenge_trigger='login';
+	
+	UPDATE budgetbuddy.user_challenge_inventory
+	SET user_challenge_completion_date = CURRENT_TIMESTAMP
+	FROM budgetbuddy.challenge
+	WHERE budgetbuddy.user_challenge_inventory.challenge_id = budgetbuddy.challenge.challenge_id
+	AND budgetbuddy.user_challenge_inventory.user_id=NEW.user_id 
+	AND budgetbuddy.user_challenge_inventory.user_challenge_completion_date IS NULL
+	AND budgetbuddy.user_challenge_inventory.user_challenge_current_amount = budgetbuddy.challenge.challenge_completion_amount;	
+
+	END IF;
+
+	RETURN new;
+end;
+$login_challenges_check_procedure$ LANGUAGE plpgsql;
+
+
+CREATE TRIGGER login_challenges_check_procedure 
+AFTER UPDATE OF last_login ON budgetbuddy.users
+FOR EACH ROW 
+EXECUTE PROCEDURE budgetbuddy.login_challenges_check_procedure();
+
+
+/* DROP LOGIN CHALLENGE CHECK PROCEDURE AND TRIGGERS */
+
+drop trigger login_challenges_check_procedure on budgetbuddy.users
+drop function budgetbuddy.login_challenges_check_procedure()
+
+
+
+
+
+
+
+
+
+/* RECORDING INCOME/EXPENSE CHALLENGES CHECK PROCEDURE AND TRIGGER*/
+
+CREATE OR REPLACE FUNCTION budgetbuddy.record_income_expense_check_procedure()
+RETURNS TRIGGER 
+AS $record_income_expense_check_procedure$
+begin
+
+	IF NEW.receipt_is_income = true
+	THEN
+    	UPDATE budgetbuddy.user_challenge_inventory
+	SET user_challenge_current_amount = user_challenge_current_amount + 1
+	FROM budgetbuddy.challenge 
+	WHERE budgetbuddy.user_challenge_inventory.challenge_id = budgetbuddy.challenge.challenge_id
+	AND budgetbuddy.user_challenge_inventory.user_id=NEW.user_id
+	AND budgetbuddy.user_challenge_inventory.user_challenge_completion_date IS NULL
+	AND budgetbuddy.challenge.challenge_trigger='record_income';
+	
+	UPDATE budgetbuddy.user_challenge_inventory
+	SET user_challenge_completion_date = CURRENT_TIMESTAMP
+	FROM budgetbuddy.challenge
+	WHERE budgetbuddy.user_challenge_inventory.challenge_id = budgetbuddy.challenge.challenge_id
+	AND budgetbuddy.user_challenge_inventory.user_id=NEW.user_id
+	AND budgetbuddy.user_challenge_inventory.user_challenge_completion_date IS NULL
+	AND budgetbuddy.user_challenge_inventory.user_challenge_current_amount = budgetbuddy.challenge.challenge_completion_amount;	
+	
+
+	ELSE
+    	UPDATE budgetbuddy.user_challenge_inventory
+	SET user_challenge_current_amount = user_challenge_current_amount + 1
+	FROM budgetbuddy.challenge 
+	WHERE budgetbuddy.user_challenge_inventory.challenge_id = budgetbuddy.challenge.challenge_id
+	AND budgetbuddy.user_challenge_inventory.user_id=NEW.user_id
+	AND budgetbuddy.user_challenge_inventory.user_challenge_completion_date IS NULL
+	AND budgetbuddy.challenge.challenge_trigger='record_expense';
+	
+	UPDATE budgetbuddy.user_challenge_inventory
+	SET user_challenge_completion_date = CURRENT_TIMESTAMP
+	FROM budgetbuddy.challenge
+	WHERE budgetbuddy.user_challenge_inventory.challenge_id = budgetbuddy.challenge.challenge_id
+	AND budgetbuddy.user_challenge_inventory.user_id=NEW.user_id
+	AND budgetbuddy.user_challenge_inventory.user_challenge_completion_date IS NULL
+	AND budgetbuddy.user_challenge_inventory.user_challenge_current_amount = budgetbuddy.challenge.challenge_completion_amount;
+
+	END IF;
+
+	RETURN new;
+end;
+$record_income_expense_check_procedure$ LANGUAGE plpgsql;
+
+
+CREATE TRIGGER record_income_expense_check_procedure 
+AFTER INSERT ON budgetbuddy.receipt
+FOR EACH ROW 
+EXECUTE PROCEDURE budgetbuddy.record_income_expense_check_procedure();
+
+
+/* DROP LOGIN CHALLENGE CHECK PROCEDURE AND TRIGGERS */
+
+drop trigger record_income_expense_check_procedure on budgetbuddy.receipt
+drop function budgetbuddy.record_income_expense_check_procedure()
+
+
+
+
+
+
+
+
+/* UPDATE EXPERIENCE POINTS ON CHALLENGE COMPLETION*/
+
+
+CREATE OR REPLACE FUNCTION update_experience_procedure()
+RETURNS TRIGGER 
+AS $update_experience_procedure$
+begin
+
+	UPDATE budgetbuddy.users
+	SET user_current_experience_points = user_current_experience_points + challenge_experience_points
+	FROM budgetbuddy.challenge
+	WHERE user_id=NEW.user_id 
+	AND challenge_id=NEW.challenge_id;
+	
+	RETURN new;
+end;
+$update_experience_procedure$ LANGUAGE plpgsql;
+
+
+CREATE TRIGGER update_experience_procedure 
+AFTER UPDATE OF user_challenge_completion_date ON budgetbuddy.user_challenge_inventory
+FOR EACH ROW 
+EXECUTE PROCEDURE update_experience_procedure();
+
+
+/* DROP LOGIN CHALLENGE CHECK PROCEDURE AND TRIGGERS */
+
+drop trigger update_experience_procedure on budgetbuddy.user_challenge_inventory
+drop function update_experience_procedure()
