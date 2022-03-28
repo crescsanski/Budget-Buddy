@@ -1,0 +1,77 @@
+/* PROCEDURES THAT INSERT NECESSARY DATA */
+
+
+
+
+/* Fill security questions */
+CREATE OR REPLACE PROCEDURE budgetbuddy.insert_security_questions()
+LANGUAGE SQL
+AS $$
+INSERT INTO budgetBuddy.security_question(security_question_name, security_question_question) 
+VALUES ('nickname', 'What was your childhood nickname?'),('friend','What is the name of your favorite childhood friend?'),
+('street','What street did you live on in third grade?'),('middle','What is your oldest sibling''s middle name?'),
+('school','What school did you attend for sixth grade?'),('cousin','What is your oldest cousin''s first and last name?'),
+('toy','What was the name of your favorite toy growing up?'),('city','In what city or town did your mother and father meet?'),
+('kiss','What is the first name of your first kiss?'),('teacher','What was the last name of your third grade teacher?'),
+('number','What is the number of your nearest sibling''s address?'),('grandmother','What is your maternal grandmother''s maiden name?'),
+('job','In what city or town was your first job?'),('college','What was the name of your first choice college?');
+$$;
+
+/* Fill security question table */
+CALL budgetbuddy.insert_security_questions();
+
+
+
+
+/* Fill categories */
+CREATE OR REPLACE PROCEDURE budgetbuddy.insert_categories()
+LANGUAGE SQL
+AS $$
+INSERT INTO budgetBuddy.category(category_name, category_description,category_type) 
+VALUES ('Housing','Property insurance, rent, mortgage payments, property taxes, home maintenance costs, ect.','need'),
+('Transportation','Auto insurance, vehicle payments, DMV fees, gas, tolls, parking, public transit, vehicle maintenance, ect.','need'),
+('Food/Grocery Essential','Food products, grocery items, and dining out considered essential','need'),
+('Food/Grocery Non-Essential','Food products, grocery items, and dining out considered non-essential','want'),
+('Utilities','Water, electricity, HVAC, gas, phone, cable/internet, ect.','need'),
+('Insurance','Life insurance, disability insurance, and other miscellaneous insurances.','need'),
+('Medical','Health insurance, out-of-pocket primary care costs, specialty care, dental care, urgent care, prescriptions, medical supplies/devices, ect.','need'),
+('Investment/Savings','401(k) retirement account, IRAs, ETFs, stocks, savings bonds, non-liquid assets, checking/savings account, ect.','saving'),
+('Entertainment','Sporting events, concert tickets, vacation expenses, video games, movies, hobbies, ect.','want'),
+('Lifestyle Essential','Clothing, home furnishings/decor, health/beauty, and personal care considered essential','need'),
+('Lifestyle Non-Essential','Clothing, home furnishings/decor, health/beauty, and personal care considered non-essential','want'),
+('Gift','Charitable donations and presents for others.','want'),
+('Pet','Ownership, food, treats, housing, medical expenses, and anything else pertaining to ones hairy, furry, scaly, or feathery friends.','need'),
+('Tax Payment','Government tax payment','need'),
+('Debt Payment','Payment for any type of debt','need'),
+('Miscellaneous Expense Essential','Expenses that do not fit in other categories and are considered essential.','need'),
+('Miscellaneous Expense Non-Essential','Expenses that do not fit in other categories and are considered non-essential.','want'),
+('Job Income','Wages or salary from ones job.','income'),
+('Received Gift','Cash gift from another person.','income'),
+('Interest','Non-liquid funds made liquid, dividends, savings account interest, ect.','income'),
+('Government Payment','Assistance payments from the government.','income'),
+('Tax Refund','Government refund from taxes.','income'),
+('Miscellaneous Income','Incomes that do not fit in other categories.','income');
+$$;
+
+/* Fill Category table */
+CALL budgetbuddy.insert_categories();
+
+
+
+
+/* Fill Experience Levels */
+CREATE OR REPLACE PROCEDURE budgetbuddy.insert_experience_levels()
+LANGUAGE plpgsql
+AS $$
+declare 
+   counter integer := 1;   
+begin
+   while counter <= 100 loop
+	INSERT INTO budgetBuddy.experience(experience_level, experience_title, experience_point_threshold) 
+VALUES (counter,'temp title',((counter)*252));
+counter := counter + 1;
+   end loop;
+end$$;
+
+/* Fill Experience Levels table */
+CALL budgetbuddy.insert_experience_levels();

@@ -1,0 +1,1 @@
+TRUNCATE budgetbuddy.experience RESTART IDENTITY CASCADE;

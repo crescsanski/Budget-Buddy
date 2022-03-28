@@ -11,3 +11,6 @@ Either 	1: run database reset (drops and adds all tables, procedures, and views)
 #3 - inserts random data for users including expenses,incomes, receipts, budget goals, ect.
 #4 - procedures to insert specific data which can be called by using the "quickProcedures" file
 #5 - views for possible widgets
+
+If there is an ! point at the end of the file name then it is not
+updated

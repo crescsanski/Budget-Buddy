@@ -1,0 +1,81 @@
+/* TRIGGERS */
+
+
+
+/* UPDATE LEVELS */
+
+drop trigger update_level_procedure on budgetbuddy.users
+drop function budgetbuddy.update_level_procedure()
+
+CREATE OR REPLACE FUNCTION budgetbuddy.update_level_procedure()
+RETURNS TRIGGER 
+AS $update_level_procedure$
+begin
+	IF NEW.user_current_experience_points > NEW.user_required_experience_points 
+	THEN
+	UPDATE budgetbuddy.users SET user_level = NEW.user_level + 1
+	WHERE user_id = NEW.user_id;
+	UPDATE budgetbuddy.users SET user_required_experience_points = (SELECT experience_point_threshold 
+										from budgetBuddy.experience WHERE experience_id = NEW.user_level + 1)
+	WHERE user_id = NEW.user_id;	
+	END IF;
+	RETURN new;
+end;
+$update_level_procedure$ LANGUAGE plpgsql;
+
+CREATE TRIGGER update_level_procedure 
+AFTER UPDATE OF user_current_experience_points ON budgetbuddy.users
+FOR EACH ROW 
+EXECUTE PROCEDURE budgetbuddy.update_level_procedure();
+
+
+
+/* UPDATE LOGINS */
+
+
+drop trigger update_total_logins_procedure on budgetbuddy.users
+drop function budgetbuddy.update_total_logins_procedure()
+
+
+
+CREATE FUNCTION budgetbuddy.update_total_logins_procedure()
+RETURNS TRIGGER 
+AS $update_total_logins_procedure$
+declare 
+   counter integer := 1;
+   zeroDays integer := (NEW.last_login::date - OLD.last_login::date) -1;
+   popDays integer := zeroDays + 2;
+begin
+	IF (OLD.last_login::date) != NEW.last_login::date
+	THEN
+		WHILE counter <= zeroDays LOOP
+		UPDATE budgetbuddy.users
+		SET user_login_array = array_append(user_login_array, 0)
+		WHERE user_id = NEW.user_id;
+		counter := counter + 1;
+   		END LOOP;
+		UPDATE budgetbuddy.users
+		SET user_login_array = array_append(user_login_array, 1)
+		WHERE user_id = NEW.user_id;
+	END IF;
+	IF ((NEW.last_login::date) - (NEW.user_registration_date + 1)) > 179
+	THEN
+		UPDATE budgetbuddy.users
+		SET user_login_array = user_login_array[popDays:]
+		WHERE user_id = NEW.user_id;
+	END IF;
+	UPDATE budgetbuddy.users
+	SET user_total_logins = (SELECT (SELECT SUM(s) FROM UNNEST(user_login_array) s) from budgetbuddy.users
+		WHERE user_id = NEW.user_id)
+	WHERE user_id = NEW.user_id;
+	RETURN new;
+end;
+$update_total_logins_procedure$ LANGUAGE plpgsql;
+
+
+CREATE TRIGGER update_total_logins_procedure 
+AFTER UPDATE OF last_login ON budgetbuddy.users
+FOR EACH ROW 
+EXECUTE PROCEDURE budgetbuddy.update_total_logins_procedure();
+
+

@@ -1,0 +1,73 @@
+CREATE OR REPLACE FUNCTION update_level_procedure()
+RETURNS TRIGGER 
+AS $update_level_procedure$
+begin
+	IF NEW.user_current_experience_points > NEW.user_required_experience_points 
+	THEN
+	UPDATE budgetbuddy.users SET user_level = NEW.user_level + 1
+	and set user_required_experience = (SELECT experience_point_threshold 
+										from budgetBuddy.experience WHERE experience_id = NEW.user_level + 1)
+	WHERE user_id = NEW.user_id;	
+	END IF;
+	RETURN new;
+end;
+$update_level_procedure$ LANGUAGE plpgsql;
+
+
+CREATE OR REPLACE TRIGGER update_level_procedure 
+AFTER UPDATE OF user_current_experience_points ON budgetbuddy.users
+FOR EACH ROW 
+EXECUTE PROCEDURE update_level_procedure();
+
+UPDATE budgetbuddy.users SET user_required_experience_points = 252 WHERE user_id = 2;
+
+select * from budgetbuddy.users
+
+
+
+--------------------------------------------------------------
+
+
+
+
+/* Fill Experience Levels */
+CREATE OR REPLACE PROCEDURE insert_experience_levels()
+LANGUAGE plpgsql
+AS $$
+declare 
+   counter integer := 1;   
+begin
+   while counter <= 100 loop
+	INSERT INTO budgetBuddy.experience(experience_level, experience_title, experience_point_threshold) 
+VALUES (counter,'temp title',((counter)*252));
+counter := counter + 1;
+   end loop;
+end$$;
+
+/* Fill Experience Levels table */
+CALL insert_experience_levels();
+
+
+
+--------------------------------------------------------
+
+
+
+INSERT INTO budgetBuddy.users(user_first_name, user_last_name, user_user_name,
+user_email, password, user_phone_number, user_registration_date, user_birth_date,
+user_has_notifications, user_budget_goal_amount, user_current_experience_points, 
+user_required_experience_points,user_level,security_question_id,
+user_security_question_answer) 
+VALUES ('Stephen', 'Ippolito', 'srippolito',
+'stephen@gmail.com', 'password', '6083200857', '2021-01-01', '1997-01-27',
+false, 20, 0,250,1,1,'dog');
+
+INSERT INTO budgetBuddy.users(user_first_name, user_last_name, user_user_name,
+user_email, password, user_phone_number, user_registration_date, user_birth_date,
+user_has_notifications, user_budget_goal_amount, user_current_experience_points, 
+user_required_experience_points,user_level,security_question_id,
+user_security_question_answer) 
+VALUES ('Stephen', 'Ippolito', 'srippolito2',
+'stephen@gmail2.com', 'password', '6083200855', '2021-01-01', '1997-01-27',
+false, 20, 0,250,1,1,'dog');
+

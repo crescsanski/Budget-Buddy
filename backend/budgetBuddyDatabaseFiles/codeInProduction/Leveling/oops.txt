@@ -1,0 +1,31 @@
+CREATE OR REPLACE FUNCTION update_level_procedure()
+RETURNS TRIGGER 
+AS $update_level_procedure$
+declare 
+   counter integer := 1; 
+   new_required_experience integer := 0;
+begin
+	while NEW.user_current_experience_points > (SELECT experience_point_threshold 
+												from budgetBuddy.experience WHERE experience_id = counter)
+												and NEW.user_level < 100
+	counter := counter + 1;
+	new_required_experience := (SELECT experience_point_threshold 
+							from budgetBuddy.experience WHERE experience_id = counter);
+   end loop;   
+	IF NEW.user_current_experience_points > NEW.user_required_experience_points 
+	THEN
+	UPDATE budgetbuddy.users SET user_level =  WHERE user_id = NEW.user_id;
+	END IF;
+	RETURN new;
+end;
+$update_level_procedure$ LANGUAGE plpgsql;
+
+
+CREATE OR REPLACE TRIGGER update_level_procedure 
+AFTER UPDATE OF user_current_experience_points ON budgetbuddy.users
+FOR EACH ROW 
+EXECUTE PROCEDURE update_level_procedure();
+
+UPDATE budgetbuddy.users SET user_current_experience_points = 257 WHERE user_id = 3;
+
+select * from budgetbuddy.experience

@@ -16,18 +16,20 @@ $$;
 
 /* Insert a new user */
 CREATE OR REPLACE PROCEDURE insert_new_user(user_first_name VARCHAR, user_last_name VARCHAR, user_user_name VARCHAR,
-user_email VARCHAR, user_password VARCHAR, user_phone_number VARCHAR, user_registration_date DATE, user_birth_date DATE,
+user_email VARCHAR, password VARCHAR, user_phone_number VARCHAR, user_registration_date DATE, user_birth_date DATE,
 user_has_notifications BOOLEAN, user_budget_goal_amount INT, user_experience_points INT, security_question_id INT,
 user_security_question_answer VARCHAR)
 LANGUAGE SQL
 AS $$
 INSERT INTO budgetBuddy.users(user_first_name, user_last_name, user_user_name,
-user_email, user_password, user_phone_number, user_registration_date, user_birth_date,
-user_has_notifications, user_budget_goal_amount, user_experience_points, security_question_id,
+user_email, password, user_phone_number, user_registration_date, user_birth_date,
+user_has_notifications, user_budget_goal_amount, user_current_experience_points, 
+user_required_experience_points,user_level, security_question_id,
 user_security_question_answer) 
 VALUES (user_first_name, user_last_name, user_user_name,
-user_email, user_password, user_phone_number, user_registration_date, user_birth_date,
-user_has_notifications, user_budget_goal_amount, user_experience_points, security_question_id,
+user_email, password, user_phone_number, user_registration_date, user_birth_date,
+user_has_notifications, user_budget_goal_amount, user_current_experience_points, 
+user_required_experience_points,user_level, security_question_id,
 user_security_question_answer);
 $$;
 
@@ -66,21 +68,6 @@ WHERE user_id = (select user_id from
 budgetBuddy.users where user_user_name = toad) order by receipt_date desc limit 1), category_id);
 $$;
 
-/* Total Products and Complete Receipt*/
-CREATE OR REPLACE PROCEDURE complete_receipt_expense(toad VARCHAR)
-LANGUAGE SQL
-AS $$
-UPDATE budgetBuddy.receipt
-SET receipt_amount = (SELECT SUM(expense_price)
-FROM budgetBuddy.expense
-INNER JOIN budgetBuddy.receipt ON budgetBuddy.receipt.receipt_id=budgetBuddy.expense.receipt_id
-INNER JOIN budgetBuddy.users ON budgetBuddy.users.user_id=budgetBuddy.receipt.user_id
-WHERE budgetBuddy.expense.receipt_id = (SELECT receipt_id FROM budgetBuddy.receipt 
-WHERE user_id = (select user_id from budgetBuddy.users where user_user_name = toad) order by receipt_date desc limit 1))
-WHERE receipt_id = (SELECT receipt_id FROM budgetBuddy.receipt WHERE user_id = (select user_id from
-budgetBuddy.users where user_user_name = toad) order by receipt_date desc limit 1);
-$$;
-
 
 
 
@@ -105,20 +92,6 @@ WHERE user_id = (select user_id from budgetBuddy.users where user_user_name = to
 order by receipt_date desc limit 1), category_id);
 $$;
 
-/* Total Incomes and Complete Receipt*/
-CREATE OR REPLACE PROCEDURE complete_receipt_income(toad VARCHAR)
-LANGUAGE SQL
-AS $$
-UPDATE budgetBuddy.receipt
-SET receipt_amount = (SELECT SUM(income_amount)
-FROM budgetBuddy.income
-INNER JOIN budgetBuddy.receipt ON budgetBuddy.receipt.receipt_id=budgetBuddy.income.receipt_id
-INNER JOIN budgetBuddy.users ON budgetBuddy.users.user_id=budgetBuddy.receipt.user_id
-WHERE budgetBuddy.income.receipt_id = (SELECT receipt_id FROM budgetBuddy.receipt 
-WHERE user_id = (select user_id from budgetBuddy.users where user_user_name = toad) order by receipt_date desc limit 1))
-WHERE receipt_id = (SELECT receipt_id FROM budgetBuddy.receipt WHERE user_id = (select user_id from
-budgetBuddy.users where user_user_name = toad) order by receipt_date desc limit 1);
-$$;
 
 
 

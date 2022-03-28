@@ -5,7 +5,7 @@ CREATE OR REPLACE VIEW BadgesEarned AS
   budgetBuddy.users.user_id
   ,budgetBuddy.challenge.challenge_name
   ,budgetBuddy.challenge.challenge_description
-  ,budgetBuddy.user_challenge_inventory.challenge_completion
+  ,budgetBuddy.user_challenge_inventory.user_challenge_completion_date
   FROM
   budgetBuddy.user_challenge_inventory
   INNER JOIN budgetBuddy.users
@@ -21,8 +21,8 @@ date_part('year', budgetBuddy.receipt.receipt_date) as TheYear,
 date_part('week', budgetBuddy.receipt.receipt_date) as TheWeek,
 budgetBuddy.category.category_name as Category,
 sum(budgetBuddy.expense.expense_price) as TotalSpent,
-(budgetBuddy.user_category_budget.user_category_budget_estimated_amount/4) as WeeklyTarget,
-((budgetBuddy.user_category_budget.user_category_budget_estimated_amount/4) - sum(budgetBuddy.expense.expense_price)) as Difference
+(budgetBuddy.user_category_budget.user_category_budget_altered_amount/4) as WeeklyTarget,
+((budgetBuddy.user_category_budget.user_category_budget_altered_amount/4) - sum(budgetBuddy.expense.expense_price)) as Difference
 FROM
   budgetBuddy.expense
   INNER JOIN budgetBuddy.category
@@ -38,7 +38,7 @@ and date_part('month', receipt_date) =  date_part('month', current_timestamp)
 and budgetBuddy.user_category_budget.category_id = budgetBuddy.expense.category_id
 group by budgetBuddy.users.user_id,budgetBuddy.category.category_name,
 date_part('year', budgetBuddy.receipt.receipt_date),date_part('week', budgetBuddy.receipt.receipt_date),
-budgetBuddy.user_category_budget.user_category_budget_estimated_amount;
+budgetBuddy.user_category_budget.user_category_budget_altered_amount;
 
 
 CREATE OR REPLACE VIEW WeeklyBudgetOne AS
@@ -59,9 +59,9 @@ TheYear,TheWeek,UserID;
 CREATE OR REPLACE VIEW WeeklyBudgetTwo AS
 select 
 budgetBuddy.user_category_budget.user_id as UserID,
-sum((budgetBuddy.user_category_budget.user_category_budget_estimated_amount)/4) as WeeklyBudget
+sum((budgetBuddy.user_category_budget.user_category_budget_altered_amount)/4) as WeeklyBudget
 from budgetBuddy.user_category_budget
 INNER JOIN budgetBuddy.category
     ON budgetBuddy.user_category_budget.category_id = budgetBuddy.category.category_id
-where budgetBuddy.category.category_income = false
+where budgetBuddy.category.category_is_income = false
 group by UserID;
