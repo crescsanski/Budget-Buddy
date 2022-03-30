@@ -50,44 +50,49 @@ export class IncomeHistoryService {
 
     if (re.receipt.receipt_is_income)
     {
-            
-      for (let i in this.catIncByMonth) 
+      
+      for (let inc of re.incomes)
       {
-       
-        if (this.catIncByMonth[i].year == date.getFullYear() && this.catIncByMonth[i].month == month)
+        let i = this.catIncByMonth.findIndex(val => val.category_id == inc.category_id && val.year == date.getFullYear()
+          && val.month == month)
+        if (i >= 0)
         {
-          for (let inc of re.incomes)
-          {
-            if (this.catIncByMonth[i].category_id == inc.category_id)
-            {
-              this.catIncByMonth[i].totalIncomeReceived += inc.income_amount;
-            }
-          }
+          this.catIncByMonth[i].totalIncomeReceived += inc.income_amount;
         }
-        
+        else
+        {
+          this.catIncByMonth.push({category_id: inc.category_id, year: date.getFullYear(), month: month, totalIncomeReceived: inc.income_amount})
+        }
       }
       
-      for (let i in this.incByMonth) 
+      let i = this.incByMonth.findIndex(val => val.year == date.getFullYear() && val.month == month)
+      if (i >= 0)
       {
-        if (this.incByMonth[i].year == date.getFullYear() && this.incByMonth[i].month == month)
-        {
-          this.incByMonth[i].totalIncomeReceived += total;
-          break;
-        }
+        this.incByMonth[i].totalIncomeReceived += total;
       }
+      else
+      {
+        this.incByMonth.push({year: date.getFullYear(), month: month, totalIncomeReceived: total})
+      }
+
+
+      var found = false;
       for (let i in this.cumIncByMonth)
       {
         if ((this.cumIncByMonth[i].year == date.getFullYear() && this.cumIncByMonth[i].month >= month)
           || this.cumIncByMonth[i].year > date.getFullYear())
         {
+          found = true;
           this.cumIncByMonth[i].totalIncomeReceived += total;
         }
       }
+      if (!found)
+      {
+        this.cumIncByMonth.push({year: date.getFullYear(), month: month, totalIncomeReceived: total})
+      }
       
     }
-    
-    
-
+  
   }
 
   get weekIncome()

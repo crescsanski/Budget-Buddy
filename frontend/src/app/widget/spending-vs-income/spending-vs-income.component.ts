@@ -117,6 +117,10 @@ export class SpendingVsIncomeComponent implements OnInit {
                   let sum = this.values[context.dataIndex]
                   let value = this.values2[context.dataIndex]
                   let percentage = (sum*100 / value);
+                  if (value == 0 || value == undefined)
+                  {
+                    return "rgba(0, 0, 0, 0.72)"
+                  }
                   return this.getColor(percentage)
                 }
               return ""
@@ -134,8 +138,16 @@ export class SpendingVsIncomeComponent implements OnInit {
                   {
                    // console.log(value)
                     let sum = this.values[context.dataIndex]
-                    let percentage = (sum*100 / value).toFixed(2)+"%";
-                    return percentage;
+                    if (value == 0 || value == undefined)
+                    {
+                      return "No Income Data"
+                    } 
+                    else
+                    {
+                      let percentage = (sum*100 / value).toFixed(2)+"%";
+                      return percentage;
+                    }
+              
                   }
                 return ""
               },

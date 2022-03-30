@@ -4,7 +4,7 @@
             <h2>Estimated vs. Actual Expenses</h2> 
         </div>
         <div style="position: relative;">
-            <div *ngIf="!dataExists" class="center">
+            <div *ngIf="!dataExists" class="centerUn">
                 <span>There is no data to display because there are neither logged expenses nor estimated budget expenses for the selected month.</span>
             </div>
             <p-chart [ngStyle]="{'visibility': dataExists ? 'visible' : 'hidden'}" #chart3 type="bar" [data]="chartData" [options]="chartOptions"></p-chart>

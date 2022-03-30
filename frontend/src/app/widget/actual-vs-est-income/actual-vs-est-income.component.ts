@@ -149,15 +149,14 @@ export class ActualVsEstIncomeComponent implements OnInit {
         datalabels: {
           align: 'end',
           anchor: 'end',
+          offset: -22,
           backgroundColor: (context) => {
-            if (context.dataset.label == 'Estimated Income')
-            {
+           
               let sum = this.actIncValues[context.dataIndex]
               let value = this.estIncValues[context.dataIndex]
               let percentage = (sum*100 / value);
               return this.getColor(percentage)
-            }
-          return ""
+            
         },
           borderRadius: 4,
           font: {
@@ -165,17 +164,24 @@ export class ActualVsEstIncomeComponent implements OnInit {
           },
           display: (context) => {
            // console.log(context)
-            return context.dataset.label == 'Estimated Income'
+              if (context.dataset.label == 'Estimated Income' && this.estIncValues[context.dataIndex] > this.actIncValues[context.dataIndex])
+              {
+                return true;
+              }
+              else if (context.dataset.label == 'Actual Income' && this.actIncValues[context.dataIndex] > this.estIncValues[context.dataIndex])
+              {
+                return true;
+              }
+              return false;
+              
           },
           formatter: (value, context) => {
-              if (context.dataset.label == 'Estimated Income')
-              {
+             
                // console.log(value)
                 let sum = this.actIncValues[context.dataIndex]
-                let percentage = (sum*100 / value).toFixed(2)+"%";
+                let val = this.estIncValues[context.dataIndex]
+                let percentage = (sum*100 / val).toFixed(2)+"%";
                 return percentage;
-              }
-            return ""
           },
           color: 'white',
       },

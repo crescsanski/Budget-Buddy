@@ -87,38 +87,43 @@ export class SpendingHistoryService {
           this.weeklySpendingTotal += total;
         }    
       }
-      
-      for (let i in this.catSpenByMonth) 
+      for (let exp of re.expenses)
       {
-       
-        if (this.catSpenByMonth[i].year == date.getFullYear() && this.catSpenByMonth[i].month == month)
+        let i = this.catSpendByMonth.findIndex(val => val.year == date.getFullYear() && val.month == month && 
+        val.category_id == exp.category_id)
+        if (i >= 0)
         {
-          for (let exp of re.expenses)
-          {
-            if (this.catSpenByMonth[i].category_id == exp.category_id)
-            {
-              this.catSpenByMonth[i].totalSpent += exp.expense_price;
-            }
-          }
+          this.catSpendByMonth[i].totalSpent += exp.expense_price;
         }
-        
-      }
-      
-      for (let i in this.spenByMonth) 
-      {
-        if (this.spenByMonth[i].year == date.getFullYear() && this.spenByMonth[i].month == month)
+        else
         {
-          this.spenByMonth[i].totalSpent += total;
-          break;
+          this.catSpendByMonth.push({year: date.getFullYear(), month: month, category_id: exp.category_id, totalSpent: exp.expense_price})
         }
       }
+
+      let i = this.spenByMonth.findIndex(val => val.year == date.getFullYear() && val.month == month)
+      if (i >= 0)
+      {
+        this.spenByMonth[i].totalSpent += total;
+      }
+      else
+      {
+        this.spenByMonth.push({year: date.getFullYear(), month: month, totalSpent: total})
+      }
+     
+      var found = false;
       for (let i in this.cumSpenByMonth)
       {
         if ((this.cumSpenByMonth[i].year == date.getFullYear() && this.cumSpenByMonth[i].month >= month)
           || this.cumSpenByMonth[i].year > date.getFullYear())
         {
+          found = true;
           this.cumSpenByMonth[i].totalSpent += total;
         }
+      }
+      if (!found)
+      {
+        this.cumSpenByMonth.push({year: date.getFullYear(), month: month, totalSpent: total})
       }
       
     }

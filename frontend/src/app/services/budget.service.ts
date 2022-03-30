@@ -113,7 +113,15 @@ export class BudgetService {
     
 
     let index = this.bud_Calcs.findIndex((val) => val.month == this.ts.month && val.year == this.ts.year)
-    this.bud_Calcs[index] = this.curMonthCalcs;
+    if (index >= 0)
+    {
+      this.bud_Calcs[index] = this.curMonthCalcs;
+    }
+    else
+    {
+      this.bud_Calcs.push(this.curMonthCalcs)
+    }
+  
 
   }
 

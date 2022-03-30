@@ -5,7 +5,7 @@
         </div>
 
         <div style="position: relative;">
-            <div *ngIf="!dataExists" class="center">
+            <div *ngIf="!dataExists" class="centerUn">
                 <span>There is no data to display because there are neither logged incomes nor logged expenses for the selected year.</span>
             </div>
             <p-chart [ngStyle]="{'visibility': dataExists ? 'visible' : 'hidden'}" #chart3 type="bar" [data]="chartData" [options]="chartOptions"></p-chart>

@@ -5,11 +5,12 @@
         </div>
 
         <div style="position: relative;">
-            <div *ngIf="!dataExists" class="center">
+            <div *ngIf="!dataExists" class="centerUn">
                 <span>There is no data to display because there are no logged purchases for the selected month.</span>
             </div>
-            <p-chart [ngStyle]="{'visibility': dataExists ? 'visible' : 'hidden'}" #chart3 type="pie"  [options]="chartOptions" [data]="data"></p-chart>
-          
+            <div [style]="{'width': '50%'}">
+                 <p-chart [ngStyle]="{'visibility': dataExists ? 'visible' : 'hidden'}" #chart3 type="pie"  [options]="chartOptions" [data]="data"></p-chart>
+             </div>
         </div>
 
         

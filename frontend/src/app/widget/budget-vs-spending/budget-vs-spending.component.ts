@@ -40,6 +40,9 @@ export class BudgetVsSpendingComponent implements OnInit {
     private catServ: CategoryService,
     private trigServ: TriggerService, public ts: TimeService) { 
       Chart.register(ChartDataLabels)
+    
+
+      
       this.typeOptions = this.budServ.types;
 
       this.catOptions = this.budServ.exBudByCat.filter(val => val.year == this.ts.year && val.month == this.ts.month)
@@ -160,19 +163,19 @@ export class BudgetVsSpendingComponent implements OnInit {
     plugins: {
         legend: {
             display: true,
+           
         },
         datalabels: {
           align: 'end',
           anchor: 'end',
+          offset: -22,
           backgroundColor: (context) => {
-            if (context.dataset.label == 'Estimated Expenses')
-            {
+       
               let sum = this.spendingValues[context.dataIndex]
               let value = this.budgetValues[context.dataIndex]
               let percentage = (sum*100 / value);
               return this.getColor(percentage)
-            }
-          return ""
+  
         },
           borderRadius: 4,
           font: {
@@ -180,17 +183,22 @@ export class BudgetVsSpendingComponent implements OnInit {
           },
           display: (context) => {
            // console.log(context)
-            return context.dataset.label == 'Estimated Expenses'
+           if (context.dataset.label == 'Estimated Expenses' && this.budgetValues[context.dataIndex] > this.spendingValues[context.dataIndex])
+           {
+             return true;
+           }
+           else if (context.dataset.label == 'Actual Expenses' && this.spendingValues[context.dataIndex] > this.budgetValues[context.dataIndex])
+           {
+             return true;
+           }
+           return false;
           },
           formatter: (value, context) => {
-              if (context.dataset.label == 'Estimated Expenses')
-              {
-               // console.log(value)
+   
                 let sum = this.spendingValues[context.dataIndex]
-                let percentage = (sum*100 / value).toFixed(2)+"%";
+                let val = this.budgetValues[context.dataIndex]
+                let percentage = (sum*100 / val).toFixed(2)+"%";
                 return percentage;
-              }
-            return ""
           },
           color: 'white',
       }

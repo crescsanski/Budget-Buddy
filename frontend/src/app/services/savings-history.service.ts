@@ -56,13 +56,25 @@ export class SavingsHistoryService {
           }    
         }
         
-        
+        var found = false;
         for (let i in this.cumSavByMonth)
         {
           if ((this.cumSavByMonth[i].year == date.getFullYear() && this.cumSavByMonth[i].month >= month)
             || this.cumSavByMonth[i].year > date.getFullYear())
           {
+            found = true;
             re.receipt.receipt_is_income ? this.cumSavByMonth[i].totalSavings += total : this.cumSavByMonth[i].totalSavings -= total;
+          }
+        }
+        if (!found)
+        {
+          if (re.receipt.receipt_is_income)
+          {
+            this.cumSavByMonth.push({year: date.getFullYear(), month: month, totalSavings: total});
+          }
+          else
+          {
+            this.cumSavByMonth.push({year: date.getFullYear(), month: month, totalSavings: -1 * total});
           }
         }
         
