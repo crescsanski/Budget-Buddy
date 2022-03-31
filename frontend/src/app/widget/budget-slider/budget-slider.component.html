@@ -23,23 +23,29 @@
             <div class="grid">
                 <div class="col-12">
                     <div class="field">
-                        <label for="cat" >Selected Categories</label>
+                        <label for="cat" style="margin-right: 15px">Selected Categories</label>
                         <p-multiSelect [options]="budgetCategories" class="inputfield" [(ngModel)]="filteredCats"
                         [maxSelectedLabels]="0" [selectedItemsLabel]="'{0} items selected'" 
                         (onChange)="updateCategories()" 
+                        placeholder="Select a Value"
                         inputId="cat"
                         optionLabel="categoryTitle"></p-multiSelect>
                     </div>
                 </div>
                 <div class="col-12">
-                    <div  class="content-area scrollbox">
+                    <div  *ngIf="filteredCats.length > 0" class="content-area scrollbox">
                         <div *ngFor="let cat of budgetCategories">
-                            <div class="sliderArea" *ngIf="cat.visible != false">
+                            <div class="sliderArea" *ngIf="cat.visible">
                                 <p style="color: #003486; text-align: left; font-weight: bold;">{{cat.categoryTitle}}: <span style="font-weight: lighter;">${{cat.new_amount}}/${{cat.max}} ({{cat.new_amount/configTotal | percent:'1.0-2'}})</span></p>
                                 <p-slider *ngIf="refresh" (onChange)="sliderChange()" (onSlideEnd)="this.updateVisibility();" [(ngModel)]=cat.new_amount [min]="0" [max]=cat.max [animate]="true" [step]="5" ptoolT></p-slider>
                                 <p-slider *ngIf="!refresh" (onChange)="sliderChange()" [(ngModel)]=cat.new_amount [min]="0" [max]=cat.max [animate]="true" [step]="5" ptoolT></p-slider>
                             </div>
+                            
                         </div>
+                       
+                    </div>
+                    <div *ngIf="filteredCats.length == 0" class="catFilter">
+                        <span>Please select at least one category.</span>
                     </div>
                 </div>
                

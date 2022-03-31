@@ -21,6 +21,7 @@ import { AuthService } from 'src/app/services/auth.service';
 export class ActualVsEstIncomeComponent implements OnInit {
   chartData: any;
   chartOptions: any;
+  selection: boolean = true;
   dataExists: boolean = false;
   categories: string[] = []
   catOptions: Budget[] = []
@@ -65,9 +66,9 @@ export class ActualVsEstIncomeComponent implements OnInit {
   {
     this.selectedCats = this.catOptions.filter(val => val.is_favorite);
 
-    if (this.selectedCats.length == 0)
+    if (this.budServ.noIncFavorites)
     {
-      this.selectedCats = this.catOptions;
+      this.selection = false;
     }
   }
 
@@ -147,9 +148,8 @@ export class ActualVsEstIncomeComponent implements OnInit {
   this.chartOptions = {
     plugins: {
         datalabels: {
-          align: 'end',
-          anchor: 'end',
-          offset: -22,
+          align: 'center',
+          anchor: 'center',
           backgroundColor: (context) => {
            
               let sum = this.actIncValues[context.dataIndex]
@@ -249,12 +249,12 @@ export class ActualVsEstIncomeComponent implements OnInit {
     {
       if (num <= 100)
       {
-        return 'rgba(44, 28, 150, 0.5)'
+        return 'rgba(44, 28, 150, 0.35)'
 
       }
       else
       {
-        return 'rgba(76, 192, 94, 0.5)'
+        return 'rgba(76, 192, 94, 0.35)'
       }
     }
 

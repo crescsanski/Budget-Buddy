@@ -12,6 +12,7 @@ import { User } from '../models/user';
 import { BudgetCategory } from '../models/formModels/budgetCategory';
 import { TimeService } from './time.service';
 import { Category } from '../models/category';
+import { ThrowStmt } from '@angular/compiler';
 
 
 @Injectable({ providedIn: 'root' })
@@ -21,6 +22,8 @@ export class BudgetService {
   user: User | null = null;
   private bud_Calcs: BudgetTotals[] = [];
   private curMonthCalcs: BudgetTotals;
+  noIncFavorites: boolean = false; //represent whether user has no favorites
+  noExpFavorites: boolean = false;
   private exBudCat: Budget[]
   private inBudCat: Budget[]
 
@@ -88,10 +91,25 @@ export class BudgetService {
     })
   }
 
+  updateFavoriteStatus()
+  {
+    let num = this.inBudCat.filter(val => val.is_favorite)
+    let num2 = this.exBudCat.filter(val => val.is_favorite)
+    if (num.length == 0)
+    {
+      this.noIncFavorites = true;
+    }
+    if (num2.length == 0)
+    {
+      this.noExpFavorites = true;
+    }
+  }
+
   updateValues(budgets: Budget[])
   {
     this.inBudCat = budgets.filter(val => val.category_type == "income")
     this.exBudCat = budgets.filter(val => val.category_type != "income")
+    this.updateFavoriteStatus();
 
     let sum = this.exBudCat.reduce(function (accumulator, item) {
       return accumulator + item.altered_amount;
@@ -173,6 +191,7 @@ export class BudgetService {
         let exp = out.filter(value => value.category_type != "income")
         this.exBudCat = exp;
         this.inBudCat = inc;
+        this.updateFavoriteStatus();
       }),
       catchError(this.handleError<Budget[]>(`getBudByCat`))
     )

@@ -109,11 +109,10 @@ export class SpendingVsIncomeComponent implements OnInit {
   this.chartOptions = {
         plugins: {
             datalabels: {
-              align: 'end',
-              anchor: 'end',
+              align: 'center',
+              anchor: 'center',
               backgroundColor: (context) => {
-                if (context.dataset.label == 'Income')
-                {
+                
                   let sum = this.values[context.dataIndex]
                   let value = this.values2[context.dataIndex]
                   let percentage = (sum*100 / value);
@@ -122,8 +121,7 @@ export class SpendingVsIncomeComponent implements OnInit {
                     return "rgba(0, 0, 0, 0.72)"
                   }
                   return this.getColor(percentage)
-                }
-              return ""
+               
             },
               borderRadius: 4,
               font: {
@@ -131,25 +129,30 @@ export class SpendingVsIncomeComponent implements OnInit {
               },
               display: (context) => {
                // console.log(context)
-                return context.dataset.label == 'Income'
+               if (context.dataset.label == 'Income' && this.values2[context.dataIndex] > this.values[context.dataIndex])
+               {
+                 return true;
+               }
+               else if (context.dataset.label == 'Spending' && this.values[context.dataIndex] > this.values2[context.dataIndex])
+               {
+                 return true;
+               }
+               return false;
               },
               formatter: (value, context) => {
-                  if (context.dataset.label == 'Income')
-                  {
+                  
                    // console.log(value)
                     let sum = this.values[context.dataIndex]
-                    if (value == 0 || value == undefined)
+                    let val = this.values2[context.dataIndex]
+                    if (val == 0 || val == undefined)
                     {
                       return "No Income Data"
                     } 
                     else
                     {
-                      let percentage = (sum*100 / value).toFixed(2)+"%";
+                      let percentage = (sum*100 / val).toFixed(2)+"%";
                       return percentage;
                     }
-              
-                  }
-                return ""
               },
               color: 'white',
           },
@@ -218,12 +221,12 @@ export class SpendingVsIncomeComponent implements OnInit {
     {
       if (num <= 100)
       {
-        return 'rgba(76, 192, 94, 0.5)'
+        return 'rgba(76, 192, 94, 0.35)'
 
       }
       else
       {
-        return 'rgba(255, 0, 0, 0.5)'
+        return 'rgba(255, 0, 0, 0.35)'
       }
     }
 

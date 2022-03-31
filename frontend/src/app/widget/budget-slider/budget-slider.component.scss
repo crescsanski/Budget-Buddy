@@ -1,6 +1,6 @@
 .scrollbox {
   max-height: 50vh;
-  overflow-y: scroll;
+  overflow-y: auto;
   overflow-x: visible !important;
   width: 96%;
   padding: 10px 0px;
@@ -13,6 +13,17 @@
   }
 }
 
+:host::ng-deep #chart
+{
+  width: 100% !important;
+  height: auto !important;
+}
+
+.catFilter
+{
+  text-align: center;
+  vertical-align: middle;
+}
 
 .sliderArea {
   margin-top: 2em;

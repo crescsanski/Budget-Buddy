@@ -24,6 +24,7 @@ export class BudgetVsSpendingComponent implements OnInit {
   dataExists: boolean = false;
   chartData: any;
   chartOptions: any;
+  selection: boolean = true;
   categories: string[] = []
   catOptions: Budget[] = []
   typeOptions: SelectItem[] = []
@@ -69,10 +70,11 @@ export class BudgetVsSpendingComponent implements OnInit {
   {
     this.selectedCats = this.catOptions.filter(val => val.is_favorite);
 
-    if (this.selectedCats.length == 0)
+    if (this.budServ.noExpFavorites)
     {
-      this.selectedCats = this.catOptions;
+      this.selection = false;
     }
+
   }
 
   setupValues()
@@ -166,9 +168,8 @@ export class BudgetVsSpendingComponent implements OnInit {
            
         },
         datalabels: {
-          align: 'end',
-          anchor: 'end',
-          offset: -22,
+          align: 'center',
+          anchor: 'center',
           backgroundColor: (context) => {
        
               let sum = this.spendingValues[context.dataIndex]
@@ -263,12 +264,12 @@ export class BudgetVsSpendingComponent implements OnInit {
     {
       if (num <= 100)
       {
-        return 'rgba(76, 192, 94, 0.5)'
+        return 'rgba(76, 192, 94, 0.35)'
 
       }
       else
       {
-        return 'rgba(255, 0, 0, 0.5)'
+        return 'rgba(255, 0, 0, 0.35)'
       }
     }
 
