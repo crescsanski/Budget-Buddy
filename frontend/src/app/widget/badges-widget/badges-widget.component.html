@@ -5,15 +5,16 @@
             <h2>Badges</h2> 
         </div>
     </div>
-       <div class="badges" *ngFor="let badge of badges">
-        <div style="display: inline-flex">
-            <img src="../../../assets/icons/badge-icon.png"/>
-        <div class="descriptions">
-            <p class="name">{{badge.badge_name}}</p>
-            <p class="description">{{badge.badge_description}}</p>
+        <div class="badgeList">
+            <div class="badges" *ngFor="let badge of badges">
+                <div style="display: inline-flex">
+                    <img src="../../../assets/icons/badge-icon.png"/>
+                <div class="descriptions">
+                    <p class="name">{{badge.badge_name}}</p>
+                    <p class="description">{{badge.badge_description}}</p>
+                </div>
+                </div>
+            </div> 
         </div>
-        </div>
-    </div> 
     </div>
-    
 </div>
