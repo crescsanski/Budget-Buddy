@@ -35,10 +35,13 @@ export class TriggerService {
     this.budgetUpdateAnnounce.next();
   }
 
-  announceFavoritesChange(favorites: Category[])
+  announceFavoritesChange(favorites: Category[], shouldUpWid: boolean)
   {
     this.budServ.updateFavorites(favorites)
-    this.budgetUpdateAnnounce.next();
+    if (shouldUpWid)
+    {
+      this.budgetUpdateAnnounce.next();
+    }
   }
 
  announceReceiptDelete(rec: Receipt)

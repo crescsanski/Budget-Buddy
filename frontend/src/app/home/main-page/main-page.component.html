@@ -53,7 +53,8 @@
     <p-progressSpinner *ngIf="loading"></p-progressSpinner>
     <div style="display: contents;" *ngIf="!loading">
       <p-listbox [options]="budgetCategories" [(ngModel)]="selectedCategories"  [listStyle]="{'max-height':'20vh'}" optionLabel="category_name" [multiple]="true"  [filter]="true" [filterPlaceHolder]="'Search'" [checkbox]="true"></p-listbox>
-      <button  pButton pRipple  type="button" (click)="setFavorites()" style="display: block; text-align: center; width: 99%; margin-top: 2em" >Submit</button>
+      <button  pButton pRipple  type="button" (click)="setFavorites($event)" style="display: block; text-align: center; width: 99%; margin-top: 2em" >Submit</button>
+      <p-confirmPopup></p-confirmPopup>
     </div>
 </p-dialog>
 

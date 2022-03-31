@@ -11,6 +11,7 @@ import { BudgetService } from 'src/app/services/budget.service';
 import { TimeService } from 'src/app/services/time.service';
 import { Budget } from 'src/app/models/budget';
 import { TriggerService } from 'src/app/services/trigger.service';
+import {ConfirmationService} from 'primeng/api';
 
 
 @Component({
@@ -39,7 +40,7 @@ export class MainPageComponent implements OnInit {
 
 
 
-  constructor(private authService: AuthService, private trigServ: TriggerService, private ts: TimeService, private budServ: BudgetService, private catServ: CategoryService, private messageService: MessageService, private router: Router) { 
+  constructor(private confServ: ConfirmationService, private authService: AuthService, private trigServ: TriggerService, private ts: TimeService, private budServ: BudgetService, private catServ: CategoryService, private messageService: MessageService, private router: Router) { 
     
     try{
       this.router.getCurrentNavigation().extras.state.newUser;
@@ -153,8 +154,24 @@ export class MainPageComponent implements OnInit {
     this.favoriteMenu = true;
   }
 
-  setFavorites(){
+  setFavorites(event){
     //TODO: API TO SET FAVORITES
+    this.confServ.confirm({
+      target: event.target,
+      message: 'Would you like to filter all widgets to only display your newly selected favorites in the current session? \n (All widgets use favorites as the default selection in their category filter.)',
+      icon: 'pi pi-exclamation-triangle',
+      accept: () => {
+        this.updateFavorites(true)
+      },
+      reject: () => {
+        this.updateFavorites(false)
+      }
+    })
+
+  }
+
+  updateFavorites(shouldUpWid: boolean)
+  {
     this.loading = true;
     var post: Budget[] = []
     this.budgetCategories.forEach((val) => {
@@ -177,7 +194,7 @@ export class MainPageComponent implements OnInit {
     this.budServ.updateBudget(post).subscribe(() => {
       this.favoriteMenu = false;
       this.loading = false;
-      this.trigServ.announceFavoritesChange(this.selectedCategories)
+      this.trigServ.announceFavoritesChange(this.selectedCategories, shouldUpWid)
     })
   }
 

@@ -20,6 +20,7 @@ import { RegisterPageComponent } from './register/register-page/register-page.co
 import { PrimengModule } from './primeng/primeng.module';
 import { CurrencyPipe, DatePipe, DecimalPipe, PercentPipe } from '@angular/common';
 import {TooltipModule} from 'primeng/tooltip';
+import { ConfirmationService } from 'primeng/api';
 
 @NgModule({
   declarations: [
@@ -54,7 +55,7 @@ import {TooltipModule} from 'primeng/tooltip';
   providers: [
     { provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true },
     { provide: HTTP_INTERCEPTORS, useClass: ErrorInterceptor, multi: true },
-    DatePipe, CurrencyPipe, PercentPipe, DecimalPipe
+    DatePipe, CurrencyPipe, PercentPipe, DecimalPipe, ConfirmationService
   ],
   bootstrap: [AppComponent]
 })

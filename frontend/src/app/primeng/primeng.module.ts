@@ -16,12 +16,14 @@ import { InputTextModule } from 'primeng/inputtext';
 import {TabViewModule} from 'primeng/tabview';
 import {ProgressSpinnerModule} from 'primeng/progressspinner';
 import {ProgressBarModule} from 'primeng/progressbar';
+import {ConfirmPopupModule} from 'primeng/confirmpopup';
 
 @NgModule({
   declarations: [  ],
   imports: [
     InputNumberModule,
     ProgressSpinnerModule,
+    ConfirmPopupModule,
     ProgressBarModule,
     CalendarModule,
     MultiSelectModule,
@@ -43,6 +45,7 @@ import {ProgressBarModule} from 'primeng/progressbar';
     MessagesModule,
     PasswordModule,
     ProgressSpinnerModule,
+    ConfirmPopupModule,
     ButtonModule,
     InputMaskModule,
     CheckboxModule,
