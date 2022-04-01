@@ -9,6 +9,7 @@ from app.models import *
 from django.db.models.functions import *
 from django.db.models import *
 
+
 @api_view(["GET"])
 #WANT SCORE VARIABLES
 def budgetScore(request, user_id):
@@ -175,7 +176,7 @@ def budgetScore(request, user_id):
             estimatorScore = 0    
     
 # //WEIGHTED SCORES
-    out = (int)((wantScore * .5) + (useScore * .3) + (estimatorScore * .2))
+    out = (int)((float(wantScore) * .5) + (float(useScore) * .3) + (float(estimatorScore) * .2))
 # //total may seem off but it isn't because it is not actually 
 # //made into an INT until all score are combined
 

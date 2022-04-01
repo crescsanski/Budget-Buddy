@@ -1,5 +1,7 @@
-import { ChallengePackage } from './../../models/challengePackage';
+import { Challenge } from '../../models/Challenge';
 import { Component, OnInit } from '@angular/core';
+import { ChallengesService } from 'src/app/services/challenges.service';
+import { TriggerService } from 'src/app/services/trigger.service';
 
 @Component({
   selector: 'app-challenge-progress',
@@ -8,20 +10,24 @@ import { Component, OnInit } from '@angular/core';
 })
 export class ChallengeProgressComponent implements OnInit {
 
-  challenges: any[] //will be of type ChallengePackage (but too complicated to implement w/out just retrieving data)
+  challenges: Challenge[] //will be of type ChallengePackage (but too complicated to implement w/out just retrieving data)
 
-  constructor() {
+  constructor(private chalServ: ChallengesService, private trigServ: TriggerService) {
+      this.challenges = this.chalServ.challenges;
+
+      this.trigServ.challAnnounced$.subscribe(() => this.challenges = this.chalServ.challenges)
       //TO DO: implement w/ API
+
+      /*
       this.challenges = [
         {
-          challenge__challenge_completion_amount: 7,
-          challenge_value_label: 'days',
-          challenge__challenge_description: 'Track spending every day for one week',
-          challenge__challenge_is_active: true,
-          challenge__challenge_name: "Daily Tracker",
-          challenge__challenge_start_amount: 0,
-          challenge__challenge_time_given: 7,
-          user_challenge_current_amount: 5,
+          goal: 7,
+          label: 'days',
+          description: 'Track spending every day for one week',
+          name: "Daily Tracker",
+          start_amount: 0,
+          time_given: -1,
+          progress: 5,
           currentProgress: Math.floor((5 / 7) * 100),
           user_challenge_completion_date: "3/27/22"
         },
@@ -38,6 +44,7 @@ export class ChallengeProgressComponent implements OnInit {
           user_challenge_completion_date: "4/12/22"
         }
       ]
+      */
    }
 
   ngOnInit(): void {

@@ -12,12 +12,15 @@ from rest_framework.decorators import action, permission_classes
 from django.contrib.auth import get_user_model, logout
 from rest_framework.response import Response
 from app.models import *
+from django.db.models import F
 from django.contrib.auth.password_validation import CommonPasswordValidator, NumericPasswordValidator, UserAttributeSimilarityValidator, validate_password, MinimumLengthValidator
 from app.serializers import *
 from django.contrib import auth
 from pdf2image import convert_from_path
 from django.db import connection
 from django.core.files.storage import FileSystemStorage
+from django.db.models.functions import Cast
+from django.db.models import FloatField
 import pytesseract
 import matplotlib.pyplot as plt
 from imutils.perspective import four_point_transform
@@ -31,6 +34,29 @@ import numpy as np
 import shutil
 from django.views.decorators.http import require_http_methods
 from rest_framework.decorators import api_view, throttle_classes
+
+@api_view(['GET'])
+def manageUserChallInv(request, user_id):
+    user = Users.objects.get(user_id = user_id)
+
+    ex = UserChallengeInventory.objects.filter(user = user).select_related('challenge').annotate(
+        id = 
+    F('user_challenge_inventory_id'),
+                name = F('challenge__challenge_name'),
+                description = F('challenge__challenge_description'),
+                start_date = F('user_challenge_start_date'),
+                goal = F('challenge__challenge_completion_amount'),
+                progress = F('user_challenge_current_amount'),
+                completion_date = F('user_challenge_completion_date'),
+                type = F('challenge__challenge_type'),
+                time_given = F('challenge__challenge_time_given'),
+                trigger = F('challenge__challenge_trigger')).annotate(
+                    fracCompl = Cast(F('progress'), FloatField()) / Cast(F('goal'), FloatField()) * 100).values(
+                    'id', 'name', 'description', 'start_date', 'goal', 'progress', 'fracCompl', 'completion_date', 'type', 'time_given', 'trigger'
+                )
+
+    return Response(ex)
+    
 
 class ValidateChallengeViewSet(GenericAPIView):
     permission_classes = [permissions.IsAuthenticated]

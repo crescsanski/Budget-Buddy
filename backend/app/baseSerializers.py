@@ -39,11 +39,6 @@ class CategorySerializer(serializers.ModelSerializer):
 #         model = Levels
 #         fields = '__all__'
 
-
-class TriggerSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = ChallengeTrigger
-        fields = '__all__'
     
 class ChallengeSerializer(serializers.ModelSerializer):
     class Meta:

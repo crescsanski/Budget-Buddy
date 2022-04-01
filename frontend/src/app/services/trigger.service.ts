@@ -6,6 +6,7 @@ import { Category } from '../models/category';
 import { Receipt } from '../models/receipt';
 import { QuickReceipt } from '../models/simReceipt';
 import { BudgetService } from './budget.service';
+import { ChallengesService } from './challenges.service';
 import { IncomeHistoryService } from './income-history.service';
 import { SavingsHistoryService } from './savings-history.service';
 import { SpendingHistoryService } from './spending-history.service';
@@ -19,6 +20,7 @@ export class TriggerService {
   private expenReceiptChange = new Subject<Receipt>();
   private incomReceiptChange = new Subject<Receipt>();
 
+  private challAnnounce = new Subject<void>();
   private budgetUpdateAnnounce = new Subject<Budget[]>();
   private favoritesAnnounce = new Subject<void>();
 
@@ -27,6 +29,13 @@ export class TriggerService {
   incomReceiptChanged$ = this.incomReceiptChange.asObservable();
   favoritesAnnounced$ = this.favoritesAnnounce.asObservable();
   budgetUpdatedAnnounced$ = this.budgetUpdateAnnounce.asObservable();
+  challAnnounced$ = this.challAnnounce.asObservable();
+
+  async announceChallengeUpdate()
+  {
+    await (this.challServ.getChallenges().toPromise());
+    this.challAnnounce.next();
+  }
 
   announceBudgetUpdate(budgets: Budget[])
   {
@@ -94,6 +103,8 @@ export class TriggerService {
   announceExpenReceiptSubmit(rec: Receipt)
   {
 
+    this.checkTrigger('record_expense')
+
     this.recAddProcess(rec)
 
     rec.operation = "new"
@@ -103,6 +114,8 @@ export class TriggerService {
 
   announceIncomReceiptSubmit(rec: Receipt)
   {
+
+    this.checkTrigger('record_income')
     
     this.recAddProcess(rec)
     rec.operation = "new"
@@ -110,6 +123,15 @@ export class TriggerService {
     this.incomReceiptChange.next(rec);
   }
 
+  checkTrigger(type: string)
+  {
+    if (this.challServ.trigs.has(type))
+    {
+      this.announceChallengeUpdate();
+    }
+  }
+
   constructor(private spenHis: SpendingHistoryService, private savHis: SavingsHistoryService,
-    private incHis: IncomeHistoryService, private budServ: BudgetService) { }
+    private incHis: IncomeHistoryService, private challServ: ChallengesService,
+    private budServ: BudgetService) { }
 }

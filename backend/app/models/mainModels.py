@@ -36,25 +36,16 @@ class Challenge(models.Model):
     challenge_is_repeatable = models.BooleanField()
     challenge_is_active = models.BooleanField()
     challenge_experience_points = models.IntegerField(blank=True, null=True)
-    challenge_start_ammount = models.IntegerField(blank=True, null=True)
-    challenge_completion_ammount = models.IntegerField(blank=True, null=True)
+    challenge_start_amount = models.IntegerField(blank=True, null=True)
+    challenge_completion_amount = models.IntegerField(blank=True, null=True)
     item = models.ForeignKey('Item', models.DO_NOTHING, blank=True, null=True)
     difficulty = models.IntegerField(blank=True, null=True)
-    challenge_trigger = models.ForeignKey('ChallengeTrigger', models.DO_NOTHING, blank=True, null=True)
+    challenge_trigger = models.CharField(max_length=255)
     experience_level_unlock = models.IntegerField(blank=True, null=True)
 
     class Meta:
         managed = False
         db_table = 'challenge'
-
-
-class ChallengeTrigger(models.Model):
-    challenge_trigger_id = models.AutoField(primary_key=True)
-    challenge_trigger_name = models.CharField(max_length=255)
-
-    class Meta:
-        managed = False
-        db_table = 'challenge_trigger'
 
 
 class Competition(models.Model):

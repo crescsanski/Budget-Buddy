@@ -5,6 +5,7 @@ import { BadgesEarnedService } from "../services/badgesEarned.service";
 import { BudgetService } from "../services/budget.service";
 import { BudgetScoreService } from "../services/budget_score.service";
 import { CategoryService } from "../services/category.service";
+import { ChallengesService } from "../services/challenges.service";
 import { IncomeHistoryService } from "../services/income-history.service";
 import { SavingsHistoryService } from "../services/savings-history.service";
 import { SpendingHistoryService } from "../services/spending-history.service";
@@ -16,6 +17,7 @@ export class DataResolver implements Resolve<any> {
     constructor(private budServ: BudgetService,
         private spenTot: SpendingHistoryService,
         private budSco: BudgetScoreService,
+        private chalServ: ChallengesService,
         private badServ: BadgesEarnedService,
         private rs: ReceiptTrackService,
         private incServ: IncomeHistoryService,
@@ -38,6 +40,9 @@ export class DataResolver implements Resolve<any> {
 
         //Fetch receipts for user:
         this.rs.getReceipts(),
+
+        //Fetch challenges for user:
+        this.chalServ.getChallenges(),
 
         //Fetch Default Display for Savings over Time Widget
         this.savServ.getByMonthCumSavings(),

@@ -44,6 +44,8 @@ urlpatterns = [
     path('receipt_upload/', views.ReceiptUploadConvertViewSet.as_view()),
     
     path('validate_challenge/<userid>/<challengeid>', views.ValidateChallengeViewSet.as_view()),
+
+    path('chall_inv/<user_id>/', views.manageUserChallInv),
     
     path('badges_earned/<userid>/', views.BadgesEarnedViewSet.as_view()),
 
