@@ -13,6 +13,32 @@
  /* margin-top: -130px;*/
 }
 
+:host::ng-deep .custom
+{
+  width: fit-content !important;
+  display: inline-block !important;
+  text-align: left;
+}
+
+.label
+{
+  margin-right: 20px; 
+  font-weight: 500 !important;
+  filter: brightness(85%);
+  font-size: 1.08em;
+  vertical-align: middle;
+  display: inline-block !important;
+  margin-top: 11px;
+  width: 270px;
+  text-align: left;
+}
+
+.custom2
+{
+  display: flex !important;
+  justify-content:left
+}
+
 h1 {
   text-align: center;
   color: $blue;
@@ -21,7 +47,11 @@ h1 {
 .questions
 {
     overflow-y: auto;
-    max-height: calc(100% - 290px)
+    max-height: calc(100% - 290px);
+    justify-content: center !important;
+    align-self: center;
+    align-items: center;
+    margin-left: 150px;
 }
 
 .column {
