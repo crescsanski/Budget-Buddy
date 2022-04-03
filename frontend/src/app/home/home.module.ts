@@ -19,6 +19,7 @@ import {ChartModule} from 'primeng/chart';
 import {DialogModule} from 'primeng/dialog';
 import { BudgetAdjusterComponent } from './budget-creator/budget-adjuster/budget-adjuster.component';
 import {ListboxModule} from 'primeng/listbox';
+import { BudgetAlgorithmComponent } from './budget-creator/budget-algorithm/budget-algorithm.component';
 
 
 
@@ -35,7 +36,8 @@ import {ListboxModule} from 'primeng/listbox';
     NewBudgetComponent,
     BudgetPanelComponent,
     BudgetAdvisorComponent,
-    BudgetAdjusterComponent
+    BudgetAdjusterComponent,
+    BudgetAlgorithmComponent
   ],
   imports: [
     CommonModule,

@@ -12,6 +12,7 @@ import { BudgetService } from 'src/app/services/budget.service';
 import { Budget } from 'src/app/models/budget';
 import { AuthService } from 'src/app/services/auth.service';
 import { CategoryService } from 'src/app/services/category.service';
+import { THIS_EXPR } from '@angular/compiler/src/output/output_ast';
 
 @Component({
   selector: 'app-budget-panel',
@@ -34,6 +35,7 @@ export class BudgetPanelComponent implements OnInit {
   
   prompts: newBudgetPrompt[];
   catOptions: Category[];
+  runSpenRecAlg: boolean = true;
   form: FormArray
   currentPanel: any;
   exisBudgets: Budget[]
@@ -60,7 +62,7 @@ export class BudgetPanelComponent implements OnInit {
     private ms: MessageService) {
 
   this.panels = [
-    'Advisor','Income', 'Expenses', 'Finalization'
+    'Optimizer', 'Advisor','Income', 'Expenses', 'Finalization'
   ]
 
   this.income = this.cs.incomeCats.map(obj => ({...obj, amount: 0, category: obj.category_type, categoryTitle: obj.category_name}));
@@ -96,6 +98,7 @@ export class BudgetPanelComponent implements OnInit {
       {icon: '../../../../assets/icons/budget-icons/misc-income.png', categoryTitle: 'Miscellaneous Expense',  amount: 0, type: 'Expense', category: 'debt'},
   ]
   */
+
     
   this.prompts = [
     //toggle comments to show finalization page first

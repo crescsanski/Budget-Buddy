@@ -1,0 +1,26 @@
+<div class="panel">
+    <h1>Optimizing Your Budget</h1>
+    <br>
+    <h3>Please provide answers to the following questions.  We will use your answers to deterimine
+        the optimal percentage of total income that you should budget toward needs, wants, and savings-based spending categories.</h3>
+    <br>
+    <div class="questions">
+        <div style="width: 40%; display: block" class="column">
+            <h3>What is your yearly income?</h3>
+            <p-inputNumber placeholder="$0.00" mode="currency" [(ngModel)]="income" currency="USD" locale="en-US"></p-inputNumber>
+        </div>
+        <div *ngFor="let item of userAttributes; let i=index">
+            <div style="width: 40%; display: block" class="column">
+                <h3>{{item.label}}</h3>
+                <p-selectButton [options]="answers" [(ngModel)]="item.value" optionLabel="label" optionValue="value"></p-selectButton>
+            </div>
+        </div>
+        
+        <br>
+    </div>
+   
+    <div style="display:inline-block; text-align: center; justify-content: center; width: 100%">
+    <br>
+        <p-button style="text-align: center" (onClick)="this.nextPage()">Submit</p-button>
+    </div>
+</div>

@@ -1,3 +1,7 @@
+<div *ngIf="currentPanel == 'Optimizer'" class="panel panel2">
+    <app-budget-algorithm (pageForward)="pageForward();"></app-budget-algorithm>
+</div>
+
 <div *ngIf="currentPanel == 'Advisor' && advisorVisible">
     <app-budget-advisor (pageForward)="pageForward(); "></app-budget-advisor>
 </div>

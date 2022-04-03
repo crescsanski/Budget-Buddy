@@ -17,6 +17,7 @@ import {TabViewModule} from 'primeng/tabview';
 import {ProgressSpinnerModule} from 'primeng/progressspinner';
 import {ProgressBarModule} from 'primeng/progressbar';
 import {ConfirmPopupModule} from 'primeng/confirmpopup';
+import {SelectButtonModule} from 'primeng/selectbutton';
 
 @NgModule({
   declarations: [  ],
@@ -37,6 +38,7 @@ import {ConfirmPopupModule} from 'primeng/confirmpopup';
     SliderModule,
     InputTextModule,
     TabViewModule,
+    SelectButtonModule
   ],
   exports: [
     InputNumberModule,
@@ -55,6 +57,7 @@ import {ConfirmPopupModule} from 'primeng/confirmpopup';
     SliderModule,
     InputTextModule,
     TabViewModule,
+    SelectButtonModule
   ],
   providers: [
     MessageService
