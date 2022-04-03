@@ -1,19 +1,19 @@
-<div class="panel">
+<div *ngIf="load" class="panel">
     <h1>Understanding Your Budget</h1>
     <br>
-    <h3>Budget Buddy recommends the 50%, 30%, 20% rule.</h3>
+    <h3>Budget Buddy recommends the {{this.dat.need * 100}}%, {{this.dat.want * 100}}%, {{this.dat.saving * 100}}% rule.</h3>
     <p-chart type="doughnut" [data]="data"  [style]="{'width': '30%'}" [options]="options"></p-chart>
     <br>
     <h3>Click on the categories below to see our recommendations for each.</h3>
     <div class="card-area">
         <div class="card" (click)="setDisplay(needs)">
-            <h1>50% <br> Needs</h1>
+            <h1>{{this.dat.need * 100}}% <br> Needs</h1>
         </div>
         <div class="card" (click)="this.setDisplay(wants)">
-            <h1>30% <br> Wants</h1>
+            <h1>{{this.dat.want * 100}}% <br> Wants</h1>
         </div>
         <div class="card" (click)="this.setDisplay(debt)">
-            <h1>20% <br> Savings</h1>
+            <h1>{{this.dat.saving * 100}}% <br> Savings</h1>
         </div>  
     </div>
     <br>

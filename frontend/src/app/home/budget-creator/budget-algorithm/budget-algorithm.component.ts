@@ -9,13 +9,14 @@ import { SelectItem } from 'primeng/api';
 export class BudgetAlgorithmComponent implements OnInit {
 
   userAttributes: SelectItem<boolean>[];
+  load: boolean = false;
   answers: SelectItem<boolean>[];
   income: number;
 
   @Output() pageForward  = new EventEmitter();
 
-  nextPage() {
-    this.pageForward.emit();
+  nextPage(pack: any) {
+    this.pageForward.emit(pack);
   }
 
   
@@ -320,10 +321,62 @@ export class BudgetAlgorithmComponent implements OnInit {
     taxPayment2 = income * need * (taxPayment * 0.01)
     miscellaneousExpenseEssential2 = income * need * (miscellaneousExpenseEssential * 0.01)
 
+    this.nextPage({
+        want: want,
+        need: need,
+        saving: saving,
+        income: income,
+        housing: housing2,
+        transportation: transportation2,
+        foodGroceryEssential: foodGroceryEssential2,
+        medical: medical2,
+        utilities: utilities2,
+        debtPayment: debtPayment2,
+        insurance: insurance2,
+        lifestyleEssential: lifestyleEssential2,
+        petCost: petCost2,
+        taxPayment: taxPayment2,
+        miscellaneousExpenseEssential: miscellaneousExpenseEssential2
+    })
 
-
-
-
+    /*
+    console.log("BudgetReport")
+    console.log("")
+    console.log("Monthly Income: $" + income)
+    console.log("")
+    console.log("Indepentent: " + independent + " /Retired: " + retired + " /Married: " + married + " /Multiple Incomes: " + multipleIncomes + " /Children: " + children + " /City: " + city + " /Pet: " + pet + " /Tax Payment: " + noRefund)
+    console.log("")
+    console.log("Needs: " + (need * 100) + "%")
+    console.log("Wants: " + (want * 100) + "%")
+    console.log("Savings: " + (saving * 100) + "%")
+    console.log("")
+    console.log("Housing Percent: " + housing + "%")
+    console.log("Transportation Percent: " + transportation + "%")
+    console.log("Food/Grocery Essential Percent: " + foodGroceryEssential + "%")
+    console.log("Medical Percent: " + medical + "%")
+    console.log("Utilities Percent: " + utilities + "%")
+    console.log("Debt Payment Percent: " + debtPayment + "%")
+    console.log("Insurance Percent: " + insurance + "%")
+    console.log("Lifestyle Essential Percent: " + lifestyleEssential + "%")
+    console.log("Pet Percent: " + petCost + "%")
+    console.log("Tax Payment Percent: " + taxPayment + "%")
+    console.log("Miscellaneous Essential Percent: " + miscellaneousExpenseEssential + "%")
+    console.log("")
+    console.log("Total Percent: " + (housing + transportation + foodGroceryEssential + medical + utilities + debtPayment + insurance + lifestyleEssential + petCost + taxPayment + miscellaneousExpenseEssential) + "%")
+    console.log("")
+    console.log("Housing Cost: $" + housing2)
+    console.log("Transportation Cost: $" + transportation2)
+    console.log("Food/Grocery Essential Cost: $" + foodGroceryEssential2)
+    console.log("Medical Cost: $" + medical2)
+    console.log("Utilities Cost: $" + utilities2)
+    console.log("Debt Payment Cost: $" + debtPayment2)
+    console.log("Insurance Cost: $" + insurance2)
+    console.log("Lifestyle Essential Cost: $" + lifestyleEssential2)
+    console.log("Pet Cost: $" + petCost2)
+    console.log("Tax Payment Cost: $" + taxPayment2)
+    console.log("Miscellaneous Essential Cost: $" + miscellaneousExpenseEssential2)
+    console.log("")
+    */
   }
 
 }

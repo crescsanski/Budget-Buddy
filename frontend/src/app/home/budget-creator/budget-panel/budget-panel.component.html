@@ -1,9 +1,9 @@
 <div *ngIf="currentPanel == 'Optimizer'" class="panel panel2">
-    <app-budget-algorithm (pageForward)="pageForward();"></app-budget-algorithm>
+    <app-budget-algorithm (pageForward)="pageForwardSpec($event);"></app-budget-algorithm>
 </div>
 
-<div *ngIf="currentPanel == 'Advisor' && advisorVisible">
-    <app-budget-advisor (pageForward)="pageForward(); "></app-budget-advisor>
+<div [hidden]="!(currentPanel == 'Advisor' && advisorVisible)">
+    <app-budget-advisor *ngIf="advisorPackage" [dat]="advisorPackage" (pageForward)="pageForward(); "></app-budget-advisor>
 </div>
 <div *ngIf="currentPanel == 'Income' && advisorVisible" class="panel" style="padding:2em; height: 65vh; overflow-y: auto">
     <div>

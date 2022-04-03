@@ -36,6 +36,7 @@ export class BudgetPanelComponent implements OnInit {
   prompts: newBudgetPrompt[];
   catOptions: Category[];
   runSpenRecAlg: boolean = true;
+  advisorPackage: any;
   form: FormArray
   currentPanel: any;
   exisBudgets: Budget[]
@@ -144,8 +145,16 @@ export class BudgetPanelComponent implements OnInit {
 
   pageForward(){
     this.panelNumber+=1;
-    this.currentPanel = this.panels[this.panelNumber]
+    this.currentPanel = this.panels[this.panelNumber];
+    
     console.log(this.currentPanel)
+  }
+
+  pageForwardSpec(data: any)
+  {
+    this.advisorPackage = data;
+    console.log("To send to advisor: ", this.advisorPackage)
+    setTimeout(() => this.pageForward(), 100);
   }
 
   pageForwardStep2(){

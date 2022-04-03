@@ -1,27 +1,31 @@
 <div class="panel">
     <h1>Optimizing Your Budget</h1>
     <br>
-    <h3>The Budget Buddy can provide personalized budget recommendations.</h3>
-    <h3>Please answer the questions below to get started.</h3>
-    <br>
-    <div class="questions grid">
-        <div class="col-12 custom2">
-            <label class="label">What is your annual income?</label>
-            <p-inputNumber class="custom" placeholder="$0.00" mode="currency" [(ngModel)]="income" currency="USD" locale="en-US"></p-inputNumber>
-        </div>
-        <div *ngFor="let item of userAttributes; let i=index" class="col-12 custom2">
-         
-            <label class="label" >{{item.label}}</label>
-            <p-selectButton class="custom" [options]="answers" [(ngModel)]="item.value" optionLabel="label" optionValue="value"></p-selectButton>
-       
-        </div>
-        
+    <div style="display: contents" *ngIf="!load">
+        <h3>The Budget Buddy can provide personalized budget recommendations.</h3>
+        <h3>Please answer the questions below to get started.</h3>
         <br>
-    </div>
-   
-    <div style="display:inline-block; text-align: center; justify-content: center; width: 100%">
-    <br>
-    <br>
-        <p-button style="text-align: center" (onClick)="this.nextPage()">Submit</p-button>
+        <div class="questions grid">
+            <div class="col-12 custom2">
+                <label class="label">What is your annual income?</label>
+                <p-inputNumber class="custom" placeholder="$0.00" mode="currency" [(ngModel)]="income" currency="USD" locale="en-US"></p-inputNumber>
+            </div>
+            <div *ngFor="let item of userAttributes; let i=index" class="col-12 custom2">
+             
+                <label class="label" >{{item.label}}</label>
+                <p-selectButton class="custom" [options]="answers" [(ngModel)]="item.value" optionLabel="label" optionValue="value"></p-selectButton>
+           
+            </div>
+            
+            <br>
+        </div>
+       
+        <div style="display:inline-block; text-align: center; justify-content: center; width: 100%">
+        <br>
+        <br>
+            <p-button style="text-align: center" (onClick)="runSpendingRec(); load = true;">Submit</p-button>
+        </div>
     </div>
 </div>
+
+

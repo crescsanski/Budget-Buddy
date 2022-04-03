@@ -47,7 +47,7 @@ h1 {
 .questions
 {
     overflow-y: auto;
-    max-height: calc(100% - 290px);
+    max-height: calc(100% - 290px) !important;
     justify-content: center !important;
     align-self: center;
     align-items: center;

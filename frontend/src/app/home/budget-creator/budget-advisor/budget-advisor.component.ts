@@ -1,4 +1,4 @@
-import { Component, OnInit, Output, EventEmitter } from '@angular/core';
+import { Component, OnInit, Output, EventEmitter, Input } from '@angular/core';
 import { CategoryService } from 'src/app/services/category.service';
 import { newBudgetPrompt } from './../../../models/newBudgetPrompt';
 
@@ -11,6 +11,7 @@ import { newBudgetPrompt } from './../../../models/newBudgetPrompt';
 export class BudgetAdvisorComponent implements OnInit {
   data: any;
   options: any;
+  load: boolean = false;
   needs: newBudgetPrompt[] = [];
   wants: newBudgetPrompt[] = [];
   debt: newBudgetPrompt[] = [];
@@ -19,6 +20,8 @@ export class BudgetAdvisorComponent implements OnInit {
 
   @Output() pageForward  = new EventEmitter();
 
+  @Input() dat: any;
+
   nextPage() {
     this.pageForward.emit();
   }
@@ -26,14 +29,18 @@ export class BudgetAdvisorComponent implements OnInit {
   
   displayNeeds = false;
 
-  constructor(private cs: CategoryService) { }
+  constructor(private cs: CategoryService) { 
 
-  ngOnInit() {
+  }
+
+  ngOnInit(): void {
+
+    console.log("Breakdown: " + this.dat)
     this.data = {
-        labels: ['Savings','Wants','Needs'],
+        labels: ['Needs', 'Wants', 'Savings'],
         datasets: [
             {
-                data: [20, 30, 50],
+                data: [(this.dat.need * 100), (this.dat.want * 100), (this.dat.saving * 100)],
                 backgroundColor: [
                     "#003486",
                     "#4ec5ca",
@@ -84,16 +91,18 @@ export class BudgetAdvisorComponent implements OnInit {
     ];
     */
 
+    this.load = true;
+
   }
 
   setDisplay(selected) {
     this.displayItems = selected;
     if (this.displayItems == this.needs) {
-      this.title = '50% Needs';
+      this.title = (this.dat.need * 100) + '% Needs';
     } else if (this.displayItems == this.debt) {
-      this.title = '20% Savings';
+      this.title = (this.dat.saving * 100) + "% Savings";
     } else  if (this.displayItems == this.wants) {
-      this.title = '30% Wants';
+      this.title = (this.dat.want * 100) + '% Wants';
     } else {
       this.title = 'Error'
     }
