@@ -6,11 +6,15 @@
   width: 20vw;
   min-width: 300px;
   max-width: 320px;
-  padding-right: 2vw;
+  padding-right: 4vw;
   padding-left: 1vw;
   padding-top: 10px;
   background-repeat: no-repeat;
   font-family: "Century Gothic Pro", sans-serif !important;
+}
+
+.hide {
+  display: none;
 }
 
 h1 {

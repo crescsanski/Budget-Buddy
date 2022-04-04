@@ -70,8 +70,14 @@ div {
 }
 
 .large-widgets {
-  width: 54vw;
+  width: 60vw;
   display: block;
+}
+
+.title-bar {
+  margin-bottom: 1vh;
+  height: 11vh;
+
 }
 
 .xlarge-widgets {
@@ -87,6 +93,7 @@ div {
 
 .small-widgets {
   display: block;
+  width: 12vw;
   margin-left: 1vw;
   margin-right: 0.5vw;
 }
