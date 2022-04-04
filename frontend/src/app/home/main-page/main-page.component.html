@@ -57,6 +57,10 @@
     </div>
 </p-dialog>
 
+<p-dialog header="Avatar Editor" [(visible)]="avatarEditor">
+  <app-avatar-editor></app-avatar-editor>
+</p-dialog>
+
 <p-dialog header="Welcome" [(visible)]="welcomeMessage" [style]="{width: '50vw'}">
   <h2 style="text-align: center;">Welcome!</h2>
   <p style="text-align: center;">Now that we've set up your budget, let's learn about Budget Buddy!<br>In the menu to the left, we have several options.</p>
