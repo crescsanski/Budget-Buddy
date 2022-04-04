@@ -1,3 +1,4 @@
+import { PercentPipe } from '@angular/common';
 import { Component, OnInit, Output, EventEmitter, Input } from '@angular/core';
 import { CategoryService } from 'src/app/services/category.service';
 import { newBudgetPrompt } from './../../../models/newBudgetPrompt';
@@ -13,6 +14,9 @@ export class BudgetAdvisorComponent implements OnInit {
   options: any;
   load: boolean = false;
   needs: newBudgetPrompt[] = [];
+  wantIcons: any;
+  needIcons: any;
+  debtIcons: any;
   wants: newBudgetPrompt[] = [];
   debt: newBudgetPrompt[] = [];
   displayItems: newBudgetPrompt[] = [];
@@ -29,7 +33,7 @@ export class BudgetAdvisorComponent implements OnInit {
   
   displayNeeds = false;
 
-  constructor(private cs: CategoryService) { 
+  constructor(private cs: CategoryService, private pp: PercentPipe) { 
 
   }
 
@@ -61,35 +65,46 @@ export class BudgetAdvisorComponent implements OnInit {
       maintainAspectRatio: false
     };
 
-    this.wants = this.cs.expenseCats.map(obj => ({...obj, visible: true, max: 0, amount: 0, category: obj.category_type, categoryTitle: obj.category_name})).filter(obj => obj.category_type == "want");
-    this.debt = this.cs.expenseCats.map(obj => ({...obj, visible: true, max: 0, amount: 0, category: obj.category_type, categoryTitle: obj.category_name})).filter(obj => obj.category_type == "saving");
-    this.needs = this.cs.expenseCats.map(obj => ({...obj, visible: true, max: 0, amount: 0, category: obj.category_type, categoryTitle: obj.category_name})).filter(obj => obj.category_type == "need");
-
-    /*
-     this.wants =[
-      {icon: '../../../../assets/icons/budget-icons/restaraunts.png', categoryTitle: 'Restaurants',  amount: 0, type: 'Expense'},
-      {icon: '../../../../assets/icons/budget-icons/entertainment.png', categoryTitle: 'Entertainment',  amount: 0, type: 'Expense'},
-      {icon: '../../../../assets/icons/budget-icons/clothing.png', categoryTitle: 'Clothing',  amount: 0, type: 'Expense'},
-      {icon: '../../../../assets/icons/budget-icons/furnishings.png', categoryTitle: 'Furnishings',  amount: 0, type: 'Expense'},
-      {icon: '../../../../assets/icons/budget-icons/non-essential-groceries.png', categoryTitle: 'Non-Essential Groceries',  amount: 0, type: 'Expense'},
-      {icon: '../../../../assets/icons/budget-icons/gift.png', categoryTitle: 'Gifts',  amount: 0, type: 'Expense'},
+    this.wantIcons ={
+      'Restaurants': {icon: '../../../../assets/icons/budget-icons/restaraunts.png', categoryTitle: 'Restaurants',  amount: 0, type: 'Expense'},
+      'Entertainment': {icon: '../../../../assets/icons/budget-icons/entertainment.png', categoryTitle: 'Entertainment',  amount: 0, type: 'Expense'},
+      'Lifestyle Non-Essential': {icon: '../../../../assets/icons/budget-icons/clothing.png', categoryTitle: 'Clothing',  amount: 0, type: 'Expense'},
+      'Furnishings': {icon: '../../../../assets/icons/budget-icons/furnishings.png', categoryTitle: 'Furnishings',  amount: 0, type: 'Expense'},
+      'Food/Grocery Non-Essential': {icon: '../../../../assets/icons/budget-icons/non-essential-groceries.png', categoryTitle: 'Non-Essential Groceries',  amount: 0, type: 'Expense'},
+      'Gift': {icon: '../../../../assets/icons/budget-icons/gift.png', categoryTitle: 'Gifts',  amount: 0, type: 'Expense'},
+      'Miscellaneous Expense Non-Essential': {icon: '../../../../assets/icons/budget-icons/misc-income.png', categoryTitle: 'Miscellaneous Expense',  amount: 0, type: 'Expense'},
   
-    ]
-    this.debt = [
-      {icon: '../../../../assets/icons/budget-icons/investment.png', categoryTitle: 'Investment/Savings',  amount: 0, type: 'Expense'},
-      {icon: '../../../../assets/icons/budget-icons/misc-income.png', categoryTitle: 'Miscellaneous Expense',  amount: 0, type: 'Expense'},
-    ];
-    this.needs = [
-      {icon: '../../../../assets/icons/budget-icons/tax-payment.png', categoryTitle: 'Tax Payment', amount: 0, type: 'Expense'},
-      {icon: '../../../../assets/icons/budget-icons/utilities.png', categoryTitle: 'Utilities',  amount: 0, type: 'Expense'},
-      {icon: '../../../../assets/icons/budget-icons/insurance.png', categoryTitle: 'Insurance',  amount: 0, type: 'Expense'},
-      {icon: '../../../../assets/icons/budget-icons/medical.png', categoryTitle: 'Medical',  amount: 0, type: 'Expense'},
-      {icon: '../../../../assets/icons/budget-icons/pet.png', categoryTitle: 'Pets',  amount: 0, type: 'Expense'},
-      {icon: '../../../../assets/icons/budget-icons/housing.png', categoryTitle: 'Housing',  amount: 0, type: 'Expense'},
-      {icon: '../../../../assets/icons/budget-icons/transportation.png', categoryTitle: 'Transportation',  amount: 0, type: 'Expense'},
-      {icon: '../../../../assets/icons/budget-icons/essential-groceries.png', categoryTitle: 'Essential Groceries',  amount: 0, type: 'Expense'},
-    ];
-    */
+     }
+    this.debtIcons = {
+      'Investment/Savings': {icon: '../../../../assets/icons/budget-icons/investment.png', categoryTitle: 'Investment/Savings',  amount: 0, type: 'Expense'},
+    };
+    this.needIcons = {
+      'Tax Payment': {icon: '../../../../assets/icons/budget-icons/tax-payment.png', categoryTitle: 'Tax Payment', amount: 0, type: 'Expense'},
+      'Debt Payment': {icon: '../../../../assets/icons/budget-icons/tax-payment.png', categoryTitle: 'Tax Payment', amount: 0, type: 'Expense'},
+      'Utilities': {icon: '../../../../assets/icons/budget-icons/utilities.png', categoryTitle: 'Utilities',  amount: 0, type: 'Expense'},
+      'Insurance': {icon: '../../../../assets/icons/budget-icons/insurance.png', categoryTitle: 'Insurance',  amount: 0, type: 'Expense'},
+      'Medical': {icon: '../../../../assets/icons/budget-icons/medical.png', categoryTitle: 'Medical',  amount: 0, type: 'Expense'},
+      'Pet': {icon: '../../../../assets/icons/budget-icons/pet.png', categoryTitle: 'Pets',  amount: 0, type: 'Expense'},
+      'Lifestyle Essential': {icon: '../../../../assets/icons/budget-icons/clothing.png', categoryTitle: 'Clothing',  amount: 0, type: 'Expense'},
+      'Housing': {icon: '../../../../assets/icons/budget-icons/housing.png', categoryTitle: 'Housing',  amount: 0, type: 'Expense'},
+      'Transportation': {icon: '../../../../assets/icons/budget-icons/transportation.png', categoryTitle: 'Transportation',  amount: 0, type: 'Expense'},
+      'Food/Grocery Essential': {icon: '../../../../assets/icons/budget-icons/essential-groceries.png', categoryTitle: 'Essential Groceries',  amount: 0, type: 'Expense'},
+      'Miscellaneous Expense Essential': {icon: '../../../../assets/icons/budget-icons/misc-income.png', categoryTitle: 'Miscellaneous Expense',  amount: 0, type: 'Expense'},
+    };
+
+    this.wants = this.cs.expenseCats.map(obj => ({...obj, visible: true, max: 0, amount: 0, category: obj.category_type, categoryTitle: obj.category_name})).filter(obj => obj.category_type == "want")
+      .map(obj => ({...obj, icon: this.wantIcons.hasOwnProperty(obj.category_name) ? this.wantIcons[obj.category_name].icon : undefined}));
+    this.debt = this.cs.expenseCats.map(obj => ({...obj, visible: true, max: 0, amount: 0, category: obj.category_type, categoryTitle: obj.category_name})).filter(obj => obj.category_type == "saving")
+      .map(obj => ({...obj, icon: this.debtIcons.hasOwnProperty(obj.category_name) ? this.debtIcons[obj.category_name].icon : undefined}));
+    this.needs = this.cs.expenseCats.map(obj => ({...obj, visible: true, max: 0, 
+        target: this.dat.hasOwnProperty(obj.category_name) ? this.dat[obj.category_name].amount : undefined, 
+        break: this.dat.hasOwnProperty(obj.category_name) ? this.dat[obj.category_name].percen : undefined,
+         amount: 0, category: obj.category_type, categoryTitle: obj.category_name})).filter(obj => obj.category_type == "need")
+         .map(obj => ({...obj, icon: this.needIcons.hasOwnProperty(obj.category_name) ? this.needIcons[obj.category_name].icon : undefined}));
+
+    
+
+    
 
     this.load = true;
 
@@ -98,11 +113,11 @@ export class BudgetAdvisorComponent implements OnInit {
   setDisplay(selected) {
     this.displayItems = selected;
     if (this.displayItems == this.needs) {
-      this.title = (this.dat.need * 100) + '% Needs';
+      this.title = this.pp.transform(this.dat.need) + ' Needs';
     } else if (this.displayItems == this.debt) {
-      this.title = (this.dat.saving * 100) + "% Savings";
+      this.title = this.pp.transform(this.dat.saving) + " Savings";
     } else  if (this.displayItems == this.wants) {
-      this.title = (this.dat.want * 100) + '% Wants';
+      this.title = this.pp.transform(this.dat.want) + ' Wants';
     } else {
       this.title = 'Error'
     }

@@ -326,17 +326,19 @@ export class BudgetAlgorithmComponent implements OnInit {
         need: need,
         saving: saving,
         income: income,
-        housing: housing2,
-        transportation: transportation2,
-        foodGroceryEssential: foodGroceryEssential2,
-        medical: medical2,
-        utilities: utilities2,
-        debtPayment: debtPayment2,
-        insurance: insurance2,
-        lifestyleEssential: lifestyleEssential2,
-        petCost: petCost2,
-        taxPayment: taxPayment2,
-        miscellaneousExpenseEssential: miscellaneousExpenseEssential2
+        "Housing": {amount: housing2,
+                  percen: housing * 0.01,
+                  cat: "Housing"},
+        "Transportation": {amount: transportation2, percen: transportation * 0.01, cat: "Transportation"},
+        "Food/Grocery Essential": {amount: foodGroceryEssential2, percen: foodGroceryEssential * 0.01, cat: "Food/Grocery Essential"},
+        "Medical": {amount: medical2, percen: medical * 0.01, cat: "Medical"},
+        "Utilities": {amount: utilities2, percen: utilities * 0.01, cat: "Utilities"},
+        "Debt Payment": {amount: debtPayment2, percen: debtPayment * 0.01, cat: "Debt Payment"},
+        "Insurance": {amount: insurance2, percen: insurance * 0.01, cat: "Insurance"},
+        "Lifestyle Essential": {amount: lifestyleEssential2, percen: lifestyleEssential * 0.01, cat: "Lifestyle Essential"},
+        "Pet": {amount: petCost2, percen: petCost * 0.01, cat: "Pet"},
+        "Tax Payment": {amount: taxPayment2, percen: taxPayment * 0.01, cat: "Tax Payment"},
+        "Miscellaneous Expense Essential": {amount: miscellaneousExpenseEssential2, percen: miscellaneousExpenseEssential * 0.01, cat: "Miscellaneous Expense Essential"}
     })
 
     /*
