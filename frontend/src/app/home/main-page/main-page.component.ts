@@ -73,10 +73,7 @@ export class MainPageComponent implements OnInit {
     ]
 
     this.budgetWidgets = [
-      { size: 'large', title: 'Breakdown', image: '../../assets/prototype-images/bar-graph.png' },
-      { size: 'large', title: 'Net Income', image: '../../assets/prototype-images/pie-chart.png', button: 'Add Income' },
-      { size: 'small', title: 'Weekly Budget Manager', image: '../../assets/prototype-images/budget-breakdown.png' },
-      { size: 'small', title: 'Income', image: '../../assets/prototype-images/income-breakdown.png' }
+      
     ]
 
     this.trackingWidgets = [
@@ -84,21 +81,12 @@ export class MainPageComponent implements OnInit {
     ]
 
     this.analyticsWidgets = [
-      { size: 'large', title: 'Savings', image: '../../assets/prototype-images/line-graph.png' },
-      { size: 'large', title: 'Total Spending', image: '../../assets/prototype-images/spending-progress-bar.png' },
-      { size: 'large', title: 'Net Income', image: '../../assets/prototype-images/pie-chart.png' },
-      { size: 'small', title: 'Report Card', image: '../../assets/prototype-images/report-card.png' },
-      { size: 'small', title: 'Top 3: Spending', image: '../../assets/prototype-images/top-3-spending.png' }
+     
     ]
 
     this.rewardsWidgets = [
-      { size: 'large', title: 'Trophies', image: '../../assets/prototype-images/rewards-panel.png' },
-      { size: 'large', title: 'Progress', image: '../../assets/prototype-images/badges-progress.png' },
-      { size: 'small', title: 'Badges', image: '../../assets/prototype-images/line-graph.png' },
     ]
-
     this.roomWidgets = [
-      { size: 'large', title: '', image: '../../assets/prototype-images/room.png' },
       
     ]
 

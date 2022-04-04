@@ -91,10 +91,6 @@
           <app-weekly-spending></app-weekly-spending>
           <app-savings-over-time></app-savings-over-time>
           <app-spending-vs-income></app-spending-vs-income>
-
-        <div *ngFor="let widget of dashboardWidgets" class="large-widgets">
-          <app-basic-widget *ngIf="widget.size==='large'" [title]=widget.title [image]=widget.image></app-basic-widget>
-        </div>
       </div>
       <div class="small-widgets">
         <app-letter-grade></app-letter-grade>
@@ -106,32 +102,20 @@
       <div class="large-widgets">
         <app-budget-slider></app-budget-slider>
         <app-budget-vs-spending></app-budget-vs-spending>
-        <div *ngFor="let widget of budgetWidgets" class="large-widgets">
-          <app-basic-widget *ngIf="widget.size==='large'" [title]=widget.title [image]=widget.image></app-basic-widget>
-        </div>
       </div>
       <div class="small-widgets">
        
-        <div *ngFor="let widget of budgetWidgets" class="small-widgets">
-          <app-small-widget *ngIf="widget.size==='small'" (click)="toggleHidden()" [title]=widget.title [image]=widget.image></app-small-widget>
-        </div>
       </div>
     </div>
     <div *ngIf="currentPage === 'Tracking'" class="widget-container" style="width: 73vw;"> 
       <div class="small-widgets">
         <app-tracking></app-tracking>
         <app-income-tracking></app-income-tracking>
-        <div *ngFor="let widget of trackingWidgets" class="small-widgets">
-          <app-small-widget *ngIf="widget.size==='small'" [title]=widget.title [image]=widget.image></app-small-widget>
-        </div>
       </div>
       <div class="large-widgets">
         <div class="large-widgets">
          <app-receipt-tracking></app-receipt-tracking>
          <app-weekly-spending></app-weekly-spending>
-        </div>
-        <div *ngFor="let widget of trackingWidgets" class="large-widgets">
-          <app-basic-widget *ngIf="widget.size==='large'" [title]=widget.title [image]=widget.image></app-basic-widget>
         </div>
       </div>
     </div>
@@ -139,41 +123,28 @@
       <div class="large-widgets">
         <app-actual-vs-est-income></app-actual-vs-est-income>
         <app-spending-by-category></app-spending-by-category>
-        <div *ngFor="let widget of analyticsWidgets" class="large-widgets">
-          <app-basic-widget *ngIf="widget.size==='large'" [title]=widget.title [image]=widget.image></app-basic-widget>
-        </div>
       </div>
       <div class="small-widgets">
-        <div *ngFor="let widget of analyticsWidgets" class="small-widgets">
-          <app-small-widget *ngIf="widget.size==='small'" [title]=widget.title [image]=widget.image></app-small-widget>
-        </div>
+      
       </div>
     </div>
     <div *ngIf="currentPage === 'Rewards' || currentPage === 'Competitions'" class="widget-container" style="width: 73vw;"> 
       <div class="large-widgets">
         <app-challenge-progress></app-challenge-progress>
-        <div *ngFor="let widget of rewardsWidgets" class="large-widgets">
-          <app-basic-widget *ngIf="widget.size==='large'" [title]=widget.title [image]=widget.image></app-basic-widget>
-        </div>
+
       </div>
       <div class="small-widgets">
         <app-available-challenges></app-available-challenges>
         <app-trophies></app-trophies>
-        <div *ngFor="let widget of analyticsWidgets" class="small-widgets">
-          <app-small-widget *ngIf="widget.size==='small'" [title]=widget.title [image]=widget.image></app-small-widget>
-        </div>
+  
       </div>
     </div>
     <div *ngIf="currentPage === 'My Room'" class="widget-container" style="width: 73vw;"> 
       <div class="large-widgets">
-        <div *ngFor="let widget of roomWidgets" class="xlarge-widgets">
-          <app-basic-widget *ngIf="widget.size==='large'" [title]=widget.title [image]=widget.image></app-basic-widget>
-        </div>
+    
       </div>
       <div class="small-widgets">
-        <div *ngFor="let widget of roomWidgets" class="small-widgets">
-          <app-small-widget *ngIf="widget.size==='small'" [title]=widget.title [image]=widget.image></app-small-widget>
-        </div>
+      
       </div>
     </div>
   </div>
