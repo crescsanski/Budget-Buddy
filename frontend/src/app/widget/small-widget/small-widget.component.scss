@@ -4,13 +4,14 @@
   background-color: white;
   color: $teal;
   padding: 1em;
-  min-width: 20em;
+  min-width: 15em;
   border-radius: 25px;
   text-align: center;
   box-shadow: 2px 2px 5px $light-gray;
   display: flex;
   margin-bottom: 2em;
   width: 15vw;
+  max-width: 100% !important;
   padding-bottom: 2em;
 }
 
