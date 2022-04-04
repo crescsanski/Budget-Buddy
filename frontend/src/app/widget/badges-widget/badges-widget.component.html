@@ -5,16 +5,36 @@
             <h2>Badges</h2> 
         </div>
     </div>
-        <div class="badgeList">
-            <div class="badges" *ngFor="let badge of badges">
-                <div style="display: inline-flex">
-                    <img src="../../../assets/icons/badge-icon.png"/>
-                <div class="descriptions">
-                    <p class="name">{{badge.badge_name}}</p>
-                    <p class="description">{{badge.badge_description}}</p>
-                </div>
-                </div>
-            </div> 
+       <div class="badges" *ngFor="let badge of displayBadges">
+        <div style="display: inline-flex">
+            <img src="../../../assets/icons/badge-icon.png"/>
+        <div class="descriptions">
+            <p class="name">{{badge.badge_name}}</p>
+            <p class="description">{{badge.badge_description}}</p>
+        </div>
         </div>
     </div>
+        <p class="minorButton" (click)="viewAll()">View All →</p>
+    </div>
+    
 </div>
+
+<p-dialog class="customdialog" header="About" [(visible)]="allVisible" [style]="{width: '10vw'}" style="text-align: center">
+    <div>
+        <div>
+        <div>
+            <h2>Badges</h2> 
+        </div>
+    </div>
+       <div class="badges" *ngFor="let badge of badges">
+        <div style="display: inline-flex; padding-left: 6vw">
+            <img src="../../../assets/icons/badge-icon.png"/>
+        <div class="descriptions">
+            <p class="name">{{badge.badge_name}}</p>
+            <p class="description" style="max-width: 20vw !important">{{badge.badge_description}}</p>
+        </div>
+        </div>
+    </div>
+        <p class="minorButton" (click)="viewAll()">View All →</p>
+    </div>
+</p-dialog>

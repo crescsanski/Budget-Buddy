@@ -1,4 +1,4 @@
-@import 'node_modules/primeflex/primeflex.scss';
+@import "/node_modules/primeflex/primeflex.scss";
 
 $blue: #003486 !default;
 $teal: #4ec5ca !default;
@@ -50,6 +50,16 @@ button {
   border-color: $blue;
 }
 
+.minorButton {
+  text-decoration: underline;
+  color: $light-gray;
+
+  &:hover {
+    opacity: 50%;
+    cursor: pointer;
+  }
+}
+
 .link {
   &:hover {
     opacity: 50%;
@@ -71,6 +81,10 @@ button {
     border-width: 1px;
     width: 98%;
     padding: 0.2em;
+  }
+
+  .p-dialog-content {
+    color: blue;
   }
 
   .p-inputwrapper {
@@ -133,7 +147,6 @@ button {
     .p-dialog-header {
       color: $teal;
     }
-
   }
 }
 

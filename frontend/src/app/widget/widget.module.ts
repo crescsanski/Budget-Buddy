@@ -27,6 +27,7 @@ import { BudgetBreakdownChartComponent } from './budget-breakdown-chart/budget-b
 import { TrophiesComponent } from './trophies/trophies.component';
 import { ChallengeProgressComponent } from './challenge-progress/challenge-progress.component';
 import { AvailableChallengesComponent } from './available-challenges/available-challenges.component';
+import { AvatarEditorComponent } from './avatar-editor/avatar-editor.component';
 
 
 @NgModule({
@@ -49,7 +50,8 @@ import { AvailableChallengesComponent } from './available-challenges/available-c
     BudgetBreakdownChartComponent,
     TrophiesComponent,
     ChallengeProgressComponent,
-    AvailableChallengesComponent
+    AvailableChallengesComponent,
+    AvatarEditorComponent
   ],
   imports: [
     CommonModule,
@@ -81,6 +83,8 @@ import { AvailableChallengesComponent } from './available-challenges/available-c
     TrophiesComponent,
     LetterGradeComponent,
     ChallengeProgressComponent,
-  AvailableChallengesComponent]
+  AvailableChallengesComponent, 
+  AvatarEditorComponent
+]
 })
 export class WidgetModule { }

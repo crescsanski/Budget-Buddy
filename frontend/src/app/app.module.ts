@@ -21,6 +21,7 @@ import { PrimengModule } from './primeng/primeng.module';
 import { CurrencyPipe, DatePipe, DecimalPipe, PercentPipe } from '@angular/common';
 import {TooltipModule} from 'primeng/tooltip';
 import { ConfirmationService } from 'primeng/api';
+import {DialogModule} from 'primeng/dialog';
 
 @NgModule({
   declarations: [
@@ -48,7 +49,8 @@ import { ConfirmationService } from 'primeng/api';
     HomeModule,
     WidgetModule,
     TooltipModule,
-    FormsModule
+    FormsModule,
+    DialogModule
   ],
   exports: [
   ],
