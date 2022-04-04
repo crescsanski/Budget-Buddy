@@ -20,6 +20,7 @@ import { RegisterPageComponent } from './register/register-page/register-page.co
 import { PrimengModule } from './primeng/primeng.module';
 import { CurrencyPipe, DatePipe, DecimalPipe, PercentPipe } from '@angular/common';
 import {TooltipModule} from 'primeng/tooltip';
+import {DialogModule} from 'primeng/dialog';
 
 @NgModule({
   declarations: [
@@ -47,7 +48,8 @@ import {TooltipModule} from 'primeng/tooltip';
     HomeModule,
     WidgetModule,
     TooltipModule,
-    FormsModule
+    FormsModule,
+    DialogModule
   ],
   exports: [
   ],
