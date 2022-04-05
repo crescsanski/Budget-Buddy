@@ -13,13 +13,15 @@
         </div>
         
         <div class="field grid"> 
-            <label for="horizontal" class="col-fixed" style="width:50px" >Year</label>
-            <div class="col-fixed" style="width:150px">
-                <p-inputNumber [(ngModel)]="yearSel" [useGrouping]="false" [showButtons]="true" 
-                [min]="ts.minYear" [max]="ts.maxYear" (onInput)="getNewData()" class="inputfield"
-                buttonLayout="horizontal" spinnerMode="horizontal" inputId="horizontal"
-                decrementButtonClass="p-button-secondary" incrementButtonClass="p-button-secondary" incrementButtonIcon="pi pi-plus" decrementButtonIcon="pi pi-minus">
-                </p-inputNumber>
+            <label for="horizontal" class="col-fixed" style="width:120px" >Date Range</label>
+            <div class="col-fixed" style="width:250px">
+                <p-calendar [(ngModel)]="rangeDates" class="inputfield" (onInput)="getNewData()" (onSelect)="getNewData()" (onBlur)="getNewData()" selectionMode="range" [minDate]="ts.minDate" [maxDate]="ts.maxDate" [readonlyInput]="true" inputId="range"></p-calendar>
+            </div>
+        </div>
+        <div class="field grid"> 
+            <label for="horizontal" class="col-fixed" style="width:120px" >Interval</label>
+            <div class="col-fixed" style="width:450px">
+                <p-selectButton [options]="types" [(ngModel)]="selectedType" (onChange)="getNewData()" optionLabel="name" optionValue="value"></p-selectButton>
             </div>
         </div>
     </div>

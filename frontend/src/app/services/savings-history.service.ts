@@ -18,7 +18,7 @@ export class SavingsHistoryService {
   private cumUrl = 'api/cum_savings_history';
   user: User | null = null;
   private weeklySavingsTotal: number;
-  private cumSavByMonth: SavingsOverTime[]
+  private cumSav: SavingsOverTime[]
 
   httpOptions = {
     headers: new HttpHeaders({ 'Content-Type': 'application/json' })
@@ -35,6 +35,7 @@ export class SavingsHistoryService {
     {
       let date = new Date(re.receipt.receipt_date)
       let month = date.getMonth() + 1
+      let week = this.tiServ.getWeek(date)
       let total = this.rs.getTotal(re)
       switch (mode)
       {
@@ -57,24 +58,24 @@ export class SavingsHistoryService {
         }
         
         var found = false;
-        for (let i in this.cumSavByMonth)
+        for (let i in this.cumSav)
         {
-          if ((this.cumSavByMonth[i].year == date.getFullYear() && this.cumSavByMonth[i].month >= month)
-            || this.cumSavByMonth[i].year > date.getFullYear())
+          if ((this.cumSav[i].year == date.getFullYear() && this.cumSav[i].month == month && this.cumSav[i].week >= week)
+            || this.cumSav[i].year > date.getFullYear())
           {
             found = true;
-            re.receipt.receipt_is_income ? this.cumSavByMonth[i].totalSavings += total : this.cumSavByMonth[i].totalSavings -= total;
+            re.receipt.receipt_is_income ? this.cumSav[i].totalSavings += total : this.cumSav[i].totalSavings -= total;
           }
         }
         if (!found)
         {
           if (re.receipt.receipt_is_income)
           {
-            this.cumSavByMonth.push({year: date.getFullYear(), month: month, totalSavings: total});
+            this.cumSav.push({year: date.getFullYear(), month: month, week: week, totalSavings: total});
           }
           else
           {
-            this.cumSavByMonth.push({year: date.getFullYear(), month: month, totalSavings: -1 * total});
+            this.cumSav.push({year: date.getFullYear(), month: month, week: week, totalSavings: -1 * total});
           }
         }
         
@@ -86,21 +87,21 @@ export class SavingsHistoryService {
     return this.weeklySavingsTotal;
   }
 
-  get cumSavingsByMonth()
+  get cumSavings()
   {
-    return this.cumSavByMonth;
+    return this.cumSav;
   }
 
-  /**GET cumulative savings growth by month.*/
-  getByMonthCumSavings(): Observable<SavingsOverTime[]>
+  /**GET cumulative savings growth.*/
+  getCumSavings(): Observable<SavingsOverTime[]>
   {
-    const url = `${this.cumUrl}/${this.user.user_id}/?period=monthly`
+    const url = `${this.cumUrl}/${this.user.user_id}/?period=weekly`
 
     return this.http.get<SavingsOverTime[]>(url).pipe(
       tap(out => 
         {
-          console.log(`Fetched cumulative savings totals by month`);
-          this.cumSavByMonth = out;
+          console.log(`Fetched cumulative savings totals by week`);
+          this.cumSav = out;
         }
       
         ),

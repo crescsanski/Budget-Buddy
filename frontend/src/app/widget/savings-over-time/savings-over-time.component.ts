@@ -1,5 +1,7 @@
+import { DatePipe } from '@angular/common';
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { UIChart } from 'primeng/chart';
+import { SavingsOverTime } from 'src/app/models/savingsOverTime';
 import { SavingsHistoryService } from 'src/app/services/savings-history.service';
 import { TimeService } from 'src/app/services/time.service';
 import { TriggerService } from 'src/app/services/trigger.service';
@@ -12,13 +14,22 @@ import { TriggerService } from 'src/app/services/trigger.service';
 export class SavingsOverTimeComponent implements OnInit {
   chartData: any;
   dataExists: boolean = false;
+  allTime: boolean = true;
+  rangeDates: Date[] = [this.ts.minDate, this.ts.maxDate]
+  types: any[] = 
+  [
+     { name: "Yearly", value: "yearly"},
+     { name: "Monthly", value: "monthly"},
+     { name: "Weekly", value: "weekly"}
+  ]
+  selectedType: string = "monthly"
   chartOptions: any;
   yearSel: number = this.ts.year //default to current year
   monthNames: string[] = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December']
 
   @ViewChild('chart') chart: UIChart;
 
-  constructor(private savServ: SavingsHistoryService, private trigServ: TriggerService, public ts: TimeService) { 
+  constructor(private dp: DatePipe, private savServ: SavingsHistoryService, private trigServ: TriggerService, public ts: TimeService) { 
       this.trigServ.incomReceiptChanged$.subscribe(() =>
       {
           this.getNewData();
@@ -30,19 +41,101 @@ export class SavingsOverTimeComponent implements OnInit {
       })
   }
 
+  syncData()
+  {
+    let newData = this.savServ.cumSavings.filter((value) => {
+        let date = this.ts.getDate(value.week, value.year)
+        return date >= this.rangeDates[0] && date <= this.rangeDates[1]
+       })
+
+
+
+    var result: SavingsOverTime[] = [];
+    var labels = []
+    var groups = []
+    var xTitle: string;
+    var grouped = {};
+    if (this.selectedType == "yearly")
+    {
+        result = this.groupByAndSum(newData, "yearly")
+
+        labels = result.map(val => val.year)
+
+        xTitle = "Years"
+    }
+    else if (this.selectedType == "monthly")
+    {
+
+        result = this.groupByAndSum(newData, "monthly")
+        xTitle = "Months"
+
+        labels = result.map(val => `${this.monthNames[val.month - 1]} ${val.year}`)
+    }
+    else
+    {
+        result = this.groupByAndSum(newData, "weekly")
+        xTitle = "Weeks"
+        labels = result.map(val => this.ts.getDate(val.week, val.year).toISOString().substring(0, 10))
+    }
+
+    if (result.length > 1)
+    {
+        this.dataExists = true;
+    }
+    else
+    {
+        this.dataExists = false;
+    }
+
+
+    let values = result.map((value) => value.totalSavings)
+
+    return {labels: labels, values: values, xTitle: xTitle}
+  }
+
+  groupByAndSum(data: SavingsOverTime[], type: string): SavingsOverTime[]
+  {
+    const result: SavingsOverTime[] = [...data.reduce((r, o) => {
+        var key: string;
+        switch (type)
+        {
+            case "yearly":
+                key = `${o.year}`; 
+                break;
+            case "monthly":
+                key = o.year + "-" + o.month;
+                break;
+            case "weekly":
+                key = o.year + "-" + o.month + "-" + o.week;
+        }
+         
+        const item = r.get(key) || Object.assign({}, o, {
+          totalSavings: 0,
+        });
+        
+        if (o.totalSavings > item.totalSavings)
+        {
+            item.totalSavings = o.totalSavings;
+        }
+        
+        return r.set(key, item);
+      }, new Map).values()];
+
+      return result
+  }
+
   ngOnInit(): void {
 
-    let data = this.savServ.cumSavingsByMonth.filter((value) => value.year == this.yearSel)
-    let monthLabels = data.map((value) => this.monthNames[value.month - 1])
-    let values = data.map((value) => value.totalSavings)
+    let data = this.syncData();
+
 
     //TODO: Implement http request
     this.chartData = {
-      labels: monthLabels,
+      labels: data.labels,
       datasets: [
           {
               label: 'Savings',
-              data: values,
+              data: data.values,
               fill: true,
               borderColor: '#4ec5ca80',
               backgroundColor: '#4ec5ca50',
@@ -66,7 +159,7 @@ export class SavingsOverTimeComponent implements OnInit {
             },
             title: {
                 display: true,
-                text: 'Months',
+                text: data.xTitle,
                 font: {
                     size: 20
                 }
@@ -91,22 +184,13 @@ export class SavingsOverTimeComponent implements OnInit {
 
 }
 
-    async getNewData()
+    getNewData()
     {
-        let newData = this.savServ.cumSavingsByMonth.filter((value) => value.year == this.yearSel)
-        if (newData.length > 0)
-        {
-            this.dataExists = true;
-        }
-        else
-        {
-            this.dataExists = false;
-        }
-        let monthLabels = newData.map((value) => this.monthNames[value.month - 1])
-        let values = newData.map((value) => value.totalSavings)
+        let data = this.syncData();
 
-        this.chartData.labels = monthLabels;
-        this.chartData.datasets[0].data = values;
+        this.chartData.labels = data.labels;
+        this.chartData.datasets[0].data = data.values;
+        this.chartOptions.scales.x.title.text = data.xTitle;
         this.chart.refresh();
 
     }

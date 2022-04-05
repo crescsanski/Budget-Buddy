@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Subject } from 'rxjs';
+import { WeeklySpendingComponent } from '../widget/weekly-spending/weekly-spending.component';
 import { AuthService } from './auth.service';
 
 @Injectable({
@@ -66,6 +67,18 @@ export class TimeService {
     // Adjust to Thursday in week 1 and count number of weeks from date to week1.
     return 1 + Math.round(((date.getTime() - week1.getTime()) / 86400000
                           - 3 + (week1.getDay() + 6) % 7) / 7);
+  }
+
+  getDate(w: number, y: number)
+  {
+    var simple = new Date(y, 0, 1 + (w - 1) * 7);
+    var dow = simple.getDay();
+    var ISOweekStart = simple;
+    if (dow <= 4)
+        ISOweekStart.setDate(simple.getDate() - simple.getDay() + 1);
+    else
+        ISOweekStart.setDate(simple.getDate() + 8 - simple.getDay());
+    return ISOweekStart;
   }
 
   //return number of days in specified month

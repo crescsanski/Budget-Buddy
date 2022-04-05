@@ -37,7 +37,7 @@ export class MainPageComponent implements OnInit {
   budgetCategories: Category[];
   selectedCategories: Category[];
   welcomeMessage: boolean = false; 
-  avatarEditor: boolean = true;
+  avatarEditor: boolean = false;
 
 
 

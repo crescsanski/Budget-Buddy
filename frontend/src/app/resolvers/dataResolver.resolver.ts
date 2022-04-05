@@ -45,7 +45,7 @@ export class DataResolver implements Resolve<any> {
         this.chalServ.getChallenges(),
 
         //Fetch Default Display for Savings over Time Widget
-        this.savServ.getByMonthCumSavings(),
+        this.savServ.getCumSavings(),
 
         //Fetch Default Display for Spending over Time Widget
         this.spenTot.getByMonthCumSpendings(),
