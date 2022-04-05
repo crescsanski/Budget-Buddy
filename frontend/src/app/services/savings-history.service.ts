@@ -47,8 +47,8 @@ export class SavingsHistoryService {
           break;
       }
   
-      if (!re.receipt.receipt_is_income)
-      {
+     
+      
         if (date.getFullYear() == this.tiServ.year && month == this.tiServ.month)
         {
           if (this.tiServ.getWeek(date) == this.tiServ.week)
@@ -60,8 +60,10 @@ export class SavingsHistoryService {
         var found = false;
         for (let i in this.cumSav)
         {
-          if ((this.cumSav[i].year == date.getFullYear() && this.cumSav[i].month == month && this.cumSav[i].week >= week)
-            || this.cumSav[i].year > date.getFullYear())
+          let itDate = this.tiServ.getDate(this.cumSav[i].week, this.cumSav[i].year)
+          let comDate = this.tiServ.getDate(this.tiServ.getWeek(date), date.getFullYear())
+
+          if (itDate >= comDate)
           {
             found = true;
             re.receipt.receipt_is_income ? this.cumSav[i].totalSavings += total : this.cumSav[i].totalSavings -= total;
@@ -79,7 +81,7 @@ export class SavingsHistoryService {
           }
         }
         
-      }
+      
     }
 
   get weekSavings()
