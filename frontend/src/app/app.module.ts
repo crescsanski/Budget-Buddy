@@ -22,6 +22,8 @@ import { CurrencyPipe, DatePipe, DecimalPipe, PercentPipe } from '@angular/commo
 import {TooltipModule} from 'primeng/tooltip';
 import { ConfirmationService } from 'primeng/api';
 import {DialogModule} from 'primeng/dialog';
+import { StatusUpdateComponent } from './alerts/status-update/status-update.component';
+import { DialogService } from 'primeng/dynamicdialog';
 
 @NgModule({
   declarations: [
@@ -31,7 +33,8 @@ import {DialogModule} from 'primeng/dialog';
     LoginPanelComponent,
     RegisterPanelComponent,
     RegisterNavComponent,
-    RegisterPageComponent
+    RegisterPageComponent,
+    StatusUpdateComponent
   ],
   imports: [
     BrowserModule,
@@ -57,7 +60,7 @@ import {DialogModule} from 'primeng/dialog';
   providers: [
     { provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true },
     { provide: HTTP_INTERCEPTORS, useClass: ErrorInterceptor, multi: true },
-    DatePipe, CurrencyPipe, PercentPipe, DecimalPipe, ConfirmationService
+    DatePipe, CurrencyPipe, PercentPipe, DecimalPipe, ConfirmationService, DialogService
   ],
   bootstrap: [AppComponent]
 })

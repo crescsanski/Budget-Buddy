@@ -5,6 +5,7 @@ import { PasswordModule } from 'primeng/password';
 import { ButtonModule } from 'primeng/button';
 import {MessagesModule} from 'primeng/messages';
 import { MessageService } from 'primeng/api';
+import {DynamicDialogModule} from 'primeng/dynamicdialog';
 import {CheckboxModule} from 'primeng/checkbox';
 import {ToastModule} from 'primeng/toast';
 import {CalendarModule} from 'primeng/calendar';
@@ -25,6 +26,7 @@ import {SelectButtonModule} from 'primeng/selectbutton';
     InputNumberModule,
     ProgressSpinnerModule,
     ConfirmPopupModule,
+    DynamicDialogModule,
     ProgressBarModule,
     CalendarModule,
     MultiSelectModule,
@@ -48,6 +50,7 @@ import {SelectButtonModule} from 'primeng/selectbutton';
     PasswordModule,
     ProgressSpinnerModule,
     ConfirmPopupModule,
+    DynamicDialogModule,
     ButtonModule,
     InputMaskModule,
     CheckboxModule,

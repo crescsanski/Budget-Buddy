@@ -3,6 +3,7 @@ import { Badge } from 'src/app/models/badge';
 import { BadgesEarned } from 'src/app/models/badgesEarned';
 import { AuthService } from 'src/app/services/auth.service';
 import { BadgesEarnedService } from 'src/app/services/badgesEarned.service';
+import { ChallengesService } from 'src/app/services/challenges.service';
 
 @Component({
   selector: 'app-badges-widget',
@@ -11,18 +12,15 @@ import { BadgesEarnedService } from 'src/app/services/badgesEarned.service';
 })
 export class BadgesWidgetComponent implements OnInit {
   badges!: Badge[];
-  displayBadges: Badge[];
   allVisible = false;
 
-  constructor(baEar: BadgesEarnedService, au: AuthService) { 
+  constructor(private chaServ: ChallengesService, au: AuthService) { 
 
     let userId = au.currentUserValue.user_id;
 
-    this.badges = baEar.earnedBadges;
 
-    this.displayBadges = this.badges.slice(0, 3)
-
-
+    this.badges = chaServ.challenges.filter(val => val.completion_date != null && val.no_badge == false)
+      .map(val => (<Badge>{badge_name: val.name, badge_description: val.description}))
   }
 
   ngOnInit(): void {

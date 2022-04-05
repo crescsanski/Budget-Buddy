@@ -13,9 +13,9 @@ export class ChallengeProgressComponent implements OnInit {
   challenges: Challenge[] //will be of type ChallengePackage (but too complicated to implement w/out just retrieving data)
 
   constructor(private chalServ: ChallengesService, private trigServ: TriggerService) {
-      this.challenges = this.chalServ.challenges;
+      this.challenges = this.getInProgress(this.chalServ.challenges);
 
-      this.trigServ.challAnnounced$.subscribe(() => this.challenges = this.chalServ.challenges)
+      this.trigServ.challAnnounced$.subscribe(() => this.challenges = this.getInProgress(this.chalServ.challenges))
       //TO DO: implement w/ API
 
       /*
@@ -45,6 +45,11 @@ export class ChallengeProgressComponent implements OnInit {
         }
       ]
       */
+   }
+
+   getInProgress(inven: Challenge[])
+   {
+     return inven.filter(val => val.is_active && val.completion_date == null)
    }
 
   ngOnInit(): void {

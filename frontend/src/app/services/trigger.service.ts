@@ -3,6 +3,7 @@ import { Injectable } from '@angular/core';
 import { Subject } from 'rxjs';
 import { Budget } from '../models/budget';
 import { Category } from '../models/category';
+import { Challenge } from '../models/Challenge';
 import { Receipt } from '../models/receipt';
 import { QuickReceipt } from '../models/simReceipt';
 import { BudgetService } from './budget.service';
@@ -23,6 +24,7 @@ export class TriggerService {
   private challAnnounce = new Subject<void>();
   private budgetUpdateAnnounce = new Subject<Budget[]>();
   private favoritesAnnounce = new Subject<void>();
+  private challComplete = new Subject<Challenge>();
 
   //Observable streams
   expenReceiptChanged$ = this.expenReceiptChange.asObservable();
@@ -30,11 +32,19 @@ export class TriggerService {
   favoritesAnnounced$ = this.favoritesAnnounce.asObservable();
   budgetUpdatedAnnounced$ = this.budgetUpdateAnnounce.asObservable();
   challAnnounced$ = this.challAnnounce.asObservable();
+  challCompletedAnnounced$ = this.challComplete.asObservable();
 
   async announceChallengeUpdate()
   {
     await (this.challServ.getChallenges().toPromise());
     this.challAnnounce.next();
+
+    this.findNewCompleted(this.challServ.pre_Inv, this.challServ.challenges);
+  }
+
+  async announceChallengeComplete(chall: Challenge)
+  {
+    this.challComplete.next(chall);
   }
 
   announceBudgetUpdate(budgets: Budget[])
@@ -129,6 +139,20 @@ export class TriggerService {
     {
       this.announceChallengeUpdate();
     }
+  }
+
+  //Compares old and new challenge inventory to check whether any challenges that were previously active and still in progress
+  // are now complete.
+  findNewCompleted(oldInv: Challenge[], newInv: Challenge[]): void
+  {
+    let candidates = oldInv.filter(val => val.is_active && val.completion_date == null).map(val => val.id)
+
+    newInv.filter(val => val.is_active && val.completion_date != null).forEach((val) => {
+      if (candidates.includes(val.id))
+      {
+        this.announceChallengeComplete(val);
+      }
+    })
   }
 
   constructor(private spenHis: SpendingHistoryService, private savHis: SavingsHistoryService,

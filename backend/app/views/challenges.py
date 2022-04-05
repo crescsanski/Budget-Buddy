@@ -35,6 +35,14 @@ import shutil
 from django.views.decorators.http import require_http_methods
 from rest_framework.decorators import api_view, throttle_classes
 
+def retrieveUserLevelData(user_id):
+    user = Users.objects.filter(user_id = user_id)
+    send = user.annotate(level = F('user_level'),
+                experience_points = F('user_current_experience_points'),
+                required_experience = F('user_required_experience_points')).values('level', 'experience_points',
+                    'required_experience')
+    return send
+
 @api_view(['GET'])
 def manageUserChallInv(request, user_id):
     user = Users.objects.get(user_id = user_id)
@@ -43,8 +51,11 @@ def manageUserChallInv(request, user_id):
         id = 
     F('user_challenge_inventory_id'),
                 name = F('challenge__challenge_name'),
+                no_badge = F('challenge__challenge_is_repeatable'),
                 description = F('challenge__challenge_description'),
+                rewardPoints = F('challenge__challenge_experience_points'),
                 start_date = F('user_challenge_start_date'),
+                is_active = F('challenge__challenge_is_active'),
                 goal = F('challenge__challenge_completion_amount'),
                 progress = F('user_challenge_current_amount'),
                 completion_date = F('user_challenge_completion_date'),
@@ -52,10 +63,16 @@ def manageUserChallInv(request, user_id):
                 time_given = F('challenge__challenge_time_given'),
                 trigger = F('challenge__challenge_trigger')).annotate(
                     fracCompl = Cast(F('progress'), FloatField()) / Cast(F('goal'), FloatField()) * 100).values(
-                    'id', 'name', 'description', 'start_date', 'goal', 'progress', 'fracCompl', 'completion_date', 'type', 'time_given', 'trigger'
+                    'id', 'name', 'description', 'rewardPoints', 'start_date', 'is_active', 'no_badge', 'goal', 'progress', 'fracCompl', 'completion_date', 'type', 'time_given', 'trigger'
                 )
+    
+    levelData = retrieveUserLevelData(user_id)
+    out = {
+        'inventory': ex,
+        'levelProgress': levelData
+    }
 
-    return Response(ex)
+    return Response(out)
     
 
 class ValidateChallengeViewSet(GenericAPIView):

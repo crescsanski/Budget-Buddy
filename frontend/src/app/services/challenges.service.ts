@@ -8,6 +8,9 @@ import { Challenge } from '../models/Challenge';
 import { MessageService } from './message.service';
 import { AuthService } from './auth.service';
 import { User } from '../models/user';
+import { ChallengeInventoryPackage } from '../models/ChallengeInventoryPackage';
+import { LevelProgress } from '../models/LevelProgress';
+import { TriggerService } from './trigger.service';
 
 
 @Injectable({ providedIn: 'root' })
@@ -15,6 +18,9 @@ export class ChallengesService {
 
   private apiUrl = 'api/chall_inv';  // URL to web api
   private challInvs: Challenge[]
+  private preInv: Challenge[]
+  private levelProgress: LevelProgress;
+  private preLevProg: LevelProgress;
   private triggers: Set<string>;
   user: User | null = null;
   httpOptions = {
@@ -28,9 +34,24 @@ export class ChallengesService {
       this.authService.currentUser.subscribe(x => this.user = <User>x);
     }
   
+ get pre_Inv()
+  {
+    return this.preInv;
+  }
+
+  get preLev_Prog()
+  {
+    return this.preLevProg
+  }
+
   get challenges()
   {
     return this.challInvs;
+  }
+
+  get levProgress()
+  {
+    return this.levelProgress;
   }
 
   get trigs()
@@ -40,18 +61,23 @@ export class ChallengesService {
 
 
   /** GET challenges earned by user_id. Will 404 if id not found */
-  getChallenges(): Observable<Challenge[]> {
+  getChallenges(): Observable<ChallengeInventoryPackage> {
     const url = `${this.apiUrl}/${this.user.user_id}/`;
-    return this.http.get<Challenge[]>(url).pipe(
-      tap((out: Challenge[]) => 
+    return this.http.get<ChallengeInventoryPackage>(url).pipe(
+      tap((out: ChallengeInventoryPackage) => 
       {
-        this.challInvs = out;
-        this.setTriggers(out);
+        this.preInv = this.challInvs;
+        this.challInvs = out.inventory;
+        this.preLevProg = this.levelProgress;
+        this.levelProgress = out.levelProgress;
+        this.setTriggers(out.inventory);
         console.log(`fetched challenges for user`)
       }),
-      catchError(this.handleError<Challenge[]>(`getChallenges id=${this.user.user_id}`))
+      catchError(this.handleError<ChallengeInventoryPackage>(`getChallenges id=${this.user.user_id}`))
     );
   }
+
+  
 
   setTriggers(inv: Challenge[])
   {
