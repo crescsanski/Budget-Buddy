@@ -84,6 +84,31 @@ p {
   background: teal;
 }
 
+.scroll
+{
+  overflow-y: auto;
+  height: 100%;
+  display: block;
+}
+
+.subContainer
+{
+  height: calc(100% - 250px) !important;
+  display: block;
+}
+
+.subContainer2
+{
+  height: calc(100% - 310px) !important;
+  display: block;
+}
+
+.container
+{
+  display: block;
+  height: 60vh;
+}
+
 #slide.on:before {
   transform: translateX(100%);
 }

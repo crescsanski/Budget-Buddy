@@ -40,6 +40,7 @@ export class BudgetAdjusterComponent implements OnInit {
   selectedCategory = "";
 
   @Input() prompts: newBudgetPrompt[];
+  @Input() dat: any;
   @Input() totalIncome: number;
   @Input() totalExpenses: number;
   @Input() incomes: any[];
@@ -225,30 +226,30 @@ export class BudgetAdjusterComponent implements OnInit {
   }
 
   makeRecommendations(){
-    this.wantsRecommend = this.totalIncome *.30;
-    this.needsRecommend = this.totalIncome *.50;
-    this.debtRecommend = this.totalIncome *.20;
+    this.wantsRecommend = this.totalIncome *this.dat.want;
+    this.needsRecommend = this.totalIncome *this.dat.need;
+    this.debtRecommend = this.totalIncome *this.dat.saving;
 
     this.actualWantsPercent = this.breakdown.want/this.totalIncome
     this.actualNeedsPercent = this.breakdown.need/this.totalIncome
     this.actualDebtPercent = this.breakdown.debt/this.totalIncome
 
-    if(this.actualWantsPercent>.3) {
+    if(this.actualWantsPercent>this.dat.want) {
       this.overBudget = true;
       this.errorCategory = "wants"
-      this.errorPercent = (this.actualWantsPercent-.3) *100;
+      this.errorPercent = (this.actualWantsPercent-this.dat.want) *100;
       this.errorValue = this.breakdown.want;
       this.errorDifference = this.breakdown.want-this.wantsRecommend;
-    } else if(this.actualNeedsPercent>.5) {
+    } else if(this.actualNeedsPercent>this.dat.need) {
       this.overBudget = true;
       this.errorCategory = "needs"
-      this.errorPercent = (this.actualNeedsPercent - 0.5)*100;
+      this.errorPercent = (this.actualNeedsPercent - this.dat.need)*100;
       this.errorValue = this.breakdown.need;
       this.errorDifference = this.breakdown.need-this.needsRecommend;
-    } else if(this.actualDebtPercent>.2) {
+    } else if(this.actualDebtPercent>this.dat.saving) {
       this.overBudget = true;
       this.errorCategory = "savings"
-      this.errorPercent = (this.actualDebtPercent-.2) *100;
+      this.errorPercent = (this.actualDebtPercent-this.dat.saving) *100;
       this.errorValue = this.breakdown.debt;
       this.errorDifference = this.breakdown.debt-this.debtRecommend;
     }

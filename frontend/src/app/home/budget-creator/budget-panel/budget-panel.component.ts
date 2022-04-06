@@ -14,6 +14,7 @@ import { AuthService } from 'src/app/services/auth.service';
 import { CategoryService } from 'src/app/services/category.service';
 import { THIS_EXPR } from '@angular/compiler/src/output/output_ast';
 
+
 @Component({
   selector: 'app-budget-panel',
   templateUrl: './budget-panel.component.html',
@@ -62,13 +63,14 @@ export class BudgetPanelComponent implements OnInit {
     private cs: CategoryService,
     private ms: MessageService) {
 
+      
+
   this.panels = [
-    'Optimizer', 'Advisor','Income', 'Expenses', 'Finalization'
+    'Income', 'Optimizer', 'Advisor', 'Expenses', 'Finalization'
   ]
 
   this.income = this.cs.incomeCats.map(obj => ({...obj, amount: 0, category: obj.category_type, categoryTitle: obj.category_name}));
   this.expenses = this.cs.expenseCats.map(obj => ({...obj, amount: 0, category: obj.category_type, categoryTitle: obj.category_name}));
-
   /*
 
   this.income = [
@@ -154,6 +156,13 @@ export class BudgetPanelComponent implements OnInit {
   {
     this.advisorPackage = data;
     console.log("To send to advisor: ", this.advisorPackage)
+    this.expenses.forEach((val) =>
+    {
+      if (val.category == "need")
+      {
+        val.amount = data[val.category_name].amount
+      }
+    })
     setTimeout(() => this.pageForward(), 100);
   }
 
@@ -215,6 +224,11 @@ recalculate() {
   this.totalExpenses = this.debtValue + this.wantsValue + this.needsValue;
   this.availableBudget = this.totalIncome - this.totalExpenses;
   console.log("Available Budget: ", this.availableBudget)
+}
+
+isNaN(num: number)
+{
+  return isNaN(num)
 }
 
 }

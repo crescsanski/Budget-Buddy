@@ -1,8 +1,10 @@
-import { PercentPipe } from '@angular/common';
+import { CurrencyPipe, PercentPipe } from '@angular/common';
 import { Component, OnInit, Output, EventEmitter, Input } from '@angular/core';
+import { RouteConfigLoadEnd } from '@angular/router';
 import { CategoryService } from 'src/app/services/category.service';
+import { ColorService } from 'src/app/services/color.service';
 import { newBudgetPrompt } from './../../../models/newBudgetPrompt';
-
+import {Chart, ChartItem} from 'chart.js';
 
 @Component({
   selector: 'app-budget-advisor',
@@ -11,8 +13,11 @@ import { newBudgetPrompt } from './../../../models/newBudgetPrompt';
 })
 export class BudgetAdvisorComponent implements OnInit {
   data: any;
+  data2: any;
   options: any;
+  options2: any;
   load: boolean = false;
+  displayType: string;
   needs: newBudgetPrompt[] = [];
   wantIcons: any;
   needIcons: any;
@@ -27,18 +32,21 @@ export class BudgetAdvisorComponent implements OnInit {
   @Input() dat: any;
 
   nextPage() {
-    this.pageForward.emit();
+
+      this.pageForward.emit();
+   
+
   }
 
   
   displayNeeds = false;
 
-  constructor(private cs: CategoryService, private pp: PercentPipe) { 
+  constructor(public cp: CurrencyPipe, private colServ: ColorService, private cs: CategoryService, private pp: PercentPipe) { 
 
   }
 
   ngOnInit(): void {
-
+   
     console.log("Breakdown: " + this.dat)
     this.data = {
         labels: ['Needs', 'Wants', 'Savings'],
@@ -59,8 +67,57 @@ export class BudgetAdvisorComponent implements OnInit {
         ]
     };
 
+    let labels = ['Housing', 'Transportation', 'Food/Grocery Essential', 'Medical', 'Utilities', 'Debt Payment',
+    'Insurance', 'Lifestyle Essential', 'Pet', 'Tax Payment', 'Miscellaneous Expense Essential']
+    let yValues = [this.dat['Housing'].amount, this.dat['Transportation'].amount,
+    this.dat['Food/Grocery Essential'].amount, this.dat['Medical'].amount, 
+  this.dat['Utilities'].amount, this.dat['Debt Payment'].amount,
+this.dat['Insurance'].amount, this.dat['Lifestyle Essential'].amount,
+this.dat['Pet'].amount, this.dat['Tax Payment'].amount, this.dat['Miscellaneous Expense Essential'].amount]
+
+    this.data2 = {
+      labels: labels,
+      datasets: [
+          {
+              data: yValues,
+      backgroundColor: this.colServ.configureDefaultColors(yValues),
+    hoverBackgroundColor: this.colServ.configureDefaultColors(yValues)
+    }
+      ]
+  };
+
+    let cp = this.cp
+    let pp = this.pp
+    let dat = this.dat
+
+    this.options2 = {
+
+      plugins: {
+        tooltip: {
+          enabled: true,
+          titleFont: 
+          {
+            size: 30
+          },
+          bodyFont: {
+            size: 30
+          },
+          callbacks: {
+              label: function(context) {
+                  let lab = labels[context.dataset.index]
+                  let val: number = yValues[context.dataset.index]
+                  return [context.label, "Amount: " + cp.transform(context.raw), 
+                  "Percentage: " + pp.transform(dat[context.label].percen)] 
+              }
+            }
+          }
+      }
+    }
+
     this.options = {
-      datalabels: { display: false },
+      plugins: {
+        datalabels: { display: false },
+      },  
       responsive: false,
       maintainAspectRatio: false
     };
@@ -113,15 +170,19 @@ export class BudgetAdvisorComponent implements OnInit {
   setDisplay(selected) {
     this.displayItems = selected;
     if (this.displayItems == this.needs) {
+      this.displayType = "need"
       this.title = this.pp.transform(this.dat.need) + ' Needs';
     } else if (this.displayItems == this.debt) {
+      this.displayType = "saving"
       this.title = this.pp.transform(this.dat.saving) + " Savings";
     } else  if (this.displayItems == this.wants) {
+      this.displayType = "want"
       this.title = this.pp.transform(this.dat.want) + ' Wants';
     } else {
       this.title = 'Error'
     }
     this.displayNeeds = true;
   }
+
 
 }

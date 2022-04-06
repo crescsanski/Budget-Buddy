@@ -1,4 +1,4 @@
-import { Component, EventEmitter, OnInit, Output } from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { SelectItem } from 'primeng/api';
 
 @Component({
@@ -14,6 +14,8 @@ export class BudgetAlgorithmComponent implements OnInit {
   income: number;
 
   @Output() pageForward  = new EventEmitter();
+
+  @Input() monthlyIncome: number;
 
   nextPage(pack: any) {
     this.pageForward.emit(pack);
@@ -36,6 +38,7 @@ export class BudgetAlgorithmComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    this.income = this.monthlyIncome * 12
   }
 
   runSpendingRec()

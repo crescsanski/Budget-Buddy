@@ -1,59 +1,69 @@
+
+
 <div *ngIf="currentPanel == 'Optimizer'" class="panel panel2">
-    <app-budget-algorithm (pageForward)="pageForwardSpec($event);"></app-budget-algorithm>
+    <app-budget-algorithm *ngIf="totalIncome && !isNaN(totalIncome)"[monthlyIncome]="totalIncome" (pageForward)="pageForwardSpec($event);"></app-budget-algorithm>
 </div>
 
 <div [hidden]="!(currentPanel == 'Advisor' && advisorVisible)">
     <app-budget-advisor *ngIf="advisorPackage" [dat]="advisorPackage" (pageForward)="pageForward(); "></app-budget-advisor>
 </div>
-<div *ngIf="currentPanel == 'Income' && advisorVisible" class="panel" style="padding:2em; height: 65vh; overflow-y: auto">
-    <div>
-    <div>
-        <div class="header">
-            <h1>Income</h1> 
-        </div>
-        <div *ngFor="let item of income; let i=index">
-            <div *ngIf="i<10" style="width: 40%; display: block" class="column">
-                <h3>{{item.categoryTitle}}</h3>
-                <p-inputNumber placeholder="$0.00" mode="currency" [(ngModel)]="item.amount" currency="USD" locale="en-US"></p-inputNumber>
+<div *ngIf="currentPanel == 'Income'" class="panel container" style="padding:2em; height: 65vh;">
+    
+    <div class="header">
+        <h1>Income</h1> 
+        <p>Please enter your expected monthly income from the following categories.</p>
+        <br>
+    </div>
+    <div class="subContainer">
+        <div class="scroll">
+            <div *ngFor="let item of income; let i=index" >
+                <div *ngIf="i<10" style="width: 40%; display: block" class="column">
+                    <h3>{{item.categoryTitle}}</h3>
+                    <p-inputNumber placeholder="$0.00" mode="currency" [(ngModel)]="item.amount" currency="USD" locale="en-US"></p-inputNumber>
+                </div>
             </div>
-        </div>
-        <div *ngFor="let item of income; let i=index">
-            <div *ngIf="i>=10" style="width: 40%; display: block" class="column">
-                <h3>{{item.categoryTitle}}</h3>
-                <p-inputNumber placeholder="$0.00" mode="currency" [(ngModel)]="item.amount" currency="USD" locale="en-US"></p-inputNumber>
+            <div *ngFor="let item of income; let i=index">
+                <div *ngIf="i>=10" style="width: 40%; display: block" class="column">
+                    <h3>{{item.categoryTitle}}</h3>
+                    <p-inputNumber placeholder="$0.00" mode="currency" [(ngModel)]="item.amount" currency="USD" locale="en-US"></p-inputNumber>
+                </div>
             </div>
-        </div>
         </div>
     </div>
     <button pButton style="margin-left: 2.5em; margin-top: 3em; width: 88%" type="submit" label='Track' (click)="recalculate(); pageForward()"></button>
 </div>
 
-<div *ngIf="currentPanel == 'Expenses' && advisorVisible" class="panel panel-expenses" style="padding:2em; height: 65vh; overflow-y: scroll">
-    <div>
-    <div>
+<div *ngIf="currentPanel == 'Expenses'" class="panel container" style="padding:2em; height: 75vh">
+   
         <div class="header">
             <h1>Expenses</h1> 
+            <p>Please enter your expected monthly expenses from the following categories.</p>
+
+            <p>We've preloaded the recommended values for the need categories, but you are free to modify them as desired.</p>
+            <br>
         </div>
-        <div *ngFor="let item of expenses; let i=index">
-            <div *ngIf="i<10" style="width: 40%; display: block" class="column">
-                <h3>{{item.categoryTitle}}</h3>
-                <p-inputNumber placeholder="$0.00" mode="currency" [(ngModel)]="item.amount" currency="USD" locale="en-US"></p-inputNumber>
+        <div class="subContainer2">
+            <div class="scroll">
+                <div *ngFor="let item of expenses; let i=index">
+                    <div *ngIf="i<10" style="width: 40%; display: block" class="column">
+                        <h3>{{item.categoryTitle}}</h3>
+                        <p-inputNumber placeholder="$0.00" mode="currency" [(ngModel)]="item.amount" currency="USD" locale="en-US"></p-inputNumber>
+                    </div>
+                </div>
+                <div *ngFor="let item of expenses; let i=index">
+                    <div *ngIf="i>=10" style="width: 40%; display: block" class="column">
+                        <h3>{{item.categoryTitle}}</h3>
+                        <p-inputNumber placeholder="$0.00" mode="currency" [(ngModel)]="item.amount" currency="USD" locale="en-US"></p-inputNumber>
+                    </div>
+                </div>
             </div>
         </div>
-        <div *ngFor="let item of expenses; let i=index">
-            <div *ngIf="i>=10" style="width: 40%; display: block" class="column">
-                <h3>{{item.categoryTitle}}</h3>
-                <p-inputNumber placeholder="$0.00" mode="currency" [(ngModel)]="item.amount" currency="USD" locale="en-US"></p-inputNumber>
-            </div>
-        </div>
-        </div>
-    </div>
     <button pButton style="margin-left: 2.5em; margin-top: 3em; width: 88%" type="submit" label='Track' (click)="recalculate(); pageForward()"></button>
 </div>
 
 
 <div *ngIf="currentPanel =='Finalization' " style="top:20vh">
     <app-budget-adjuster [prompts]="prompts" [expenses]="expenses" [incomes]="income" [totalIncome]="totalIncome" [totalExpenses]="totalExpenses" 
-    [availableBudget]="availableBudget" [breakdown]="getBreakdown()"></app-budget-adjuster>
+    [dat]="advisorPackage" [availableBudget]="availableBudget" [breakdown]="getBreakdown()"></app-budget-adjuster>
 </div>
 
