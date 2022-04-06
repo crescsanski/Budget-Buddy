@@ -22,11 +22,13 @@ export class TriggerService {
   private incomReceiptChange = new Subject<Receipt>();
 
   private challAnnounce = new Subject<void>();
+  private levelAnnounce = new Subject<void>();
   private budgetUpdateAnnounce = new Subject<Budget[]>();
   private favoritesAnnounce = new Subject<void>();
   private challComplete = new Subject<Challenge>();
 
   //Observable streams
+  levelGained$ = this.levelAnnounce.asObservable();
   expenReceiptChanged$ = this.expenReceiptChange.asObservable();
   incomReceiptChanged$ = this.incomReceiptChange.asObservable();
   favoritesAnnounced$ = this.favoritesAnnounce.asObservable();
@@ -45,6 +47,16 @@ export class TriggerService {
   async announceChallengeComplete(chall: Challenge)
   {
     this.challComplete.next(chall);
+
+    if (this.challServ.preLev_Prog.level < this.challServ.levProgress.level)
+    {
+      this.announceLevelGain();
+    }
+  }
+
+  async announceLevelGain()
+  {
+    this.levelAnnounce.next();
   }
 
   announceBudgetUpdate(budgets: Budget[])

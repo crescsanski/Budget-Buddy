@@ -66,7 +66,7 @@ def manageUserChallInv(request, user_id):
                     'id', 'name', 'description', 'rewardPoints', 'start_date', 'is_active', 'no_badge', 'goal', 'progress', 'fracCompl', 'completion_date', 'type', 'time_given', 'trigger'
                 )
     
-    levelData = retrieveUserLevelData(user_id)
+    levelData = retrieveUserLevelData(user_id)[0]
     out = {
         'inventory': ex,
         'levelProgress': levelData

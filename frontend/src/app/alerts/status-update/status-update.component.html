@@ -1,5 +1,24 @@
 <div>
         <h1>Congratulations!  You've completed a challenge.</h1>
         <p>Experience Gained: {{this.completedChallenge.rewardPoints}}</p>
-        <p>Badge Earned: {{this.completedChallenge.name}}</p>
+        <div *ngIf="!completedChallenge.no_badge">
+            <p >Badge Earned: {{this.completedChallenge.name}}</p>
+        </div>
+        <div >
+            <div style="display: inline-flex;">
+                <span>Level {{oldLevel}}</span><p-progressBar class="progress-bar" [value]="value1"></p-progressBar><span>Level {{oldLevel + 1}}</span>
+            </div>
+            
+            <p class="subtitle">{{ target1 }} XP / <span style="font-weight:bold">{{ needed1 }} XP</span></p>
+        </div>
+        
+        <div *ngIf="gainedLevel">
+            <p>Wow!  You've earned enough experience to advance to the next level</p>
+            <div style="display: inline-flex;">
+                <span>Level {{curLevel}}</span><p-progressBar class="progress-bar" [value]="value2"></p-progressBar><span>Level {{curLevel + 1}}</span>
+            </div>
+           
+            <p class="subtitle">{{ target2 }} XP / <span style="font-weight:bold">{{ needed1 }} XP</span></p>
+        </div>
+        
 </div>

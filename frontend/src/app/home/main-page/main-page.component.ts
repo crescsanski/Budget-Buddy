@@ -12,6 +12,7 @@ import { TimeService } from 'src/app/services/time.service';
 import { Budget } from 'src/app/models/budget';
 import { TriggerService } from 'src/app/services/trigger.service';
 import {ConfirmationService} from 'primeng/api';
+import { ChallengesService } from 'src/app/services/challenges.service';
 
 
 @Component({
@@ -41,8 +42,13 @@ export class MainPageComponent implements OnInit {
 
 
 
-  constructor(private confServ: ConfirmationService, private authService: AuthService, private trigServ: TriggerService, private ts: TimeService, private budServ: BudgetService, private catServ: CategoryService, private messageService: MessageService, private router: Router) { 
+  constructor(private challServ: ChallengesService, private confServ: ConfirmationService, private authService: AuthService, private trigServ: TriggerService, private ts: TimeService, private budServ: BudgetService, private catServ: CategoryService, private messageService: MessageService, private router: Router) { 
     
+    this.trigServ.levelGained$.subscribe(() =>
+    {
+      this.level = this.challServ.levProgress.level
+    })
+
     try{
       this.router.getCurrentNavigation().extras.state.newUser;
       this.welcomeMessage = true;

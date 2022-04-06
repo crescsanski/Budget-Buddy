@@ -3,6 +3,8 @@ import { MainPageComponent } from './../main-page.component';
 import { ThrowStmt } from '@angular/compiler';
 import { Component, EventEmitter, OnInit, Output } from '@angular/core';
 import { AuthService } from 'src/app/services/auth.service';
+import { ChallengesService } from 'src/app/services/challenges.service';
+import { TriggerService } from 'src/app/services/trigger.service';
 
 @Component({
   selector: 'app-menu',
@@ -18,7 +20,12 @@ export class MenuComponent implements OnInit {
   @Output()
   notify: EventEmitter<string> = new EventEmitter<string>();
   
-  constructor(authServ: AuthService) {
+  constructor(private trigServ: TriggerService, private challServ: ChallengesService, authServ: AuthService) {
+
+    this.trigServ.levelGained$.subscribe(() =>
+    {
+      this.level = this.challServ.levProgress.level
+    })
 
     if (authServ.currentUserValue)
     {
