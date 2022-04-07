@@ -6,3 +6,10 @@ h3{
     font-size: x-large;
     margin-bottom: 3px;
 }
+
+:host::ng-deep .over > * > *
+{
+    background-color: rgb(198, 0, 0) !important;
+    color: white !important;
+
+}

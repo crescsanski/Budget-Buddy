@@ -2,6 +2,7 @@ import { Challenge } from '../../models/Challenge';
 import { Component, OnInit } from '@angular/core';
 import { ChallengesService } from 'src/app/services/challenges.service';
 import { TriggerService } from 'src/app/services/trigger.service';
+import { CurrencyPipe } from '@angular/common';
 
 @Component({
   selector: 'app-challenge-progress',
@@ -12,7 +13,7 @@ export class ChallengeProgressComponent implements OnInit {
 
   challenges: Challenge[] //will be of type ChallengePackage (but too complicated to implement w/out just retrieving data)
 
-  constructor(private chalServ: ChallengesService, private trigServ: TriggerService) {
+  constructor(private chalServ: ChallengesService, private trigServ: TriggerService, private cp: CurrencyPipe) {
       this.challenges = this.getInProgress(this.chalServ.challenges);
 
       this.trigServ.challAnnounced$.subscribe(() => this.challenges = this.getInProgress(this.chalServ.challenges))
@@ -49,7 +50,20 @@ export class ChallengeProgressComponent implements OnInit {
 
    getInProgress(inven: Challenge[])
    {
-     return inven.filter(val => val.is_active && val.completion_date == null)
+     return inven.filter(val => val.is_active && val.completion_date == null).map(val => 
+      {
+        var prog: any = val.progress
+        var goal: any = val.goal
+        var label: any = val.label;
+        if (val.label == 'dollars')
+        {
+          prog = this.cp.transform(val.progress)
+          goal = this.cp.transform(val.goal)
+          label = ""
+        }
+        return {...val, fracCompl: Math.round(val.fracCompl), displayProg: prog, label: label, displayGoal: goal}
+      }
+    )
    }
 
   ngOnInit(): void {

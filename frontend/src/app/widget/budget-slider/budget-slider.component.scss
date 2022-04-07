@@ -1,7 +1,7 @@
 .scrollbox {
   max-height: 50vh;
   overflow-y: auto;
-  overflow-x: visible !important;
+  overflow-x: hidden !important;
   width: 96%;
   padding: 10px 0px;
   margin-left: 5px;
@@ -11,6 +11,11 @@
   .p {
     text-align: left !important;
   }
+}
+
+:host::ng-deep p-slider > div
+{
+  width: 96% !important;
 }
 
 :host::ng-deep #chart

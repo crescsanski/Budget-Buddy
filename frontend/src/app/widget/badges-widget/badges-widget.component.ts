@@ -20,7 +20,7 @@ export class BadgesWidgetComponent implements OnInit {
 
 
     this.badges = chaServ.challenges.filter(val => val.completion_date != null && val.no_badge == false)
-      .map(val => (<Badge>{badge_name: val.name, badge_description: val.description}))
+      .map(val => (<Badge>{badge_name: val.badge_name, badge_description: val.description}))
   }
 
   ngOnInit(): void {

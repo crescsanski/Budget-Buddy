@@ -2,6 +2,8 @@ import datetime
 from threading import Timer
 from django.contrib.auth.hashers import *
 import threading
+from django.db import connection
+import schedule
 
 from numpy import fix
 from app.models import Users, UserCategoryBudget, Expense, Income, Receipt
@@ -14,8 +16,15 @@ class gameThread(threading.Thread):
       pass
       #fixPasswordAndActivateAccount()
       #activateBudgetsForThisMonth()
-      #t = Timer(self.counter, mainGameOrigin)
-      #t.start()
+      schedule.every().day.at("00:00:00").do(gameTasks)
+
+
+def gameTasks():
+   if datetime.datetime.now().day == 1:
+      with connection.cursor() as cursor:
+         # Call procedures to run on first day of month
+         cursor.callproc('test_procedure')
+   
 
 def fixPasswordAndActivateAccount():
    for user in Users.objects.all():
@@ -40,40 +49,7 @@ def activateBudgetsForThisMonth():
          print("The budget is missing a date.")
          UserCategoryBudget.objects.filter(pk=budget.pk).update(user_category_budget_date = today)
 
-#This function should trigger once every hour to update the state of the game.
-def mainGameOrigin():
-   pass
-   # Expense.objects.filter(receipt__user_id=54).delete()
-   # Income.objects.filter(receipt__user_id=54).delete()
-   # Receipt.objects.filter(user_id = 54).delete()
-   # 
 
-#       #For each user....
-
-#       #We need to update their experience points
-#       updateExperPoints(user.pk)
-
-#       #We need to modify their level (if applicable)
-#       updateLevel(user.pk)
-
-#       #We need to call SQL procedures to verify the completion of challenges
-#       #If completed, the corresponding reward should be granted.
-#       verifyChallenges(user.pk)
-
-#       #We need to swap out expired challenges with new ones.
-#       assignNewChallenges(user.pk)
-
-# def updateExperPoints(userPk):
-#    pass
-
-# def updateLevel(userPk):
-#    pass
-
-# def verifyChallenges(userPk):
-#    pass
-
-# def assignNewChallenges(userPk):
-#    pass
 
 
 

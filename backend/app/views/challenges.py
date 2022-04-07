@@ -52,18 +52,20 @@ def manageUserChallInv(request, user_id):
     F('user_challenge_inventory_id'),
                 name = F('challenge__challenge_name'),
                 no_badge = F('challenge__challenge_is_repeatable'),
+                badge_name = F('challenge__challenge_badge_description'),
+                label = F('challenge__challenge_unit_type'),
                 description = F('challenge__challenge_description'),
                 rewardPoints = F('challenge__challenge_experience_points'),
                 start_date = F('user_challenge_start_date'),
                 is_active = F('challenge__challenge_is_active'),
-                goal = F('challenge__challenge_completion_amount'),
+                goal = F('user_challenge_completion_amount'),
                 progress = F('user_challenge_current_amount'),
                 completion_date = F('user_challenge_completion_date'),
                 type = F('challenge__challenge_type'),
                 time_given = F('challenge__challenge_time_given'),
                 trigger = F('challenge__challenge_trigger')).annotate(
                     fracCompl = Cast(F('progress'), FloatField()) / Cast(F('goal'), FloatField()) * 100).values(
-                    'id', 'name', 'description', 'rewardPoints', 'start_date', 'is_active', 'no_badge', 'goal', 'progress', 'fracCompl', 'completion_date', 'type', 'time_given', 'trigger'
+                    'id', 'name', 'badge_name', 'label', 'description', 'rewardPoints', 'start_date', 'is_active', 'no_badge', 'goal', 'progress', 'fracCompl', 'completion_date', 'type', 'time_given', 'trigger'
                 )
     
     levelData = retrieveUserLevelData(user_id)[0]

@@ -2,6 +2,7 @@ export interface Challenge {
     id: number;
     name: string;
     label?: string;
+    badge_name: string;
     fracCompl: number;
     description: string;
     rewardPoints: number;
@@ -15,4 +16,7 @@ export interface Challenge {
     type: string;
     time_given: number;
     trigger: string;
+    displayGoal?: string;
+    displayProg?: string;
+    displayLabel?: string;
 }
