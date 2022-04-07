@@ -32,8 +32,7 @@ export class StatusUpdateComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.completedChallenge.rewardPoints
-    this.completedChallenge.no_badge
+
     this.origExper = this.challServ.preLev_Prog.experience_points
     this.needed1 = this.challServ.preLev_Prog.required_experience
     this.curExper = this.challServ.levProgress.experience_points
@@ -55,13 +54,13 @@ export class StatusUpdateComponent implements OnInit {
       this.targetPerc1 = this.curExper / this.needed1 * 100
     }
 
-    this.value1 = this.challServ.preLev_Prog.experience_points / this.challServ.preLev_Prog.required_experience * 100
+    this.value1 = Math.round(this.challServ.preLev_Prog.experience_points / this.challServ.preLev_Prog.required_experience * 100)
     this.value2 = 0
 
     let interval = setInterval(() => {
       this.value1 = this.value1 + 1;
       if (this.value1 >= this.targetPerc1) {
-          this.value1 = this.targetPerc1;
+          this.value1 = Math.round(this.targetPerc1);
       }
   }, 70);
 
@@ -70,7 +69,7 @@ export class StatusUpdateComponent implements OnInit {
       let interval2 = setInterval(() => {
         this.value2 = this.value2 + 1;
         if (this.value2 >= this.targetPerc2) {
-            this.value2 = this.targetPerc2;
+            this.value2 = Math.round(this.targetPerc2);
         }
     }, 70);
   }

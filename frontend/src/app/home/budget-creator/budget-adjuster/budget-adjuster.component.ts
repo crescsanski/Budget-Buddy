@@ -101,6 +101,9 @@ export class BudgetAdjusterComponent implements OnInit {
 
  this.stackedOptions = {
             plugins: {
+                datalabels: {
+                  display: false
+                },
                 tooltips: {
                     mode: 'index',
                     intersect: false
@@ -206,14 +209,14 @@ export class BudgetAdjusterComponent implements OnInit {
     this.incomes.forEach((obj) =>
     {
       post.push({category: obj.category_id, 
-      user_category_budget_estimated_amount: obj.amount,
-    user_category_budget_altered_amount: obj.amount});
+      user_category_budget_estimated_amount: Math.round(obj.amount),
+    user_category_budget_altered_amount: Math.round(obj.amount)});
     })
     this.expenses.forEach((obj) =>
       {
         post.push({category: obj.category_id, 
-          user_category_budget_estimated_amount: obj.amount,
-        user_category_budget_altered_amount: obj.amount});
+          user_category_budget_estimated_amount: Math.round(obj.amount),
+        user_category_budget_altered_amount: Math.round(obj.amount)});
       })
     
     this.budServ.setInitialBudget(post).subscribe((val) =>
