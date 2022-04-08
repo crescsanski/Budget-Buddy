@@ -39,6 +39,17 @@ export class SavingsOverTimeComponent implements OnInit {
       {
           this.getNewData();
       })
+
+      var minDate = new Date();
+      this.savServ.cumSavings.forEach((value) =>
+      {
+        let date = this.ts.getDate(value.week, value.year)
+        if (date < minDate)
+        {
+            minDate = date;
+        }
+      })
+      this.rangeDates[0] = minDate;
   }
 
   syncData()
@@ -57,7 +68,7 @@ export class SavingsOverTimeComponent implements OnInit {
     var grouped = {};
     if (this.selectedType == "yearly")
     {
-        result = this.groupByAndSum(newData, "yearly")
+        result = this.groupByAndMax(newData, "yearly")
 
         labels = result.map(val => val.year)
 
@@ -66,14 +77,14 @@ export class SavingsOverTimeComponent implements OnInit {
     else if (this.selectedType == "monthly")
     {
 
-        result = this.groupByAndSum(newData, "monthly")
+        result = this.groupByAndMax(newData, "monthly")
         xTitle = "Months"
 
         labels = result.map(val => `${this.monthNames[val.month - 1]} ${val.year}`)
     }
     else
     {
-        result = this.groupByAndSum(newData, "weekly")
+        result = this.groupByAndMax(newData, "weekly")
         xTitle = "Weeks"
         labels = result.map(val => this.ts.getDate(val.week, val.year).toISOString().substring(0, 10))
     }
@@ -93,7 +104,7 @@ export class SavingsOverTimeComponent implements OnInit {
     return {labels: labels, values: values, xTitle: xTitle}
   }
 
-  groupByAndSum(data: SavingsOverTime[], type: string): SavingsOverTime[]
+  groupByAndMax(data: SavingsOverTime[], type: string): SavingsOverTime[]
   {
     const result: SavingsOverTime[] = [...data.reduce((r, o) => {
         var key: string;

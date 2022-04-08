@@ -1,12 +1,9 @@
 .scrollbox {
-  max-height: 50vh;
-  overflow-y: auto;
-  overflow-x: hidden !important;
+  overflow-y: scroll;
+  overflow-x: visible !important;
   width: 96%;
-  padding: 10px 0px;
-  margin-left: 5px;
-  margin-right: 5px;
-  margin-top: 0;
+  max-height: 45vh;
+  
 
   .p {
     text-align: left !important;
@@ -33,4 +30,9 @@
 .sliderArea {
   margin-top: 2em;
   margin-left: 1em;
+}
+
+.button-secondary {
+  color: #4ec5ca;
+  background-color: #ffffff;
 }

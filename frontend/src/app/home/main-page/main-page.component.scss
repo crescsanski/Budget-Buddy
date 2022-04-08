@@ -21,9 +21,15 @@ h1 {
   }
 }
 
-
-
-
+.edit-button {
+  margin-right: .5em;
+  color: gainsboro;
+  font-size: 1em;
+  &:hover {
+    cursor: pointer;
+    transform: scale(1.05);
+  }
+}
 
 .setting-item {
   font-family: "Century Gothic Pro", sans-serif !important;
@@ -80,8 +86,8 @@ div {
 }
 
 .title-bar {
-  margin-bottom: 1vh;
-  height: 11vh;
+  margin-bottom: 2em;
+  height: 7.5vh;
 
 }
 

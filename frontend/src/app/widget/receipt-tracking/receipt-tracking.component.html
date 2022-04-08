@@ -1,36 +1,40 @@
-<div class="panel">
+<div class="panel" style="height: 70vh">
     <div class="content-area" style="margin-left: 0; ">
-        <div class="header" style="width: 160%">
+        <div class="header">
             <h2>Receipts</h2>
-            <button style="text-align: right;" pButton pRipple pTooltip="View All Receipts" tooltipPosition="bottom" type="button" icon="pi pi-list" class="p-button-rounded p-button-outlined" (click)="showAllReceipts()"></button>
+            <button pButton pRipple pTooltip="View All Receipts" tooltipPosition="bottom" type="button" class="p-button-rounded p-button-outlined viewAll"(click)="showAllReceipts()">View All Receipts</button>
         </div>
         <div style="display: inline-flex; width: 100%">
-            <div #receiptList style= "height: 30vh; overflow-y: auto; width: 50%">
-                <div *ngFor="let item of userReceipts | slice:userReceipts.length - 3; let i=index" style="display: inline-flex;">
+            <div #receiptList style= "height: 52vh; overflow-y: scroll; overflow-x:hidden; max-width: 25vw; border: gainsboro;border-width: 1px; border-style: solid;">
+                <div *ngFor="let item of userReceipts" style="display: inline-flex;">
                     <div *ngIf="item == selectedReceipt" class="receipt-list selected" style="position: relative">
-                        <p style="font-weight: bolder; font-size: 800; text-align: left; height: 1.3em; overflow-y: hidden; overflow-x: hidden; width: 115px;">{{item.receipt.receipt_name}} 
-                            <img class="edit-button" src="../../../assets/icons/trash.png" 
-                            style="width:1em; position: absolute; top: 0.5em; right: 1em; border-radius: 100" (click)="openDeleteReceipt(item)">
-                            <img class="edit-button" src="../../../assets/icons/edit-icon.png" 
-                            style="width:1em; position: absolute; top: 0.5em; right: 2.5em; border-radius: 100" (click)="openReceiptEditor(item)"></p>
-                        <p style="margin-top: -15px;">{{rs.getTotal(item) | currency}} <span style="text-align: left; margin-left: 2.5em">{{item.receipt.receipt_date | date:'shortDate'}}</span></p>
-                    </div>
-                    <div *ngIf="item != selectedReceipt" class="receipt-list" (click)="selectReceipt(item)" style="position: relative">
                         <p style="font-weight: bolder; font-size: 800; text-align: left; 
-                        height: 1.3em; overflow-y: hidden; overflow-x: hidden; width: 115px;">{{item.receipt.receipt_name}} <img class="edit-button" 
+                        height: 1.3em; overflow-y: hidden; overflow-x: hidden; width: 22vw">{{item.receipt.receipt_name}} <img class="edit-button" 
                         src="../../../assets/icons/trash.png" style="width:1em; top: 0.5em; position: absolute; right: 1em; border-radius: 100" 
                         (click)="openDeleteReceipt(item)"><img class="edit-button" src="../../../assets/icons/edit-icon.png" 
                         style="width:1em; top: 0.5em; position: absolute; right: 2.5em; border-radius: 100" (click)="openReceiptEditor(item)"></p>
-                        <p style="margin-top: -15px;">{{rs.getTotal(item) | currency}} 
-                            <span style="text-align: left; margin-left: 2.5em">{{item.receipt.receipt_date | date:'shortDate'}}</span></p>
+
+                        <p style="margin-top: -15px; display: flex; justify-content: space-between;">{{rs.getTotal(item) | currency}} 
+                            <span>{{item.receipt.receipt_date | date:'shortDate'}}</span></p>
+                    </div>
+
+                    <div *ngIf="item != selectedReceipt" class="receipt-list" (click)="selectReceipt(item)" style="position: relative">
+                        <p style="font-weight: bolder; font-size: 800; text-align: left; 
+                        height: 1.3em; overflow-y: hidden; overflow-x: hidden; width: 22vw">{{item.receipt.receipt_name}} <img class="edit-button" 
+                        src="../../../assets/icons/trash.png" style="width:1em; top: 0.5em; position: absolute; right: 1em; border-radius: 100" 
+                        (click)="openDeleteReceipt(item)"><img class="edit-button" src="../../../assets/icons/edit-icon.png" 
+                        style="width:1em; top: 0.5em; position: absolute; right: 2.5em; border-radius: 100" (click)="openReceiptEditor(item)"></p>
+
+                        <p style="margin-top: -15px; display: flex; justify-content: space-between;">{{rs.getTotal(item) | currency}} 
+                            <span>{{item.receipt.receipt_date | date:'shortDate'}}</span></p>
                     </div>
                 </div>
             </div>
             
-            <div class="image-area" style="display: block; text-align: center;">
+            <div class="image-area" style="display: block; text-align: center; margin: 3vw;">
                 <img src="{{imageUpload}}">
                 <div *ngIf="imageUpload == noUpload" style="text-align: center;">
-                    <p-button (click)="op.toggle($event)">Upload Receipt</p-button>
+                    <p-button class="viewAll" (click)="op.toggle($event)">Upload Receipt</p-button>
                 </div>
             </div>
         </div>

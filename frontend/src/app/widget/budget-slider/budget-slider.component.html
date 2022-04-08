@@ -1,44 +1,38 @@
-<div class="panel">
+<div class="panel" style="width: 73vw">
     <div style="width: 100%">
         <div class="content-area">
-            <h2>My Budget</h2> 
-        </div>
-        
-    </div>
-    <div class="grid">
-        <div class="col-6">
-            <div class="grid">
-                <div class="col-12">
-                    <app-budget-breakdown-chart #chart 
-                    [defaultBreakdown]="actualBreakdown"></app-budget-breakdown-chart>
-                </div>
-                <div class="col-12">
-                    <p style="margin-top: 9px; color: #003486; font-size: 1.4em; text-align: center; font-weight: lighter;">Using: <span style="font-weight: bold;">${{configTotal}}/${{maxTotalBudget}}</span></p>
-                    <p-progressBar [value]="percenUsed"></p-progressBar>
+            <div class="header">
+                <h2>My Budget</h2>
+                <div class="field">
+                    <p-multiSelect [options]="budgetCategories" class="inputfield" [(ngModel)]="filteredCats"
+                    [maxSelectedLabels]="0" [selectedItemsLabel]="'{0} items selected'" placeholder="Select Categories"
+                    (onChange)="updateCategories()" inputId="cat" optionLabel="categoryTitle" style="width: 10vw;"></p-multiSelect>
                 </div>
             </div>
-            
-        </div>
-        <div class="col-6">
-            <div class="grid">
-                <div class="col-12">
-                    <div class="field">
-                        <label for="cat" style="margin-right: 15px">Selected Categories</label>
-                        <p-multiSelect [options]="budgetCategories" class="inputfield" [(ngModel)]="filteredCats"
-                        [maxSelectedLabels]="0" [selectedItemsLabel]="'{0} items selected'" 
-                        (onChange)="updateCategories()" 
-                        placeholder="Select a Value"
-                        inputId="cat"
-                        optionLabel="categoryTitle"></p-multiSelect>
+
+            <div class="grid" style="justify-content:center;">
+
+                <!--Pie Graph-->
+                <div class="col-6" style="text-align: center; width: 37vw; justify-content: center; display: flex; background-color: #4ec5ca50; padding: 2vw; width: 33vw; border-color: gainsboro; border-radius: 1px; border-style: solid;">
+                    <div class="grid">
+                        <div class="col-12" style="height: 35vh; padding: 2vw">
+                            <app-budget-breakdown-chart #chart [defaultBreakdown]="actualBreakdown"></app-budget-breakdown-chart>
+                        </div>
                     </div>
                 </div>
-                <div class="col-12">
-                    <div  *ngIf="filteredCats.length > 0" class="content-area scrollbox">
-                        <div *ngFor="let cat of budgetCategories">
-                            <div class="sliderArea" *ngIf="cat.visible">
-                                <p style="color: #003486; text-align: left; font-weight: bold;">{{cat.categoryTitle}}: <span style="font-weight: lighter;">${{cat.new_amount}}/${{cat.max}} ({{cat.new_amount/configTotal | percent:'1.0-2'}})</span></p>
-                                <p-slider *ngIf="refresh" (onChange)="sliderChange()" (onSlideEnd)="this.updateVisibility();" [(ngModel)]=cat.new_amount [min]="0" [max]=cat.max [animate]="true" [step]="5" ptoolT></p-slider>
-                                <p-slider *ngIf="!refresh" (onChange)="sliderChange()" [(ngModel)]=cat.new_amount [min]="0" [max]=cat.max [animate]="true" [step]="5" ptoolT></p-slider>
+        
+                <!--Scroll Area-->
+                <div class="col-6" style="border-color: gainsboro; border-radius: 1px; border-style: solid; padding: 0px; width: 37vw">
+                    <div class="grid">
+                        <div class="col-12" style="padding: 0px">
+                            <div  class="content-area scrollbox" style="padding-left: 2vw">
+                                <div *ngFor="let cat of budgetCategories">
+                                    <div class="sliderArea" *ngIf="cat.visible != false">
+                                        <p style="color: #003486; text-align: left; font-weight: bold;">{{cat.categoryTitle}}: <span style="font-weight: lighter;">${{cat.new_amount}}/${{cat.max}} ({{cat.new_amount/configTotal | percent:'1.0-2'}})</span></p>
+                                        <p-slider *ngIf="refresh" (onChange)="sliderChange()" (onSlideEnd)="this.updateVisibility();" [(ngModel)]=cat.new_amount [min]="0" [max]=cat.max [animate]="true" [step]="5" ptoolT></p-slider>
+                                        <p-slider *ngIf="!refresh" (onChange)="sliderChange()" [(ngModel)]=cat.new_amount [min]="0" [max]=cat.max [animate]="true" [step]="5" ptoolT></p-slider>
+                                    </div>
+                                </div>
                             </div>
                             
                         </div>
@@ -48,17 +42,26 @@
                         <span>Please select at least one category.</span>
                     </div>
                 </div>
-               
+        
+                <!--Percentage Bar-->
+                <div class="col-12" style="padding: 2vw; border-color: gainsboro; border-radius: 1px; border-style: solid; width: 70vw">
+                    <p-progressBar [value]="percenUsed"></p-progressBar>
+                    <p style="margin: 1vw; color: #003486; font-size: 1.4em; font-weight: lighter; float: right"><span style="font-weight: bold;">${{configTotal}}/${{maxTotalBudget}}</span></p>
+
+                    <div style="text-align: right; justify-content: end;" class="grid">
+
+                            <button (click)="applyChanges()" style="width:8vw; margin-right: .5vw"> Apply Changes</button>
+                            <button style="margin-right: 10px; width:8vw" (click)="reset()" class="button-secondary">Reset</button>
+                              
+                    </div>
+                </div>
+                </div>
+                   
+                
+
+
         </div>
-    </div> 
-           
-    <div style="text-align: center; width: 100%;" class="grid" *ngIf="show">
-        <div class="col-6">
-            <button style="width: 10em; font-size: large;" (click)="reset()">Reset</button>
-        </div>
-        <div class="col-6">
-            <button style="width: 10em; font-size: large;" (click)="applyChanges()"> Apply Changes</button>
-        </div>       
     </div>
-</div>
+
+    
     
