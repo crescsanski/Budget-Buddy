@@ -15,17 +15,17 @@
                 <!--Pie Graph-->
                 <div class="col-6" style="text-align: center; width: 37vw; justify-content: center; display: flex; background-color: #4ec5ca50; padding: 2vw; width: 33vw; border-color: gainsboro; border-radius: 1px; border-style: solid;">
                     <div class="grid">
-                        <div class="col-12" style="height: 35vh; padding: 2vw">
+                        <div class="col-12" style="height: 25vh; padding: 2vw">
                             <app-budget-breakdown-chart #chart [defaultBreakdown]="actualBreakdown"></app-budget-breakdown-chart>
                         </div>
                     </div>
                 </div>
         
                 <!--Scroll Area-->
-                <div class="col-6" style="border-color: gainsboro; border-radius: 1px; border-style: solid; padding: 0px; width: 37vw">
+                <div class="col-6" style="border-color: gainsboro; border-radius: 1px; border-style: solid; min-height: 50vh; padding: 0px; width: 37vw">
                     <div class="grid">
                         <div class="col-12" style="padding: 0px">
-                            <div  class="content-area scrollbox" style="padding-left: 2vw">
+                            <div  class="content-area scrollbox" style="min-height: 50vh; padding-left: 2vw">
                                 <div *ngFor="let cat of budgetCategories">
                                     <div class="sliderArea" *ngIf="cat.visible != false">
                                         <p style="color: #003486; text-align: left; font-weight: bold;">{{cat.categoryTitle}}: <span style="font-weight: lighter;">${{cat.new_amount}}/${{cat.max}} ({{cat.new_amount/configTotal | percent:'1.0-2'}})</span></p>
@@ -51,7 +51,7 @@
                     <div style="text-align: right; justify-content: end;" class="grid">
 
                             <button (click)="applyChanges()" style="width:8vw; margin-right: .5vw"> Apply Changes</button>
-                            <button style="margin-right: 10px; width:8vw" (click)="reset()" class="button-secondary">Reset</button>
+                            <button style="margin-right: 0.5vw; width:8vw" (click)="reset()" class="button-secondary">Reset</button>
                               
                     </div>
                 </div>

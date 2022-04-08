@@ -1,5 +1,5 @@
 .scrollbox {
-  overflow-y: scroll;
+  overflow-y: auto;
   overflow-x: visible !important;
   width: 96%;
   max-height: 45vh;
@@ -18,7 +18,7 @@
 :host::ng-deep #chart
 {
   width: 100% !important;
-  height: auto !important;
+  height: 35vh !important;
 }
 
 .catFilter
