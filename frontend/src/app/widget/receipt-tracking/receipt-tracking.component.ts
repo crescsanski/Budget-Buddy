@@ -22,7 +22,6 @@ import { QuickReceipt } from 'src/app/models/simReceipt';
 export class ReceiptTrackingComponent implements OnInit {
 
   viewAllReceipts = false;
-  allReceipts: Receipt[] = [];
   userReceipts: Receipt[] = [];
   noUpload = './../../../assets/icons/budget-icons/receipt.png'
   imageUpload: any = this.noUpload;
@@ -70,8 +69,6 @@ export class ReceiptTrackingComponent implements OnInit {
       this.frequencyOptions = this.ws.frequencyOptions;
 
       this.userReceipts = this.rs.receipts
-
-      this.allReceipts = this.rs.receipts;
 
       this.ts.expenReceiptChanged$.subscribe((rec: Receipt) =>
       {

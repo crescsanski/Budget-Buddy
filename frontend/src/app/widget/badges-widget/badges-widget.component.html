@@ -5,7 +5,7 @@
             <h2>Badges</h2> 
         </div>
     </div>
-       <div class="badges" *ngFor="let badge of badges">
+       <div class="badges" *ngFor="let badge of badges | slice:badges.length - 3; let i=index">
         <div style="display: inline-flex">
             <img src="../../../assets/icons/badge-icon.png"/>
         <div class="descriptions">

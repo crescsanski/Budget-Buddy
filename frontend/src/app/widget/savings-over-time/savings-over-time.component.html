@@ -6,7 +6,7 @@
 
         <div style="position: relative;">
             <div *ngIf="!dataExists" class="centerUn">
-                <span>There is no data to display because there are neither logged expenses nor estimated budget expenses for the selected year.</span>
+                <span>There is no data to display because there are neither logged expenses nor estimated budget expenses for the selected filters.</span>
             </div>
             <p-chart [ngStyle]="{'visibility': dataExists ? 'visible' : 'hidden'}" #chart type="line" [data]="chartData" [options]="chartOptions"></p-chart>
           
@@ -15,7 +15,7 @@
         <div class="field grid"> 
             <label for="horizontal" class="col-fixed" style="width:120px" >Date Range</label>
             <div class="col-fixed" style="width:250px">
-                <p-calendar [(ngModel)]="rangeDates" class="inputfield" (onInput)="getNewData()" (onSelect)="getNewData()" (onBlur)="getNewData()" selectionMode="range" [minDate]="ts.minDate" [maxDate]="ts.maxDate" [readonlyInput]="true" inputId="range"></p-calendar>
+                <p-calendar [(ngModel)]="rangeDates" class="inputfield" (onInput)="getNewData()" (onSelect)="getNewData()" (onBlur)="getNewData()" selectionMode="range" [maxDate]="ts.maxDate" [readonlyInput]="true" inputId="range"></p-calendar>
             </div>
         </div>
         <div class="field grid"> 
