@@ -16,7 +16,7 @@ import { QuickReceipt } from 'src/app/models/simReceipt';
 @Component({
   selector: 'app-tracking',
   templateUrl: './tracking.component.html',
-  styleUrls: ['./tracking.component.scss', './../small-widget/small-widget.component.scss']
+  styleUrls: ['./tracking.component.scss']
 })
 export class TrackingComponent implements OnInit {
   form: FormGroup = <FormGroup>{};

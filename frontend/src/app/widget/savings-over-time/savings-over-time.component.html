@@ -2,18 +2,18 @@
     <div class="content-area">
         <div class="header">
             <h2>Savings Over Time</h2> 
-        </div>
-        <p-chart #chart type="line" [data]="chartData" [options]="chartOptions"></p-chart>
-        
-        <div class="field grid"> 
-            <label for="horizontal" class="col-fixed" style="width:50px" >Year</label>
-            <div class="col-fixed" style="width:150px">
-                <p-inputNumber [(ngModel)]="yearSel" [useGrouping]="false" [showButtons]="true" 
+            <div class="field grid" style="float: right; right:0"> 
+                <label for="horizontal" class="col-fixed" style="font-size: 1.25em; padding-top: .75vh; color: #707070" >Year</label>
+                <div class="col-fixed" style="width:8vw">
+                    <p-inputNumber [(ngModel)]="yearSel" [useGrouping]="false" [showButtons]="true" 
                 [min]="1900" [max]="2100" (onInput)="getNewData()" class="inputfield"
                 buttonLayout="horizontal" spinnerMode="horizontal" inputId="horizontal"
                 decrementButtonClass="p-button-secondary" incrementButtonClass="p-button-secondary" incrementButtonIcon="pi pi-plus" decrementButtonIcon="pi pi-minus">
                 </p-inputNumber>
+                </div>
             </div>
         </div>
+        <br>
+        <p-chart #chart type="line" [data]="chartData" [options]="chartOptions"></p-chart>
     </div>
 </div>

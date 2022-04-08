@@ -36,7 +36,8 @@ export class MainPageComponent implements OnInit {
   budgetCategories: Category[];
   selectedCategories: Category[];
   welcomeMessage: boolean = false; 
-  avatarEditor: boolean = true;
+  avatarEditor: boolean = false;
+  trackingType: string = "income";
 
 
 
@@ -49,7 +50,8 @@ export class MainPageComponent implements OnInit {
     catch(e) {}
     
 
-    this.currentPage = 'Dashboard';
+    //this.currentPage = 'Dashboard';
+    this.currentPage = 'Tracking';
    if (authService.currentUserValue)
     {
       this.name = authService.currentUserValue.user_first_name + " " + authService.currentUserValue.user_last_name;
@@ -168,6 +170,10 @@ export class MainPageComponent implements OnInit {
       this.loading = false;
       this.trigServ.announceFavoritesChange(this.selectedCategories)
     })
+  }
+
+  openAvatarEditor(){
+    this.avatarEditor = true;
   }
 
 

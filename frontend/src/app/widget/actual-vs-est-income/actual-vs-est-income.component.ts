@@ -92,7 +92,6 @@ export class ActualVsEstIncomeComponent implements OnInit {
               label: 'Actual Income',
               data: this.actIncValues,
               fill: true,
-              borderColor: '#4ec5ca80',
               barPercentage: 0.9,
               backgroundColor: (context) => {   
                   let sum = this.actIncValues[context.dataIndex]
@@ -107,9 +106,7 @@ export class ActualVsEstIncomeComponent implements OnInit {
             label: 'Estimated Income',
             data: this.estIncValues,
             fill: true,
-            borderColor: 'rgba(0, 0, 0, 0.5)',
-            backgroundColor: 'rgba(0, 0, 0, 0.1)',
-            borderWidth: 1,
+            backgroundColor: 'rgba(78, 197, 202, 0.15)',
             barPercentage: 1,
             tension: 0,
             

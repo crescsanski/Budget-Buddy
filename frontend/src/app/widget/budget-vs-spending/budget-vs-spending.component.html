@@ -1,33 +1,33 @@
-<div class="panel">
+<div class="panel" style="width: 73vw">
     <div class="content-area">
-        <div class="header">
+        <div class="header" style="justify-content: space-between; align-items: flex-start; margin-bottom: 2vh">
             <h2>Estimated vs. Actual Expenses</h2> 
+            <div style="display: inline-flex; justify-content: space-evenly;">
+                <div class="field"> 
+                    <label for="month" >Month</label>
+                    <p-calendar id="month" inputId="month" class="inputfield" [(ngModel)]="selDate" view="month" 
+                    (onSelect)="getNewData()" dateFormat="mm/yy"></p-calendar>
+               </div>
+               
+                <div class="field">
+                    <label for="cat" >Categories</label>
+                    <p-multiSelect [options]="catOptions" class="inputfield" [(ngModel)]="selectedCats" placeholder="Select a Category"
+                    [maxSelectedLabels]="0" [selectedItemsLabel]="'{0} items selected'" (onChange)="getNewData()" inputId="cat" optionLabel="categoryTitle"></p-multiSelect>
+                </div>
+    
+                <div class="field">
+                    <label for="cat">Type</label>
+                    <p-multiSelect [options]="typeOptions" class="inputfield" [(ngModel)]="selectedTypes"
+                    [maxSelectedLabels]="0" [selectedItemsLabel]="'{0} items selected'" 
+                    (onChange)="getNewData()" 
+                    inputId="cat"
+                    ></p-multiSelect>
+                </div>
+            </div>
+
+       
         </div>
         <p-chart #chart3 type="bar" [data]="chartData" [options]="chartOptions"></p-chart>
         
-        <div class="formgroup-inline" style="margin-top: 15px;"> 
-           
-                <label class="col-fixed" style="width:65px; margin-top: 3px;" for="month" >Month</label>
-                <p-calendar id="month" inputId="month" 
-                class="inputfield" [(ngModel)]="selDate" view="month" (onSelect)="getNewData()" dateFormat="mm/yy"></p-calendar>
-           
-            <div class="field">
-                <label for="cat" >Categories</label>
-                <p-multiSelect [options]="catOptions" class="inputfield" [(ngModel)]="selectedCats"
-                [maxSelectedLabels]="0" [selectedItemsLabel]="'{0} items selected'" 
-                (onChange)="getNewData()" 
-                inputId="cat"
-                optionLabel="categoryTitle"></p-multiSelect>
-            </div>
-
-            <div class="field">
-                <label for="cat" >Type</label>
-                <p-multiSelect [options]="typeOptions" class="inputfield" [(ngModel)]="selectedTypes"
-                [maxSelectedLabels]="0" [selectedItemsLabel]="'{0} items selected'" 
-                (onChange)="getNewData()" 
-                inputId="cat"
-                ></p-multiSelect>
-            </div>
-        </div>
     </div>
 </div>

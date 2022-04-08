@@ -1,8 +1,4 @@
-<div class="panel">
-        <div class="header">
-            <h2>Spending</h2> 
-        </div>
-        <form [formGroup]="form" (ngSubmit)="track()">
+<form [formGroup]="form" (ngSubmit)="track()">
             <div class="content-area">
                 <p>Name</p>
                 <input formControlName="product_name" type="text" pInputText/>
@@ -27,7 +23,5 @@
                 <br>
                 <button style="margin-top: 2em" class="track" pButton type="submit" label='Track'></button>
             </div>
-        </form>
+</form>
        
-
-</div>

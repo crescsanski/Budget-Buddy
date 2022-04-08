@@ -71,7 +71,6 @@ export class SpendingVsIncomeComponent implements OnInit {
               label: 'Spending',
               data: this.values,
               fill: true,
-              borderColor: 'rgba(0, 0, 255, 0.5)',
               barPercentage: 0.9,
               backgroundColor: (context) => {   
                   let sum = this.values[context.dataIndex]
@@ -86,10 +85,8 @@ export class SpendingVsIncomeComponent implements OnInit {
             label: 'Income',
             data: this.values2,
             fill: true,
-            borderColor: 'rgba(0, 0, 0, 0.5)',
-            borderWidth: 1,
             barPercentage: 1,
-            backgroundColor: 'rgba(0, 0, 0, 0.1)',
+            backgroundColor: 'rgba(78, 197, 202, 0.15)',
             tension: 0,
             
         },

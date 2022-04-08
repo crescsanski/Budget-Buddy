@@ -1,0 +1,15 @@
+<div class="panel">
+    <div class="header" style="display: block;">
+        <h2>Track Manually</h2> 
+        <p-dropdown [options]="options" [(ngModel)]="type" optionLabel="display" optionValue="code" placeholder="Select Type"></p-dropdown>
+    </div>
+    <br>
+    <div *ngIf="type == 'spending'">
+        <app-tracking></app-tracking>
+    </div>
+    <div *ngIf="type == 'income'">
+        <app-income-tracking></app-income-tracking>
+    </div>
+   
+
+</div>

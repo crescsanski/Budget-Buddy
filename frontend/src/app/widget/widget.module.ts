@@ -28,6 +28,7 @@ import { TrophiesComponent } from './trophies/trophies.component';
 import { ChallengeProgressComponent } from './challenge-progress/challenge-progress.component';
 import { AvailableChallengesComponent } from './available-challenges/available-challenges.component';
 import { AvatarEditorComponent } from './avatar-editor/avatar-editor.component';
+import { TrackingTypeComponent } from './tracking-type/tracking-type.component';
 
 
 @NgModule({
@@ -51,7 +52,8 @@ import { AvatarEditorComponent } from './avatar-editor/avatar-editor.component';
     TrophiesComponent,
     ChallengeProgressComponent,
     AvailableChallengesComponent,
-    AvatarEditorComponent
+    AvatarEditorComponent,
+    TrackingTypeComponent
   ],
   imports: [
     CommonModule,
@@ -84,7 +86,8 @@ import { AvatarEditorComponent } from './avatar-editor/avatar-editor.component';
     LetterGradeComponent,
     ChallengeProgressComponent,
   AvailableChallengesComponent, 
-  AvatarEditorComponent
+  AvatarEditorComponent,
+  TrackingTypeComponent
 ]
 })
 export class WidgetModule { }
