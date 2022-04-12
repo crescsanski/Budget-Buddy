@@ -12,61 +12,6 @@
   box-shadow: 3px 3px 10px $light-gray;
 }
 
-::ng-deep #new .p-progressbar
-{
-  background-color: black !important;
-}
-::ng-deep #init .p-progressbar-value
-{
-  background-color: #4ec5ca !important;
-}
-::ng-deep #init .p-progressbar-value
-{
-  position: absolute;
-  border-top-right-radius: 0px !important;
-  border-bottom-right-radius: 0px !important;
-}
-::ng-deep .box .p-progressbar
-{
-  position: absolute;
-  width: 100% !important;
-  top: 0;
-  left: 0;
-}
-::ng-deep .overlay .p-progressbar
-{
-  z-index: 9;
-  background-color: rgba(0,0,0,0) !important;
-}
-
-::ng-deep .overlay .p-progressbar-label
-{
-  left: 0px;
-  color: rgba(0,0,0,0) !important;
-  position: absolute !important;
-}
-::ng-deep #new .p-progressbar-label
-{
-  margin-right: 700px !important;
-}
-::ng-deep #new .p-progressbar-label
-{
-  left: 0px;
-  color: rgba(255,255,255,1) !important;
-  position: absolute !important;
-}
-.pointer
-{
-  position: absolute;
-  width: 0.1em;
-  height: 15em;
-  background-color:#4ec5ca;
-  right: 0em;
-}
-
-.container{
-  position: relative;
-}
 
 
 .content {
@@ -155,6 +100,11 @@ p.subtitle {
     max-height: 4em;
     margin: 1em;
   }
+}
+
+.feedback
+{
+  color: $dark-blue !important;
 }
 
 .name {

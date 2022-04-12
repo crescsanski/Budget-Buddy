@@ -17,11 +17,11 @@
  
            
             <div *ngIf="gainedLevel">
-                <h2>Wow!  You've earned enough experience to reach Level {{curLevel}}</h2>
+                <h2 class="feedback" >Wow!  You've earned enough experience to reach Level {{curLevel}}</h2>
             </div>
 
             <div *ngIf="!gainedLevel">
-                <h2>Keep up the good work!  You only need another {{needed1 - target1}} experience points to reach the next level.</h2>
+                <h2 class="feedback" >Keep up the good work!  You only need another {{needed1 - target1}} experience points to reach the next level.</h2>
             </div>
             
             
