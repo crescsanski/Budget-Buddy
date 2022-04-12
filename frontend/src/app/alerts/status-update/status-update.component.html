@@ -1,41 +1,29 @@
 <div>
         <h1>Congratulations!  You've completed a challenge.</h1>
-        <p>Experience Gained: {{this.completedChallenge.rewardPoints}}</p>
-        <div *ngIf="!completedChallenge.no_badge">
-            <p >Badge Earned: {{this.completedChallenge.name}}</p>
-        </div>
-        <div class="grid">
-            <div class="col-2" style="float: right">
-                <span style="font-weight:bold; font-size: 3em;">Level {{oldLevel}}</span>
+        <h2><i class="pi pi-plus" style="font-weight: 1000"></i> {{this.completedChallenge.rewardPoints}} Experience Points</h2>
+      
+           
+                <div class="badges" *ngIf="!completedChallenge.no_badge">
+                    <span class="center">Badge Earned: </span>
+                    <div style="display: inline-flex">
+                        <img src="../../../assets/icons/badge-icon.png"/>
+                
+                        <div class="descriptions">
+                            <p class="name">{{this.completedChallenge.badge_name}}</p>
+                            <p class="description">{{this.completedChallenge.description}}</p>
+                        </div>
+                    </div>
+                </div>
+ 
+           
+            <div *ngIf="gainedLevel">
+                <h2>Wow!  You've earned enough experience to reach Level {{curLevel}}</h2>
             </div>
-            <div class="col-8">
-                <p-progressBar class="progress-bar" [value]="value1"></p-progressBar>
-                <p class="subtitle">{{ target1 }} XP / <span style="font-weight:bold">{{ needed1 }} XP</span></p>
-            </div>
-            <div class="col-2" style="float: left">
-                <span style="font-weight:bold; font-size: 3em;">Level {{oldLevel + 1}}</span>
-            </div>
-            
-            
-        </div>
-        
-        <div *ngIf="gainedLevel">
-            <p>Wow!  You've earned enough experience to advance to the next level</p>
 
-            <div class="grid">
-                <div class="col-2" style="float: right">
-                    <span style="font-weight:bold; font-size: 3em;">Level {{curLevel}}</span>
-                </div>
-                <div class="col-8">
-                    <p-progressBar class="progress-bar" [value]="value2"></p-progressBar>
-                    <p class="subtitle">{{ target2 }} XP / <span style="font-weight:bold">{{ needed2 }} XP</span></p>
-                </div>
-                <div class="col-2" style="float: left">
-                    <span style="font-weight:bold; font-size: 3em;">Level {{curLevel + 1}}</span>
-                </div>
-                
-                
+            <div *ngIf="!gainedLevel">
+                <h2>Keep up the good work!  You only need another {{needed1 - target1}} experience points to reach the next level.</h2>
             </div>
-        </div>
-        
+            
+            
+
 </div>

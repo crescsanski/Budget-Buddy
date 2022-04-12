@@ -11,7 +11,8 @@ import { ChallengesService } from 'src/app/services/challenges.service';
 export class StatusUpdateComponent implements OnInit {
 
   completedChallenge: Challenge
-  value1: number;
+  oldValue1: number;
+  newValue1: number;
   value2: number;
   curExper: number;
   requiredExper: number;
@@ -54,15 +55,19 @@ export class StatusUpdateComponent implements OnInit {
       this.targetPerc1 = this.curExper / this.needed1 * 100
     }
 
-    this.value1 = Math.round(this.challServ.preLev_Prog.experience_points / this.challServ.preLev_Prog.required_experience * 100)
+    this.oldValue1 = Math.round(this.challServ.preLev_Prog.experience_points / this.challServ.preLev_Prog.required_experience * 100)
+    this.newValue1 = this.oldValue1;
     this.value2 = 0
 
+    this.newValue1 = Math.round(this.targetPerc1);
+    /*
     let interval = setInterval(() => {
-      this.value1 = this.value1 + 1;
-      if (this.value1 >= this.targetPerc1) {
-          this.value1 = Math.round(this.targetPerc1);
+      this.newValue1 = this.newValue1 + 1;
+      if (this.newValue1 >= this.targetPerc1) {
+          this.newValue1 = Math.round(this.targetPerc1);
       }
-  }, 70);
+  }, 80);
+  */
 
   if (this.gainedLevel)
   {
