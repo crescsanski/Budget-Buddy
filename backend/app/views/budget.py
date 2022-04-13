@@ -38,7 +38,9 @@ import re
 import numpy as np
 import shutil
 from django.views.decorators.http import require_http_methods
-from rest_framework.decorators import api_view, throttle_classes
+from rest_framework.decorators import api_view, throttle_classes, renderer_classes
+from rest_framework.renderers import JSONRenderer
+
 #This API is intended for setting, modifying, and deleting a user's budget.
 
 #The function below handles the initial creation of a user's budget.  It expects a list of monthly estimated incomes and expenses, as well
@@ -156,6 +158,7 @@ def manageUserBudget(request, userid):
 
 #Calculate and retrieve a user's monthly and weekly spending budget total for each budget cycle (excludes income categories)
 @api_view(["GET"])
+@renderer_classes([JSONRenderer])
 def getBudgetTotals(request, userid):
 
     today = date.today()

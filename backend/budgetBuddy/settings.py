@@ -14,19 +14,22 @@ import os
 import django_heroku
 from pathlib import Path
 from dotenv import load_dotenv
+import dj_database_url
+import psycopg2
 
 load_dotenv()
 
-#Load DB Credentials
-DB_NAME=os.getenv('DB_NAME')
-DB_USER=os.getenv('DB_USER')
-DB_PASSWORD=os.getenv('DB_PASSWORD')
-DB_HOST=os.getenv('DB_HOST')
-DB_PORT=os.getenv('DB_PORT')
-
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
-BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-PROJECT_ROOT = os.path.dirname(os.path.abspath(__file__))
+BASE_DIR = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+
+DATABASE_URL = os.environ['DATABASE_URL']
+
+
+conn = psycopg2.connect(DATABASE_URL, sslmode='require')
+
+DATABASES = {'default': dj_database_url.config(conn_max_age=600, ssl_require=True)}
+
+
 
 
 # Quick-start development settings - unsuitable for production
@@ -72,7 +75,10 @@ REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': [
         'budgetBuddy.authentication.TokenExpireAuthentication',
     ],
-    'DEFAULT_FILTER_BACKENDS': ['django_filters.rest_framework.DjangoFilterBackend']
+    'DEFAULT_FILTER_BACKENDS': ['django_filters.rest_framework.DjangoFilterBackend'],
+     'DEFAULT_RENDERER_CLASSES': (
+        'rest_framework.renderers.JSONRenderer',
+    )
 }
 
 MIDDLEWARE = [
@@ -97,7 +103,9 @@ STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [os.path.join(PROJECT_ROOT, 'templates')],
+        'DIRS': (
+            os.path.join(BASE_DIR, "staticfiles"),
+        ),
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -111,26 +119,10 @@ TEMPLATES = [
     },
 ]
 
+
 WSGI_APPLICATION = 'budgetBuddy.wsgi.application'
 
 
-# Database
-# https://docs.djangoproject.com/en/3.2/ref/settings/#databases
-
-DATABASES = { 
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': DB_NAME,
-        'USER': DB_USER,
-        'PASSWORD': DB_PASSWORD,
-        'HOST': DB_HOST,
-        'PORT': DB_PORT,
-        'OPTIONS': {
-            'options': '-c search_path=budgetbuddy',
-            'sslmode': 'require'
-        }
-    }
-}
 
 
 # Password validation
@@ -189,13 +181,20 @@ CORS_ORIGIN_WHITELIST = (
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/1.10/howto/static-files/
 
-STATIC_ROOT = os.path.join(PROJECT_ROOT, 'staticfiles')
-STATIC_URL = '/static/'
+STATIC_ROOT = os.path.join(
+    BASE_DIR, "staticfiles"
+)  # "/app/staticfiles" # os.path.join(BASE_DIR, "django-staticfiles")
 
-# Extra places for collectstatic to find static files.
+STATIC_URL = "/static/"
+
 STATICFILES_DIRS = [
-    os.path.join(PROJECT_ROOT, 'static'),
+    os.path.join(BASE_DIR, "frontend", "dist")
 ]
+
+
+WHITENOISE_ROOT = os.path.join(
+    BASE_DIR, "staticfiles"
+)
 
 # Simplified static file serving.
 # https://warehouse.python.org/project/whitenoise/

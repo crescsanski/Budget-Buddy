@@ -51,14 +51,19 @@ export class MainPageComponent implements OnInit {
     })
 
     try{
-      this.router.getCurrentNavigation().extras.state.newUser;
-      this.welcomeMessage = true;
+      var date = new Date()
+      var thresh = date.setDate(date.getDate() - 5)
+      if (this.router.getCurrentNavigation().extras.state.newUser && new Date(authService.currentUserValue.user_registration_date) >= date)
+      {
+        this.welcomeMessage = true;
+      }
+
       }
     catch(e) {}
     
 
-    //this.currentPage = 'Dashboard';
-    this.currentPage = 'Tracking';
+    this.currentPage = 'Dashboard';
+    //this.currentPage = 'Tracking';
    if (authService.currentUserValue)
     {
       this.name = authService.currentUserValue.user_first_name + " " + authService.currentUserValue.user_last_name;

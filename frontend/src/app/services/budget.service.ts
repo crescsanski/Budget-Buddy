@@ -199,7 +199,7 @@ export class BudgetService {
 
   /**GET User's Budget Totals */
   getBudgetTotals(): Observable<BudgetTotals[]> {
-    return this.http.get<BudgetTotals[]>(`${this.budgetsUrl}users/${this.user.user_id}/totals`).pipe(
+    return this.http.get<BudgetTotals[]>(`${this.budgetsUrl}users/${this.user.user_id}/totals/`).pipe(
     tap((out: BudgetTotals[]) => 
       {
         console.log(`Fetched budget totals`)

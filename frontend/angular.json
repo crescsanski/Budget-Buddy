@@ -17,7 +17,7 @@
         "build": {
           "builder": "@angular-devkit/build-angular:browser",
           "options": {
-            "outputPath": "../backend/budgetBuddy/static/",
+            "outputPath": "dist",
             "outputHashing": "none",
             "resourcesOutputPath": "static",
             "watch": true,
@@ -45,13 +45,13 @@
               "budgets": [
                 {
                   "type": "initial",
-                  "maximumWarning": "500kb",
-                  "maximumError": "1mb"
+                  "maximumWarning": "500mb",
+                  "maximumError": "1000mb"
                 },
                 {
                   "type": "anyComponentStyle",
-                  "maximumWarning": "2kb",
-                  "maximumError": "4kb"
+                  "maximumWarning": "500mb",
+                  "maximumError": "1000mb"
                 }
               ],
               "fileReplacements": [
