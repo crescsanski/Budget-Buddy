@@ -1,0 +1,16 @@
+{
+    "name": "Budget Buddy",
+    "description": "A gamified budgeting web application.",
+    "environments": {},
+    "keywords": [],
+    "repository": "https://github.com/crescsanski/Budget-Buddy",
+    "stack": "heroku-18",
+    "success_url": "/",
+    "website": "https://github.com/crescsanski/Budget-Buddy",
+    "scripts": { },
+    "buildpacks": [
+      {
+        "url": "https://github.com/negativetwelve/heroku-buildpack-subdir"
+      }
+    ]
+  }
