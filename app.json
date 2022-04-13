@@ -12,5 +12,25 @@
       {
         "url": "https://github.com/negativetwelve/heroku-buildpack-subdir"
       }
-    ]
+    ],
+    "env": {
+        "DEBUG": {
+          "description": "A boolean that turns on/off debug mode.",
+          "value": "false"
+        },
+        "DISABLE_COLLECTSTATIC": {
+          "description": "Disable Heroku's automatic 'collectstatic' build step.",
+          "value": "true"
+        },
+        "NPM_CONFIG_PRODUCTION": {
+          "description": "Heroku Production NPM Configuration. Must be 'false' so the app can be built on Heroku at deploy time.",
+          "value": "false"
+        }
+      },
+    "formation": {
+        "web": {
+          "quantity": 1,
+          "size": "free"
+        }
+      }
   }
