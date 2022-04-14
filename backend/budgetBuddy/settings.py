@@ -21,6 +21,8 @@ load_dotenv()
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+if BASE_DIR == '/':
+    BASE_DIR = ''
 
 DATABASE_URL = os.environ['DATABASE_URL']
 
@@ -185,7 +187,7 @@ STATIC_ROOT = os.path.join(
     BASE_DIR, "staticfiles"
 )  # "/app/staticfiles" # os.path.join(BASE_DIR, "django-staticfiles")
 
-STATIC_URL = "/static/"
+STATIC_URL = "static/"
 
 STATICFILES_DIRS = [
     os.path.join(BASE_DIR, "frontend", "dist")
