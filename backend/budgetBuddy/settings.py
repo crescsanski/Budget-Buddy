@@ -41,7 +41,7 @@ SECRET_KEY = 'django-insecure-%p+p9eii62%x59h3s$ibep2*4%d91+v%ot@91dh^ztx^bdwazq
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['127.0.0.1', 'localhost']
+ALLOWED_HOSTS = ['127.0.0.1', 'localhost', 'budget-buddy-app1.herokuapp.com']
 
 APPEND_SLASH=False
 
@@ -175,7 +175,7 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 # Configure CORS
 CORS_ORIGIN_ALLOW_ALL = False
 CORS_ORIGIN_WHITELIST = (
-    'http://localhost:4200',
+    'http://localhost:4200', 'https://budget-buddy-app1.herokuapp.com'
 )
 
 # Static files (CSS, JavaScript, Images)
