@@ -20,9 +20,7 @@ import psycopg2
 load_dotenv()
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
-BASE_DIR = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-if BASE_DIR == '/':
-    BASE_DIR = ''
+BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 DATABASE_URL = os.environ['DATABASE_URL']
 
@@ -41,7 +39,7 @@ DATABASES = {'default': dj_database_url.config(conn_max_age=600, ssl_require=Tru
 SECRET_KEY = 'django-insecure-%p+p9eii62%x59h3s$ibep2*4%d91+v%ot@91dh^ztx^bdwazq'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
 ALLOWED_HOSTS = ['127.0.0.1', 'localhost', 'budget-buddy-app1.herokuapp.com']
 
@@ -187,10 +185,10 @@ STATIC_ROOT = os.path.join(
     BASE_DIR, "staticfiles"
 )  # "/app/staticfiles" # os.path.join(BASE_DIR, "django-staticfiles")
 
-STATIC_URL = "static/"
+STATIC_URL = "/static/"
 
 STATICFILES_DIRS = [
-    os.path.join(BASE_DIR, "frontend", "dist")
+    os.path.join(BASE_DIR, "dist")
 ]
 
 
