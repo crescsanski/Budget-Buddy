@@ -8,14 +8,17 @@ import { TimeService } from './time.service';
 import { IncomeOverTime } from '../models/incomeOverTime';
 import { ReceiptTrackService } from '../widget/services/receipt-track.service';
 import { Receipt } from '../models/receipt';
+import { environment } from '../../environments/environment'
+
+const API_URL = environment.apiUrl;
 
 @Injectable({
   providedIn: 'root'
 })
 export class IncomeHistoryService {
 
-  private apiUrl = 'api/income_history';  // URL to web api
-  private cumUrl = 'api/cum_income_history';
+  private apiUrl = API_URL + 'api/income_history';  // URL to web api
+  private cumUrl = API_URL + 'api/cum_income_history';
   user: User | null = null;
   private weeklyIncomeTotal: number;
   private cumIncByMonth: IncomeOverTime[]

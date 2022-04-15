@@ -8,12 +8,14 @@ import { BadgesEarned } from '../models/badgesEarned';
 import { MessageService } from './message.service';
 import { AuthService } from './auth.service';
 import { User } from '../models/user';
+import { environment } from '../../environments/environment'
 
+const API_URL = environment.apiUrl;
 
 @Injectable({ providedIn: 'root' })
 export class BadgesEarnedService {
 
-  private badgesEarnedUrl = 'api/badges_earned';  // URL to web api
+  private badgesEarnedUrl = API_URL + 'api/badges_earned';  // URL to web api
   private badgesEarned: BadgesEarned[]
   user: User | null = null;
   httpOptions = {

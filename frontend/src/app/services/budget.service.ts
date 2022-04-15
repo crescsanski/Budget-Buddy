@@ -13,12 +13,14 @@ import { BudgetCategory } from '../models/formModels/budgetCategory';
 import { TimeService } from './time.service';
 import { Category } from '../models/category';
 import { ThrowStmt } from '@angular/compiler';
+import { environment } from '../../environments/environment'
 
+const API_URL = environment.apiUrl;
 
 @Injectable({ providedIn: 'root' })
 export class BudgetService {
 
-  private budgetsUrl = 'api/budget/';  // URL to web api
+  private budgetsUrl = API_URL + 'api/budget/';  // URL to web api
   user: User | null = null;
   private bud_Calcs: BudgetTotals[] = [];
   private curMonthCalcs: BudgetTotals;

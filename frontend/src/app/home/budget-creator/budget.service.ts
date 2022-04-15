@@ -5,13 +5,17 @@ import { Observable, of } from 'rxjs';
 import { catchError, map, tap } from 'rxjs/operators';
 
 import { BudgetPackage } from 'src/app/models/budgetPackage';
+import { environment } from '../../../environments/environment'
+
+const API_URL = environment.apiUrl;
+
 
 @Injectable({
   providedIn: 'root'
 })
 export class BudgetService {
 
-  private apiUrl = 'api/budget/';  // URL to web api
+  private apiUrl = API_URL + 'api/budget/';  // URL to web api
 
   httpOptions = {
     headers: new HttpHeaders({ 'Content-Type': 'application/json' })
