@@ -1,1 +1,1 @@
-web: gunicorn --preload budgetBuddy.wsgi
+web: gunicorn --preload --logfile budgetBuddy.wsgi
