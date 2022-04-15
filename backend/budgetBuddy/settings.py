@@ -22,10 +22,7 @@ load_dotenv()
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
-DATABASE_URL = os.environ['DATABASE_URL'] + '?options=-csearch_path%3Dbudgetbuddy'
-
-
-conn = psycopg2.connect(DATABASE_URL, sslmode='require')
+os.environ['DATABASE_URL'] += '?options=-csearch_path%3Dbudgetbuddy'
 
 DATABASES = {'default': dj_database_url.config(conn_max_age=600, ssl_require=True)}
 
