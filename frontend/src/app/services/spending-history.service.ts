@@ -9,14 +9,17 @@ import { TimeService } from './time.service';
 import { QuickReceipt } from '../models/simReceipt';
 import { Receipt } from '../models/receipt';
 import { ReceiptTrackService } from '../widget/services/receipt-track.service';
+import { environment } from '../../environments/environment'
+
+const API_URL = environment.apiUrl;
 
 @Injectable({
   providedIn: 'root'
 })
 export class SpendingHistoryService {
 
-  private apiUrl = 'api/spend_history';  // URL to web api
-  private cumUrl = 'api/cum_spend_history';
+  private apiUrl = API_URL + 'api/spend_history';  // URL to web api
+  private cumUrl = API_URL + 'api/cum_spend_history';
   user: User | null = null;
   private weeklySpendingTotal: number;
   private cumSpenByMonth: SpendingOverTime[];

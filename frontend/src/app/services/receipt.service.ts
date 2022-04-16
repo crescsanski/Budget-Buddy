@@ -7,12 +7,14 @@ import { catchError, map, tap } from 'rxjs/operators';
 import { Receipt } from '../models/receipt';
 import { MessageService } from './message.service';
 import { QuickReceipt } from '../models/simReceipt';
+import { environment } from '../../environments/environment'
 
+const API_URL = environment.apiUrl;
 
 @Injectable({ providedIn: 'root' })
 export class ReceiptService {
 
-  private receiptsUrl = 'api/receipts/';  // URL to web api
+  private receiptsUrl = API_URL + 'api/receipts/';  // URL to web api
 
   httpOptions = {
     headers: new HttpHeaders({ 'Content-Type': 'application/json' })
