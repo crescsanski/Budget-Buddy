@@ -77,6 +77,11 @@ def setInitialBudget(request):
     except:
         raise ValidationError("The user already has an existing budget.")
 
+    #Lastly, let's set the user characteristics
+    Users.objects.filter(user_id = user).update(
+        **validData['characteristics']
+    )
+
     return Response(f"An initial budget has been set for user_id {user}")
 
 @api_view(["GET", "PUT", "DELETE"])

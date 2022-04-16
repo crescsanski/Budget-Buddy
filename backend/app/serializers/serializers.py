@@ -28,7 +28,8 @@ class InitialBudgetSerializer(serializers.Serializer):
     class CustomUserSerializer(serializers.ModelSerializer):
         class Meta:
             model = Users 
-            fields = ['user_id']
+            fields = ['user_independent', 'user_retired', 'user_married', 'user_multiple_incomes', 'user_children',
+            'user_city', 'user_pet', 'user_gets_tax_refund']
 
     class CustomCatUsBudgetSerializer(serializers.ModelSerializer):
         class Meta:
@@ -36,6 +37,7 @@ class InitialBudgetSerializer(serializers.Serializer):
             fields = ['category', 'user_category_budget_estimated_amount', 'user_category_budget_altered_amount', 'user_category_budget_favorite']
     
     budgets = CustomCatUsBudgetSerializer(UserCategoryBudget.objects.all(), many = True)
+    characteristics = CustomUserSerializer(Users.objects.all(), many = False)
 
     class Meta:
         fields = ['budgets']
@@ -85,7 +87,7 @@ class UserRegistrationSerializer(serializers.ModelSerializer):
         model = Users 
         fields = ['user_first_name', 'user_last_name',
         'user_user_name','user_birth_date', 'user_email', 'user_phone_number',
-        'password', 'user_has_notifications']
+        'password', 'user_has_notifications', 'user_recommendation_consent']
     
     #Validate password
     def validate(self, data):
