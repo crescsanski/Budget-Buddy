@@ -14,6 +14,7 @@ import { TimeService } from './time.service';
 import { Category } from '../models/category';
 import { ThrowStmt } from '@angular/compiler';
 import { environment } from '../../environments/environment'
+import { Characteristic } from '../models/characteristic';
 
 const API_URL = environment.apiUrl;
 
@@ -169,10 +170,11 @@ export class BudgetService {
   }
 
   /**Set initial budget */
-  setInitialBudget(budgets: Budget[]): Observable<any> {
+  setInitialBudget(budgets: Budget[], characteristics: Characteristic): Observable<any> {
     const object = {
       user_id: this.user.user_id,
-      budgets: budgets
+      budgets: budgets,
+      characteristics: characteristics
     }
     return this.http.post(this.budgetsUrl, object, this.httpOptions)
     .pipe(

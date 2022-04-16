@@ -40,7 +40,7 @@ class InitialBudgetSerializer(serializers.Serializer):
     characteristics = CustomUserSerializer(Users.objects.all(), many = False)
 
     class Meta:
-        fields = ['budgets']
+        fields = ['budgets', 'characteristics']
 
 class UpdateBudgetSerializer(serializers.Serializer):
 

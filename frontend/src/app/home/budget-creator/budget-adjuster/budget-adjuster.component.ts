@@ -4,6 +4,7 @@ import { UIChart } from 'primeng/chart';
 import { BudgetService } from 'src/app/services/budget.service';
 import { Budget } from 'src/app/models/budget';
 import { Router } from '@angular/router';
+import { Characteristic } from 'src/app/models/characteristic';
 
 
 @Component({
@@ -218,8 +219,19 @@ export class BudgetAdjusterComponent implements OnInit {
           user_category_budget_estimated_amount: Math.round(obj.amount),
         user_category_budget_altered_amount: Math.round(obj.amount)});
       })
+    let characteristic: Characteristic = {
+      user_children: this.dat.children,
+      user_city: this.dat.city,
+      user_gets_tax_refund: this.dat.tax,
+      user_independent: this.dat.independent,
+      user_married: this.dat.married,
+      user_multiple_incomes: this.dat.multipleIncomes,
+      user_pet: this.dat.pet,
+      user_retired: this.dat.retired
+
+    }
     
-    this.budServ.setInitialBudget(post).subscribe((val) =>
+    this.budServ.setInitialBudget(post, characteristic).subscribe((val) =>
     {
       if (val != "error")
       {

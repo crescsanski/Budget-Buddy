@@ -1,11 +1,3 @@
-from django.db import models
-from rest_framework.authtoken.models import Token
-from django.core.validators import EmailValidator, RegexValidator
-from datetime import date
-from django.contrib.auth.models import (
-    BaseUserManager, AbstractBaseUser
-)
-
 # This is an auto-generated Django model module.
 # You'll have to do the following manually to clean this up:
 #   * Rearrange models' order
@@ -14,6 +6,46 @@ from django.contrib.auth.models import (
 #   * Remove `managed = False` lines if you wish to allow Django to create, modify, and delete the table
 # Feel free to rename the models, but don't rename db_table values or field names.
 from django.db import models
+
+
+class AuthGroup(models.Model):
+    name = models.CharField(unique=True, max_length=150)
+
+    class Meta:
+        managed = False
+        db_table = 'auth_group'
+
+
+class AuthGroupPermissions(models.Model):
+    id = models.BigAutoField(primary_key=True)
+    group = models.ForeignKey(AuthGroup, models.DO_NOTHING)
+    permission = models.ForeignKey('AuthPermission', models.DO_NOTHING)
+
+    class Meta:
+        managed = False
+        db_table = 'auth_group_permissions'
+        unique_together = (('group', 'permission'),)
+
+
+class AuthPermission(models.Model):
+    name = models.CharField(max_length=255)
+    content_type = models.ForeignKey('DjangoContentType', models.DO_NOTHING)
+    codename = models.CharField(max_length=100)
+
+    class Meta:
+        managed = False
+        db_table = 'auth_permission'
+        unique_together = (('content_type', 'codename'),)
+
+
+class AuthtokenToken(models.Model):
+    key = models.CharField(primary_key=True, max_length=40)
+    created = models.DateTimeField()
+    user = models.OneToOneField('Users', models.DO_NOTHING)
+
+    class Meta:
+        managed = False
+        db_table = 'authtoken_token'
 
 
 class Category(models.Model):
@@ -31,8 +63,6 @@ class Challenge(models.Model):
     challenge_id = models.AutoField(primary_key=True)
     challenge_name = models.CharField(max_length=255)
     challenge_description = models.CharField(max_length=255)
-    challenge_badge_description = models.CharField(max_length=255)
-    challenge_unit_type = models.CharField(max_length=255)
     challenge_type = models.CharField(max_length=255)
     challenge_time_given = models.IntegerField()
     challenge_is_repeatable = models.BooleanField()
@@ -40,10 +70,13 @@ class Challenge(models.Model):
     challenge_experience_points = models.IntegerField(blank=True, null=True)
     challenge_start_amount = models.IntegerField(blank=True, null=True)
     challenge_completion_amount = models.IntegerField(blank=True, null=True)
+    challenge_unit_type = models.CharField(max_length=255, blank=True, null=True)
+    challenge_badge_description = models.CharField(max_length=255, blank=True, null=True)
     item = models.ForeignKey('Item', models.DO_NOTHING, blank=True, null=True)
     difficulty = models.IntegerField(blank=True, null=True)
     challenge_trigger = models.CharField(max_length=255)
     experience_level_unlock = models.IntegerField(blank=True, null=True)
+    challenge_sequence = models.IntegerField(blank=True, null=True)
 
     class Meta:
         managed = False
@@ -63,6 +96,51 @@ class Competition(models.Model):
         managed = False
         db_table = 'competition'
         unique_together = (('user', 'user_2_id'),)
+
+
+class DjangoAdminLog(models.Model):
+    action_time = models.DateTimeField()
+    object_id = models.TextField(blank=True, null=True)
+    object_repr = models.CharField(max_length=200)
+    action_flag = models.SmallIntegerField()
+    change_message = models.TextField()
+    content_type = models.ForeignKey('DjangoContentType', models.DO_NOTHING, blank=True, null=True)
+    user = models.ForeignKey('Users', models.DO_NOTHING)
+
+    class Meta:
+        managed = False
+        db_table = 'django_admin_log'
+
+
+class DjangoContentType(models.Model):
+    app_label = models.CharField(max_length=100)
+    model = models.CharField(max_length=100)
+
+    class Meta:
+        managed = False
+        db_table = 'django_content_type'
+        unique_together = (('app_label', 'model'),)
+
+
+class DjangoMigrations(models.Model):
+    id = models.BigAutoField(primary_key=True)
+    app = models.CharField(max_length=255)
+    name = models.CharField(max_length=255)
+    applied = models.DateTimeField()
+
+    class Meta:
+        managed = False
+        db_table = 'django_migrations'
+
+
+class DjangoSession(models.Model):
+    session_key = models.CharField(primary_key=True, max_length=40)
+    session_data = models.TextField()
+    expire_date = models.DateTimeField()
+
+    class Meta:
+        managed = False
+        db_table = 'django_session'
 
 
 class Expense(models.Model):
@@ -192,8 +270,10 @@ class UserChallengeInventory(models.Model):
     user_challenge_inventory_id = models.AutoField(primary_key=True)
     user_challenge_start_date = models.DateField()
     user_challenge_completion_date = models.DateTimeField(blank=True, null=True)
-    user_challenge_completion_amount = models.IntegerField(blank=True, null=True)
     user_challenge_current_amount = models.IntegerField(blank=True, null=True)
+    user_challenge_completion_amount = models.IntegerField(blank=True, null=True)
+    challenge_sequence = models.IntegerField(blank=True, null=True)
+    challenge_type = models.CharField(max_length=255, blank=True, null=True)
     challenge = models.ForeignKey(Challenge, models.DO_NOTHING, blank=True, null=True)
     user = models.ForeignKey('Users', models.DO_NOTHING, blank=True, null=True)
 
@@ -235,59 +315,7 @@ class UserWidgetInventory(models.Model):
         db_table = 'user_widget_inventory'
 
 
-class Widget(models.Model):
-    widget_id = models.AutoField(primary_key=True)
-    widget_name = models.CharField(max_length=255)
-    widget_description = models.CharField(max_length=255)
-    widget_link = models.CharField(max_length=255)
-
-    class Meta:
-        managed = False
-        db_table = 'widget'
-
-class MyUserManager(BaseUserManager):
-    def create_user(self, username, password=None, extra=None):
-        """
-        Creates and saves a User with the given email, date of
-        birth and password.
-        """
-        userFields = [a.name for a in Users._meta.get_fields() if a.name != 'user_user_name']
-        default = dict.fromkeys(userFields, "")
-        default['is_active'] = True
-                     
-        if extra == None:
-            user = self.model(
-                user_user_name=username,
-                **default
-            )
-        else:
-            user = self.model(
-                **extra,
-                user_registration_date = date.today()
-            )
-
-        user.set_password(password)
-        user.save(using=self._db)
-        return user
-
-    def create_superuser(self, user_user_name, password):
-        """
-        Creates and saves a superuser with the given email, date of
-        birth and password.
-        """
-        user = self.create_user(
-            username=user_user_name,
-            password=password,
-        )
-        user.is_admin = True
-        user.save(using=self._db)
-        return user
-
-
-
-
-
-class Users(AbstractBaseUser, models.Model):
+class Users(models.Model):
     user_id = models.AutoField(primary_key=True)
     user_first_name = models.CharField(max_length=255, blank=True, null=True)
     user_last_name = models.CharField(max_length=255, blank=True, null=True)
@@ -307,6 +335,7 @@ class Users(AbstractBaseUser, models.Model):
     is_admin = models.BooleanField(blank=True, null=True)
     last_login = models.DateTimeField(blank=True, null=True)
     user_total_logins = models.IntegerField(blank=True, null=True)
+    user_login_array = models.TextField(blank=True, null=True)  # This field type is a guess.
     user_auto_renewal = models.BooleanField(blank=True, null=True)
     user_independent = models.BooleanField(blank=True, null=True)
     user_retired = models.BooleanField(blank=True, null=True)
@@ -317,33 +346,19 @@ class Users(AbstractBaseUser, models.Model):
     user_pet = models.BooleanField(blank=True, null=True)
     user_gets_tax_refund = models.BooleanField(blank=True, null=True)
     user_recommendation_consent = models.BooleanField(blank=True, null=True)
-
-
-    objects = MyUserManager()
-
-    USERNAME_FIELD = 'user_user_name'
-    REQUIRED_FIELDS = []
-
-    def __str__(self):
-        return self.email
-
-    def has_perm(self, perm, obj=None):
-        "Does the user have a specific permission?"
-        # Simplest possible answer: Yes, always
-        return True
-
-    def has_module_perms(self, app_label):
-        "Does the user have permissions to view the app `app_label`?"
-        # Simplest possible answer: Yes, always
-        return True
-
-    @property
-    def is_staff(self):
-        "Is the user a member of staff?"
-        # Simplest possible answer: All admins are staff
-        return self.is_admin
+    user_budget_alterations = models.IntegerField(blank=True, null=True)
 
     class Meta:
         managed = False
         db_table = 'users'
 
+
+class Widget(models.Model):
+    widget_id = models.AutoField(primary_key=True)
+    widget_name = models.CharField(max_length=255)
+    widget_description = models.CharField(max_length=255)
+    widget_link = models.CharField(max_length=255)
+
+    class Meta:
+        managed = False
+        db_table = 'widget'
