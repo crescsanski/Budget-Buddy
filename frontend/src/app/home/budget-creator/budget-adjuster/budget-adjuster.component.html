@@ -1,22 +1,25 @@
 <div class="panel">
-    <h1>Understanding Your Budget</h1>
-    <p style="font-weight: bolder; text-align: center;">Use the sliders to adjust your budget. We recommend your budget follow the {{this.dat.need * 100 | number:'1.0-0'}}-{{this.dat.want * 100| number:'1.0-0'}}-{{this.dat.saving * 100| number:'1.0-0'}} Rule</p>
-    <p-chart #chart id="chart" type="bar" [data]="stackedData" [options]="stackedOptions" height="100px" style="text-align: center; margin-left: -200px"></p-chart>
-    <p style="margin-top: -10px">Total: {{totalExpenses | currency}}/<span style="font-weight: bold;">{{totalIncome | currency}}</span></p>
-    <p-dropdown [options]="categories" [(ngModel)]=selectedCategory [showClear]="true" [placeholder]="'Select a Category'" (onChange)="onChange()"></p-dropdown>
-    <div *ngFor="let cat of expenses">
-        <div *ngIf="cat.visible">
-            <p style="color: #003486; text-align: left; font-weight: bold;">{{cat.categoryTitle}}: <span style="font-weight: lighter;">{{cat.amount | currency}}</span></p>
-            <p-slider [(ngModel)]=cat.amount [min]="0" [max]=cat.max [animate]="true" [step]="5" (onSlideEnd)="update($event)"></p-slider>
-        </div>
+    <div *ngIf="loading" style="text-align: center; justify-content: center;">
+        <h2 style="text-align: center; width: 100%">Building your budget...</h2>
+        <p-progressSpinner *ngIf="loading"></p-progressSpinner>
     </div>
-    <button pButton style="margin-left: 2.5em; margin-top: 3em; width: 88%" type="submit" label='Submit Final Budget' (click)="submit()"></button>
-    <p-dialog header="Over Budget!" [(visible)]="overBudget">
-        <h3>It looks like you are {{getErrPerc(errorPercent)}}% over budget in the {{errorCategory}} category.</h3>
-        <h3>We recommend you reduce your budget in this category by {{(getErrPerc(errorDifference)) | currency}}.</h3>
-
-    </p-dialog>
-
-    <p-progressSpinner *ngIf="loading"></p-progressSpinner>
+    <div *ngIf="!loading">
+        <h1>Understanding Your Budget</h1>
+        <p style="font-weight: bolder; text-align: center;">Use the sliders to adjust your budget. We recommend your budget follow the {{this.dat.need * 100 | number:'1.0-0'}}-{{this.dat.want * 100| number:'1.0-0'}}-{{this.dat.saving * 100| number:'1.0-0'}} Rule</p>
+        <p-chart #chart id="chart" type="bar" [data]="stackedData" [options]="stackedOptions" height="100px" style="text-align: center; margin-left: -200px"></p-chart>
+        <p style="margin-top: -10px">Total: {{totalExpenses | currency}}/<span style="font-weight: bold;">{{totalIncome | currency}}</span></p>
+        <p-dropdown [options]="categories" [(ngModel)]=selectedCategory [showClear]="true" [placeholder]="'Select a Category'" (onChange)="onChange()"></p-dropdown>
+        <div *ngFor="let cat of expenses">
+            <div *ngIf="cat.visible">
+                <p style="color: #003486; text-align: left; font-weight: bold;">{{cat.categoryTitle}}: <span style="font-weight: lighter;">{{cat.amount | currency}}</span></p>
+                <p-slider [(ngModel)]=cat.amount [min]="0" [max]=cat.max [animate]="true" [step]="5" (onSlideEnd)="update($event)"></p-slider>
+            </div>
+        </div>
+        <button pButton style="margin-left: 2.5em; margin-top: 3em; width: 88%" type="submit" label='Submit Final Budget' (click)="submit()"></button>
+        <p-dialog header="Over Budget!" [(visible)]="overBudget">
+            <h3>It looks like you are {{getErrPerc(errorPercent)}}% over budget in the {{errorCategory}} category.</h3>
+            <h3>We recommend you reduce your budget in this category by {{(getErrPerc(errorDifference)) | currency}}.</h3>
     
+        </p-dialog>  
+    </div>  
 </div>

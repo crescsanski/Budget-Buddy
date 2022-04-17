@@ -2,27 +2,25 @@
 
 .panel {
   /*width: 40vw;*/
-  text-align: center;
+  //text-align: center;
   height: 100%;
   max-height: 100%;
   margin: 25px;
   /*padding: 50px;*/
- /* border: 30px;*/
+  /* border: 30px;*/
   /*border-style: solid;*/
- /* border-color: white;*/
- /* margin-top: -130px;*/
+  /* border-color: white;*/
+  /* margin-top: -130px;*/
 }
 
-:host::ng-deep .custom
-{
+:host::ng-deep .custom {
   width: fit-content !important;
   display: inline-block !important;
   text-align: left;
 }
 
-.label
-{
-  margin-right: 20px; 
+.label {
+  margin-right: 20px;
   font-weight: 500 !important;
   filter: brightness(85%);
   font-size: 1.08em;
@@ -33,10 +31,9 @@
   text-align: left;
 }
 
-.custom2
-{
+.custom2 {
   display: flex !important;
-  justify-content:left
+  justify-content: left;
 }
 
 h1 {
@@ -44,27 +41,36 @@ h1 {
   color: $blue;
 }
 
-.questions
-{
-    overflow-y: auto;
-    max-height: calc(100% - 290px) !important;
-    justify-content: center !important;
-    align-self: center;
-    align-items: center;
-    margin-left: 150px;
+.questions {
+  overflow-y: auto;
+  height: fit-content;
+  justify-content: center !important;
+  align-self: center;
+  align-items: center;
+}
+
+.line {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 2vh;
+
+  p {
+    margin-top: -0.5vh;
+  }
 }
 
 .column {
-    float: left;
-    width: 50%;
-    margin-left: 3em;
-  }
-  
-  .column:after {
-    content:"";
-    display: table;
-    clear: both;
-  }
+  float: left;
+  width: 50%;
+  margin-left: 3em;
+}
+
+.column:after {
+  content: "";
+  display: table;
+  clear: both;
+}
 
 h3 {
   color: $blue;
@@ -72,7 +78,6 @@ h3 {
 }
 
 .card {
-  text-align: center;
   width: 8vw;
   margin: 1vw;
   margin-top: 2vh;
@@ -99,7 +104,6 @@ h3 {
 .card-area {
   display: inline-flex;
   width: 34vw;
-  text-align: center;
   justify-content: space-between;
   margin-left: 1vw;
 }

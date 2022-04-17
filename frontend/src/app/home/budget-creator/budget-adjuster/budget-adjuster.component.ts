@@ -36,7 +36,7 @@ export class BudgetAdjusterComponent implements OnInit {
 
   overBudget: boolean = false;
 
-  categories = ['want', 'need', 'saving']
+  categories = ['Wants', 'Needs', 'Savings']
 
   selectedCategory = "";
 

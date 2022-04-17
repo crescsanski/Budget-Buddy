@@ -1,7 +1,21 @@
-<div class="panel">
+<div class="panel" style="width: 100%">
     <div class="content-area">
-        <div class="header">
-            <h2>Savings Over Time</h2> 
+        <div class="header" style="justify-content: space-between;">
+            <h2>Savings Over Time</h2>
+            <div style="display: flex; text-align: right; justify-content: space-between; width: 60%">
+                <div> 
+                    <div style="width: fit-content; text-align: left;">
+                        <label>Date Range</label>
+                        <p-calendar [(ngModel)]="rangeDates" class="inputfield" (onInput)="getNewData()" (onSelect)="getNewData()" (onBlur)="getNewData()" selectionMode="range" [maxDate]="ts.maxDate" [readonlyInput]="true" inputId="range"></p-calendar>
+                    </div>
+                </div>
+                <div> 
+                    <div style="width: fit-content; text-align: left;">
+                        <label>Interval</label>
+                        <p-selectButton [options]="types" [(ngModel)]="selectedType" (onChange)="getNewData()" optionLabel="name" optionValue="value"></p-selectButton>
+                    </div>
+                </div>
+            </div> 
         </div>
 
         <div style="position: relative;">
@@ -11,19 +25,7 @@
             <p-chart [ngStyle]="{'visibility': dataExists ? 'visible' : 'hidden'}" #chart type="line" [data]="chartData" [options]="chartOptions"></p-chart>
           
         </div>
-        
-        <div class="field grid"> 
-            <label for="horizontal" class="col-fixed" style="width:120px" >Date Range</label>
-            <div class="col-fixed" style="width:250px">
-                <p-calendar [(ngModel)]="rangeDates" class="inputfield" (onInput)="getNewData()" (onSelect)="getNewData()" (onBlur)="getNewData()" selectionMode="range" [maxDate]="ts.maxDate" [readonlyInput]="true" inputId="range"></p-calendar>
-            </div>
-        </div>
-        <div class="field grid"> 
-            <label for="horizontal" class="col-fixed" style="width:120px" >Interval</label>
-            <div class="col-fixed" style="width:450px">
-                <p-selectButton [options]="types" [(ngModel)]="selectedType" (onChange)="getNewData()" optionLabel="name" optionValue="value"></p-selectButton>
-            </div>
-        </div>
+
         <br>
     </div>
 </div>

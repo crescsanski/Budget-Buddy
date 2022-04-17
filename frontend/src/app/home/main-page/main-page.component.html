@@ -4,7 +4,7 @@
   <p-menu #menu [popup]="true" [model]="settings"></p-menu>
   <div class="widget-area">
     <div class="title-bar">
-      <h1 style="text-align: left; margin-left: 2vw; margin-top: 4vh; ">{{ currentPage }} 
+      <h1 style="text-align: left; margin-left: 2.7vw; margin-top: 4vh; ">{{ currentPage }} 
         <button  style="position: absolute; right: 2vw; top: 3em;"pButton pRipple pTooltip="Logout" tooltipPosition="bottom" type="button" icon="pi pi-power-off" class="p-button-rounded p-button-outlined" (click)="cleanLogout()" ></button>
         <button  style="position: absolute; right: 5.5vw; top: 3em;"pButton pRipple pTooltip="Settings" tooltipPosition="bottom" type="button" icon="pi pi-cog" class="p-button-rounded p-button-outlined" (click)="op.toggle($event)"></button>
     </h1>
@@ -119,7 +119,7 @@
       </div>
     </div>
     <div *ngIf="currentPage === 'Analytics'" class="widget-container" style="width: 73vw;"> 
-      <div class="large-widgets" style="width: 75vw; justify-content: center;">
+      <div class="large-widgets" style="width: 70vw; justify-content: center;">
         <app-actual-vs-est-income></app-actual-vs-est-income>
         <app-savings-over-time></app-savings-over-time>
         <app-spending-by-category></app-spending-by-category>
@@ -147,6 +147,6 @@
       </div>
     </div>
   </div>
- <img class="back-to-top" src="../../assets/prototype-images/back-to-top.png">
+ <img class="back-to-top" src="../../assets/prototype-images/back-to-top.png" (click)="backToTop()">
   
 </div>

@@ -204,5 +204,10 @@ export class MainPageComponent implements OnInit {
     this.avatarEditor = true;
   }
 
+  backToTop() {
+    document.body.scrollTop = 0;
+    document.documentElement.scrollTop = 0;
+  }
+
 
 }
