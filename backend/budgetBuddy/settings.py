@@ -15,7 +15,6 @@ import django_heroku
 from pathlib import Path
 from dotenv import load_dotenv
 import dj_database_url
-import psycopg2
 
 load_dotenv()
 
