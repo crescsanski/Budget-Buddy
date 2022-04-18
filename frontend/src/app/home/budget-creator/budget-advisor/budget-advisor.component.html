@@ -1,4 +1,4 @@
-<div *ngIf="load" class="panel">
+<div *ngIf="load">
     <h1>Understanding Your Budget</h1>
     <br>
     <div>
@@ -6,7 +6,7 @@
         <p-chart type="doughnut" [data]="data"  [style]="{'width': '30%'}" [options]="options"></p-chart>
         <br>
         <h3>Click on the categories below to see our recommendations for each.</h3>
-        <div class="card-area">
+        <div class="card-area" style="display: flex; justify-content: center;">
             <div class="card" (click)="setDisplay(needs)">
                 <h1>{{this.dat.need | percent}} <br> Needs</h1>
             </div>
@@ -21,25 +21,17 @@
     <br>
     <div style="display:inline-block; text-align: center; justify-content: center; width: 100%">
     <br>
-        <p-button style="text-align: center" (onClick)="this.nextPage()">Got it!</p-button>
+        <p-button (onClick)="this.nextPage()">Got it!</p-button>
     </div>
     <p-dialog header="{{title}}" [(visible)]="displayNeeds">
-        <div *ngIf="displayType != 'need'">
+        <div>
             <div *ngFor="let item of displayItems" style="display: block; width: 100%; justify-content: left; height: 2vw; margin-bottom: 3vh">
                 <div style="display: inline-flex;">
                     <img [src]="item.icon" style="width: 2vw; height: 2vw; margin-right: 2em">
-                    <p>{{item.categoryTitle}} <span *ngIf="item.category == 'need'">{{" (Target Percentage: "}} {{item.break | percent}})</span> </p>
+                    <p>{{item.categoryTitle}} <span *ngIf="item.category == 'need'" style="font-weight: bold;">{{item.break | percent}}</span> </p>
                     
                 </div>
             </div>
         </div>
-        <div *ngIf="displayType == 'need'">
-            <h3>The Budget Buddy recommends the following breakdown for your spending on needs.  Hover over each slice to see the 
-                corresponding amount and percentage for the selected category.
-            </h3>
-            <p-chart type="pie" [data]="data2"  [style]="{'width': '20%'}" [options]="options2"></p-chart>
-        </div>
-        
-        
     </p-dialog>
 </div>

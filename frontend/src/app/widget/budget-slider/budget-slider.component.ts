@@ -57,6 +57,7 @@ export class BudgetSliderComponent implements OnInit {
 
     this.actualBreakdown = this.getCurBreakDown();
 
+
    }
 
    updateParameters(total: number)

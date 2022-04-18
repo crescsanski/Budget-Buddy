@@ -12,6 +12,8 @@
   box-shadow: 3px 3px 10px $light-gray;
 }
 
+
+
 .content {
   padding: 2em;
 }
@@ -39,9 +41,77 @@ h1 {
   margin-bottom: 0.75em;
   margin-top: 0.2em;
   font-size: 2.5em;
+  color:  $teal;
 }
 
-p {
+h2 {
+  text-align: center;
+  margin-bottom: 0.75em;
+  margin-top: 0.2em;
+  font-size: 1.5em;
+  color:  $blue;
+}
+
+span.center
+{
+  width: fit-content;
+  text-align: center;
+  margin-bottom: 0.75em;
+  margin-top: 0.2em;
+  font-size: 1.5em;
+  color:  $blue;
+  font-weight: 700;
+}
+
+p.subtitle {
   margin-bottom: 0.25em;
   margin-top: 2em;
+  color: $dark-blue;
+}
+.content-area {
+  width: 100%;
+  margin-bottom: -10px !important;
+}
+
+.descriptions {
+  p {
+    text-align: left;
+    max-width: 10vw;
+  }
+}
+.title {
+  font-weight: bolder;
+}
+
+.badgeList
+{
+  overflow-y: auto;
+  height: 250px;
+}
+
+.badges {
+  text-align: left;
+  display: inline-flex !important;
+  width: 100%;
+  align-items: center;
+  justify-content: center;
+  img {
+    width: 3em;
+    max-height: 4em;
+    margin: 1em;
+  }
+}
+
+.feedback
+{
+  color: $dark-blue !important;
+}
+
+.name {
+  font-weight: bolder;
+  font-size: large;
+}
+
+.description {
+  margin-top: -10px;
 }

@@ -61,6 +61,17 @@ export class ChallengesService {
     return this.triggers;
   }
 
+  //remove in production
+  forTesting(lev: LevelProgress, chall: Challenge[])
+  {
+    let ch = chall[0]
+    var out: LevelProgress = JSON.parse(JSON.stringify(lev))
+    ch.rewardPoints = 700
+    out.experience_points -= ch.rewardPoints;
+    
+    return out;
+  }
+
 
   /** GET challenges earned by user_id. Will 404 if id not found */
   getChallenges(): Observable<ChallengeInventoryPackage> {
@@ -68,10 +79,22 @@ export class ChallengesService {
     return this.http.get<ChallengeInventoryPackage>(url).pipe(
       tap((out: ChallengeInventoryPackage) => 
       {
-        this.preInv = this.challInvs;
-        this.challInvs = out.inventory;
-        this.preLevProg = this.levelProgress;
-        this.levelProgress = out.levelProgress;
+        if (this.challInvs == null && this.levelProgress == null)
+        {
+          this.challInvs = out.inventory
+          this.preInv = out.inventory
+          //this.preLevProg = this.forTesting(out.levelProgress, out.inventory)
+          this.preLevProg = out.levelProgress
+          this.levelProgress = out.levelProgress
+        }
+        else
+        {
+          this.preInv = this.challInvs;
+          this.challInvs = out.inventory;
+          this.preLevProg = this.levelProgress;
+          this.levelProgress = out.levelProgress;
+        }
+        
         this.setTriggers(out.inventory);
         console.log(`fetched challenges for user`)
       }),

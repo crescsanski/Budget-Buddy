@@ -1,11 +1,21 @@
-<div class="panel">
+<div class="panel" style="width: 100%">
     <div class="content-area">
         <div class="header">
             <h2>Spending By Category</h2> 
+            <div class="formgroup-inline"> 
+           
+                <label class="col-fixed" style="width:65px; margin-top: 3px;" 
+                for="month" >Month</label>
+                <p-calendar id="month" inputId="month" 
+                [minDate]="ts.minDate" [maxDate]="ts.maxDate"
+                class="inputfield" [(ngModel)]="selDate" view="month" 
+                (onSelect)="getNewData()" 
+                dateFormat="mm/yy"></p-calendar>
+            </div>
         </div>
 
-        <div style="position: relative;">
-            <div *ngIf="!dataExists" class="centerUn">
+        <div style="display: flex; justify-content: center;">
+            <div *ngIf="!dataExists">
                 <span>There is no data to display because there are no logged purchases for the selected month.</span>
             </div>
             <div [style]="{'width': '50%'}">
@@ -13,16 +23,6 @@
              </div>
         </div>
 
-        
-        <div class="formgroup-inline" style="margin-top: 15px;"> 
-           
-            <label class="col-fixed" style="width:65px; margin-top: 3px;" 
-            for="month" >Month</label>
-            <p-calendar id="month" inputId="month" 
-            [minDate]="ts.minDate" [maxDate]="ts.maxDate"
-            class="inputfield" [(ngModel)]="selDate" view="month" 
-            (onSelect)="getNewData()" 
-            dateFormat="mm/yy"></p-calendar>
-    </div>
+
     </div>
 </div>

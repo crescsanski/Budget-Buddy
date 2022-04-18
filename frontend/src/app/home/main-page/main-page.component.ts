@@ -13,6 +13,9 @@ import { Budget } from 'src/app/models/budget';
 import { TriggerService } from 'src/app/services/trigger.service';
 import {ConfirmationService} from 'primeng/api';
 import { ChallengesService } from 'src/app/services/challenges.service';
+import { DialogService } from 'primeng/dynamicdialog';
+import { Challenge } from 'src/app/models/Challenge';
+import { StatusUpdateComponent } from 'src/app/alerts/status-update/status-update.component';
 
 
 @Component({
@@ -43,11 +46,16 @@ export class MainPageComponent implements OnInit {
 
 
 
-  constructor(private challServ: ChallengesService, private confServ: ConfirmationService, private authService: AuthService, private trigServ: TriggerService, private ts: TimeService, private budServ: BudgetService, private catServ: CategoryService, private messageService: MessageService, private router: Router) { 
+  constructor(private challServ: ChallengesService, private dialogService: DialogService, private confServ: ConfirmationService, private authService: AuthService, private trigServ: TriggerService, private ts: TimeService, private budServ: BudgetService, private catServ: CategoryService, private messageService: MessageService, private router: Router) { 
     
     this.trigServ.levelGained$.subscribe(() =>
     {
       this.level = this.challServ.levProgress.level
+    })
+
+    this.trigServ.challCompletedAnnounced$.subscribe((val: Challenge) =>
+    {
+      this.show(val)
     })
 
     try{
@@ -72,9 +80,15 @@ export class MainPageComponent implements OnInit {
 
     this.budgetCategories = this.catServ.expenseCats.concat(this.catServ.incomeCats)
    //this.currentPage = 'Tracking';
+
+      //FOR TESTING ONLY: TOGGLE THE LINE BELOW TO TEST THE CHALLENGES ALERT POPUP
+      //this.show(this.challServ.challenges[0])
   }
 
   ngOnInit(): void {
+
+
+
     this.settings = [
       { label: 'New', icon: 'pi pi-fw pi-plus'},
       { label: 'Open', icon: 'pi pi-fw pi-download'},
@@ -202,6 +216,21 @@ export class MainPageComponent implements OnInit {
 
   openAvatarEditor(){
     this.avatarEditor = true;
+  }
+
+  backToTop() {
+    document.body.scrollTop = 0;
+    document.documentElement.scrollTop = 0;
+  }
+  private show(val: Challenge)
+  {
+    const ref = this.dialogService.open(StatusUpdateComponent, {
+      data: {
+        completedChallenge: val
+      },
+      header: '',
+      width: '60%'
+  });
   }
 
 

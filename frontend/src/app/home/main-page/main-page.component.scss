@@ -126,9 +126,9 @@ div {
 .back-to-top {
   width: 30px;
   height: 30px;
-  position: absolute;
   right: 1vw;
   bottom: 10vh;
+  position:fixed;
 
   &:hover {
     opacity: 50%;

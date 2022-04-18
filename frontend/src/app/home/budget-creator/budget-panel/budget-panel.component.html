@@ -1,14 +1,10 @@
-
-
-<div *ngIf="currentPanel == 'Optimizer'" class="panel panel2">
+<div *ngIf="currentPanel == 'Optimizer'" class="panel container">
     <app-budget-algorithm *ngIf="totalIncome && !isNaN(totalIncome)"[monthlyIncome]="totalIncome" (pageForward)="pageForwardSpec($event);"></app-budget-algorithm>
 </div>
-
-<div [hidden]="!(currentPanel == 'Advisor' && advisorVisible)">
+<div *ngIf="currentPanel == 'Advisor' " class="panel container">
     <app-budget-advisor *ngIf="advisorPackage" [dat]="advisorPackage" (pageForward)="pageForward(); "></app-budget-advisor>
 </div>
-<div *ngIf="currentPanel == 'Income'" class="panel container" style="padding:2em; height: 65vh;">
-    
+<div *ngIf="currentPanel == 'Income'" class="panel container">
     <div class="header">
         <h1>Income</h1> 
         <p>Please enter your expected monthly income from the following categories.</p>
@@ -39,7 +35,7 @@
             <h1>Expenses</h1> 
             <p>Please enter your expected monthly expenses from the following categories.</p>
 
-            <p>We've preloaded the recommended values for the need categories, but you are free to modify them as desired.</p>
+            <p>We've preloaded some values based on our recommendations, but you are free to modify them as you need.</p>
             <br>
         </div>
         <div class="subContainer2">

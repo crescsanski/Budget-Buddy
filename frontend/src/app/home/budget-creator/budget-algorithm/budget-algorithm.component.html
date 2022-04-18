@@ -5,12 +5,15 @@
         <h3>The Budget Buddy can provide personalized budget recommendations.</h3>
         <h3>Please answer the questions below to get started.</h3>
         <br>
-        <div class="questions grid">
+        <div class="questions">
            
-            <div *ngFor="let item of userAttributes; let i=index" class="col-12 custom2">
-             
-                <label class="label" >{{item.label}}</label>
-                <p-selectButton class="custom" [options]="answers" [(ngModel)]="item.value" optionLabel="label" optionValue="value"></p-selectButton>
+            <div *ngFor="let item of userAttributes; let i=index">
+                
+                <div class="line">
+                    <label class="label" >{{item.label}}</label>
+                    <p-selectButton class="custom" [options]="answers" [(ngModel)]="item.value" optionLabel="label" optionValue="value"></p-selectButton>
+                </div>
+                
            
             </div>
             
@@ -20,7 +23,7 @@
         <div style="display:inline-block; text-align: center; justify-content: center; width: 100%">
         <br>
         <br>
-            <p-button style="text-align: center" (onClick)="runSpendingRec(); load = true;">Submit</p-button>
+            <p-button (onClick)="runSpendingRec(); load = true;">Submit</p-button>
         </div>
     </div>
 </div>
