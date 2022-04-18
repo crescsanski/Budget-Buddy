@@ -55,6 +55,7 @@ class ReceiptUploadConvertViewSet(GenericAPIView):
             out[f.name] = self.processFile(file_uploaded = f)
 
         shutil.rmtree('rawReceipts/', True)
+        shutil.rmtree('images/', True)
 
         return Response(out)
 
