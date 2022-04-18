@@ -1,3 +1,2 @@
 https://github.com/dwightgunning/heroku-buildpack-version
-frontend=https://github.com/heroku/heroku-buildpack-nodejs
 backend=https://github.com/heroku/heroku-buildpack-python
