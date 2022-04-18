@@ -34,7 +34,7 @@ DATABASES = {'default': dj_database_url.config(conn_max_age=600, ssl_require=Tru
 SECRET_KEY = 'django-insecure-%p+p9eii62%x59h3s$ibep2*4%d91+v%ot@91dh^ztx^bdwazq'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
 #ALLOWED_HOSTS = ['127.0.0.1', 'localhost', 'budget-buddy-app1.herokuapp.com']
 ALLOWED_HOSTS = ['*']
