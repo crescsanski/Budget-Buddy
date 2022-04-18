@@ -26,33 +26,23 @@ export class AppComponent {
     private budServ: BudgetService,
     private spenTot: SpendingHistoryService,
     private trigServ: TriggerService,
+    private challServ: ChallengesService,
     private dialogService: DialogService,
     private badServ: BadgesEarnedService,
     private catService: CategoryService)
   {
-    this.authServ.currentUser.subscribe(x => this.user = <User>x);
-
-    this.trigServ.challCompletedAnnounced$.subscribe((val: Challenge) =>
-    {
-      this.show(val)
-    })
+    this.authServ.currentUser.subscribe(x => {
+      this.user = <User>x
+    });
 
   }
+
 
   cleanLogout() {
     this.authServ.cleanLogout().subscribe();
   }
 
-  private show(val: Challenge)
-  {
-    const ref = this.dialogService.open(StatusUpdateComponent, {
-      data: {
-        completedChallenge: val
-      },
-      header: 'Progress Update!',
-      width: '70%'
-  });
-  }
+  
 }
 
 

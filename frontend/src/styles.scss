@@ -100,6 +100,20 @@ button {
     white-space: pre-line !important;
   }
 
+  .p-dialog
+  {
+    background-color: white !important;
+    color: #4ec5ca !important;
+    padding: 0.1em !important;
+    border-radius: 8px !important;
+    box-shadow: 2px 2px 5px #707070 !important;
+    margin-bottom: 2em !important;
+    margin-right: 2em !important;
+    margin-left: 2em !important;
+    padding-bottom: 1em !important;
+
+  }
+
   .p-dropdown {
     width: 100% !important;
     text-align: left;
