@@ -55,7 +55,7 @@ export class BudgetAdjusterComponent implements OnInit {
   onChange(){
     //this.dropdownPrompts = [];
     this.expenses.forEach(x => {
-      if(x.category  == (this.selectedCategory.toLowerCase())) {
+      if(x.category  == (this.selectedCategory.toLowerCase().slice(0,-1))) {
         //this.dropdownPrompts.push(x);
         x.visible = true;
       }
