@@ -1,5 +1,5 @@
 import { WidgetModule } from './widget/widget.module';
-import { HomeModule } from './home/home.module';
+import { HomeModule } from './models/home.module';
 import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
@@ -16,7 +16,7 @@ import { ErrorInterceptor } from './helpers/error.interceptor';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { RegisterPanelComponent } from './register/register-panel/register-panel.component';
 import { RegisterNavComponent } from './register/register-nav/register-nav.component';
-import { RegisterPageComponent } from './register/register-page/register-page.component';
+import { RegisterPageComponent } from './register/register-panel/register-page/register-page.component';
 import { PrimengModule } from './primeng/primeng.module';
 import { CurrencyPipe, DatePipe, DecimalPipe, PercentPipe } from '@angular/common';
 import {TooltipModule} from 'primeng/tooltip';

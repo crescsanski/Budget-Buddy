@@ -28,7 +28,7 @@
             <div *ngFor="let item of displayItems" style="display: block; width: 100%; justify-content: left; height: 2vw; margin-bottom: 3vh">
                 <div style="display: inline-flex;">
                     <img [src]="item.icon" style="width: 2vw; height: 2vw; margin-right: 2em">
-                    <p>{{item.categoryTitle}} <span *ngIf="item.category == 'need'" style="font-weight: bold;">{{item.break | percent}}</span> </p>
+                    <p>{{item.categoryTitle}} <span *ngIf="item.category == 'need' && !this.dat.default" style="font-weight: bold;">{{item.break | percent}}</span> </p>
                     
                 </div>
             </div>

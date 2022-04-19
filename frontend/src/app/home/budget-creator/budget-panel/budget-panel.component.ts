@@ -13,6 +13,7 @@ import { Budget } from 'src/app/models/budget';
 import { AuthService } from 'src/app/services/auth.service';
 import { CategoryService } from 'src/app/services/category.service';
 import { THIS_EXPR } from '@angular/compiler/src/output/output_ast';
+import { User } from 'src/app/models/user';
 
 
 @Component({
@@ -38,6 +39,7 @@ export class BudgetPanelComponent implements OnInit {
   catOptions: Category[];
   runSpenRecAlg: boolean = true;
   advisorPackage: any;
+  user: User;
   form: FormArray
   currentPanel: any;
   exisBudgets: Budget[]
@@ -63,11 +65,24 @@ export class BudgetPanelComponent implements OnInit {
     private cs: CategoryService,
     private ms: MessageService) {
 
-      
+  this.user = this.as.currentUserValue
 
   this.panels = [
     'Income', 'Optimizer', 'Advisor', 'Expenses', 'Finalization'
   ]
+
+  if (!this.user.user_recommendation_consent)
+  {
+    this.panels.splice(1,1)
+    this.advisorPackage = {
+      need: 0.5,
+      want: 0.3, 
+      saving: 0.2,
+      default: true
+    }
+  }
+
+  console.log(this.panels)
 
   this.income = this.cs.incomeCats.map(obj => ({...obj, amount: 0, category: obj.category_type, categoryTitle: obj.category_name}));
   this.expenses = this.cs.expenseCats.map(obj => ({...obj, amount: 0, category: obj.category_type, categoryTitle: obj.category_name}));
@@ -196,6 +211,11 @@ recalculate() {
 isNaN(num: number)
 {
   return isNaN(num)
+}
+
+needPack(): boolean
+{
+  return this.as.currentUserValue.user_recommendation_consent
 }
 
 }

@@ -1,4 +1,4 @@
-import { BudgetCategory } from './../../models/formModels/budgetCategory';
+import { BudgetCategory } from '../../models/formModels/budgetCategory';
 import { Router } from '@angular/router';
 import { Component, OnChanges, OnInit, SimpleChanges } from '@angular/core';
 import {MenuItem} from 'primeng/api';

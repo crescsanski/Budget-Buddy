@@ -5,6 +5,7 @@ import { AuthService } from 'src/app/services/auth.service';
 import { first } from 'rxjs/operators';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { MessageService } from 'src/app/services/message.service';
+import { ConfirmationService } from 'primeng/api/';
 
 
 @Component({
@@ -20,6 +21,7 @@ export class RegisterPanelComponent implements OnInit {
 
   constructor(private router: Router, 
     private messageService: MessageService,
+    private confServ: ConfirmationService,
     private formBuilder: FormBuilder,
     private route: ActivatedRoute,
     private authService: AuthService) { }
@@ -34,7 +36,26 @@ export class RegisterPanelComponent implements OnInit {
       user_phone_number: ['', Validators.required],
       user_birth_date: ['', Validators.required],
       user_has_notifications: [false, Validators.required],
+      user_recommendation_consent: [false, Validators.required],
   });
+
+    this.f['user_recommendation_consent'].valueChanges.subscribe((value: boolean) =>
+    {
+      if (value)
+      {
+        this.confServ.confirm({
+          message: 'Are you sure you would like to opt into personalized budget recommendations? \n (By checking this box, you consent to providing us with personal details such as marital status.)',
+          icon: 'pi pi-exclamation-triangle',
+          accept: () => {
+            
+          },
+          reject: () => {
+            this.f['user_recommendation_consent'].setValue(false)
+          }
+        })
+      }
+      
+    })
 
   }
 
@@ -86,4 +107,6 @@ export class RegisterPanelComponent implements OnInit {
             }
         });
     }
+
+  
 }

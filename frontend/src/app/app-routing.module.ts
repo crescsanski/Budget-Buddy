@@ -4,7 +4,7 @@ import { MainPageComponent } from './home/main-page/main-page.component';
 import { NgModule } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
 import { AuthGuard } from './helpers/auth.guard';
-import { RegisterPageComponent } from './register/register-page/register-page.component';
+import { RegisterPageComponent } from './register/register-panel/register-page/register-page.component';
 import { DataResolver } from './resolvers/dataResolver.resolver';
 import { NewBudgetResolver } from './resolvers/newBudgetResolver.resolver';
 import { BudgetGuard } from './helpers/budget.guard';
