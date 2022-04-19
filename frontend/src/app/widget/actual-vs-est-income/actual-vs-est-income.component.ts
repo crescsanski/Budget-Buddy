@@ -69,6 +69,7 @@ export class ActualVsEstIncomeComponent implements OnInit {
     if (this.budServ.noIncFavorites)
     {
       this.selection = false;
+      this.selectedCats = this.catOptions
     }
   }
 

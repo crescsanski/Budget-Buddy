@@ -73,6 +73,7 @@ export class BudgetVsSpendingComponent implements OnInit {
     if (this.budServ.noExpFavorites)
     {
       this.selection = false;
+      this.selectedCats = this.catOptions;
     }
 
   }

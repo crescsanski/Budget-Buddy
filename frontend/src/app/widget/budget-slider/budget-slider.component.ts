@@ -46,9 +46,10 @@ export class BudgetSliderComponent implements OnInit {
 
     this.budgetCategories = this.budServ.exBudByCat.filter(val => val.year == this.ts.year && val.month == this.ts.month)
       .map(val => {
-        val.visible = val.is_favorite;
+        this.budServ.noExpFavorites ? val.visible = true : val.visible = val.is_favorite;
         return val;})
       .sort((a, b) => (a.category_id > b.category_id) ? 1 : -1)
+   
     this.filteredCats = this.budgetCategories.filter(val => val.visible);
     
     this.refreshNewValues();
