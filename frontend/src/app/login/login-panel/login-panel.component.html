@@ -1,5 +1,12 @@
-<div class="panel">
-    <div class="content" [formGroup]="form">
+<div *ngIf="loading" class="loadingPanel panelShared panel">
+    <div *ngIf="loading" style="text-align: center; justify-content: center;">
+        <h2 style="text-align: center; width: 100%">Gettings things ready...</h2>
+        <p-progressSpinner *ngIf="loading"></p-progressSpinner>
+    </div>
+</div>
+
+<div *ngIf="!loading" class="loginPanel panelShared panel">
+    <div *ngIf="!loading" class="content" [formGroup]="form">
         <h1>Login</h1>
         <p>Username</p>
         <input type="text" formControlName="username" class="field" pInputText />
