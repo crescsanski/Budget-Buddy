@@ -2,7 +2,6 @@ import { Injectable } from "@angular/core";
 import { ActivatedRouteSnapshot, Resolve, RouterStateSnapshot } from "@angular/router";
 import { forkJoin, Observable } from "rxjs";
 import { finalize } from "rxjs/operators";
-import { BadgesEarnedService } from "../services/badgesEarned.service";
 import { BudgetService } from "../services/budget.service";
 import { BudgetScoreService } from "../services/budget_score.service";
 import { CategoryService } from "../services/category.service";
@@ -19,7 +18,6 @@ export class DataResolver implements Resolve<any> {
         private spenTot: SpendingHistoryService,
         private budSco: BudgetScoreService,
         private chalServ: ChallengesService,
-        private badServ: BadgesEarnedService,
         private rs: ReceiptTrackService,
         private incServ: IncomeHistoryService,
         private savServ: SavingsHistoryService,
