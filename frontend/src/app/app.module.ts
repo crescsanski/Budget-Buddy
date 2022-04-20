@@ -9,7 +9,7 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { ServiceWorkerModule } from '@angular/service-worker';
 import { environment } from '../environments/environment';
 import { LoginPageComponent } from './login/login-page/login-page.component';
-import { LoginNavComponent } from './login/login-nav/login-nav.component';
+import { LoginNavComponent } from './home/main-page/login-nav/login-nav.component';
 import { LoginPanelComponent } from './login/login-panel/login-panel.component';
 import { AuthInterceptor } from './helpers/authInterceptor.service';
 import { ErrorInterceptor } from './helpers/error.interceptor';

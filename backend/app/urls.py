@@ -36,7 +36,6 @@ urlpatterns = [
 
     path('savings_history/<user_id>/', views.getSavingsHistory),
 
-    #path('budget/<budgetid>/', views.manageBudget),
     path('budget/users/<userid>/', views.manageUserBudget),
     path('budget/', views.setInitialBudget),
     path('budget/users/<userid>/totals/', views.getBudgetTotals),
