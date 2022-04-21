@@ -23,8 +23,21 @@ def gameTasks():
    if datetime.datetime.now().day == 1:
       with connection.cursor() as cursor:
          # Call procedures to run on first day of month
-         cursor.callproc('test_procedure')
-   
+         cursor.callproc('budgetbuddy.monthly_weekly_challenge_check()')
+         cursor.callproc('budgetbuddy.month_end_challenge_removal()')
+         cursor.callproc('budgetbuddy.auto_renewal_procedure()')
+   if datetime.datetime.now().day == 3:
+      with connection.cursor() as cursor:
+         # Call procedures to run on thrid day of month
+         cursor.callproc('budgetbuddy.reset_user_budget_alterations()')
+         cursor.callproc('budgetbuddy.insert_random_monthly_challenges()')
+         cursor.callproc('budgetbuddy.insert_random_first_week_challenges()')
+   if datetime.datetime.now().day == 8 or datetime.datetime.now().day == 15 or datetime.datetime.now().day == 22:
+      with connection.cursor() as cursor:
+         # Call procedures to run on eigth day of month
+         cursor.callproc('budgetbuddy.weekly_challenge_check()')
+         cursor.callproc('budgetbuddy.week_end_challenge_removal()')
+         cursor.callproc('budgetbuddy.insert_random_following_week_challenges()')
 
 def fixPasswordAndActivateAccount():
    for user in Users.objects.all():
