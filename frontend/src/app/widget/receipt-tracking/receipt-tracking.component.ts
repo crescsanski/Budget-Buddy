@@ -72,15 +72,16 @@ export class ReceiptTrackingComponent implements OnInit {
 
       this.ts.expenReceiptChanged$.subscribe((rec: Receipt) =>
       {
-        if (rec.operation == "new")
+        if (rec.operation == "new"  && !this.userReceipts.includes(rec))
         {
           this.loadTable(rec);
         }        
       })
 
       this.ts.incomReceiptChanged$.subscribe((rec: Receipt) => {
-        if (rec.operation == "new")
+        if (rec.operation == "new"  && !this.userReceipts.includes(rec))
         {
+        
           this.loadTable(rec);
         }
    

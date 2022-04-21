@@ -136,7 +136,7 @@ export class TriggerService {
 
   announceIncomReceiptSubmit(rec: Receipt)
   {
-
+   
     this.checkTrigger('record_income')
     
     this.recAddProcess(rec)
