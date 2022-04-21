@@ -67,52 +67,57 @@ export class BudgetAdvisorComponent implements OnInit {
         ]
     };
 
-    let labels = ['Housing', 'Transportation', 'Food/Grocery Essential', 'Medical', 'Utilities', 'Debt Payment',
-    'Insurance', 'Lifestyle Essential', 'Pet', 'Tax Payment', 'Miscellaneous Expense Essential']
-    let yValues = [this.dat['Housing'].amount, this.dat['Transportation'].amount,
-    this.dat['Food/Grocery Essential'].amount, this.dat['Medical'].amount, 
-  this.dat['Utilities'].amount, this.dat['Debt Payment'].amount,
-this.dat['Insurance'].amount, this.dat['Lifestyle Essential'].amount,
-this.dat['Pet'].amount, this.dat['Tax Payment'].amount, this.dat['Miscellaneous Expense Essential'].amount]
-
-    this.data2 = {
-      labels: labels,
-      datasets: [
-          {
-              data: yValues,
-      backgroundColor: this.colServ.configureDefaultColors(yValues),
-    hoverBackgroundColor: this.colServ.configureDefaultColors(yValues)
-    }
-      ]
-  };
-
-    let cp = this.cp
-    let pp = this.pp
-    let dat = this.dat
-
-    this.options2 = {
-
-      plugins: {
-        tooltip: {
-          enabled: true,
-          titleFont: 
-          {
-            size: 30
-          },
-          bodyFont: {
-            size: 30
-          },
-          callbacks: {
-              label: function(context) {
-                  let lab = labels[context.dataset.index]
-                  let val: number = yValues[context.dataset.index]
-                  return [context.label, "Amount: " + cp.transform(context.raw), 
-                  "Percentage: " + pp.transform(dat[context.label].percen)] 
+    if (!this.dat.default)
+    {
+      let labels = ['Housing', 'Transportation', 'Food/Grocery Essential', 'Medical', 'Utilities', 'Debt Payment',
+      'Insurance', 'Lifestyle Essential', 'Pet', 'Tax Payment', 'Miscellaneous Expense Essential']
+      let yValues = [this.dat['Housing'].amount, this.dat['Transportation'].amount,
+      this.dat['Food/Grocery Essential'].amount, this.dat['Medical'].amount, 
+    this.dat['Utilities'].amount, this.dat['Debt Payment'].amount,
+  this.dat['Insurance'].amount, this.dat['Lifestyle Essential'].amount,
+  this.dat['Pet'].amount, this.dat['Tax Payment'].amount, this.dat['Miscellaneous Expense Essential'].amount]
+  
+      this.data2 = {
+        labels: labels,
+        datasets: [
+            {
+                data: yValues,
+        backgroundColor: this.colServ.configureDefaultColors(yValues),
+      hoverBackgroundColor: this.colServ.configureDefaultColors(yValues)
+      }
+        ]
+    };
+  
+      let cp = this.cp
+      let pp = this.pp
+      let dat = this.dat
+  
+      this.options2 = {
+  
+        plugins: {
+          tooltip: {
+            enabled: true,
+            titleFont: 
+            {
+              size: 30
+            },
+            bodyFont: {
+              size: 30
+            },
+            callbacks: {
+                label: function(context) {
+                    let lab = labels[context.dataset.index]
+                    let val: number = yValues[context.dataset.index]
+                    return [context.label, "Amount: " + cp.transform(context.raw), 
+                    "Percentage: " + pp.transform(dat[context.label].percen)] 
+                }
               }
             }
-          }
+        }
       }
     }
+
+
 
     this.options = {
       plugins: {

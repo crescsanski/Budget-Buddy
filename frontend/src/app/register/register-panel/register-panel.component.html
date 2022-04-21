@@ -2,7 +2,7 @@
     <div class="content" [formGroup]="form">
         <h1>Register</h1>
         <div class="grid">
-            <div class="row">
+            <div class="col-4">
                 <p>Username</p>
                 <input type="text" formControlName="user_user_name" class="field" pInputText />
                     <div class="validator" *ngIf="f.user_user_name.invalid && (f.user_user_name.dirty || f.user_user_name.touched)">
@@ -13,13 +13,15 @@
                     <div class="validator" *ngIf="f.password.invalid && (f.password.dirty || f.password.touched)">
                         Please enter a valid password.
                     </div>
+                <div class="spacer"></div>
                 <p>Email</p>
                 <input type="text" formControlName="user_email" class="field" pInputText />
                     <div class="validator" *ngIf="f.user_email.invalid && (f.user_email.dirty || f.user_email.touched)">
                         Please enter a valid email.
                     </div>
+               
             </div>
-            <div class="row">
+            <div class="col-4">
                 <p>First Name</p>
                 <input type="text" formControlName="user_first_name" class="field" pInputText />
                     <div class="validator" *ngIf="f.user_first_name.invalid && (f.user_first_name.dirty || f.user_first_name.touched)">
@@ -36,7 +38,7 @@
                         Field is required
                     </div>
             </div>
-        <div class="row">
+        <div class="col-4">
                 <p>Date of Birth</p>
                 <p-inputMask mask="9999-99-99" formControlName="user_birth_date" placeholder="1987-03-12" slotChar="yyyy-mm-dd"></p-inputMask>
                     <div class="validator" *ngIf="f.user_birth_date.invalid && (f.user_birth_date.dirty || f.user_birth_date.touched)">
@@ -44,7 +46,11 @@
                     </div>
                 <p>Check to Enroll in Notifications</p>
                 <input type="checkbox" formControlName="user_has_notifications" class="field">
+                <p>Check to Enroll in Personalized Budget Recommendations</p>
+                <input type="checkbox" formControlName="user_recommendation_consent" class="field">
+                <p-confirmDialog [style]="{width: '50vw'}" [baseZIndex]="10000" rejectButtonStyleClass="p-button-text"></p-confirmDialog>
             </div>
+          
          </div>
         <br>
         <div class="button-container">

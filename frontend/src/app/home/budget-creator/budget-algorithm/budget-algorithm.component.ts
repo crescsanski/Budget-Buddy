@@ -328,6 +328,7 @@ export class BudgetAlgorithmComponent implements OnInit {
         want: want,
         need: need,
         saving: saving,
+        default: false,
         income: income,
         independent: independent,
         retired: retired,

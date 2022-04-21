@@ -7,7 +7,6 @@ import { CategoryService } from './services/category.service';
 import {DialogService} from 'primeng/dynamicdialog';
 import { BudgetService } from './services/budget.service';
 import { SpendingHistoryService } from './services/spending-history.service';
-import { BadgesEarnedService } from './services/badgesEarned.service';
 import { ChallengesService } from './services/challenges.service';
 import { TriggerService } from './services/trigger.service';
 import { Challenge } from './models/Challenge';
@@ -28,7 +27,6 @@ export class AppComponent {
     private trigServ: TriggerService,
     private challServ: ChallengesService,
     private dialogService: DialogService,
-    private badServ: BadgesEarnedService,
     private catService: CategoryService)
   {
     this.authServ.currentUser.subscribe(x => {

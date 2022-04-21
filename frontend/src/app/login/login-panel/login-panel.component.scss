@@ -1,15 +1,31 @@
 @import "../../../styles.scss";
 
-.panel {
+.panelShared {
   background-color: white;
   color: $teal;
+  border-radius: 62px;
+  box-shadow: 3px 3px 10px $light-gray;
+}
+
+.loginPanel
+{
   padding: 1em;
   width: 30vw;
   min-width: 20em;
   max-width: 20em;
-  border-radius: 62px;
   text-align: left;
-  box-shadow: 3px 3px 10px $light-gray;
+}
+
+.loadingPanel
+{
+  width: 40vw !important;
+  text-align: center !important;
+  padding: 50px !important;
+  border: 30px !important;
+  border-style: solid !important;
+  border-color: white !important;
+  margin-top: 5vh !important;
+  margin-left: -10vw !important;
 }
 
 .content {

@@ -2,7 +2,6 @@ import { Component, OnInit } from '@angular/core';
 import { Badge } from 'src/app/models/badge';
 import { BadgesEarned } from 'src/app/models/badgesEarned';
 import { AuthService } from 'src/app/services/auth.service';
-import { BadgesEarnedService } from 'src/app/services/badgesEarned.service';
 import { ChallengesService } from 'src/app/services/challenges.service';
 
 @Component({

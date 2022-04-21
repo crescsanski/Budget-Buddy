@@ -31,6 +31,16 @@ h1 {
   }
 }
 
+.loadingPanel
+{
+  color: $teal;
+  text-align: center !important;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: rgba(0,0,0,0);
+}
+
 .setting-item {
   font-family: "Century Gothic Pro", sans-serif !important;
   color: $blue;

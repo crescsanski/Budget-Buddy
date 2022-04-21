@@ -1,4 +1,4 @@
-import { BudgetCategory } from './../../models/formModels/budgetCategory';
+import { BudgetCategory } from '../../models/formModels/budgetCategory';
 import { Router } from '@angular/router';
 import { Component, OnChanges, OnInit, SimpleChanges } from '@angular/core';
 import {MenuItem} from 'primeng/api';
@@ -75,7 +75,14 @@ export class MainPageComponent implements OnInit {
    if (authService.currentUserValue)
     {
       this.name = authService.currentUserValue.user_first_name + " " + authService.currentUserValue.user_last_name;
-      this.level = authService.currentUserValue.user_level;
+      if (this.challServ.levProgress)
+      {
+        this.level = this.challServ.levProgress.level
+      }
+      else
+      {
+        this.level = authService.currentUserValue.user_level;
+      }  
     }   
 
     this.budgetCategories = this.catServ.expenseCats.concat(this.catServ.incomeCats)

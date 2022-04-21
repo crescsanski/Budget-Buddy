@@ -35,7 +35,7 @@
             <h1>Expenses</h1> 
             <p>Please enter your expected monthly expenses from the following categories.</p>
 
-            <p>We've preloaded some values based on our recommendations, but you are free to modify them as you need.</p>
+            <p *ngIf="needPack()">We've preloaded some values based on our recommendations, but you are free to modify them as you need.</p>
             <br>
         </div>
         <div class="subContainer2">

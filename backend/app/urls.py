@@ -36,7 +36,6 @@ urlpatterns = [
 
     path('savings_history/<user_id>/', views.getSavingsHistory),
 
-    #path('budget/<budgetid>/', views.manageBudget),
     path('budget/users/<userid>/', views.manageUserBudget),
     path('budget/', views.setInitialBudget),
     path('budget/users/<userid>/totals/', views.getBudgetTotals),
@@ -47,8 +46,6 @@ urlpatterns = [
 
     path('chall_inv/<user_id>/', views.manageUserChallInv),
     
-    path('badges_earned/<userid>/', views.BadgesEarnedViewSet.as_view()),
-
     path('budget_score/<user_id>/', views.budgetScore),
 
     path('', include(router.urls))
@@ -58,7 +55,7 @@ urlpatterns = [
 from app import tasks
 
 # Create a separate thread to execute tasks on timer
-t1 = tasks.gameThread(5)
+t1 = tasks.gameThread()
 
 # Start the game logic thread:
 

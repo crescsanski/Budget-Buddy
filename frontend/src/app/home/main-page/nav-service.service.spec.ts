@@ -1,6 +1,6 @@
 import { TestBed } from '@angular/core/testing';
 
-import { NavService } from './nav-service.service';
+import { NavService } from './frontend/src/app/home/nav-service.service';
 
 describe('NavService', () => {
   let service: NavService;

@@ -1,7 +1,7 @@
 import { Injectable } from "@angular/core";
 import { ActivatedRouteSnapshot, Resolve, RouterStateSnapshot } from "@angular/router";
 import { forkJoin, Observable } from "rxjs";
-import { BadgesEarnedService } from "../services/badgesEarned.service";
+import { finalize } from "rxjs/operators";
 import { BudgetService } from "../services/budget.service";
 import { BudgetScoreService } from "../services/budget_score.service";
 import { CategoryService } from "../services/category.service";
@@ -18,7 +18,6 @@ export class DataResolver implements Resolve<any> {
         private spenTot: SpendingHistoryService,
         private budSco: BudgetScoreService,
         private chalServ: ChallengesService,
-        private badServ: BadgesEarnedService,
         private rs: ReceiptTrackService,
         private incServ: IncomeHistoryService,
         private savServ: SavingsHistoryService,
@@ -27,16 +26,16 @@ export class DataResolver implements Resolve<any> {
     
     resolve(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): any | Observable<any> | Promise<any> {
     
-    var observArray = []
+    var urgentObservArray = []
     if (this.catService.expenseCats == null || this.catService.incomeCats == null)
     {
-        observArray.push(this.catService.getCategories())
+        urgentObservArray.push(this.catService.getCategories())
     }
-   
-    const observable = forkJoin( observArray.concat([
-    
-        //Fetch Weekly and Monthly Budgets for the app:
-        this.budServ.getBudgetTotals(),
+
+    var lazyObservArray = []
+
+    //This observable holds the api calls that don't need to be complete by the time the user logs in
+    const lazyObservable = forkJoin( lazyObservArray.concat([
 
         //Fetch receipts for user:
         this.rs.getReceipts(),
@@ -53,28 +52,41 @@ export class DataResolver implements Resolve<any> {
         //Fetch Default Display for Income over Time Widget
         this.incServ.getByMonthCumIncome(),
 
-        this.incServ.getByMonthIncome(),
-
-        this.spenTot.getByMonthSpendings(),
+        //Fetch Income and Expense Budgets By Category
+        this.budServ.getBudByCat(),
 
         this.spenTot.getSpendCatBreakdown(),
 
         this.incServ.getIncomeCatBreakdown(),
 
-        //Fetch Income and Expense Budgets By Category
-        this.budServ.getBudByCat(),
+    ]))
+   
+    //This observable holds only the api calls that MUST BE MADE before the dashboard is loaded
+    const urgentObservable = forkJoin( urgentObservArray.concat([
+    
+        //Fetch Weekly and Monthly Budgets for the app:
+        this.budServ.getBudgetTotals(),
+
+        
+        this.incServ.getByMonthIncome(),
+
+        this.spenTot.getByMonthSpendings(),
 
         //Fetch Weekly Spending Total
         this.spenTot.getCurWeekSpend(),
 
-        //Fetch Badges
-        this.badServ.getBadgesEarned(),
-
         //Fetch BudgetScore
         this.budSco.getBudgetScore()
-    ]))
+    ])).pipe(
+        finalize(() =>
+        {
+             //We'll let the lazy observable run, but will not require it to finish in order to get to the next screen.
+             //We'll only start it after the required pieces have loaded.
+            lazyObservable.subscribe()
+        })
+    )
 
-    return observable;
+    return urgentObservable;
     
     }
 }

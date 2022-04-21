@@ -1,5 +1,5 @@
 
-import { MainPageComponent } from './../main-page.component';
+import { MainPageComponent } from '../main-page.component';
 import { ThrowStmt } from '@angular/compiler';
 import { Component, EventEmitter, OnInit, Output } from '@angular/core';
 import { AuthService } from 'src/app/services/auth.service';

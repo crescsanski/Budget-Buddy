@@ -1,7 +1,6 @@
 import { Injectable } from "@angular/core";
 import { ActivatedRouteSnapshot, Resolve, RouterStateSnapshot } from "@angular/router";
 import { EMPTY, forkJoin, Observable } from "rxjs";
-import { BadgesEarnedService } from "../services/badgesEarned.service";
 import { BudgetService } from "../services/budget.service";
 import { CategoryService } from "../services/category.service";
 import { SpendingHistoryService } from "../services/spending-history.service";
