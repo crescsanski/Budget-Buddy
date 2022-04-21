@@ -55,7 +55,7 @@ urlpatterns = [
 from app import tasks
 
 # Create a separate thread to execute tasks on timer
-t1 = tasks.gameThread(5)
+t1 = tasks.gameThread()
 
 # Start the game logic thread:
 

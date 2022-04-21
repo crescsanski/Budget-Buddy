@@ -81,6 +81,7 @@ Pillow = "==8.4.0"
 PyJWT = "==2.3.0"
 PyMuPDF = "==1.16.14"
 PyWavelets = "==1.2.0"
+apscheduler = "*"
 
 [dev-packages]
 

@@ -1,43 +1,43 @@
 import datetime
-from threading import Timer
 from django.contrib.auth.hashers import *
 import threading
 from django.db import connection
-import schedule
+from apscheduler.schedulers.background import BackgroundScheduler
 
-from numpy import fix
 from app.models import Users, UserCategoryBudget, Expense, Income, Receipt
 
 class gameThread(threading.Thread):
-   def __init__(self, counter):
+   def __init__(self):
       threading.Thread.__init__(self)
-      self.counter = counter
+
    def run(self):
-      pass
       #fixPasswordAndActivateAccount()
       #activateBudgetsForThisMonth()
-      schedule.every().day.at("00:00:00").do(gameTasks)
+      scheduler = BackgroundScheduler()
+      scheduler.add_job(gameTasks, 'cron', hour='0', minute='0', second = '0')
+      scheduler.start()
+    
 
 
 def gameTasks():
    if datetime.datetime.now().day == 1:
       with connection.cursor() as cursor:
          # Call procedures to run on first day of month
-         cursor.callproc('budgetbuddy.monthly_weekly_challenge_check()')
-         cursor.callproc('budgetbuddy.month_end_challenge_removal()')
-         cursor.callproc('budgetbuddy.auto_renewal_procedure()')
+         cursor.execute('CALL budgetbuddy.monthly_weekly_challenge_check();')
+         cursor.execute('CALL budgetbuddy.month_end_challenge_removal();')
+         cursor.execute('CALL budgetbuddy.auto_renewal_procedure();')
    if datetime.datetime.now().day == 3:
       with connection.cursor() as cursor:
          # Call procedures to run on thrid day of month
-         cursor.callproc('budgetbuddy.reset_user_budget_alterations()')
-         cursor.callproc('budgetbuddy.insert_random_monthly_challenges()')
-         cursor.callproc('budgetbuddy.insert_random_first_week_challenges()')
+         cursor.execute('CALL budgetbuddy.reset_user_budget_alterations();')
+         cursor.execute('CALL budgetbuddy.insert_random_monthly_challenges();')
+         cursor.execute('CALL budgetbuddy.insert_random_first_week_challenges();')
    if datetime.datetime.now().day == 8 or datetime.datetime.now().day == 15 or datetime.datetime.now().day == 22:
       with connection.cursor() as cursor:
          # Call procedures to run on eigth day of month
-         cursor.callproc('budgetbuddy.weekly_challenge_check()')
-         cursor.callproc('budgetbuddy.week_end_challenge_removal()')
-         cursor.callproc('budgetbuddy.insert_random_following_week_challenges()')
+         cursor.execute('CALL budgetbuddy.weekly_challenge_check();')
+         cursor.execute('CALL budgetbuddy.week_end_challenge_removal();')
+         cursor.execute('CALL budgetbuddy.insert_random_following_week_challenges();')
 
 def fixPasswordAndActivateAccount():
    for user in Users.objects.all():
