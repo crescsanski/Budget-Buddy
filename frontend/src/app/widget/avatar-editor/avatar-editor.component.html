@@ -1,16 +1,13 @@
 <div style="width:25vw; display: inline-flex">
-    <img [src]="currentAvatar" style="width: 15vw; margin-left: 5vw">
+    <img [src]="currentAvatar" style="width: 70%; height: 70%">
     <div style="width: 8vw; margin-left: 5vw">
-        <h3>Color</h3>
-        <p-dropdown [options]="colorOptions"></p-dropdown>
-        <br>
         <h3>Hat</h3>
-        <p-dropdown [options]="hatOptions" optionLabel="name" optionValue="item"></p-dropdown>
+        <p-dropdown [options]="hatOptions" [(ngModel)]="hat" optionLabel="name" optionValue="item" optionValue="item" (onChange)="pickPicture()"></p-dropdown>
         <br>
         <h3>Glasses</h3>
-        <p-dropdown [options]="glassesOptions" optionLabel="name" optionValue="item"></p-dropdown>
+        <p-dropdown [options]="glassesOptions" [(ngModel)]="glasses" optionLabel="name" optionValue="item" optionValue="item" (onChange)="pickPicture()"></p-dropdown>
         <h3>Acccessory</h3>
-        <p-dropdown [options]="accessoryOptions" optionLabel="name" optionValue="item"></p-dropdown>
+        <p-dropdown [options]="accessoryOptions" [(ngModel)]="accessory" optionLabel="name" optionValue="item" optionValue="item" (onChange)="pickPicture()"></p-dropdown>
     </div>
 </div>
 

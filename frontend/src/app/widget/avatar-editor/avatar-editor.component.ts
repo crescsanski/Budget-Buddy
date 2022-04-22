@@ -14,32 +14,28 @@ export class AvatarEditorComponent implements OnInit {
   glassesOptions: AvatarEditor[];
   accessoryOptions: AvatarEditor[];
 
-  hat: AvatarEditor;
-  glasses: AvatarEditor;
-  accessory: AvatarEditor;
-  colorOptions: string[];
-  color: string;
+  hat: string;
+  glasses: string;
+  accessory: string;
+  str: string;
 
 
   constructor() { 
 
-    this.currentAvatar = './../../../assets/accessories/blueCap-blueGlasses@4x.png'
-
-    this.colorOptions = [
-      'Red', 'Blue'
-    ]
+    this.currentAvatar = './../../../assets/accessories/default.png'
+    this.str = "hi"
 
     this.hatOptions = [
-      {name: 'Cap', item: 'blueCap'},
-      {name: 'Top Hat', item: 'topHat'},
-      {name: 'Flower', item: 'flower'},
       {name: 'None', item: 'none'},
+      {name: 'Cap', item: 'cap'},
+      {name: 'Top Hat', item: 'hat'},
+      {name: 'Flower', item: 'flower'},
     ]
 
     this.glassesOptions = [
-      {name: 'Glasses', item: 'glasses'},
-      {name: 'No Glasses', item: 'none'}
-
+      {name: 'None', item: 'none'},
+      {name: 'Blue Glasses', item: 'bGlasses'},
+      {name: 'Red Glasses', item: 'rGlasses'},
     ]
 
     this.accessoryOptions = [
@@ -54,36 +50,37 @@ export class AvatarEditorComponent implements OnInit {
   }
 
   pickPicture(){
-    this.currentAvatar = './../../../assets/accessories/'
+    console.log("updating avatar")
+    console.log(this.hat)
 
-    if(this.color == 'Red'){
+    this.str = ""
 
-      if(this.hat.item == 'cap'){
-
-        if(this.glasses.item == 'glasses'){
-          if(this.accessory.item == 'bowtie'){
-            //red hat, glassess, bowtie
-            this.currentAvatar += 'redCap-redGlasses-redBowtie@4x.png'
-          } else {
-            //red hat, glasses, no accessory
-            this.currentAvatar += 'redCap-redGlasses@4x.png'
-          }
-        }
-
-        else {
-          //red hat, no glasses 
-          if(this.accessory.item == 'bowtie'){
-            //red hat, glassess, bowtie
-            this.currentAvatar += 'redCap-redGlasses-redBowtie@4x.png'
-          } else {
-            //red hat, glasses, no accessory
-            this.currentAvatar += 'redCap-redGlasses@4x.png'
-          }
-
-        }
-
-      }
+    if(this.hat != "none") {
+      this.str += this.hat
     }
+
+    if(this.glasses != "none") {
+      if(this.str.length > 0){
+        this.str += "-"
+      }
+      this.str += this.glasses
+    }
+
+    if(this.accessory != "none") {
+      if(this.str.length > 0){
+        this.str += "-"
+      }
+      this.str += this.accessory
+    }
+
+    if(this.str.length > 0){
+      this.str = "./../../../assets/accessories/" + this.str + ".png"
+    }
+
+    console.log(this.str)
+
+    this.currentAvatar = this.str
+   
 
   }
 
