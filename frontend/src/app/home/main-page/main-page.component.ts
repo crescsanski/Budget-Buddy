@@ -41,8 +41,9 @@ export class MainPageComponent implements OnInit {
   budgetCategories: Category[];
   selectedCategories: Category[];
   welcomeMessage: boolean = false; 
-  avatarEditor: boolean = false;
+  avatarEditor: boolean = true;
   trackingType: string = "income";
+  avatarImage: string;
 
 
 
@@ -238,6 +239,11 @@ export class MainPageComponent implements OnInit {
       header: '',
       width: '60%'
   });
+  }
+
+  updateMenuAvatar(address: string){
+    this.avatarImage = address
+    console.log(this.avatarImage)
   }
 
 

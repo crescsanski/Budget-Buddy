@@ -1,3 +1,25 @@
+@import "../../../styles.scss";
+
 img {
-    text-align: center;
+  text-align: center;
+}
+
+.selector {
+  margin: 0.2vw;
+  padding: 1vw;
+  background-color: $borders;
+  border-radius: 14px;
+  border-style: solid;
+  border-width: 2px;
+  border-color: $shadow;
+  display: flex;
+  align-items: center;
+
+  &:hover {
+    opacity: 50%;
+    cursor: pointer;
+    img {
+      transform: scale(1.1);
+    }
+  }
 }
