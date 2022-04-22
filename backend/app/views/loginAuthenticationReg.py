@@ -91,7 +91,7 @@ class CustomAuthToken(ObtainAuthToken):
     
 class Logout(GenericAPIView):
 
-    permission_classes = [permissions.IsAuthenticated]
+    #permission_classes = [permissions.IsAuthenticated]
  
     @action(detail=False, methods=['post'])
     def post(self, request, format=None):

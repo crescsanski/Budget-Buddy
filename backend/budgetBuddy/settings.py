@@ -15,6 +15,7 @@ import django_heroku
 from pathlib import Path
 from dotenv import load_dotenv
 import dj_database_url
+import psycopg2
 
 load_dotenv()
 
@@ -34,7 +35,7 @@ DATABASES = {'default': dj_database_url.config(conn_max_age=600, ssl_require=Tru
 SECRET_KEY = 'django-insecure-%p+p9eii62%x59h3s$ibep2*4%d91+v%ot@91dh^ztx^bdwazq'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = True
 
 #ALLOWED_HOSTS = ['127.0.0.1', 'localhost', 'budget-buddy-app1.herokuapp.com']
 ALLOWED_HOSTS = ['*']
@@ -63,7 +64,7 @@ INSTALLED_APPS = [
     # Add the REST Framework
     'rest_framework',
     # Add CORS
-    #'corsheaders',
+    'corsheaders',
     'django_filters'
 ]
 
@@ -75,15 +76,15 @@ REST_FRAMEWORK = {
      'DEFAULT_RENDERER_CLASSES': (
         'rest_framework.renderers.JSONRenderer',
     ),
-    'DEFAULT_PERMISSION_CLASSES': [
-        'rest_framework.permissions.IsAuthenticated',
-    ]
+    # 'DEFAULT_PERMISSION_CLASSES': [
+    #     'rest_framework.permissions.IsAuthenticated',
+    # ]
 }
 
 MIDDLEWARE = [
     #Add middleware for CORS
     'whitenoise.middleware.WhiteNoiseMiddleware',
-    #'corsheaders.middleware.CorsMiddleware',
+    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -173,9 +174,9 @@ USE_TZ = True
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 # Configure CORS
-# CORS_ALLOW_ALL_ORIGINS = True
-# CORS_ALLOW_CREDENTIALS = True
-# CORS_EXPOSE_HEADERS = ['authorization']
+CORS_ALLOW_ALL_ORIGINS = True
+CORS_ALLOW_CREDENTIALS = True
+CORS_EXPOSE_HEADERS = ['Authorization']
 
 # CORS_ORIGIN_WHITELIST = (
 #     'http://localhost:4200', 'https://budget-buddy-app1.herokuapp.com'
