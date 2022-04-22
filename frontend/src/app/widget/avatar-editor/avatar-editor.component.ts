@@ -1,6 +1,7 @@
 import { AvatarEditor } from './../../models/avatarEditor';
 import { UserService } from './../../services/user.service';
 import { Component, OnInit } from '@angular/core';
+import { Output, EventEmitter } from '@angular/core';
 
 
 @Component({
@@ -14,37 +15,41 @@ export class AvatarEditorComponent implements OnInit {
   glassesOptions: AvatarEditor[];
   accessoryOptions: AvatarEditor[];
 
-  hat: AvatarEditor;
-  glasses: AvatarEditor;
-  accessory: AvatarEditor;
-  colorOptions: string[];
-  color: string;
+  @Output() avatarUpdate = new EventEmitter<string>();  
+
+  hat: string;
+  glasses: string;
+  accessory: string;
+  str: string;
 
 
   constructor() { 
 
-    this.currentAvatar = './../../../assets/accessories/blueCap-blueGlasses@4x.png'
+    //TODO: These 4 values need to be saved with the user's data
+    this.currentAvatar = './../../../assets/accessories/default.png'
+    this.hat = 'none'
+    this.glasses = 'none'
+    this.accessory = 'none'
 
-    this.colorOptions = [
-      'Red', 'Blue'
-    ]
+
+    this.str = "hi"
 
     this.hatOptions = [
-      {name: 'Cap', item: 'blueCap'},
-      {name: 'Top Hat', item: 'topHat'},
-      {name: 'Flower', item: 'flower'},
+      {name: 'Cap', item: 'cap', image:'./../../../assets/accessories/options/cap.png' },
+      {name: 'Top Hat', item: 'hat', image:'./../../../assets/accessories/options/hat.png'},
+      {name: 'Flower', item: 'flower', image:'./../../../assets/accessories/options/flower.png'},
       {name: 'None', item: 'none'},
     ]
 
     this.glassesOptions = [
-      {name: 'Glasses', item: 'glasses'},
-      {name: 'No Glasses', item: 'none'}
-
+      {name: 'Blue Glasses', item: 'bGlasses', image:'./../../../assets/accessories/options/bGlasses.png'},
+      {name: 'Red Glasses', item: 'rGlasses', image:'./../../../assets/accessories/options/rGlasses.png'},
+      {name: 'None', item: 'none'},
     ]
 
     this.accessoryOptions = [
+      {name: 'Bow Tie', item: 'bowtie', image:'./../../../assets/accessories/options/bowtie.png'},
       {name: 'None', item: 'none'},
-      {name: 'Bow Tie', item: 'bowtie'}
     ]
 
 
@@ -53,38 +58,63 @@ export class AvatarEditorComponent implements OnInit {
   ngOnInit(): void {
   }
 
-  pickPicture(){
-    this.currentAvatar = './../../../assets/accessories/'
+   pickPicture(){
+    console.log("updating avatar")
+    console.log(this.hat)
 
-    if(this.color == 'Red'){
+    this.str = ""
 
-      if(this.hat.item == 'cap'){
-
-        if(this.glasses.item == 'glasses'){
-          if(this.accessory.item == 'bowtie'){
-            //red hat, glassess, bowtie
-            this.currentAvatar += 'redCap-redGlasses-redBowtie@4x.png'
-          } else {
-            //red hat, glasses, no accessory
-            this.currentAvatar += 'redCap-redGlasses@4x.png'
-          }
-        }
-
-        else {
-          //red hat, no glasses 
-          if(this.accessory.item == 'bowtie'){
-            //red hat, glassess, bowtie
-            this.currentAvatar += 'redCap-redGlasses-redBowtie@4x.png'
-          } else {
-            //red hat, glasses, no accessory
-            this.currentAvatar += 'redCap-redGlasses@4x.png'
-          }
-
-        }
-
-      }
+    if(this.hat != "none") {
+      this.str += this.hat
     }
 
+    if(this.glasses != "none") {
+      if(this.str.length > 0){
+        this.str += "-"
+      }
+      this.str += this.glasses
+    }
+
+    if(this.accessory != "none") {
+      if(this.str.length > 0){
+        this.str += "-"
+      }
+      this.str += this.accessory
+    }
+
+    if(this.str.length > 0){
+      this.str = "./../../../assets/accessories/" + this.str + ".png"
+    } else {
+      this.str = './../../../assets/accessories/default.png'
+    }
+
+    console.log(this.str)
+
+    this.currentAvatar = this.str
+
+    //this.avatarUpdate.emit(this.currentAvatar)
+   
+
+  }
+
+  setHat(newHat: string){
+    this.hat = newHat
+    this.pickPicture()
+  }
+
+  setGlasses(newGlasses: string){
+    this.glasses = newGlasses
+    this.pickPicture()
+  }
+
+  setAccessory(newAccessory: string){
+    this.accessory = newAccessory
+    this.pickPicture()
+  }
+
+  updateAvatar() {
+    console.log("click")
+    this.avatarUpdate.emit(this.currentAvatar)
   }
 
 }

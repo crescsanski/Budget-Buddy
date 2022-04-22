@@ -1,10 +1,13 @@
 
 import { MainPageComponent } from '../main-page.component';
 import { ThrowStmt } from '@angular/compiler';
-import { Component, EventEmitter, OnInit, Output } from '@angular/core';
+import { Component, EventEmitter, OnInit, Output, Input} from '@angular/core';
 import { AuthService } from 'src/app/services/auth.service';
 import { ChallengesService } from 'src/app/services/challenges.service';
 import { TriggerService } from 'src/app/services/trigger.service';
+
+
+
 
 @Component({
   selector: 'app-menu',
@@ -16,7 +19,7 @@ export class MenuComponent implements OnInit {
   level: number;
   selected: string = '';
   main: MainPageComponent | undefined;
-  
+  @Input() avatarImage: string
   @Output()
   notify: EventEmitter<string> = new EventEmitter<string>();
   
@@ -36,6 +39,7 @@ export class MenuComponent implements OnInit {
 
   ngOnInit(): void {
     this.selected = 'Dashboard';
+    this.avatarImage = "./../../../assets/accessories/default.png"
     
   }
 
