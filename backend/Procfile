@@ -1,1 +1,1 @@
-web: gunicorn --preload budgetBuddy.wsgi
+web: gunicorn -c gunConfig.py --preload budgetBuddy.wsgi
