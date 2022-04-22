@@ -1,1 +1,1 @@
-web: gunicorn -c gunConfig.py --preload budgetBuddy.wsgi
+web: python manage.py runserver 0.0.0.0:\$PORT
