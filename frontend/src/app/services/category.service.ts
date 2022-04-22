@@ -8,13 +8,13 @@ import { Category } from '../models/category';
 import { MessageService } from './message.service';
 import { environment } from '../../environments/environment'
 
-const API_URL = environment.apiUrl;
+
 
 @Injectable({ providedIn: 'root' })
 export class CategoryService {
 
   
-  private categoriesUrl = API_URL + 'api/category/';  // URL to web api
+  private categoriesUrl = 'api/category/';  // URL to web api
   
   private incomeCategories: BehaviorSubject<Category[] | null>;
   private expenseCategories: BehaviorSubject<Category[] | null>;

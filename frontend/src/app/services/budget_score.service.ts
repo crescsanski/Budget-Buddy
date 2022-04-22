@@ -12,13 +12,13 @@ import { User } from '../models/user';
 import { BudgetCategory } from '../models/formModels/budgetCategory';
 import { environment } from '../../environments/environment'
 
-const API_URL = environment.apiUrl;
+
 
 
 @Injectable({ providedIn: 'root' })
 export class BudgetScoreService {
 
-  private budgetsUrl = API_URL + 'api/budget_score/';  // URL to web api
+  private budgetsUrl = 'api/budget_score/';  // URL to web api
   user: User | null = null;
   private budgetScore: number;
   private budgetGrade: string;

@@ -13,12 +13,12 @@ import { LevelProgress } from '../models/LevelProgress';
 import { TriggerService } from './trigger.service';
 import { environment } from '../../environments/environment'
 
-const API_URL = environment.apiUrl;
+
 
 @Injectable({ providedIn: 'root' })
 export class ChallengesService {
 
-  private apiUrl = API_URL + 'api/chall_inv';  // URL to web api
+  private apiUrl = 'api/chall_inv';  // URL to web api
   private challInvs: Challenge[]
   private preInv: Challenge[]
   private levelProgress: LevelProgress;

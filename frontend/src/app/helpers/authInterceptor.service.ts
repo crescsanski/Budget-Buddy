@@ -14,8 +14,7 @@ export class AuthInterceptor implements HttpInterceptor {
         if (isLoggedIn && isApiUrl) {
             request = request.clone({
                 setHeaders: {
-                    Authorization: `Token ${user!.token}`,
-                    'Cache-Control': 'public, max-age=2592000, must-revalidate'
+                    Authorization: `Token ${user!.token}`
                 }
             });
         }

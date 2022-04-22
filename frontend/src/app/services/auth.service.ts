@@ -10,16 +10,16 @@ import { Router } from '@angular/router';
 import { AlertService } from './alert.service';
 import { environment } from '../../environments/environment'
 
-const API_URL = environment.apiUrl;
+
 
 
 @Injectable({ providedIn: 'root' })
 export class AuthService {
 
-  private authUrl = API_URL + 'api/auth/';  // URL to web api
-  private logoutUrl = API_URL +'api/auth/logout/'
-  private registerUrl = API_URL +'api/auth/register/';
-  private userUrl = API_URL +'api/users/';
+  private authUrl = 'api/auth/';  // URL to web api
+  private logoutUrl = 'api/auth/logout/'
+  private registerUrl = 'api/auth/register/';
+  private userUrl = 'api/users/';
   private currentUserSubject: BehaviorSubject<User | null>;
   public currentUser: Observable<User | null>;
 

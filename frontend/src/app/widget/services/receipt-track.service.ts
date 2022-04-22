@@ -9,14 +9,14 @@ import { QuickReceipt } from 'src/app/models/simReceipt';
 import { AuthService } from 'src/app/services/auth.service';
 import { environment } from '../../../environments/environment'
 
-const API_URL = environment.apiUrl;
+
 
 @Injectable({
   providedIn: 'root'
 })
 export class ReceiptTrackService {
 
-  private apiUrl = API_URL + 'api/receipt_track/';  // URL to web api
+  private apiUrl = 'api/receipt_track/';  // URL to web api
   private userReceipts: Receipt[]
 
   httpOptions = {

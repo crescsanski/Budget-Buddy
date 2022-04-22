@@ -9,14 +9,14 @@ import { SavingsOverTime } from '../models/savingsOverTime';
 import { Receipt } from '../models/receipt';
 import { environment } from '../../environments/environment'
 
-const API_URL = environment.apiUrl;
+
 
 @Injectable({
   providedIn: 'root'
 })
 export class ReceiptUploadService {
 
-  private apiUrl = API_URL + 'api/receipt_upload/';  // URL to web api
+  private apiUrl = 'api/receipt_upload/';  // URL to web api
 
   user: User | null = null;
 

@@ -16,12 +16,12 @@ import { ThrowStmt } from '@angular/compiler';
 import { environment } from '../../environments/environment'
 import { Characteristic } from '../models/characteristic';
 
-const API_URL = environment.apiUrl;
+
 
 @Injectable({ providedIn: 'root' })
 export class BudgetService {
 
-  private budgetsUrl = API_URL + 'api/budget/';  // URL to web api
+  private budgetsUrl = 'api/budget/';  // URL to web api
   user: User | null = null;
   private bud_Calcs: BudgetTotals[] = [];
   private curMonthCalcs: BudgetTotals;

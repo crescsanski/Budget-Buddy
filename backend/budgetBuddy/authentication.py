@@ -5,6 +5,7 @@ import pytz
 from rest_framework.authtoken.models import Token
 
 class TokenExpireAuthentication(TokenAuthentication):
+    
     def authenticate_credentials(self, key):
         model = self.get_model()
         try:
