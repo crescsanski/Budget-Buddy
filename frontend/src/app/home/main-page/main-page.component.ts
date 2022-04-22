@@ -38,8 +38,9 @@ export class MainPageComponent implements OnInit {
   budgetCategories: Category[];
   selectedCategories: Category[];
   welcomeMessage: boolean = false; 
-  avatarEditor: boolean = false;
+  avatarEditor: boolean = true;
   trackingType: string = "income";
+  avatarImage: string;
 
 
 
@@ -207,6 +208,11 @@ export class MainPageComponent implements OnInit {
   backToTop() {
     document.body.scrollTop = 0;
     document.documentElement.scrollTop = 0;
+  }
+
+  updateMenuAvatar(address: string){
+    this.avatarImage = address
+    console.log(this.avatarImage)
   }
 
 

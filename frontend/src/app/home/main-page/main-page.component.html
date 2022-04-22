@@ -1,5 +1,5 @@
 <div class="app-content" style="background-color: white; border-color:white; margin: 0; position: absolute; top: 0px; left: 0px; height: 105%; width: 100%">
-  <div><app-menu class="scroll-lock" (notify)='onNotify($event)'></app-menu></div>
+  <div><app-menu class="scroll-lock" (notify)='onNotify($event)' [avatarImage]="avatarImage"></app-menu></div>
   <div class="placeholder"></div>
   <p-menu #menu [popup]="true" [model]="settings"></p-menu>
   <div class="widget-area">
@@ -62,7 +62,7 @@
 </p-dialog>
 
 <p-dialog header="Avatar Editor" [(visible)]="avatarEditor">
-  <app-avatar-editor></app-avatar-editor>
+  <app-avatar-editor (avatarUpdate)='updateMenuAvatar($event)'></app-avatar-editor>
 </p-dialog>
 
 <p-dialog header="Welcome" [(visible)]="welcomeMessage" [style]="{width: '50vw'}">

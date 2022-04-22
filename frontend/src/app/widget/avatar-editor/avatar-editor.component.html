@@ -1,13 +1,44 @@
 <div style="width:25vw; display: inline-flex">
-    <img [src]="currentAvatar" style="width: 70%; height: 70%">
-    <div style="width: 8vw; margin-left: 5vw">
+    <img [src]="currentAvatar" style="width: 60%; height: 60%; background-color: #00000000;">
+    <div style="width: 12vw; margin-left: 2vw; margin-top: -2vh;">
         <h3>Hat</h3>
-        <p-dropdown [options]="hatOptions" [(ngModel)]="hat" optionLabel="name" optionValue="item" optionValue="item" (onChange)="pickPicture()"></p-dropdown>
+        <div style="width: 20vw; display: flex; flex-wrap: wrap;">
+            <div *ngFor="let option of hatOptions">
+                <div *ngIf="option.image" class="selector" style="height: 6vw" (click)="setHat(option.item)">
+                    <img [src]="option.image" style="width: 4vw;">
+                </div>
+                <div *ngIf="!option.image" class="selector" style="height: 6vw" (click)="setHat(option.item)">
+                    <p style="width: 4vw; text-align: center;">None</p>
+                </div>
+               
+            </div>
+        </div>
         <br>
         <h3>Glasses</h3>
-        <p-dropdown [options]="glassesOptions" [(ngModel)]="glasses" optionLabel="name" optionValue="item" optionValue="item" (onChange)="pickPicture()"></p-dropdown>
+        <div style="display: inline-flex">
+            <div *ngFor="let option of glassesOptions">
+                <div *ngIf="option.image" class="selector" style="height: 6vw" (click)="setGlasses(option.item)">
+                    <img [src]="option.image" style="width: 4vw;">
+                </div>
+                <div *ngIf="!option.image" class="selector" style="height: 6vw" (click)="setGlasses(option.item)">
+                    <p style="width: 4vw; text-align: center;">None</p>
+                </div>
+            </div>
+        </div>
         <h3>Acccessory</h3>
-        <p-dropdown [options]="accessoryOptions" [(ngModel)]="accessory" optionLabel="name" optionValue="item" optionValue="item" (onChange)="pickPicture()"></p-dropdown>
+        <div style="display: inline-flex">
+            <div *ngFor="let option of accessoryOptions">
+                <div *ngIf="option.image" class="selector" style="height: 6vw" (click)="setAccessory(option.item)">
+                    <img [src]="option.image" style="width: 4vw;">
+                </div>
+                <div *ngIf="!option.image" class="selector" style="height: 6vw" (click)="setAccessory(option.item)">
+                    <p style="width: 4vw; text-align: center;">None</p>
+                </div>
+            </div>
+        </div>
+        <br>
+        <button (click)="updateAvatar()" style="margin-top: 3vh;">Submit</button>
+   
     </div>
 </div>
 
