@@ -214,7 +214,7 @@ export class BudgetVsSpendingComponent implements OnInit {
       },
       title: {
           display: true,
-          text: 'Months',
+          text: 'Categories',
           font: {
               size: 20
           }
