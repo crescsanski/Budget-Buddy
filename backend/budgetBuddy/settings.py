@@ -63,7 +63,7 @@ INSTALLED_APPS = [
     # Add the REST Framework
     'rest_framework',
     # Add CORS
-    'corsheaders',
+    #'corsheaders',
     'django_filters'
 ]
 
@@ -83,7 +83,7 @@ REST_FRAMEWORK = {
 MIDDLEWARE = [
     #Add middleware for CORS
     'whitenoise.middleware.WhiteNoiseMiddleware',
-    'corsheaders.middleware.CorsMiddleware',
+    #'corsheaders.middleware.CorsMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -173,9 +173,9 @@ USE_TZ = True
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 # Configure CORS
-CORS_ALLOW_ALL_ORIGINS = True
-CORS_ALLOW_CREDENTIALS = True
-CORS_EXPOSE_HEADERS = ['authorization']
+# CORS_ALLOW_ALL_ORIGINS = True
+# CORS_ALLOW_CREDENTIALS = True
+# CORS_EXPOSE_HEADERS = ['authorization']
 
 # CORS_ORIGIN_WHITELIST = (
 #     'http://localhost:4200', 'https://budget-buddy-app1.herokuapp.com'
