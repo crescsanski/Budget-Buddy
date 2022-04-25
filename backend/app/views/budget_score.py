@@ -49,7 +49,7 @@ def budgetScore(request, user_id):
     else:
         numberDays = numberDaysInput
     if numberDays is not None and totalLogins is not None and numberDays > 0:
-        useScoreInput = ((totalLogins/numberDays) * 100)
+        useScoreInput = float((totalLogins/numberDays) * 100)
     else:
         useScoreInput = 0
     useScore = None
@@ -144,7 +144,7 @@ def budgetScore(request, user_id):
     if totalIncomeTwo == 0:
         wantScore = 0
     else:
-        wantScoreInput = ((totalWantsTwo/totalIncomeTwo) * 100)
+        wantScoreInput = float((totalWantsTwo/totalIncomeTwo) * 100)
         if wantScoreInput < 23:
             wantScore = 100         
         elif wantScoreInput >= 23 and wantScoreInput <= 99:

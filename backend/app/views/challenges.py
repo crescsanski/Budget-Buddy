@@ -12,7 +12,7 @@ from rest_framework.decorators import action, permission_classes
 from django.contrib.auth import get_user_model, logout
 from rest_framework.response import Response
 from app.models import *
-from django.db.models import F
+from django.db.models import F, When, Q, Case
 from django.contrib.auth.password_validation import CommonPasswordValidator, NumericPasswordValidator, UserAttributeSimilarityValidator, validate_password, MinimumLengthValidator
 from app.serializers import *
 from django.contrib import auth
@@ -64,7 +64,9 @@ def manageUserChallInv(request, user_id):
                 type = F('challenge__challenge_type'),
                 time_given = F('challenge__challenge_time_given'),
                 trigger = F('challenge__challenge_trigger')).annotate(
-                    fracCompl = Cast(F('progress'), FloatField()) / Cast(F('goal'), FloatField()) * 100).values(
+                    fracCompl = Case(
+                        When(goal__gt = 0, then = Cast(F('progress'), FloatField()) / Cast(F('goal'), FloatField()) * 100),
+                        When(goal = 0, then = 0.0))).values(
                     'id', 'name', 'badge_name', 'label', 'description', 'rewardPoints', 'start_date', 'is_active', 'no_badge', 'goal', 'progress', 'fracCompl', 'completion_date', 'type', 'time_given', 'trigger'
                 )
     
