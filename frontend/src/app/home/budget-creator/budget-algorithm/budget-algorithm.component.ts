@@ -53,7 +53,7 @@ export class BudgetAlgorithmComponent implements OnInit {
     let saving = 20
 
     // user characteristics (Have user select these and update their data upon submition)
-    let independent = this.userAttributes[0].value
+    let independent = !this.userAttributes[0].value
     let retired = this.userAttributes[1].value
     let married = this.userAttributes[2].value
     let multipleIncomes = this.userAttributes[3].value
