@@ -16,7 +16,10 @@ export class ChallengeProgressComponent implements OnInit {
   constructor(private chalServ: ChallengesService, private trigServ: TriggerService, private cp: CurrencyPipe) {
       this.challenges = this.getInProgress(this.chalServ.challenges);
 
-      this.trigServ.challAnnounced$.subscribe(() => this.challenges = this.getInProgress(this.chalServ.challenges))
+      this.trigServ.challAnnounced$.subscribe(() => this.challenges = this.getInProgress(this.chalServ.challenges).sort(
+        function(a,b) {return (a.challenge_id > b.challenge_id) ? 1 : ((b.challenge_id > a.challenge_id) ? -1 : 0);} 
+        ))
+      
       //TO DO: implement w/ API
 
       /*

@@ -67,7 +67,7 @@ def manageUserChallInv(request, user_id):
                     fracCompl = Case(
                         When(goal__gt = 0, then = Cast(F('progress'), FloatField()) / Cast(F('goal'), FloatField()) * 100),
                         When(goal = 0, then = 0.0))).values(
-                    'id', 'name', 'badge_name', 'label', 'description', 'rewardPoints', 'start_date', 'is_active', 'no_badge', 'goal', 'progress', 'fracCompl', 'completion_date', 'type', 'time_given', 'trigger'
+                    'id', 'challenge_id', 'name', 'badge_name', 'label', 'description', 'rewardPoints', 'start_date', 'is_active', 'no_badge', 'goal', 'progress', 'fracCompl', 'completion_date', 'type', 'time_given', 'trigger'
                 )
     
     levelData = retrieveUserLevelData(user_id)[0]

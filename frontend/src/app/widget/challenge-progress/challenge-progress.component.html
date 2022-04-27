@@ -3,11 +3,13 @@
         <div class="header">
             <h2>My Challenges</h2> 
         </div>
-        <div *ngFor="let x of challenges">
+        <div  class = "scroll" >
+        <div class = "item" *ngFor="let x of challenges">
             <h3 style="width: 100%">{{x.name}} <span style="font-weight: 200; font-size: smaller; margin-left: .5em">{{x.description}}</span></h3>
             <p-progressBar [ngClass]="x.fracCompl > 100 ? 'over' : 'under'"  class="progress-bar" [value]="x.fracCompl"></p-progressBar>
             <p style="margin-top: 6px"> <span style=" float: left">{{x.completion_date | date:'shortDate'}}</span> {{x.displayProg }} / {{ x.displayGoal }} {{x.label}}</p>
         </div>
+    </div>
         <br>
     </div>
 </div>

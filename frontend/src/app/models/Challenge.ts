@@ -1,5 +1,6 @@
 export interface Challenge {
     id: number;
+    challenge_id: number;
     name: string;
     label?: string;
     badge_name: string;
