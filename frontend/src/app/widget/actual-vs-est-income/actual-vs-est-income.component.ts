@@ -135,7 +135,7 @@ export class ActualVsEstIncomeComponent implements OnInit {
             label: 'Estimated Income',
             data: this.estIncValues,
             fill: true,
-            backgroundColor: 'rgba(78, 197, 202, 0.15)',
+            backgroundColor: 'rgba(78, 197, 202, 0.35)',
             barPercentage: 1,
             tension: 0,
             
