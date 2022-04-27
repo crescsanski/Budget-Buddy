@@ -96,7 +96,7 @@ export class SpendingVsIncomeComponent implements OnInit {
             data: this.values2,
             fill: true,
             barPercentage: 1,
-            backgroundColor: 'rgba(78, 197, 202, 0.15)',
+            backgroundColor: 'rgba(78, 197, 202, 0.35)',
             tension: 0,
             
         },
