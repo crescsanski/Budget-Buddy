@@ -66,6 +66,12 @@ class RegisterView(GenericAPIView):
 
 class CustomAuthToken(ObtainAuthToken):
 
+    permission_classes = (
+    permissions.AllowAny,
+     )
+
+    # don't check token for this view
+    @authentication_classes([])
     def post(self, request, *args, **kwargs):
 
         serializer = self.serializer_class(data=request.data,
@@ -90,8 +96,6 @@ class CustomAuthToken(ObtainAuthToken):
         })
     
 class Logout(GenericAPIView):
-
-    #permission_classes = [permissions.IsAuthenticated]
  
     @action(detail=False, methods=['post'])
     def post(self, request, format=None):
